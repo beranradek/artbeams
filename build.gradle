@@ -1,0 +1,90 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.1.RELEASE'
+    }
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // The Spring Boot Gradle Plugin provides Spring Boot support in Gradle, 
+        // allowing you to package executable jar or war archives, 
+        // run Spring Boot applications and use the dependency management 
+        // provided by spring-boot-dependencies.
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'org.xbery'
+version = '1.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+dependencies {
+    // Scala language
+    implementation("org.scala-lang:scala-library:2.12.8")
+    implementation("org.scala-lang:scala-reflect:2.12.8")
+
+    // Web libraries
+    implementation("org.webjars:webjars-locator:0.36")
+    implementation("org.webjars:bootstrap:4.1.3")
+
+    // Spring Boot: Thanks to Spring Boot Gradle Plugin, versions can be omitted
+    // Support for Web MVC, Freemarker templates, database layer, security
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-freemarker")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    // Database and repository libraries
+    runtimeOnly("org.postgresql:postgresql:9.4.1208")
+    implementation("org.xbery:overview-repo-sql:1.1.1")
+    implementation("org.xbery:overview-repo-sql-scala:1.0.0")
+
+    // Forms
+    implementation("net.formio:formio:1.6.3")
+
+    // Working with text/HTML
+    implementation("org.apache.commons:commons-text:1.6")
+
+    // Evernote integration
+    implementation("com.evernote:evernote-api:1.25.1")
+
+    // Markdown support
+    implementation("com.vladsch.flexmark:flexmark:0.50.28")
+    implementation("com.vladsch.flexmark:flexmark-ext-attributes:0.50.28")
+    implementation("javax.inject:javax.inject:1")
+
+    // Detection of client - browser capabilities
+    implementation("com.blueconic:browscap-java:1.2.11")
+
+    // HTTP client for communication with external services
+    implementation("org.apache.httpcomponents:httpclient:4.5.10")
+
+    // Working with PDF documents
+    implementation("org.apache.pdfbox:pdfbox:2.0.17")
+
+    // Testing Spring Boot application
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+// Task stage for Heroku deployment
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean

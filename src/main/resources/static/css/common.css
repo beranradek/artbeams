@@ -1,0 +1,192 @@
+/** Styles common for both administration and public web */
+
+code {
+  font-size: 80%;
+}
+
+img {
+  max-width: 100%;
+}
+
+cite {
+    font-style: italic;
+}
+
+blockquote {
+  margin-bottom: 2.3rem;
+  margin-top: 1rem;
+  padding: 2rem 2rem 2rem 2rem;
+  background-color: #ffe5cc;
+  font-style: italic;
+  border-left: 0.3rem solid #f06d3b;
+  overflow: auto;
+}
+
+blockquote:before {
+  content: "“";
+  font-family: "Times New Roman", Times, serif;
+  font-size: 3rem;
+  display: inline;
+  float: left;
+}
+
+.align-left {
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 5px;
+}
+
+.align-right {
+  float: right;
+  margin-left: 20px;
+  margin-bottom: 5px
+}
+
+.align-center {
+  display: block;
+  margin: 0 auto;
+}
+
+/** Blog-nested styles are used in public web and for preview of article in administration */
+
+.blog-main h1, .blog-sidebar h1,
+.blog-main h2, .blog-sidebar h2,
+.blog-main h3, .blog-sidebar h3,
+.blog-main h4, .blog-sidebar h4,
+.blog-main h5, .blog-sidebar h5,
+.blog-main h6, .blog-sidebar h6 {
+  margin-top: 0;
+  font-weight: normal;
+  color: Chocolate;
+}
+
+.blog-main h1, .blog-sidebar h1 {
+    font-size: 2.1rem;
+    line-height: 3rem;
+}
+
+.blog-main h2, .blog-sidebar h2 {
+  font-size: 1.8rem;
+  line-height: 2.6rem;
+}
+
+.blog-main h3, .blog-sidebar h3 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.blog-main h4, .blog-sidebar h4 {
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
+
+.blog-main h5, .blog-sidebar h5 {
+  font-size: 0.9rem;
+  line-height: 2rem;
+}
+
+.blog-main div[style="--text-box"], .text-box {
+  padding: 2rem 2rem 2rem;
+  margin-bottom: 2rem;
+  margin-top: 1.3rem;
+  background-color: #ffe5cc;
+}
+
+.blog-main div[style="--text-box-bordered"], .text-box-bordered {
+  padding: 2rem 2rem 2rem;
+  margin-bottom: 2rem;
+  margin-top: 1.3rem;
+  background-color: #ffe5cc;
+  border: 0.3rem solid #f06d3b;
+}
+
+.blog-main div[style="--text-box-bordered-only"], .text-box-bordered-only {
+  padding: 2rem 2rem 2rem;
+  margin-bottom: 2rem;
+  margin-top: 1.3rem;
+  border: 0.3rem solid #ffe5cc;
+}
+
+.blog-main table {
+  border: 1px solid #ffe5cc;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.blog-main table th {
+  background-color: #ffe5cc;
+}
+
+.blog-main table th, .blog-main table td {
+  padding: 0.5rem;
+}
+
+.blog-main table td {
+  border: 1px solid #ffe5cc;
+}
+
+.blog-main img[src*="#left"] {
+   float: left;
+   margin-right: 2rem;
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+}
+
+.blog-main img[src*="#left-big-margin"] {
+   float: left;
+   margin-right: 4rem;
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+}
+
+.blog-main img[src*="#right"] {
+   float: right;
+   margin-left: 2rem;
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+}
+
+.blog-main img[src*="#right-big-margin"] {
+   float: right;
+   margin-left: 4rem;
+   margin-top: 0.5rem;
+   margin-bottom: 0.5rem;
+}
+
+.blog-main img[src*="#center"] {
+   display: block;
+   margin: 0 auto;
+}
+
+.color-dark {
+   color: Chocolate;
+}
+
+.color-red {
+   color: Red;
+}
+
+.open-lightbox {
+    background: #219ed1;
+    color: #ffffff;
+    font-weight: 500;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -khtml-border-radius: 8px;
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem 0.7rem 1.2rem;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+}
+
+/* Font awesome icons indentation. */
+.fas {
+    padding-bottom: 3px;
+}
+
+.label-fix {
+  /* Otherwise label does not start right bellow above inputs */
+  padding-left:0;
+}

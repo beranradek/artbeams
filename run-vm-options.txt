@@ -1,0 +1,3 @@
+-DJDBC_DATABASE_URL=jdbc:<db-type>://<host>:<port>/<db-name>?sslmode=require
+-DJDBC_DATABASE_USERNAME=<user>
+-DJDBC_DATABASE_PASSWORD=<password>
