@@ -8,7 +8,7 @@
     <meta name="description" content="CMS" />
     <meta name="keywords" content=""/>
     <title>CMS Administration</title>
-    <link rel="shortcut icon" href="/static/img/favicon.ico?v190420" />
+    <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
     <!-- Bootstrap -->
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
     <!-- FontAwesome Icons -->

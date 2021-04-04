@@ -28,7 +28,7 @@
     <!-- FB-features (comments etc.) -->
     <meta property="fb:app_id" content="${xlat['fb.app-id']}" />
   </#if>
-  <link rel="shortcut icon" href="/static/img/favicon.ico?v190420" />
+  <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
 
   <!-- Open Graph data -->
   <#if article??>

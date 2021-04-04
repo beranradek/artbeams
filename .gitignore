@@ -1,7 +1,6 @@
 logs
 project/project
-project/target
-src/main/resources/static/img 
+project/target 
 target
 tmp
 .history

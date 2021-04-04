@@ -89,7 +89,7 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
 }
 
 #headline {
-    background: url("/static/img/headline.jpg?v191219");
+    background: url("/media/headline.jpg");
     background-position: center center;
     background-repeat: no-repeat;
     -webkit-background-size: cover;

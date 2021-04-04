@@ -1,5 +1,7 @@
 INSERT INTO localisation (entry_key, entry_value) VALUES ('author.name', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('author.about', '???');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('author.img.src', '/media/author.jpg');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('favicon.img.src', '/media/favicon.ico');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item1.title', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item1.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item2.title', '???');
