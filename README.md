@@ -30,7 +30,7 @@ does not invoke application restart because it is not necessary - templates are 
 
 ### Running on Heroku
 
-* Add Heroku Procfile (with the following content: web: ./build/install/artbeams/bin/artbeams)
+* Add Heroku Procfile (provided)
 * In Heroku CLI run command: heroku ps:scale web=1 (so the application has associated one dyno required for application run and application can start)
 
 ## Quick start
