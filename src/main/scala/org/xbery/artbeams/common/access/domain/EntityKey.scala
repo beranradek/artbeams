@@ -7,12 +7,13 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
  *
   * @author Radek Beran
   */
+@SerialVersionUID(-1L)
 case class EntityKey(
   /* Type of entity (system description). */
   entityType: String,
   /* Identification of an entity that is unique within given entity type. */
   entityId: String
-)
+) extends Serializable
 
 object EntityKey {
   lazy val Empty = EntityKey(

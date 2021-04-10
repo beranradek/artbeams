@@ -1,13 +1,13 @@
 package org.xbery.artbeams.web
 
+import org.xbery.artbeams.articles.service.ArticleService
+import org.xbery.artbeams.categories.service.CategoryService
+import org.xbery.artbeams.products.service.ProductService
+
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
-
-import org.xbery.artbeams.articles.repository.ArticleRepository
-import org.xbery.artbeams.categories.service.CategoryService
-import org.xbery.artbeams.products.service.ProductService
 
 /**
   * Sitemap generating logic.
@@ -17,7 +17,7 @@ trait SitemapWriter {
 
   private lazy val SitemapDateFormat = new SimpleDateFormat("YYYY-MM-dd")
 
-  def articleRepository: ArticleRepository
+  def articleService: ArticleService
   def categoryService: CategoryService
   def productService: ProductService
 
@@ -35,7 +35,7 @@ trait SitemapWriter {
     }
 
     // Articles
-    val articles = articleRepository.findLatest(Int.MaxValue)
+    val articles = articleService.findLatest(Int.MaxValue)
     for (article <- articles) {
       writer.println(buildUrl(urlBase + "/" + article.slug, Option(article.modified), writer))
     }

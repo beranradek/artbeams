@@ -1,6 +1,5 @@
 package org.xbery.artbeams.config
 
-import javax.inject.Inject
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -11,14 +10,15 @@ import org.springframework.security.web.header.writers.{CacheControlHeadersWrite
 import org.springframework.security.web.util.matcher.{AndRequestMatcher, AntPathRequestMatcher, NegatedRequestMatcher, RequestMatcher}
 import org.xbery.artbeams.users.service.CmsAuthenticationProvider
 
+import javax.inject.Inject
 import scala.collection.JavaConverters._
 
 /**
   * Spring security configuration. Defines secured paths of application and authentication manager implementation.
   * @author Radek Beran
   */
-@Configuration
 @EnableWebSecurity
+@Configuration
 class SecurityConfig @Inject() (authProvider: CmsAuthenticationProvider, environment: Environment) extends WebSecurityConfigurerAdapter {
   private val ResourcesPaths = Seq("/webjars/**", "/media/**", "/static/**")
   private val activeProfiles = environment.getActiveProfiles().toSet

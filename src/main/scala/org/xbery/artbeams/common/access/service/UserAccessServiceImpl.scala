@@ -1,12 +1,8 @@
 package org.xbery.artbeams.common.access.service
 
-import java.time.Instant
-import java.util
-
 import com.blueconic.browscap.{BrowsCapField, Capabilities, UserAgentService}
-import javax.inject.Inject
-import javax.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.http.HttpHeaders
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -15,11 +11,17 @@ import org.xbery.artbeams.common.access.domain._
 import org.xbery.artbeams.common.access.repository.{EntityAccessCountRepository, UserAccessRepository}
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 
+import java.time.Instant
+import java.util
+import javax.inject.Inject
+import javax.servlet.http.HttpServletRequest
+import scala.concurrent.{ExecutionContext, Future}
+
 /**
   * @author Radek Beran
   */
 @Service
-class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepository, entityAccessCountRepository: EntityAccessCountRepository) extends UserAccessService {
+class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepository, entityAccessCountRepository: EntityAccessCountRepository, implicit val ec: ExecutionContext) extends UserAccessService {
 
   private lazy val logger = LoggerFactory.getLogger(this.getClass)
 
@@ -43,23 +45,31 @@ class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepositor
     val userAgent = request.getHeader(HttpHeaders.USER_AGENT)
     val report = createUserAccessReport(userAgent)
 
+    // We will store and count only human (non-bot/non-crawler) accesses for the entities such as articles.
     if (!report.crawler) {
-      // We will store and count only human (non-bot/non-crawler) accesses for the entities such as articles.
-      try {
-        val ipAddress = request.getRemoteAddr()
-        val userAccess = UserAccess(AssetAttributes.newId(), Instant.now(), ipAddress, userAgent, entityKey)
-        userAccessRepository.create(userAccess, false)
-      } catch {
-        case _: Exception =>
-          // This could be for e.g. also org.postgresql.util.PSQLException...
-          // There is no easy cross-platform way how to identify duplicate key exception
-          // case _: SQLIntegrityConstraintViolationException =>
-          // Non-unique access for given day, access will not be stored for the second time
-      }
+      // Run in background:
+      val fUserAccess = registerUserAccess(entityKey, request.getRemoteAddr(), userAgent)
     }
     report
   }
 
+  // Spring @Async is limited only to public methods and does not work for calls within the same class
+  private def registerUserAccess(entityKey: EntityKey, ipAddress: String, userAgent: String): Future[Any] = {
+    Future {
+      try {
+        val userAccess = UserAccess(AssetAttributes.newId(), Instant.now(), ipAddress, userAgent, entityKey)
+        userAccessRepository.create(userAccess, false)
+      } catch {
+        case _: Exception =>
+        // This could be for e.g. also org.postgresql.util.PSQLException...
+        // There is no easy cross-platform way how to identify duplicate key exception
+        // case _: SQLIntegrityConstraintViolationException =>
+        // Non-unique access for given day, access will not be stored for the second time
+      }
+    }
+  }
+
+  @Cacheable(Array(EntityAccessCount.CacheName))
   override def findCountOfVisits(entityKey: EntityKey): Long = {
     val entityFilter = EntityAccessCountFilter.Empty.copy(entityKey = Some(entityKey))
     entityAccessCountRepository.findByFilter(entityFilter, Seq.empty).headOption.map(_.count).getOrElse(0L)
@@ -67,6 +77,7 @@ class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepositor
 
   // Cron pattern: second, minute, hour, day, month, weekday
   @Scheduled(cron = "0 1 0 * * *", zone = Dates.AppZoneIdString)
+  @CacheEvict(value = Array(EntityAccessCount.CacheName), allEntries = true)
   override def aggregateUserAccesses(): Unit = {
     val operationMsg = s"User access aggregation task"
     logger.info(s"${operationMsg} - started")

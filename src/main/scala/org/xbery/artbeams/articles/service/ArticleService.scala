@@ -14,4 +14,10 @@ trait ArticleService {
   def findEditedArticle(id: String): Option[EditedArticle]
 
   def findBySlug(slug: String): Option[Article]
+
+  def findLatest(limit: Int): Seq[Article]
+
+  def findByCategoryId(categoryId: String, limit: Int): Seq[Article]
+
+  def findByQuery(query: String, limit: Int): Seq[Article]
 }

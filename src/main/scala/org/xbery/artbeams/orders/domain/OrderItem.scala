@@ -8,6 +8,7 @@ import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes}
   * Item of an order.
   * @author Radek Beran
   */
+@SerialVersionUID(-1L)
 case class OrderItem(
   override val common: AssetAttributes,
   orderId: String,

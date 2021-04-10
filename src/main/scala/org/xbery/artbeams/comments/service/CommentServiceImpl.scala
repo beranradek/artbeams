@@ -1,7 +1,7 @@
 package org.xbery.artbeams.comments.service
 
-import javax.inject.Inject
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.repository.ArticleRepository
@@ -13,6 +13,8 @@ import org.xbery.artbeams.common.mailer.service.Mailer
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.users.repository.UserRepository
 
+import javax.inject.Inject
+
 /**
   * @author Radek Beran
   */
@@ -21,10 +23,13 @@ class CommentServiceImpl @Inject()(commentRepository: CommentRepository, article
   private lazy val logger = LoggerFactory.getLogger(this.getClass)
   private lazy val normalizationHelper = new NormalizationHelper()
 
+  @Cacheable(Array(Comment.CacheName))
   override def findByEntityId(entityId: String): Seq[Comment] = {
+    logger.trace(s"Finding comments by entity id $entityId")
     commentRepository.findByEntityId(entityId)
   }
 
+  @CacheEvict(value = Array(Comment.CacheName), allEntries = true)
   override def saveComment(edited: EditedComment, ipAddress: String, userAgent: String)(implicit ctx: OperationCtx): Either[Exception, Option[Comment]] = {
     try {
       val userId = ctx.loggedUser.map(_.id).getOrElse(AssetAttributes.EmptyId)

@@ -1,9 +1,7 @@
 package org.xbery.artbeams.articles.service
 
-import java.util
-
-import javax.inject.Inject
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.{CacheEvict, Cacheable}
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.{Article, EditedArticle}
 import org.xbery.artbeams.articles.repository.{ArticleCategoryFilter, ArticleCategoryRepository, ArticleRepository}
@@ -12,6 +10,8 @@ import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.markdown.MarkdownConverter
 import org.xbery.artbeams.evernote.service.EvernoteApi
 
+import java.util
+import javax.inject.Inject
 import scala.collection.JavaConverters._
 
 /**
@@ -24,10 +24,14 @@ class ArticleServiceImpl @Inject()(
   markdownConverter: MarkdownConverter,
   evernoteApi: EvernoteApi) extends ArticleService {
 
-  private lazy val logger = LoggerFactory.getLogger(this.getClass)
+  protected lazy val logger = LoggerFactory.getLogger(this.getClass)
 
-  override def findArticles(): Seq[Article] = articleRepository.findArticles()
+  override def findArticles(): Seq[Article] = {
+    logger.trace("Finding articles")
+    articleRepository.findArticles()
+  }
 
+  @CacheEvict(value = Array(Article.CacheName), allEntries = true)
   override def saveArticle(edited: EditedArticle)(implicit ctx: OperationCtx): Either[Exception, Option[Article]] = {
     try {
       val userId = ctx.loggedUser.map(_.id).getOrElse(AssetAttributes.EmptyId)
@@ -69,8 +73,24 @@ class ArticleServiceImpl @Inject()(
     }
   }
 
+  @Cacheable(Array(Article.CacheName))
   override def findBySlug(slug: String): Option[Article] = {
+    logger.trace(s"Finding article by slug $slug")
     articleRepository.findBySlug(slug)
+  }
+
+  @Cacheable(Array(Article.CacheName))
+  override def findLatest(limit: Int): Seq[Article] = {
+    logger.trace(s"Finding latest $limit articles")
+    articleRepository.findLatest(limit)
+  }
+
+  override def findByCategoryId(categoryId: String, limit: Int): Seq[Article] = {
+    articleRepository.findByCategoryId(categoryId, limit)
+  }
+
+  override def findByQuery(query: String, limit: Int): Seq[Article] = {
+    articleRepository.findByQuery(query, limit)
   }
 
   private def findArticleCategories(articleId: String): util.List[String] = {

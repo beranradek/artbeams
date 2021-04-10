@@ -1,13 +1,14 @@
 package org.xbery.artbeams.common.controller
 
-import javax.inject.Inject
-import javax.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.access.service.UserAccessService
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.LoginService
+
+import javax.inject.Inject
+import javax.servlet.http.HttpServletRequest
 
 /**
   * @author Radek Beran

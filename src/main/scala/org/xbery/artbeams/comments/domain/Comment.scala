@@ -8,6 +8,7 @@ import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes}
   * Comment entity.
   * @author Radek Beran
   */
+@SerialVersionUID(-1L)
 case class Comment(
   override val common: AssetAttributes,
   parentId: Option[String],
@@ -44,6 +45,8 @@ case class Comment(
 }
 
 object Comment {
+  final val CacheName = "comments"
+
   lazy val Empty = Comment(
     AssetAttributes.Empty,
     None,

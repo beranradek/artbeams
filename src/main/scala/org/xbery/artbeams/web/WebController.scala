@@ -1,10 +1,5 @@
 package org.xbery.artbeams.web
 
-import java.util
-import java.util.concurrent.TimeUnit
-
-import javax.inject.Inject
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import net.formio.FormData
 import net.formio.validation.ValidationResult
 import org.apache.commons.io.IOUtils
@@ -14,14 +9,21 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.{GetMapping, PathVariable}
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
-import org.xbery.artbeams.articles.repository.ArticleRepository
+import org.xbery.artbeams.articles.service.ArticleService
 import org.xbery.artbeams.categories.service.CategoryService
 import org.xbery.artbeams.comments.controller.CommentController.commentFormDef
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.access.domain.EntityKey
+import org.xbery.artbeams.common.async.Awaits
 import org.xbery.artbeams.common.controller.{BaseController, ControllerComponents}
 import org.xbery.artbeams.products.service.ProductService
+
+import java.util
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Common web routes.
@@ -29,12 +31,13 @@ import org.xbery.artbeams.products.service.ProductService
   */
 @Controller
 class WebController @Inject()(
-  val articleRepository: ArticleRepository,
+  val articleService: ArticleService,
   val categoryService: CategoryService,
   val productService: ProductService,
   val commentService: CommentService,
   controllerComponents: ControllerComponents,
-  resourceLoader: ResourceLoader)
+  resourceLoader: ResourceLoader,
+  implicit val ec: ExecutionContext)
   extends BaseController(controllerComponents) with SitemapWriter {
 
   // TODO RBe: Constants from config
@@ -46,12 +49,18 @@ class WebController @Inject()(
   @GetMapping(Array("/"))
   def homepage(request: HttpServletRequest): Any = {
     // Articles in main blog area
-    val articles = articleRepository.findLatest(ArticlesPerPageLimit)
-    val userAccessReport = controllerComponents.userAccessService.getUserAccessReport(request)
-    val model = createBlogModel(request,
-      "articles" -> articles,
-      "showHeadline" -> true,
-      "userAccessReport" -> userAccessReport)
+    val fArticles = Future(articleService.findLatest(ArticlesPerPageLimit))
+    val fUserAccessReport = Future(controllerComponents.userAccessService.getUserAccessReport(request))
+    val fModel = for {
+      articles <- fArticles
+      userAccessReport <- fUserAccessReport
+    } yield {
+      createBlogModel(request,
+        "articles" -> articles,
+        "showHeadline" -> true,
+        "userAccessReport" -> userAccessReport)
+    }
+    val model = Awaits.result(fModel)
     new ModelAndView("homepage", model)
   }
 
@@ -61,7 +70,7 @@ class WebController @Inject()(
     categoryOpt match {
       case Some(category) =>
         // Articles in category
-        val articles = articleRepository.findByCategoryId(category.id, ArticlesPerPageLimit)
+        val articles = articleService.findByCategoryId(category.id, ArticlesPerPageLimit)
         val model = createBlogModel(request,
           "category" -> category,
           "articles" -> articles)
@@ -110,35 +119,41 @@ class WebController @Inject()(
     */
   @GetMapping(Array("/{slug}"))
   def article(request: HttpServletRequest, @PathVariable("slug") slug: String): Any = {
-    val articleOpt = articleRepository.findBySlug(slug)
+    val articleOpt = articleService.findBySlug(slug)
     articleOpt match {
       case Some(article) =>
-        // TODO RBe: These operations can be done in parallel
-
         // Logs user access. Checks user device capabilities.
         val entityKey = EntityKey.fromClassAndId(classOf[Article], article.id)
-        val userAccessReport = controllerComponents.userAccessService.saveUserAccess(entityKey, request)
+        val fUserAccessReport = Future(controllerComponents.userAccessService.saveUserAccess(entityKey, request))
 
         // Find count of accesses for the article
-        val countOfVisits = controllerComponents.userAccessService.findCountOfVisits(entityKey)
+        val fCountOfVisits = Future(controllerComponents.userAccessService.findCountOfVisits(entityKey))
 
-        val (comments, commentFormOpt) = if (article.showOnBlog) {
+        val fCommentsWithForm = Future(if (article.showOnBlog) {
           val newComment = Comment.Empty.toEdited().copy(entityId = article.id)
           val comments = commentService.findByEntityId(article.id)
           val commentForm = commentFormDef.fill(new FormData(newComment, ValidationResult.empty))
           (comments, Some(commentForm))
         } else {
           (Seq.empty[Comment], None)
-        }
+        })
 
-        val model = createBlogModel(
-          request,
-          "article" -> article,
-          "comments" -> comments,
-          "commentForm" -> commentFormOpt.orNull,
-          "userAccessReport" -> userAccessReport,
-          "countOfVisits" -> countOfVisits,
-        )
+        val fModel = for {
+          userAccessReport <- fUserAccessReport
+          countOfVisits <- fCountOfVisits
+          commentsWithForm <- fCommentsWithForm
+        } yield {
+          val (comments, commentFormOpt) = commentsWithForm
+          createBlogModel(
+            request,
+            "article" -> article,
+            "comments" -> comments,
+            "commentForm" -> commentFormOpt.orNull,
+            "userAccessReport" -> userAccessReport,
+            "countOfVisits" -> countOfVisits,
+          )
+        }
+        val model = Awaits.result(fModel)
         new ModelAndView("article", model)
       case _ =>
         notFound()
@@ -156,7 +171,7 @@ class WebController @Inject()(
         val articles = if (query == null || query.trim().length() < 2) {
           Seq.empty[Article]
         } else {
-          articleRepository.findByQuery(query, SearchLimit)
+          articleService.findByQuery(query, SearchLimit)
         }
         val model = createBlogModel(request,
           "query" -> query,
@@ -174,10 +189,16 @@ class WebController @Inject()(
   }
 
   private def appendSidebarData(model: util.Map[String, Any]): util.Map[String, Any] = {
-    val latestArticles = articleRepository.findLatest(LatestArticlesSidebarLimit)
-    val articleCategories = categoryService.findCategories()
-    model.put("latestArticles", latestArticles)
-    model.put("articleCategories", articleCategories)
-    model
+    val fLatestArticles = Future(articleService.findLatest(LatestArticlesSidebarLimit))
+    val fArticleCategories = Future(categoryService.findCategories())
+    val fModel = for {
+      latestArticles <- fLatestArticles
+      articleCategories <- fArticleCategories
+    } yield {
+      model.put("latestArticles", latestArticles)
+      model.put("articleCategories", articleCategories)
+      model
+    }
+    Awaits.result(fModel)
   }
 }

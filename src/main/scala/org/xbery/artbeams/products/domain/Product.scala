@@ -6,6 +6,7 @@ import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes}
   * Product entity.
   * @author Radek Beran
   */
+@SerialVersionUID(-1L)
 case class Product(
   override val common: AssetAttributes,
   slug: String,

@@ -9,6 +9,7 @@ import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes, Validity
   * Article entity
   * @author Radek Beran
   */
+@SerialVersionUID(-1L)
 case class Article(
   override val common: AssetAttributes,
   override val validity: Validity,
@@ -61,6 +62,8 @@ case class Article(
 }
 
 object Article {
+  final val CacheName = "articles"
+
   lazy val Empty = Article(
     AssetAttributes.Empty,
     Validity.Empty,

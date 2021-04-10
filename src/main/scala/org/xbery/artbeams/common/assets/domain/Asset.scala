@@ -7,7 +7,7 @@ import java.time.Instant
   *
   * @author Radek Beran
  */
-abstract class Asset {
+abstract class Asset extends Serializable {
 
   def common: AssetAttributes
 

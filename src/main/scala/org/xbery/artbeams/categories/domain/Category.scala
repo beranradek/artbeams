@@ -8,6 +8,7 @@ import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes, Validity
   * Category entity
   * @author Radek Beran
   */
+@SerialVersionUID(-1L)
 case class Category(
   override val common: AssetAttributes,
   override val validity: Validity,
@@ -39,6 +40,8 @@ case class Category(
 }
 
 object Category {
+  final val CacheName = "categories"
+
   lazy val Empty = Category(
     AssetAttributes.Empty,
     Validity.Empty,

@@ -14,6 +14,8 @@ case class EntityAccessCount(
 ) extends Serializable
 
 object EntityAccessCount {
+  final val CacheName = "entityAccessCounts"
+
   lazy val Empty = EntityAccessCount(
     EntityKey.Empty,
     0
