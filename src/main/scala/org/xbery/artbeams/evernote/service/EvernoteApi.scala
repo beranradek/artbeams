@@ -17,7 +17,7 @@ import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.evernote.config.EvernoteConfig
 import org.xbery.artbeams.evernote.domain.Note
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * @author Radek Beran

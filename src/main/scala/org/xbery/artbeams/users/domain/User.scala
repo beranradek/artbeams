@@ -5,7 +5,7 @@ import java.time.Instant
 import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes}
 import org.xbery.artbeams.common.security.PasswordHashing
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * User entity.
@@ -41,7 +41,7 @@ case class User(
       firstName = edited.firstName,
       lastName = edited.lastName,
       email = edited.email.toLowerCase(),
-      roles = edited.roleIds.asScala.map(roleId => rolesCodebook.find(r => r.id == roleId)).flatten
+      roles = edited.roleIds.asScala.map(roleId => rolesCodebook.find(r => r.id == roleId)).flatten.toSeq
     )
   }
 

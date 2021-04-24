@@ -47,8 +47,8 @@ class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepositor
 
     // We will store and count only human (non-bot/non-crawler) accesses for the entities such as articles.
     if (!report.crawler) {
-      // Run in background:
-      val fUserAccess = registerUserAccess(entityKey, request.getRemoteAddr(), userAgent)
+      // Run in background without waiting for Future result:
+      registerUserAccess(entityKey, request.getRemoteAddr, userAgent)
     }
     report
   }
@@ -80,13 +80,13 @@ class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepositor
   @CacheEvict(value = Array(EntityAccessCount.CacheName), allEntries = true)
   override def aggregateUserAccesses(): Unit = {
     val operationMsg = s"User access aggregation task"
-    logger.info(s"${operationMsg} - started")
+    logger.info(s"$operationMsg - started")
 
     // Fetch non-aggregated user accesses older (or equal) than current time
     val currentTime = Instant.now()
     // TODO RBe: Create findByFilterAsSeq in ScalaSqlRepository
     val accesses = userAccessRepository.findByFilter(UserAccessFilter.Empty.copy(timeUpperBound = Some(currentTime)), Seq.empty)
-    val entitiesToCountIncrements: Map[EntityKey, Long] = accesses.groupBy(_.entityKey).mapValues(userAccesses => userAccesses.size)
+    val entitiesToCountIncrements: Map[EntityKey, Long] = accesses.groupBy(_.entityKey).view.mapValues(userAccesses => userAccesses.size.toLong).toMap
 
     // Aggregate user accesses into summary counts for entities
     val entityKeys = entitiesToCountIncrements.keys.toSeq
@@ -95,7 +95,7 @@ class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepositor
 
     // Fetch current aggregated counts for entities
     val entityAccessCounts = entityAccessCountRepository.findByFilter(EntityAccessCountFilter.Empty.copy(entityTypeIn = Some(entityTypes), entityIdIn = Some(entityIds)), Seq.empty)
-    val entityKeysToCounts: Map[EntityKey, EntityAccessCount] = entityAccessCounts.groupBy(_.entityKey).mapValues(entityAccessCounts => entityAccessCounts.head /* only one exists */)
+    val entityKeysToCounts: Map[EntityKey, EntityAccessCount] = entityAccessCounts.groupBy(_.entityKey).view.mapValues(entityAccessCounts => entityAccessCounts.head /* only one exists */).toMap
 
     // Traverse non-aggregated increments and
     // update current aggregated counts or insert new count records if aggregation for increment does not exist yet
@@ -114,7 +114,7 @@ class UserAccessServiceImpl @Inject() (userAccessRepository: UserAccessRepositor
 
     // Delete already aggregated user accesses
     userAccessRepository.deleteByFilter(UserAccessFilter.Empty.copy(ids = Some(accesses.map(_.id))))
-    logger.info(s"${operationMsg} - finished")
+    logger.info(s"$operationMsg - finished")
   }
 
   private def parseBooleanField(capabilities: Capabilities, field: BrowsCapField): Boolean = {

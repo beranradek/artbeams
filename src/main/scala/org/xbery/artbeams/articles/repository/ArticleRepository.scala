@@ -10,7 +10,7 @@ import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.common.assets.repository.AssetRepository
 import org.xbery.overview.{Order, Overview, Pagination}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Article repository.
@@ -60,6 +60,6 @@ class ArticleRepository @Inject() (dataSource: DataSource) extends AssetReposito
   }
 
   protected def findArticleInfos(overview: Overview[ArticleFilter]): Seq[Article] = {
-    findByOverview(overview, infoAttrNames, getEntityMapper().getTableName(), getEntityMapper()).asScala
+    findByOverview(overview, infoAttrNames, getEntityMapper().getTableName(), getEntityMapper()).asScala.toSeq
   }
 }

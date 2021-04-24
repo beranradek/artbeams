@@ -7,7 +7,7 @@ import org.xbery.overview.common.Pair
 import org.xbery.overview.filter.Condition
 import org.xbery.overview.mapper._
 import org.xbery.overview.repo.Conditions
-import collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Maps {@link UserAccessCount} entity to set of attributes and vice versa.

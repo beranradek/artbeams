@@ -68,12 +68,12 @@ class ApplicationStartup extends ApplicationListener[ApplicationReadyEvent] {
     }
   }
 
-  private def loadConfig(repository: ConfigRepository) {
+  private def loadConfig(repository: ConfigRepository): Unit = {
     logger.info("Loading config")
     repository.reloadEntries()
   }
 
-  private def loadLocalisation(repository: LocalisationRepository) {
+  private def loadLocalisation(repository: LocalisationRepository): Unit = {
     logger.info("Loading localisations")
     repository.reloadEntries()
   }

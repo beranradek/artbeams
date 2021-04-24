@@ -38,8 +38,8 @@ configurations {
 
 dependencies {
     // Scala language
-    implementation("org.scala-lang:scala-library:2.12.8")
-    implementation("org.scala-lang:scala-reflect:2.12.8")
+    implementation("org.scala-lang:scala-library:2.13.5")
+    implementation("org.scala-lang:scala-reflect:2.13.5")
 
     // Web libraries
     implementation("org.webjars:webjars-locator:0.36")

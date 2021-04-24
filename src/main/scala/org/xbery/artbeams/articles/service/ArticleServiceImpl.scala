@@ -12,7 +12,7 @@ import org.xbery.artbeams.evernote.service.EvernoteApi
 
 import java.util
 import javax.inject.Inject
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * @author Radek Beran
@@ -45,7 +45,7 @@ class ArticleServiceImpl @Inject()(
       }
 
       updatedArticleOpt map { updatedArticle =>
-        articleCategoryRepository.updateArticleCategories(updatedArticle.id, edited.categories.asScala)
+        articleCategoryRepository.updateArticleCategories(updatedArticle.id, edited.categories.asScala.toSeq)
       }
 
       // Update article's markdown in Evernote

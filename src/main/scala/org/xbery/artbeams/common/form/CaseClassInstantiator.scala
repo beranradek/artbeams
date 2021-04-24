@@ -3,7 +3,7 @@ package org.xbery.artbeams.common.form
 import java.lang.reflect.Type
 import java.util
 import scala.reflect.runtime.universe._
-import collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import net.formio.binding.{ConstructionDescription, ArgumentNameResolver, Instantiator}
 

@@ -31,7 +31,7 @@ class ScalaObjectWrapper extends ObjectWrapper {
         case _ => null
       }
     case buffer: mutable.ArrayBuffer[_] =>
-      new ScalaSeqWrapper(buffer, this)
+      new ScalaSeqWrapper(buffer.toSeq, this)
     case seq: Seq[_] =>
       new ScalaSeqWrapper(seq, this)
     case map: Map.WithDefault[_, _] =>

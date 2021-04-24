@@ -11,7 +11,7 @@ import org.springframework.security.web.util.matcher.{AndRequestMatcher, AntPath
 import org.xbery.artbeams.users.service.CmsAuthenticationProvider
 
 import javax.inject.Inject
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
   * Spring security configuration. Defines secured paths of application and authentication manager implementation.

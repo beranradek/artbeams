@@ -5,7 +5,7 @@ import java.lang.reflect.{Type => JavaType, Array}
 import org.xbery.artbeams.common.form.ScalaReflections
 import net.formio.binding.BindingReflectionUtils
 import net.formio.binding.collection._
-import collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.reflect.runtime.universe._
 
 /**

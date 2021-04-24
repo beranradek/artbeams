@@ -24,7 +24,7 @@ object FunctionConverters {
   }
 
   // usage example: `(i: Int, s: String) => true`
-  implicit def javaBiPredicate[A, B](predicate: (A, B) ⇒ Boolean) =
+  implicit def javaBiPredicate[A, B](predicate: (A, B) => Boolean) =
     new BiPredicate[A, B] {
       def test(a: A, b: B) = predicate(a, b)
     }
