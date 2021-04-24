@@ -2,7 +2,7 @@ package org.xbery.artbeams.common.mapping.repository
 
 import javax.sql.DataSource
 import org.slf4j.LoggerFactory
-import org.xbery.overview.sql.repo.ScalaSqlRepository
+import org.xbery.artbeams.common.repository.ScalaSqlRepository
 
 /**
   * Stores key-value pairs.

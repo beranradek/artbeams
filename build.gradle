@@ -58,7 +58,6 @@ dependencies {
     // Database and repository libraries
     runtimeOnly("org.postgresql:postgresql:9.4.1208")
     implementation("org.xbery:overview-repo-sql:1.1.1")
-    implementation("org.xbery:overview-repo-sql-scala:1.0.0")
 
     // Forms
     implementation("net.formio:formio:1.6.3")

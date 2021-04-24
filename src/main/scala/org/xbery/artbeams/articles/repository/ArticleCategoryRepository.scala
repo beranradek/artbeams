@@ -1,10 +1,11 @@
 package org.xbery.artbeams.articles.repository
 
-import javax.inject.Inject
-import javax.sql.DataSource
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.articles.domain.ArticleCategory
-import org.xbery.overview.sql.repo.ScalaSqlRepository
+import org.xbery.artbeams.common.repository.ScalaSqlRepository
+
+import javax.inject.Inject
+import javax.sql.DataSource
 
 /**
   * Article-Category binding repository.

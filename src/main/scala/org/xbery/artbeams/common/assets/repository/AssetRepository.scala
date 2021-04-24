@@ -1,11 +1,11 @@
 package org.xbery.artbeams.common.assets.repository
 
+import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes}
+import org.xbery.artbeams.common.repository.ScalaSqlRepository
+
 import java.time.Instant
 import java.util.Optional
-
 import javax.sql.DataSource
-import org.xbery.artbeams.common.assets.domain.{Asset, AssetAttributes}
-import org.xbery.overview.sql.repo.ScalaSqlRepository
 
 /**
   * Abstract repository for asset-derived entities.
