@@ -17,7 +17,8 @@ Build using `./gradlew build`
 
 Run using `./gradlew bootRun` or `java -jar build/libs/*.jar`
 
-Updating gradle wrapper: Update gradle version in build.gradle and run: gradle wrapper
+Updating gradle wrapper: Update gradle version in build.gradle or springBootVersion of spring-boot-gradle-plugin 
+and run: gradle wrapper
 
 ### Automatic application restarts using Spring Developer Tools
 
