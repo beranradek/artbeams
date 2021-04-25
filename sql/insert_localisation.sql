@@ -51,3 +51,6 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('goto.up', 'Nahoru');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.info', 'Na webu používáme cookies. Prohlížením webu s jejich používáním souhlasíte.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.info.more', 'Více informací');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.agreement.action', 'Rozumím');
+
+INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.url', '/admin/articles/???/edit');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.title', 'Examples');

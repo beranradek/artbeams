@@ -43,7 +43,12 @@
     </div>
     <div class="col-sm-6">
         <#-- Preview of HTML rendered from markdown -->
-        <div><a href="https://commonmark.org/help/">CommonMark markdown syntax</a></div>
+        <div>
+            <a href="https://commonmark.org/help/">CommonMark markdown syntax</a>
+            <#if xlat['markdown.examples.url']??>
+            | <a href="${xlat['markdown.examples.url']}">${xlat['markdown.examples.title']}</a>
+            </#if>
+        </div>
         <div id="markdown-output" class="blog-main"></div>
     </div>
   </div>
