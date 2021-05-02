@@ -159,3 +159,8 @@ CREATE TABLE localisation (
 	entry_key VARCHAR(120) NOT NULL PRIMARY KEY,
 	entry_value VARCHAR(1000) NOT NULL
 );
+
+CREATE TABLE antispam_quiz (
+    question VARCHAR(128) NOT NULL PRIMARY KEY,
+    answer VARCHAR(64) NOT NULL
+);
