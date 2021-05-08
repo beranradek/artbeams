@@ -3,6 +3,7 @@ package org.xbery.artbeams.common.antispam.repository
 import org.xbery.artbeams.common.antispam.domain.{AntispamQuiz, AntispamQuizFilter}
 import org.xbery.overview.filter.Condition
 import org.xbery.overview.mapper._
+import org.xbery.overview.repo.Conditions
 
 import java.util
 
@@ -23,6 +24,7 @@ class AntispamQuizMapper() extends DynamicEntityMapper[AntispamQuiz, AntispamQui
 
   override def composeFilterConditions(filter: AntispamQuizFilter): util.List[Condition] = {
     val conditions = new util.ArrayList[Condition]
+    filter.question.map(question => conditions.add(Conditions.eq(this.questionAttr, question)))
     conditions
   }
 }

@@ -41,6 +41,10 @@ abstract class BaseController(common: ControllerComponents) {
     new ResponseEntity(HttpStatus.UNAUTHORIZED)
   }
 
+  def tooManyRequests(): ResponseEntity[_] = {
+    new ResponseEntity(HttpStatus.TOO_MANY_REQUESTS)
+  }
+
   def okResponse(): ResponseEntity[_] = {
     new ResponseEntity(HttpStatus.OK)
   }

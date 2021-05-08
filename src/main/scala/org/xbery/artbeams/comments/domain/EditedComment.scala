@@ -15,5 +15,9 @@ case class EditedComment(
   @ArgumentName("userName")
   userName: String,
   @ArgumentName("email")
-  email: String
+  email: String,
+  @ArgumentName("antispamQuestion")
+  antispamQuestion: String,
+  @ArgumentName("antispamAnswer")
+  antispamAnswer: String
 )

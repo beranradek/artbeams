@@ -33,13 +33,15 @@ case class Comment(
     )
   }
 
-  def toEdited(): EditedComment = {
+  def toEdited(antispamQuestion: String): EditedComment = {
     EditedComment(
       this.id,
       this.entityKey.entityId,
       this.comment,
       this.userName,
-      this.email
+      this.email,
+      antispamQuestion,
+      ""
     )
   }
 }

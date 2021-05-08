@@ -7,6 +7,7 @@ import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.categories.domain.Category
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.common.access.domain.EntityAccessCount
+import org.xbery.artbeams.common.antispam.domain.AntispamQuiz
 
 /**
   * @author Radek Beran
@@ -19,6 +20,7 @@ class CachingConfig {
     Article.CacheName,
     Category.CacheName,
     Comment.CacheName,
-    EntityAccessCount.CacheName
+    EntityAccessCount.CacheName,
+    AntispamQuiz.CacheName
   )
 }

@@ -12,6 +12,8 @@ case class AntispamQuiz(
 ) extends Serializable
 
 object AntispamQuiz {
+  final val CacheName = "antispam_quizes"
+
   lazy val Empty = AntispamQuiz(
     "",
     ""

@@ -15,6 +15,7 @@ import org.xbery.artbeams.comments.controller.CommentController.commentFormDef
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.access.domain.EntityKey
+import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
 import org.xbery.artbeams.common.async.Awaits
 import org.xbery.artbeams.common.controller.{BaseController, ControllerComponents}
 import org.xbery.artbeams.products.service.ProductService
@@ -35,6 +36,7 @@ class WebController @Inject()(
   val categoryService: CategoryService,
   val productService: ProductService,
   val commentService: CommentService,
+  val antispamQuizRepository: AntispamQuizRepository,
   controllerComponents: ControllerComponents,
   resourceLoader: ResourceLoader,
   implicit val ec: ExecutionContext)
@@ -130,7 +132,8 @@ class WebController @Inject()(
         val fCountOfVisits = Future(controllerComponents.userAccessService.findCountOfVisits(entityKey))
 
         val fCommentsWithForm = Future(if (article.showOnBlog) {
-          val newComment = Comment.Empty.toEdited().copy(entityId = article.id)
+          val antispamQuiz = antispamQuizRepository.findRandom()
+          val newComment = Comment.Empty.toEdited(antispamQuiz.question).copy(entityId = article.id)
           val comments = commentService.findByEntityId(article.id)
           val commentForm = commentFormDef.fill(new FormData(newComment, ValidationResult.empty))
           (comments, Some(commentForm))

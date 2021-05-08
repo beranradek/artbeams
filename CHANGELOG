@@ -1,5 +1,8 @@
 # Changelog
 
+1.0.4 (8.5.2021)
+* Antispam quiz for comments
+
 1.0.3 (24.4.2021)
 * Spring Boot: 2.1.1.RELEASE -> 2.4.5
 * Scala 2.12.8 -> 2.13.5
