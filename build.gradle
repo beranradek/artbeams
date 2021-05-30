@@ -60,7 +60,9 @@ dependencies {
     implementation("org.xbery:overview-repo-sql:1.1.1")
 
     // Forms
-    implementation("net.formio:formio:1.6.3")
+    implementation("net.formio:formio:1.6.5") {
+        exclude group: 'javax.servlet', module: 'servlet-api' // used version from Spring Boot
+    }
 
     // Working with text/HTML
     implementation("org.apache.commons:commons-text:1.6")
