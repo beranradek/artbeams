@@ -167,7 +167,7 @@
        </div>
      </nav>
      <#if showHeadline??>
-       <div id="headline">
+       <div id="<#if userAccessReport?? && userAccessReport.mobileDevice>headline-mobile<#else>headline</#if>">
          <div class="row">
            <div class="col-md-3">
              <#if !userAccessReport?? || !userAccessReport.mobileDevice>
