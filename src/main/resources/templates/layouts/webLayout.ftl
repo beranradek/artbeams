@@ -182,7 +182,7 @@
              <p style="font-size: 1.1rem;line-height: 1.6rem;">${xlat['headline.offer.header']}</p>
              <p class="align-center" style="margin-bottom:0.5rem">
                 <a href="${xlat['headline.offer.url']}">
-                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" loading="lazy" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}/>
+                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" loading="lazy" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}"/>
                 </a>
              </p>
              <p>${xlat['headline.offer.description']}</p>
