@@ -64,8 +64,8 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
   <!-- Custom CSS of this site -->
-  <link rel="stylesheet" type="text/css" href="/static/css/common.css?v190420" />
-  <link rel="stylesheet" type="text/css" href="/static/css/main.css?v201129" />
+  <link rel="stylesheet" type="text/css" href="/static/css/common.css?v210717" />
+  <link rel="stylesheet" type="text/css" href="/static/css/main.css?v210717" />
   <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
   <script async src="/static/js/jquery.colorbox-min.js?v191103"></script>
 
