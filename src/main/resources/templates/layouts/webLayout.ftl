@@ -66,7 +66,6 @@
   <!-- Custom CSS of this site -->
   <link rel="stylesheet" type="text/css" href="/static/css/main.css?v201129" />
   <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
-  <script src="/static/js/main.js"></script>
   <script async src="/static/js/jquery.colorbox-min.js?v191103"></script>
 
   <#if xlat['google-tag.url']??>
@@ -168,13 +167,13 @@
        </div>
      </nav>
      <#if showHeadline??>
-       <div id="<#if userAccessReport?? && userAccessReport.mobileDevice>headline-mobile<#else>headline</#if>">
+       <div id="headline" style="background-image: url('/media/headline<#if userAccessReport?? && userAccessReport.mobileDevice>-mobile</#if>.webp')">
          <div class="row">
            <div class="col-md-3">
              <#if !userAccessReport?? || !userAccessReport.mobileDevice>
                <div id="headline-portrait">
                  <div id="headline-portrait-holder">
-                   <a href="${xlat['headline.portrait.url']}"><img alt="" loading="lazy" src="${xlat['headline.portrait.src']}&size=" width="253" height="239" /></a>
+                   <a href="${xlat['headline.portrait.url']}"><img alt="" src="${xlat['headline.portrait.src']}" loading="lazy" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" /></a>
                  </div>
                </div>
              </#if>
@@ -183,7 +182,7 @@
              <p style="font-size: 1.1rem;line-height: 1.6rem;">${xlat['headline.offer.header']}</p>
              <p class="align-center" style="margin-bottom:0.5rem">
                 <a href="${xlat['headline.offer.url']}">
-                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" loading="lazy"/>
+                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" loading="lazy" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}/>
                 </a>
              </p>
              <p>${xlat['headline.offer.description']}</p>
