@@ -66,7 +66,8 @@
   <!-- Custom CSS of this site -->
   <link rel="stylesheet" type="text/css" href="/static/css/main.css?v201129" />
   <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
-  <script src="/static/js/jquery.colorbox-min.js?v191103"></script>
+  <script src="/static/js/main.js"></script>
+  <script async src="/static/js/jquery.colorbox-min.js?v191103"></script>
 
   <#if xlat['google-tag.url']??>
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -173,7 +174,7 @@
              <#if !userAccessReport?? || !userAccessReport.mobileDevice>
                <div id="headline-portrait">
                  <div id="headline-portrait-holder">
-                   <a href="${xlat['headline.portrait.url']}"><img alt="" src="${xlat['headline.portrait.src']}" width="253" height="239" /></a>
+                   <a href="${xlat['headline.portrait.url']}"><img alt="" loading="lazy" src="${xlat['headline.portrait.src']}&size=" width="253" height="239" /></a>
                  </div>
                </div>
              </#if>
@@ -182,7 +183,7 @@
              <p style="font-size: 1.1rem;line-height: 1.6rem;">${xlat['headline.offer.header']}</p>
              <p class="align-center" style="margin-bottom:0.5rem">
                 <a href="${xlat['headline.offer.url']}">
-                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}"/>
+                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" loading="lazy"/>
                 </a>
              </p>
              <p>${xlat['headline.offer.description']}</p>
