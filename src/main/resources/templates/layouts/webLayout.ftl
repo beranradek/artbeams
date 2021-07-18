@@ -58,6 +58,9 @@
 
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 
+  <script src="/webjars/jquery/3.0.0/jquery.min.js?v210718"></script>
+  <script async src="/static/js/jquery.colorbox-min.js?v210718"></script>
+
   <!-- Bootstrap -->
   <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
 
@@ -65,8 +68,8 @@
   <#-- See https://fontawesome.com/v5.7.2/icons?d=gallery for available icons. Example of usage: class="fas fa-user" -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
-  <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
-  <script async src="/static/js/jquery.colorbox-min.js?v191103"></script>
+  <#-- lightbox.css must be in head so the popup in product page works! -->
+  <link rel="stylesheet" type="text/css" href="/static/css/lightbox.css?v210718" />
 
   <#if xlat['google-tag.url']??>
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -306,7 +309,6 @@
     <div class="container">
       <span class="text-muted">&copy; ${xlat['website.title']} | ${xlat['website.disclaimer']} | <a href="#">${xlat['goto.up']}</a></span>
     </div>
-    <link rel="stylesheet" type="text/css" href="/static/css/lightbox.css?v191103" />
   </footer>
   <div class="cookie-info-bar">
     ${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['personal-data.protection.url']}">${xlat['cookies.info.more']}</a>.
