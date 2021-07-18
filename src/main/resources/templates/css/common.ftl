@@ -12,6 +12,10 @@ cite {
     font-style: italic;
 }
 
+.blog-sidebar {
+  line-height: 1.8rem;
+}
+
 blockquote {
   margin-bottom: 2.3rem;
   margin-top: 1rem;

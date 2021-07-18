@@ -27,7 +27,7 @@
     <meta name="keywords" content="${xlat['website.keywords']}"/>
   </#if>
   <#if xlat['fb.app-id']??>
-    <!-- FB-features (comments etc.) -->
+    <!-- FB-features (comments, fanpage etc.) -->
     <meta property="fb:app_id" content="${xlat['fb.app-id']}" />
   </#if>
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
