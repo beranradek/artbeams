@@ -19,11 +19,20 @@ class EntityAccessCountMapper() extends DynamicEntityMapper[EntityAccessCount, E
 
   override val getTableName: String = "entity_access_count"
 
-  override def createEntity(): EntityAccessCount = EntityAccessCount.Empty
+  val entityTypeAttr = add(Attr.ofString(cls, "entity_type").get(e => e.entityKey.entityType).primary())
+  val entityIdAttr = add(Attr.ofString(cls, "entity_id").get(e => e.entityKey.entityId).primary())
+  val countAttr = add(Attr.ofLong(cls, "access_count").get(e => e.count))
 
-  val entityTypeAttr = add(Attr.ofString(cls, "entity_type").get(e => e.entityKey.entityType).updatedEntity((e, a) => e.copy(entityKey = e.entityKey.copy(entityType = a))).primary())
-  val entityIdAttr = add(Attr.ofString(cls, "entity_id").get(e => e.entityKey.entityId).updatedEntity((e, a) => e.copy(entityKey = e.entityKey.copy(entityId = a))).primary())
-  val countAttr = add(Attr.ofLong(cls, "access_count").get(e => e.count).updatedEntity((e, a) => e.copy(count = a)))
+  override def createEntity(attributeSource: AttributeSource, attributes: util.List[Attribute[EntityAccessCount, _]], aliasPrefix: String): EntityAccessCount = {
+    val entityKey = EntityKey(
+      entityTypeAttr.getValueFromSource(attributeSource, aliasPrefix),
+      entityIdAttr.getValueFromSource(attributeSource, aliasPrefix)
+    )
+    EntityAccessCount(
+      entityKey,
+      countAttr.getValueFromSource(attributeSource, aliasPrefix)
+    )
+  }
 
   override def composeFilterConditions(filter: EntityAccessCountFilter): util.List[Condition] = {
     val conditions = new util.ArrayList[Condition]

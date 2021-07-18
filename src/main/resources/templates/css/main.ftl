@@ -1,3 +1,4 @@
+<#macro main>
 /* Globals */
 .bd-placeholder-img {
   font-size: 1.125rem;
@@ -279,3 +280,5 @@ body {
   margin-top: 1.5rem;
   text-align: center;
 }
+
+</#macro>

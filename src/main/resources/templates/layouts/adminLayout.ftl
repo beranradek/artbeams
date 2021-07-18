@@ -1,4 +1,6 @@
 <#macro page>
+<#import "/css/common.ftl" as commonCss>
+<#import "/css/mainAdmin.ftl" as mainAdminCss>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,10 +15,13 @@
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <!-- Custom CSS of this site -->
-    <link rel="stylesheet" type="text/css" href="/static/css/common.css?v210717" />
-    <link rel="stylesheet" type="text/css" href="/static/css/mainAdmin.css?v210717" />
     <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
+
+    <#-- Embedding critical CSSs as recommended by Google PageSpeed Insights -->
+    <style>
+      <@commonCss.common></@commonCss.common>
+      <@mainAdminCss.mainAdmin></@mainAdminCss.mainAdmin>
+    </style>
   </head>
   <body>
      <#-- Layout based on https://getbootstrap.com/docs/4.2/examples/starter-template/ -->

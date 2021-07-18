@@ -1,10 +1,5 @@
+<#macro common>
 /** Styles common for both administration and public web */
-
-@font-face {
-  /* https://web.dev/font-display/ */
-  font-display: swap;
-}
-
 code {
   font-size: 80%;
 }
@@ -195,3 +190,5 @@ blockquote:before {
   /* Otherwise label does not start right bellow above inputs */
   padding-left:0;
 }
+
+</#macro>

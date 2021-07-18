@@ -18,8 +18,10 @@ abstract class AssetRepository[T <: Asset, F <: AssetFilter](dataSource: DataSou
     * @return
     */
   def create(entity: T): T = {
-     val entityWithId = entityMapper.entityWithCommonAttributes(entity, entity.common.copy(id = AssetAttributes.newId()))
-     create(entityWithId, false)
+    val now = Instant.now()
+    // TODO: Set also created by, modified by...
+     val entityWithId = entityMapper.entityWithCommonAttributes(entity, entity.common.copy(id = AssetAttributes.newId(), created = now, modified = now))
+     super.create(entityWithId, false)
   }
 
   override def create(entity: T, autogenerateKey: Boolean): T = {

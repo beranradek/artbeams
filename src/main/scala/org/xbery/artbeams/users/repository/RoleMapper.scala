@@ -1,13 +1,13 @@
 package org.xbery.artbeams.users.repository
 
-import java.util
-
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.assets.repository.AssetMapper
 import org.xbery.artbeams.users.domain.Role
 import org.xbery.overview.filter.Condition
 import org.xbery.overview.mapper._
 import org.xbery.overview.sql.filter.SqlCondition
+
+import java.util
 
 /**
   * Maps {@link Role} entity to set of attributes and vice versa.
@@ -19,9 +19,15 @@ class RoleMapper() extends AssetMapper[Role, RoleFilter] {
 
   override val getTableName: String = "roles"
 
-  override def createEntity(): Role = Role.Empty
+  val nameAttr = add(Attr.ofString(cls, "name").get(e => e.name))
 
-  val nameAttr = add(Attr.ofString(cls, "name").get(e => e.name).updatedEntity((e, a) => e.copy(name = a)))
+  override def createEntity(attributeSource: AttributeSource, attributes: java.util.List[Attribute[Role, _]], aliasPrefix: String): Role = {
+    val assetAttributes = createAssetAttributes(attributeSource, attributes.asInstanceOf[util.List[Attribute[_, _]]], aliasPrefix)
+    Role(
+      assetAttributes,
+      nameAttr.getValueFromSource(attributeSource, aliasPrefix)
+    )
+  }
 
   override def composeFilterConditions(filter: RoleFilter): util.List[Condition] = {
     val conditions = super.composeFilterConditions(filter)

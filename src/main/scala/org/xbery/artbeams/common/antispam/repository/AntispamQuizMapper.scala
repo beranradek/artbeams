@@ -17,10 +17,15 @@ class AntispamQuizMapper() extends DynamicEntityMapper[AntispamQuiz, AntispamQui
 
   override val getTableName: String = "antispam_quiz"
 
-  override def createEntity(): AntispamQuiz = AntispamQuiz.Empty
+  val questionAttr = add(Attr.ofString(cls, "question").get(e => e.question).primary())
+  val answerAttr = add(Attr.ofString(cls, "answer").get(e => e.answer))
 
-  val questionAttr = add(Attr.ofString(cls, "question").get(e => e.question).updatedEntity((e, a) => e.copy(question = a)).primary())
-  val answerAttr = add(Attr.ofString(cls, "answer").get(e => e.answer).updatedEntity((e, a) => e.copy(answer = a)))
+  override def createEntity(attributeSource: AttributeSource, attributes: java.util.List[Attribute[AntispamQuiz, _]], aliasPrefix: String): AntispamQuiz = {
+    AntispamQuiz(
+      questionAttr.getValueFromSource(attributeSource, aliasPrefix),
+      answerAttr.getValueFromSource(attributeSource, aliasPrefix)
+    )
+  }
 
   override def composeFilterConditions(filter: AntispamQuizFilter): util.List[Condition] = {
     val conditions = new util.ArrayList[Condition]

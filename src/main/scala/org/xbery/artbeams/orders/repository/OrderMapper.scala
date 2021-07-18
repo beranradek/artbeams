@@ -1,11 +1,12 @@
 package org.xbery.artbeams.orders.repository
 
-import java.util
-
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.assets.repository.AssetMapper
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.overview.filter.Condition
+import org.xbery.overview.mapper.{Attribute, AttributeSource}
+
+import java.util
 
 /**
   * Maps {@link Order} entity to set of attributes and vice versa.
@@ -17,7 +18,13 @@ class OrderMapper() extends AssetMapper[Order, OrderFilter] {
 
   override val getTableName: String = "orders"
 
-  override def createEntity(): Order = Order.Empty
+  override def createEntity(attributeSource: AttributeSource, attributes: java.util.List[Attribute[Order, _]], aliasPrefix: String): Order = {
+    val assetAttributes = createAssetAttributes(attributeSource, attributes.asInstanceOf[util.List[Attribute[_, _]]], aliasPrefix)
+    Order(
+      assetAttributes,
+      Seq.empty
+    )
+  }
 
   override def composeFilterConditions(filter: OrderFilter): util.List[Condition] = {
     val conditions = super.composeFilterConditions(filter)

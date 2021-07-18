@@ -1,4 +1,6 @@
 <#macro page>
+<#import "/css/common.ftl" as commonCss>
+<#import "/css/main.ftl" as mainCss>
 <!DOCTYPE html>
 <html lang="cs">
  <head>
@@ -63,9 +65,6 @@
   <#-- See https://fontawesome.com/v5.7.2/icons?d=gallery for available icons. Example of usage: class="fas fa-user" -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 
-  <!-- Custom CSS of this site -->
-  <link rel="stylesheet" type="text/css" href="/static/css/common.css?v210717" />
-  <link rel="stylesheet" type="text/css" href="/static/css/main.css?v210717" />
   <script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
   <script async src="/static/js/jquery.colorbox-min.js?v191103"></script>
 
@@ -91,6 +90,12 @@
       var ml_account = ml('accounts', '${xlat['mailer-lite.id1']}', '${xlat['mailer-lite.id2']}', 'load');
     </script>
   </#if>
+
+  <#-- Embedding critical CSSs as recommended by Google PageSpeed Insights -->
+  <style>
+    <@commonCss.common></@commonCss.common>
+    <@mainCss.main></@mainCss.main>
+  </style>
 
   </head>
   <body class="d-flex flex-column h-100">
@@ -174,7 +179,7 @@
              <#if !userAccessReport?? || !userAccessReport.mobileDevice>
                <div id="headline-portrait">
                  <div id="headline-portrait-holder">
-                   <a href="${xlat['headline.portrait.url']}"><img alt="" src="${xlat['headline.portrait.src']}" loading="lazy" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" /></a>
+                   <a href="${xlat['headline.portrait.url']}"><img alt="" src="${xlat['headline.portrait.src']}" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" /></a>
                  </div>
                </div>
              </#if>
@@ -183,7 +188,7 @@
              <p style="font-size: 1.1rem;line-height: 1.6rem;">${xlat['headline.offer.header']}</p>
              <p class="align-center" style="margin-bottom:0.5rem">
                 <a href="${xlat['headline.offer.url']}">
-                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" loading="lazy" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}"/>
+                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}"/>
                 </a>
              </p>
              <p>${xlat['headline.offer.description']}</p>

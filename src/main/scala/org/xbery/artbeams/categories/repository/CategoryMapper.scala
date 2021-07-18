@@ -1,13 +1,13 @@
 package org.xbery.artbeams.categories.repository
 
-import java.util
-
 import org.xbery.artbeams.categories.domain.Category
-import org.xbery.artbeams.common.assets.domain.{AssetAttributes, Validity}
+import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.assets.repository.ValidityAssetMapper
 import org.xbery.overview.filter.Condition
 import org.xbery.overview.mapper._
 import org.xbery.overview.repo.Conditions
+
+import java.util
 
 /**
   * Maps {@link Category} entity to set of attributes and vice versa.
@@ -19,11 +19,21 @@ class CategoryMapper() extends ValidityAssetMapper[Category, CategoryFilter] {
 
   override val getTableName: String = "categories"
 
-  override def createEntity(): Category = Category.Empty
+  val slugAttr = add(Attr.ofString(cls, "slug").get(e => e.slug))
+  val titleAttr = add(Attr.ofString(cls, "title").get(e => e.title))
+  val descriptionAttr = add(Attr.ofString(cls, "description").get(e => e.description))
 
-  val slugAttr = add(Attr.ofString(cls, "slug").get(e => e.slug).updatedEntity((e, a) => e.copy(slug = a)))
-  val titleAttr = add(Attr.ofString(cls, "title").get(e => e.title).updatedEntity((e, a) => e.copy(title = a)))
-  val descriptionAttr = add(Attr.ofString(cls, "description").get(e => e.description).updatedEntity((e, a) => e.copy(description = a)))
+  override def createEntity(attributeSource: AttributeSource, attributes: java.util.List[Attribute[Category, _]], aliasPrefix: String): Category = {
+    val assetAttributes = createAssetAttributes(attributeSource, attributes.asInstanceOf[util.List[Attribute[_, _]]], aliasPrefix)
+    val validity = createValidity(attributeSource, attributes.asInstanceOf[util.List[Attribute[_, _]]], aliasPrefix)
+    Category(
+      assetAttributes,
+      validity,
+      slugAttr.getValueFromSource(attributeSource, aliasPrefix),
+      titleAttr.getValueFromSource(attributeSource, aliasPrefix),
+      descriptionAttr.getValueFromSource(attributeSource, aliasPrefix)
+    )
+  }
 
   override def composeFilterConditions(filter: CategoryFilter): util.List[Condition] = {
     val conditions = super.composeFilterConditions(filter)
@@ -33,8 +43,6 @@ class CategoryMapper() extends ValidityAssetMapper[Category, CategoryFilter] {
   }
 
   override def entityWithCommonAttributes(entity: Category, common: AssetAttributes): Category = entity.copy(common = common)
-
-  override def entityWithValidity(entity: Category, validity: Validity): Category = entity.copy(validity = validity)
 }
 
 object CategoryMapper {

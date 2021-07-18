@@ -1,14 +1,15 @@
 package org.xbery.artbeams.articles.repository
 
-import java.util
-
 import org.xbery.artbeams.articles.domain.Article
-import org.xbery.artbeams.common.assets.domain.{AssetAttributes, Validity}
+import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.assets.repository.ValidityAssetMapper
 import org.xbery.overview.filter.Condition
 import org.xbery.overview.mapper._
 import org.xbery.overview.repo.Conditions
 import org.xbery.overview.sql.filter.SqlCondition
+import scala.jdk.CollectionConverters._
+
+import java.util
 
 /**
   * Maps {@link Article} entity to set of attributes and vice versa.
@@ -20,21 +21,40 @@ class ArticleMapper() extends ValidityAssetMapper[Article, ArticleFilter] {
 
   override val getTableName: String = "articles"
 
-  override def createEntity(): Article = Article.Empty
-
-  val externalIdAttr = add(Attr.ofString(cls, "external_id").get(e => e.externalId.orNull).updatedEntity((e, a) => e.copy(externalId = Option(a))))
-  val slugAttr = add(Attr.ofString(cls, "slug").get(e => e.slug).updatedEntity((e, a) => e.copy(slug = a)))
-  val titleAttr = add(Attr.ofString(cls, "title").get(e => e.title).updatedEntity((e, a) => e.copy(title = a)))
-  val imageAttr = add(Attr.ofString(cls, "image").get(e => e.image.orNull).updatedEntity((e, a) => e.copy(image = Option(a))))
-  val imageDetailAttr = add(Attr.ofString(cls, "image_detail").get(e => e.imageDetail.orNull).updatedEntity((e, a) => e.copy(imageDetail = Option(a))))
-  val perexAttr = add(Attr.ofString(cls, "perex").get(e => e.perex).updatedEntity((e, a) => e.copy(perex = a)))
-  val bodyMarkdownAttr = add(Attr.ofString(cls, "body_markdown").get(e => e.bodyMarkdown).updatedEntity((e, a) => e.copy(bodyMarkdown = a)))
-  val bodyAttr = add(Attr.ofString(cls, "body").get(e => e.body).updatedEntity((e, a) => e.copy(body = a)))
-  val keywordsAttr = add(Attr.ofString(cls, "keywords").get(e => e.keywords).updatedEntity((e, a) => e.copy(keywords = a)))
-  val showOnBlogAttr = add(Attr.ofBoolean(cls, "show_on_blog").get(e => e.showOnBlog).updatedEntity((e, a) => e.copy(showOnBlog = a)))
+  val externalIdAttr = add(Attr.ofString(cls, "external_id").get(e => e.externalId.orNull))
+  val slugAttr = add(Attr.ofString(cls, "slug").get(e => e.slug))
+  val titleAttr = add(Attr.ofString(cls, "title").get(e => e.title))
+  val imageAttr = add(Attr.ofString(cls, "image").get(e => e.image.orNull))
+  val imageDetailAttr = add(Attr.ofString(cls, "image_detail").get(e => e.imageDetail.orNull))
+  val perexAttr = add(Attr.ofString(cls, "perex").get(e => e.perex))
+  val bodyMarkdownAttr = add(Attr.ofString(cls, "body_markdown").get(e => e.bodyMarkdown))
+  val bodyAttr = add(Attr.ofString(cls, "body").get(e => e.body))
+  val keywordsAttr = add(Attr.ofString(cls, "keywords").get(e => e.keywords))
+  val showOnBlogAttr = add(Attr.ofBoolean(cls, "show_on_blog").get(e => e.showOnBlog))
 
   /** Attributes for loading short info about articles (for article lists) */
   lazy val infoAttributes = Seq(idAttr, validFromAttr, createdAttr, createdByAttr, modifiedAttr, modifiedByAttr, slugAttr, titleAttr, imageAttr, perexAttr)
+
+  override def createEntity(attributeSource: AttributeSource, attributes: java.util.List[Attribute[Article, _]], aliasPrefix: String): Article = {
+    val projectedAttributeNames = attributes.asScala.map(_.getName).toSet
+    val assetAttributes = createAssetAttributes(attributeSource, attributes.asInstanceOf[util.List[Attribute[_, _]]], aliasPrefix)
+    val validity = createValidity(attributeSource, attributes.asInstanceOf[util.List[Attribute[_, _]]], aliasPrefix)
+    Article(
+      assetAttributes,
+      validity,
+      // TODO RBe: Implement getValueFromSourceOptElse
+      if (projectedAttributeNames.contains(externalIdAttr.getName)) Option(externalIdAttr.getValueFromSource(attributeSource, aliasPrefix)) else None,
+      if (projectedAttributeNames.contains(slugAttr.getName)) slugAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
+      if (projectedAttributeNames.contains(titleAttr.getName)) titleAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
+      if (projectedAttributeNames.contains(imageAttr.getName)) Option(imageAttr.getValueFromSource(attributeSource, aliasPrefix)) else None,
+      if (projectedAttributeNames.contains(imageDetailAttr.getName)) Option(imageDetailAttr.getValueFromSource(attributeSource, aliasPrefix)) else None,
+      if (projectedAttributeNames.contains(perexAttr.getName)) perexAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
+      if (projectedAttributeNames.contains(bodyMarkdownAttr.getName)) bodyMarkdownAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
+      if (projectedAttributeNames.contains(bodyAttr.getName)) bodyAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
+      if (projectedAttributeNames.contains(keywordsAttr.getName)) keywordsAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
+      if (projectedAttributeNames.contains(showOnBlogAttr.getName)) showOnBlogAttr.getValueFromSource(attributeSource, aliasPrefix) else false
+    )
+  }
 
   override def composeFilterConditions(filter: ArticleFilter): util.List[Condition] = {
     val conditions = super.composeFilterConditions(filter)
@@ -58,9 +78,6 @@ class ArticleMapper() extends ValidityAssetMapper[Article, ArticleFilter] {
   }
 
   override def entityWithCommonAttributes(entity: Article, common: AssetAttributes): Article = entity.copy(common = common)
-
-  override def entityWithValidity(entity: Article, validity: Validity): Article = entity.copy(validity = validity)
-
 }
 
 object ArticleMapper {

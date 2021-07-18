@@ -18,11 +18,21 @@ abstract class AssetMapper[T <: Asset, F <: AssetFilter]() extends DynamicEntity
 
   protected def cls: Class[T]
 
-  val idAttr = add(Attr.ofString(cls, "id").get(e => e.id).updatedEntity((e, a) => entityWithCommonAttributes(e, e.common.copy(id = a))).primary())
-  val createdAttr = add(Attr.ofInstant(cls, "created").get(e => e.created).updatedEntity((e, a) => entityWithCommonAttributes(e, e.common.copy(created = a))))
-  val createdByAttr = add(Attr.ofString(cls, "created_by").get(e => e.createdBy).updatedEntity((e, a) => entityWithCommonAttributes(e, e.common.copy(createdBy = a))))
-  val modifiedAttr = add(Attr.ofInstant(cls, "modified").get(e => e.modified).updatedEntity((e, a) => entityWithCommonAttributes(e, e.common.copy(modified = a))))
-  val modifiedByAttr = add(Attr.ofString(cls, "modified_by").get(e => e.modifiedBy).updatedEntity((e, a) => entityWithCommonAttributes(e, e.common.copy(modifiedBy = a))))
+  val idAttr = add(Attr.ofString(cls, "id").get(e => e.id).primary())
+  val createdAttr = add(Attr.ofInstant(cls, "created").get(e => e.created))
+  val createdByAttr = add(Attr.ofString(cls, "created_by").get(e => e.createdBy))
+  val modifiedAttr = add(Attr.ofInstant(cls, "modified").get(e => e.modified))
+  val modifiedByAttr = add(Attr.ofString(cls, "modified_by").get(e => e.modifiedBy))
+
+  protected def createAssetAttributes(attributeSource: AttributeSource, attributes: util.List[Attribute[_, _]], aliasPrefix: String): AssetAttributes = {
+    AssetAttributes(
+      idAttr.getValueFromSource(attributeSource, aliasPrefix),
+      createdAttr.getValueFromSource(attributeSource, aliasPrefix),
+      createdByAttr.getValueFromSource(attributeSource, aliasPrefix),
+      modifiedAttr.getValueFromSource(attributeSource, aliasPrefix),
+      modifiedByAttr.getValueFromSource(attributeSource, aliasPrefix)
+    )
+  }
 
   override def composeFilterConditions(filter: F): util.List[Condition] = {
     val conditions = new util.ArrayList[Condition]

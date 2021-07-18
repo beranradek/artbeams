@@ -1,3 +1,4 @@
+<#macro mainAdmin>
 /* Globals */
 .bd-placeholder-img {
   font-size: 1.125rem;
@@ -56,3 +57,5 @@ img {
 #markdown-content {
   width: 100%;
 }
+
+</#macro>
