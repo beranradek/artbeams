@@ -59,7 +59,8 @@
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 
   <script src="/webjars/jquery/3.0.0/jquery.min.js?v210718"></script>
-  <script async src="/static/js/jquery.colorbox-min.js?v210718"></script>
+  <#-- colorbox JS must be in head and without async/defer so the popup in product page works! -->
+  <script src="/static/js/jquery.colorbox-min.js?v210718"></script>
 
   <!-- Bootstrap -->
   <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
