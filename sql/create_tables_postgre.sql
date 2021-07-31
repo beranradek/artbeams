@@ -72,7 +72,9 @@ CREATE TABLE media (
     content_type VARCHAR(40) DEFAULT NULL,
     size integer DEFAULT NULL,
     data bytea,
-    private_access boolean DEFAULT FALSE
+    private_access boolean DEFAULT FALSE,
+    width integer DEFAULT NULL,
+    height integer DEFAULT NULL
 );
 
 CREATE TABLE products (

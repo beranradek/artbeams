@@ -7,7 +7,7 @@ import org.springframework.http.MediaType
   *
   * @author Radek Beran
   */
-case class FileData(filename: String, contentType: String, size: Long, data: Array[Byte], privateAccess: Boolean) {
+case class FileData(filename: String, contentType: String, size: Long, data: Array[Byte], privateAccess: Boolean, width: Option[Int], height: Option[Int]) {
 
   def getMediaType(): MediaType = {
     if (this.contentType != null) {
