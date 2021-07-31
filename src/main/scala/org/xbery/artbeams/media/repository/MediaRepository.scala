@@ -35,10 +35,11 @@ class MediaRepository @Inject()(dataSource: DataSource) {
       try {
         val filename = file.getOriginalFilename()
         val size = file.getSize()
+        val contentType = file.getContentType
         ps.setString(1, filename)
-        ps.setString(2, file.getContentType())
+        ps.setString(2, contentType)
         ps.setLong(3, file.getSize())
-        val isImg = isImage(file.getContentType)
+        val isImg = isImage(contentType)
         ps.setBoolean(5, privateAccess)
         var width: Option[Int] = None
         var height: Option[Int] = None
@@ -50,12 +51,9 @@ class MediaRepository @Inject()(dataSource: DataSource) {
           IOUtils.copy(inputStream, baos)
           val imgBytes = baos.toByteArray
 
-          // TODO: Needs further support for webp images
-          val bufferedImg = ImageIO.read(new ByteArrayInputStream(imgBytes))
-          if (bufferedImg != null) {
-            width = Option(bufferedImg.getWidth)
-            height = Option(bufferedImg.getHeight)
-          }
+          val (w, h) = getImageDimensions(imgBytes, contentType)
+          width = w
+          height = h
 
           ps.setBinaryStream(4, new ByteArrayInputStream(imgBytes), size)
         } else {
@@ -211,4 +209,38 @@ class MediaRepository @Inject()(dataSource: DataSource) {
   }
 
   private def isImage(contentType: String) = contentType.startsWith("image/")
+
+  private def isWebpImage(contentType: String) = contentType == "image/webp"
+
+  private def getWebpImageDimensions(imgBytes: Array[Byte]): Option[(Int, Int)] = {
+    if (imgBytes.length < 30) {
+      None
+    } else {
+      val width = (imgBytes(27).asInstanceOf[Int] & 0xff) << 8 | (imgBytes(26).asInstanceOf[Int] & 0xff)
+      val height = (imgBytes(29).asInstanceOf[Int] & 0xff) << 8 | (imgBytes(28).asInstanceOf[Int] & 0xff)
+      Some((width, height))
+    }
+  }
+
+  private def getImageDimensions(imgBytes: Array[Byte], contentType: String): (Option[Int], Option[Int]) = {
+    var width: Option[Int] = None
+    var height: Option[Int] = None
+    // Special support for webp images
+    if (isWebpImage(contentType)) {
+      val dimensionsOpt = getWebpImageDimensions(imgBytes)
+      for {
+        (w, h) <- dimensionsOpt
+      } {
+        width = Some(w)
+        height = Some(h)
+      }
+    } else {
+      val bufferedImg = ImageIO.read(new ByteArrayInputStream(imgBytes))
+      if (bufferedImg != null) {
+        width = Option(bufferedImg.getWidth)
+        height = Option(bufferedImg.getHeight)
+      }
+    }
+    (width, height)
+  }
 }
