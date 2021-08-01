@@ -1,5 +1,10 @@
 # Changelog
 
+1.0.5 (1.8.2021)
+* Storing width and height for uploaded images.
+* Nearest available image size served: /media/<image-file-name>?size=<width>
+* Article has only one image file name (which can have various sizes in media gallery).
+
 1.0.4 (8.5.2021)
 * Antispam quiz for comments
 

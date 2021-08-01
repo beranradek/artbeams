@@ -18,7 +18,6 @@ class ArticleForm {
       .field("slug", Field.TEXT)
       .field("title", Field.TEXT)
       .field("image", Field.TEXT)
-      .field("imageDetail", Field.TEXT)
       .field("perex", Field.TEXT_AREA)
       .field("bodyMarkdown", Field.TEXT_AREA)
       .field(Forms.field[Date]("validFrom", Field.DATE_TIME).pattern(ScalaForms.DateTimePattern).build())

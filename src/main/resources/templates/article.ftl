@@ -10,12 +10,12 @@
 
     <#if userAccessReport?? && userAccessReport.mobileDevice && article.image??>
       <div class="article-image-detail">
-        <img alt="" src="/media/${article.image}" />
+        <img alt="" src="/media/${article.image}?size=260" />
       </div>
     <#else>
-      <#if article.imageDetail??>
+      <#if article.image??>
         <div class="article-image-detail">
-          <img alt="" src="/media/${article.imageDetail}" />
+          <img alt="" src="/media/${article.image}?size=730" />
         </div>
       </#if>
     </#if>

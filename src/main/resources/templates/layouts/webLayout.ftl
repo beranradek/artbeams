@@ -38,7 +38,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="${xlat['website.title']}" />
     <#if article.image??>
-      <meta property="og:image" content="${_urlBase}/media/${article.image}" />
+      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=730" />
     </#if>
     <#-- TODO: Add additional metas:
     <meta property="article:tag" content="Some tag/keyword" />

@@ -25,7 +25,6 @@ class ArticleMapper() extends ValidityAssetMapper[Article, ArticleFilter] {
   val slugAttr = add(Attr.ofString(cls, "slug").get(e => e.slug))
   val titleAttr = add(Attr.ofString(cls, "title").get(e => e.title))
   val imageAttr = add(Attr.ofString(cls, "image").get(e => e.image.orNull))
-  val imageDetailAttr = add(Attr.ofString(cls, "image_detail").get(e => e.imageDetail.orNull))
   val perexAttr = add(Attr.ofString(cls, "perex").get(e => e.perex))
   val bodyMarkdownAttr = add(Attr.ofString(cls, "body_markdown").get(e => e.bodyMarkdown))
   val bodyAttr = add(Attr.ofString(cls, "body").get(e => e.body))
@@ -47,7 +46,6 @@ class ArticleMapper() extends ValidityAssetMapper[Article, ArticleFilter] {
       if (projectedAttributeNames.contains(slugAttr.getName)) slugAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
       if (projectedAttributeNames.contains(titleAttr.getName)) titleAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
       if (projectedAttributeNames.contains(imageAttr.getName)) Option(imageAttr.getValueFromSource(attributeSource, aliasPrefix)) else None,
-      if (projectedAttributeNames.contains(imageDetailAttr.getName)) Option(imageDetailAttr.getValueFromSource(attributeSource, aliasPrefix)) else None,
       if (projectedAttributeNames.contains(perexAttr.getName)) perexAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
       if (projectedAttributeNames.contains(bodyMarkdownAttr.getName)) bodyMarkdownAttr.getValueFromSource(attributeSource, aliasPrefix) else "",
       if (projectedAttributeNames.contains(bodyAttr.getName)) bodyAttr.getValueFromSource(attributeSource, aliasPrefix) else "",

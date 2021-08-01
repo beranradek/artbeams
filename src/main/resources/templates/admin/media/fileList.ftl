@@ -23,12 +23,12 @@
   <tbody>
 <#list files as file>
     <tr>
-        <td><a href="/media/${file.filename}" target="_blank">${file.filename}</a></td>
+        <td><a href="/media/${file.filename}?size=${file.width}" target="_blank">${file.filename}</a></td>
         <td>${file.contentType!}</td>
         <td>${file.size!}</td>
         <td>${file.privateAccess?c}</td>
         <td>
-            <form action="/admin/media/${file.filename}/delete" method="POST">
+            <form action="/admin/media/${file.filename}/delete?size=${file.width}" method="POST">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit" class="btn">Delete</button>
             </form>

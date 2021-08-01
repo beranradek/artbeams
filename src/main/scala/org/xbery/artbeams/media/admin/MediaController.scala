@@ -1,9 +1,5 @@
 package org.xbery.artbeams.media.admin
 
-import java.util.concurrent.TimeUnit
-
-import javax.inject.Inject
-import javax.servlet.http.HttpServletRequest
 import org.springframework.http.{CacheControl, ResponseEntity}
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation._
@@ -11,6 +7,11 @@ import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.{BaseController, ControllerComponents}
 import org.xbery.artbeams.media.repository.MediaRepository
+
+import java.util.Optional
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.servlet.http.HttpServletRequest
 
 /**
   * Image upload/serving controller.
@@ -44,8 +45,8 @@ class MediaController @Inject() (mediaRepository: MediaRepository, common: Contr
   }
 
   @PostMapping(Array("/admin/media/{filename}/delete"))
-  def deleteFile(request: HttpServletRequest, @PathVariable("filename") filename: String): Any = {
-    val success = mediaRepository.deleteFile(filename)
+  def deleteFile(request: HttpServletRequest, @PathVariable("filename") filename: String, @RequestParam size: Optional[String]): Any = {
+    val success = mediaRepository.deleteFile(filename, Option(size.orElse(null)))
     if (success) {
       redirect("/admin/media")
     } else {
@@ -55,8 +56,8 @@ class MediaController @Inject() (mediaRepository: MediaRepository, common: Contr
 
   // Allow all characters at the end of path (regex addon for filename variable):
   @GetMapping(Array("/media/{filename:.+}"))
-  def findFile(request: HttpServletRequest, @PathVariable("filename") filename: String): ResponseEntity[_] = {
-    mediaRepository.findFile(filename) match {
+  def findFile(request: HttpServletRequest, @PathVariable("filename") filename: String, @RequestParam size: Optional[String]): ResponseEntity[_] = {
+    mediaRepository.findFile(filename, Option(size.orElse(null))) match {
       case Some(fileData) =>
         if (fileData.privateAccess) {
           unauthorized()
@@ -66,7 +67,7 @@ class MediaController @Inject() (mediaRepository: MediaRepository, common: Contr
           ResponseEntity.ok()
             .contentType(mediaType)
             .contentLength(fileData.size)
-            .cacheControl(CacheControl.maxAge(24, TimeUnit.HOURS).cachePublic())
+            .cacheControl(CacheControl.maxAge(48, TimeUnit.HOURS).cachePublic())
             .body(fileData.data)
         }
       case _ =>

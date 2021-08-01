@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
+import org.xbery.artbeams.common.parser.Parsers
 import org.xbery.artbeams.media.domain.FileData
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
@@ -86,13 +87,17 @@ class MediaRepository @Inject()(dataSource: DataSource) {
     * @param filename
     * @return
     */
-  def deleteFile(filename: String): Boolean = {
+  def deleteFile(filename: String, size: Option[String]): Boolean = {
+    val widthOpt = size.flatMap(Parsers.parseIntOpt)
     var result: Boolean = false
     val conn = dataSource.getConnection()
     try {
-      val ps = conn.prepareStatement("DELETE FROM media WHERE filename = ?")
+      val ps = conn.prepareStatement("DELETE FROM media WHERE filename = ?" + widthOpt.map(width => " AND width = ?").getOrElse(""))
       try {
         ps.setString(1, filename)
+        if (widthOpt.isDefined) {
+          ps.setInt(2, widthOpt.get)
+        }
         val updatedCount = ps.executeUpdate()
         result = updatedCount == 1
       } finally {
@@ -109,12 +114,13 @@ class MediaRepository @Inject()(dataSource: DataSource) {
   }
 
   /**
-    * Retrieves file data from dababase; or None data if not found.
+    * Retrieves file data from database; or None data if not found.
+    *
     * @param filename
     * @return
     */
-  def findFile(filename: String): Option[FileData] = {
-    var fileOpt: Option[FileData] = None
+  def findFile(filename: String, size: Option[String]): Option[FileData] = {
+    var files = ListBuffer[FileData]()
     val conn = dataSource.getConnection()
     try {
       val ps = conn.prepareStatement("SELECT filename, content_type, size, data, private_access, width, height FROM media WHERE filename = ?")
@@ -130,8 +136,7 @@ class MediaRepository @Inject()(dataSource: DataSource) {
             val privateAccess = rs.getBoolean(5)
             val width = rs.getInt(6)
             val height = rs.getInt(7)
-            fileOpt = Some(
-              FileData(
+            files += FileData(
                 filename,
                 if (contentType == null) MediaType.APPLICATION_OCTET_STREAM_VALUE else contentType,
                 size,
@@ -140,7 +145,6 @@ class MediaRepository @Inject()(dataSource: DataSource) {
                 Option(width),
                 Option(height),
               )
-            )
           }
         } finally {
           if (rs != null) {
@@ -157,7 +161,7 @@ class MediaRepository @Inject()(dataSource: DataSource) {
         conn.close()
       }
     }
-    fileOpt
+    selectFile(files.toSeq, size)
   }
 
   /**
@@ -243,4 +247,44 @@ class MediaRepository @Inject()(dataSource: DataSource) {
     }
     (width, height)
   }
+
+  /**
+    * Select one of available files based on specified optional size specification.
+    * @param files
+    * @param size
+    * @return
+    */
+  private def selectFile(files: Seq[FileData], size: Option[String]): Option[FileData] = {
+    if (files.isEmpty) None else {
+      val widthOpt = size.flatMap(Parsers.parseIntOpt)
+      widthOpt match {
+        case None => files.headOption
+        case Some(width) =>
+          files.find(f => f.width.isDefined && f.width.get == width) match {
+            case Some(file) => Some(file)
+            case None =>
+              val minWidth = width / 2
+              val maxWidth = width * 2
+              files.find(f => f.width.isDefined && valueInInterval(f.width.get, minWidth, maxWidth)) match {
+                case Some(file) => Some(file)
+                case None =>
+                  if (files.forall(f => f.width.isDefined && f.width.get > width)) {
+                    // All images are bigger than requested size, choose the smallest
+                    Option(files.minBy(f => f.width.get))
+                  } else if (files.forall(f => f.width.isDefined && f.width.get < width)) {
+                    // All images are smaller than requested size, choose the biggest
+                    Option(files.maxBy(f => f.width.get))
+                  } else {
+                    files.find(f => f.width.isDefined && f.width.get > width) match {
+                      case Some(file) => Some(file)
+                      case None => files.headOption
+                    }
+                  }
+              }
+          }
+      }
+    }
+  }
+
+  private def valueInInterval(value: Int, intMin: Int, intMax: Int): Boolean = value >= intMin && value <= intMax
 }

@@ -20,11 +20,8 @@
     <label>Title
       <input type="text" name="${fields.title.name}" value="${fields.title.value!}" size="30"/>
     </label>
-    <label>Card image
+    <label>Image
       <input type="text" name="${fields.image.name}" value="${fields.image.value!}" size="30"/>
-    </label>
-    <label>Detailed image
-      <input type="text" name="${fields.imageDetail.name}" value="${fields.imageDetail.value!}" size="30"/>
     </label>
   </div>
 

@@ -99,7 +99,7 @@ class ProductController @Inject()(
                       // An order of the product for given user exists
                       // TODO: In case of paid product, check the order was already paid
                       val productFileName = product.fileName.get
-                      mediaRepository.findFile(productFileName) match {
+                      mediaRepository.findFile(productFileName, None) match {
                         case Some(fileData) =>
                           val mediaType = fileData.getMediaType()
                           val documentOutputStream = if (MediaType.APPLICATION_PDF.equals(mediaType)) {

@@ -19,8 +19,6 @@ case class EditedArticle(
   title: String,
   @ArgumentName("image")
   image: Option[String],
-  @ArgumentName("imageDetail")
-  imageDetail: Option[String],
   @ArgumentName("perex")
   perex: String,
   @ArgumentName("bodyMarkdown")

@@ -54,7 +54,6 @@ CREATE TABLE articles (
 	slug VARCHAR(128) DEFAULT NULL,
 	title VARCHAR(128) DEFAULT NULL,
 	image VARCHAR(128) DEFAULT NULL,
-	image_detail VARCHAR(128) DEFAULT NULL,
 	perex VARCHAR(4000) DEFAULT NULL,
 	body TEXT,
 	body_markdown TEXT,
@@ -76,6 +75,7 @@ CREATE TABLE media (
     width integer DEFAULT NULL,
     height integer DEFAULT NULL
 );
+CREATE INDEX idx_media_filename ON media (filename);
 
 CREATE TABLE products (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
