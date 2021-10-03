@@ -94,24 +94,7 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     background-size: cover;
     /* height: auto; */
     /* background-attachment: fixed: Stays in fixed position when scrolling (quite nice effect). */
-    height: 720px;
-    width: 100%;
-    margin-bottom: 2rem;
-    border-bottom: 0px solid;
-    border-top: 0px solid;
-}
-
-#headline-mobile {
-    background: url("/media/headline-mobile.jpg");
-    background-position: center center;
-    background-repeat: no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    /* height: auto; */
-    /* background-attachment: fixed: Stays in fixed position when scrolling (quite nice effect). */
-    height: 720px;
+    height: 850px;
     width: 100%;
     margin-bottom: 2rem;
     border-bottom: 0px solid;
