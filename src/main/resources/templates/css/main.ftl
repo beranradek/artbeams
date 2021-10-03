@@ -94,7 +94,7 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     background-size: cover;
     /* height: auto; */
     /* background-attachment: fixed: Stays in fixed position when scrolling (quite nice effect). */
-    height: 850px;
+    height: ${xlat['headline.img.height']}px;
     width: 100%;
     margin-bottom: 2rem;
     border-bottom: 0px solid;
