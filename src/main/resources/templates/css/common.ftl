@@ -49,6 +49,7 @@ blockquote:before {
 .align-center {
   display: block;
   margin: 0 auto;
+  text-align: center;
 }
 
 /** Blog-nested styles are used in public web and for preview of article in administration */

@@ -17,6 +17,7 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.portrait.url
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.portrait.src', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.portrait.width', '253');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.portrait.height', '239');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.img.height', '880');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.offer.header', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.offer.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.offer.img.src', '???');

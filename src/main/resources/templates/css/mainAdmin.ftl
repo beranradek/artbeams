@@ -52,6 +52,7 @@ img {
 .align-center {
   display: block;
   margin: 0 auto;
+  text-align: center;
 }
 
 #markdown-content {
