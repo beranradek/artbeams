@@ -1,6 +1,7 @@
 buildscript {
     ext {
         springBootVersion = '2.4.5'
+        kotlinVersion = '1.5.31'
     }
     repositories {
         jcenter()
@@ -11,18 +12,21 @@ buildscript {
         // run Spring Boot applications and use the dependency management 
         // provided by spring-boot-dependencies.
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'scala'
+apply plugin: 'kotlin'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'org.xbery'
-version = '1.0.5-SNAPSHOT'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+version = '1.0.6-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_11
+def jvmTargetVersion = JavaVersion.VERSION_11
+targetCompatibility = jvmTargetVersion
+kotlinVersion = '1.5.31'
 
 repositories {
     mavenCentral()
@@ -37,9 +41,9 @@ configurations {
 }
 
 dependencies {
-    // Scala language
-    implementation("org.scala-lang:scala-library:2.13.5")
-    implementation("org.scala-lang:scala-reflect:2.13.5")
+    // Kotlin language
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") // mandatory as of Spring Framework 5
 
     // Web libraries
     implementation("org.webjars:webjars-locator:0.36")
@@ -91,4 +95,13 @@ dependencies {
 
 // Task stage for Heroku deployment
 task stage(dependsOn: ['build', 'clean'])
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        // By default, types from Java APIs used in Kotlin are recognized as platform types for which null-checks are relaxed.
+        // Kotlin support for JSR 305 annotations + Spring nullability annotations provide null-safety for the whole Spring Framework API
+        // to Kotlin developers, with the advantage of dealing with null related issues at compile time.
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = jvmTargetVersion
+    }
+}
 build.mustRunAfter clean

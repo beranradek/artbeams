@@ -1,0 +1,43 @@
+package org.xbery.artbeams.users.repository
+
+import org.springframework.stereotype.Repository
+import org.xbery.artbeams.common.assets.repository.AssetRepository
+import org.xbery.artbeams.users.domain.Role
+import org.xbery.artbeams.users.domain.User
+import org.xbery.overview.Order
+import org.xbery.overview.Overview
+import java.util.*
+import javax.sql.DataSource
+
+/**
+ * User repository.
+ * @author Radek Beran
+ */
+@Repository
+open class UserRepository(dataSource: DataSource, private val roleRepository: RoleRepository) :
+    AssetRepository<User, UserFilter>(dataSource, UserMapper.Instance) {
+    protected val DefaultOrdering: List<Order> = Arrays.asList(Order((entityMapper as UserMapper).loginAttr, false))
+
+    /**
+     * Returns user by id, including roles.
+     */
+    override fun findByIdAsOpt(id: String): User? {
+        return super.findByIdAsOpt(id)?.let { user ->
+            user.copy(roles = roleRepository.findRolesOfUser(user.id))
+        }
+    }
+
+    open fun findUsers(): List<User> {
+        return this.findByOverview(Overview(UserFilter.Empty, DefaultOrdering))
+    }
+
+    open fun findByLogin(login: String): User? {
+        val filter: UserFilter = UserFilter.Empty.copy(login = login)
+        return this.findOneByFilter(filter)
+    }
+
+    open fun findByEmail(email: String): User? {
+        val filter: UserFilter = UserFilter.Empty.copy(email = email)
+        return this.findOneByFilter(filter)
+    }
+}

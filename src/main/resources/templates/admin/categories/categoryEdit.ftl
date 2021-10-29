@@ -29,7 +29,7 @@
   </div>
   <div class="form-group">
     <label>Valid to
-      <input type="text" name="${fields.validTo.name}" value="${fields.validTo.value}"/>
+      <input type="text" name="${fields.validTo.name}" value="${fields.validTo.value!}"/>
     </label>
   </div>
   <div class="form-group">

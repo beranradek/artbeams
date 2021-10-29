@@ -54,7 +54,7 @@
   <div class="form-group row">
     <label for="${fields.externalId.elementId}" class="col-form-label col-sm-2 label-fix">External ID</label>
     <div class="col-sm-10">
-        <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value}" id="${fields.externalId.elementId}"/>
+        <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value!}" id="${fields.externalId.elementId}"/>
     </div>
   </div>
   <div class="form-group row">
@@ -66,7 +66,7 @@
   <div class="form-group row">
     <label for="${fields.validTo.elementId}" class="col-form-label col-sm-2 label-fix">Valid to</label>
     <div class="col-sm-10">
-        <input type="text" name="${fields.validTo.name}" value="${fields.validTo.value}" id="${fields.validTo.elementId}"/>
+        <input type="text" name="${fields.validTo.name}" value="${fields.validTo.value!}" id="${fields.validTo.elementId}"/>
     </div>
   </div>
   <div class="form-group row">
@@ -78,7 +78,7 @@
   <div class="form-group row">
     <label for="${fields.showOnBlog.elementId}" class="col-form-label col-sm-2 label-fix">Show on blog</label>
     <div class="col-sm-10">
-        <input type="checkbox" name="${fields.showOnBlog.name}"<#if fields.showOnBlog.filledObject> checked</#if> id="${fields.showOnBlog.elementId}" />
+        <input type="text" name="${fields.showOnBlog.name}" value="${fields.showOnBlog.value!}" id="${fields.showOnBlog.elementId}" />
     </div>
   </div>
   <div class="form-group row">

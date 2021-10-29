@@ -13,22 +13,10 @@ dist
 /.project
 .sc
 
-# SBT
-boot/
-lib_managed/
-target/
-.history
-
-# Play
-logs
-dist
-/RUNNING_PID
-
 # Eclipse
 .cache
 .classpath
 .project
-.scala_dependencies
 .settings
 .target/
 .worksheet

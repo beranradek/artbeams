@@ -7,7 +7,7 @@ Main features:
 * Simple and rich repository layer for rapid development.
 * Markdown and WYSIWYG editor.
 * Evernote integration.
-* Built with Spring Boot, Scala, Freemarker and Bootstrap. 
+* Built with Spring Boot, Kotlin, Freemarker and Bootstrap. 
 
 ## Development
 
