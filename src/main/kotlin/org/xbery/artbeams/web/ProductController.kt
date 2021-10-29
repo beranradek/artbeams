@@ -114,7 +114,10 @@ open class ProductController(
                                     .contentType(mediaType)
                                     .contentLength(documentOutputStream.size().toLong())
                                     .cacheControl(CacheControl.noStore()) // prevent browsers and proxies to cache the request
-                                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileData.filename)
+                                    .header(
+                                        HttpHeaders.CONTENT_DISPOSITION,
+                                        "attachment; filename=" + fileData.filename
+                                    )
                                     .body(documentOutputStream.toByteArray())
                             } else {
                                 notFound()
@@ -161,15 +164,15 @@ open class ProductController(
             val nowCalendar: java.util.Calendar = java.util.Calendar.getInstance()
             val pdfMetadata: PDDocumentInformation = pdfDocument.documentInformation
             val productAuthorOpt = userService.findById(product.common.createdBy)
-          pdfMetadata.author = ("")
-          pdfMetadata.creationDate = nowCalendar
-          pdfMetadata.modificationDate = nowCalendar
-          pdfMetadata.title = product.title
+            pdfMetadata.author = ("")
+            pdfMetadata.creationDate = nowCalendar
+            pdfMetadata.modificationDate = nowCalendar
+            pdfMetadata.title = product.title
             val urlBase: String = getUrlBase(request)
             val customerInfo =
                 customer.email + (if (customer.fullName.isEmpty()) "" else " (" + customer.fullName + ")")
-          pdfMetadata.creator = urlBase + " for " + customerInfo
-          pdfDocument.documentInformation = pdfMetadata
+            pdfMetadata.creator = urlBase + " for " + customerInfo
+            pdfDocument.documentInformation = pdfMetadata
             pdfDocument.save(pdfOutputStream)
         } finally {
             pdfDocument.close()

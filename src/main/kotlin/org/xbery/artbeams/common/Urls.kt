@@ -1,6 +1,5 @@
 package org.xbery.artbeams.common
 
-import java.lang.CharSequence
 import java.net.URLEncoder
 
 /**

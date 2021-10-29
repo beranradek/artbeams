@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.parser.Parsers
 import org.xbery.artbeams.media.repository.MediaRepository
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -20,7 +21,7 @@ import javax.servlet.http.HttpServletRequest
  * @author Radek Beran
  */
 @Controller
-open class MediaController (private val mediaRepository: MediaRepository, common: ControllerComponents) :
+open class MediaController(private val mediaRepository: MediaRepository, common: ControllerComponents) :
     BaseController(common) {
     private val TplBasePath: String = "admin/media"
 
@@ -37,9 +38,8 @@ open class MediaController (private val mediaRepository: MediaRepository, common
         return if (file.isEmpty || originalFilename == null || originalFilename.isEmpty()) {
             redirect("/admin/media")
         } else {
-            val privateAccessBoolean = privateAccess != null &&
-                (privateAccess == "true" || privateAccess == "1" || privateAccess == "on" || privateAccess == "y")
-          val success = mediaRepository.storeFile(file, privateAccessBoolean)
+            val privateAccessBoolean = Parsers.parseBoolean(privateAccess)
+            val success = mediaRepository.storeFile(file, privateAccessBoolean)
             if (success) {
                 redirect("/admin/media")
             } else {

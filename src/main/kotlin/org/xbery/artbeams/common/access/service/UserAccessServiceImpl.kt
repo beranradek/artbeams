@@ -12,6 +12,7 @@ import org.xbery.artbeams.common.access.domain.*
 import org.xbery.artbeams.common.access.repository.EntityAccessCountRepository
 import org.xbery.artbeams.common.access.repository.UserAccessRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.common.parser.Parsers
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
 import javax.servlet.http.HttpServletRequest
@@ -108,8 +109,8 @@ open class UserAccessServiceImpl(
     }
 
     private fun parseBooleanField(capabilities: Capabilities, field: BrowsCapField): Boolean {
-        val value: String = capabilities.getValue(field)
-        return value != null && value.toBoolean()
+        val value = capabilities.getValue(field)
+        return Parsers.parseBoolean(value)
     }
 
     private fun createUserAccessReport(userAgent: String): UserAccessReport {

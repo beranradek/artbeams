@@ -91,17 +91,24 @@ dependencies {
 
     // Testing Spring Boot application
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
 }
 
 // Task stage for Heroku deployment
 task stage(dependsOn: ['build', 'clean'])
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         // By default, types from Java APIs used in Kotlin are recognized as platform types for which null-checks are relaxed.
         // Kotlin support for JSR 305 annotations + Spring nullability annotations provide null-safety for the whole Spring Framework API
         // to Kotlin developers, with the advantage of dealing with null related issues at compile time.
-        freeCompilerArgs = ["-Xjsr305=strict"]
+        freeCompilerArgs = ["-Xjsr305=strict", "-Xopt-in=kotlin.RequiresOptIn"]
         jvmTarget = jvmTargetVersion
     }
 }
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
 build.mustRunAfter clean

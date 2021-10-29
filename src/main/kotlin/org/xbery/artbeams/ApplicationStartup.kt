@@ -36,7 +36,7 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         val configRepository: ConfigRepository = context.getBean(ConfigRepository::class.java)
         val localisationRepository: LocalisationRepository = context.getBean(LocalisationRepository::class.java)
         val adminRole: Role = findOrCreateAdminRole(roleRepository)
-        val adminUser: User = findOrCreateAdminUser(userRepository, userService, adminRole)
+        findOrCreateAdminUser(userRepository, userService, adminRole)
         loadConfig(configRepository)
         loadLocalisation(localisationRepository)
         logger.info("Application initialization - finished")

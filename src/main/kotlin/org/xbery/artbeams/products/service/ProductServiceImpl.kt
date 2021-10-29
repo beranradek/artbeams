@@ -25,7 +25,7 @@ open class ProductServiceImpl(
     override fun saveProduct(edited: EditedProduct, ctx: OperationCtx): Product? {
         return try {
             val userId = ctx.loggedUser?.id ?: AssetAttributes.EmptyId
-            return if (edited.id == AssetAttributes.EmptyId) {
+            if (edited.id == AssetAttributes.EmptyId) {
                 productRepository.create(Product.Empty.updatedWith(edited, userId))
             } else {
                 val product = productRepository.findByIdAsOpt(edited.id)

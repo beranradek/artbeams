@@ -5,11 +5,13 @@ package org.xbery.artbeams.common.parser
  * @author Radek Beran
  */
 object Parsers {
-    fun parseIntOpt(s: String): Int? {
-        return try {
+    fun parseIntOpt(s: String): Int? =
+        try {
             s.replace(" ", "").toInt()
         } catch (e: Exception) {
             null
         }
-    }
+
+    fun parseBoolean(s: String?): Boolean = s != null &&
+            (s == "true" || s == "1" || s == "on" || s == "y" || s == "yes")
 }

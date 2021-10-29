@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
+import org.xbery.artbeams.common.parser.Parsers
 import org.xbery.artbeams.media.domain.FileData
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -82,12 +83,12 @@ open class MediaRepository (private val dataSource: DataSource) {
      * @return
      */
     open fun deleteFile(filename: String, size: String?): Boolean {
-        val widthOpt = size?.replace(" ", "")?.toInt()
+        val widthOpt = size?.let { s -> Parsers.parseIntOpt(s) }
         var result = false
         val conn = dataSource.getConnection()
         try {
             val ps: PreparedStatement =
-                conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { width -> " AND width = ?" }
+                conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { _ -> " AND width = ?" }
                     ?: ""))
             try {
                 ps.setString(1, filename)
@@ -255,7 +256,7 @@ open class MediaRepository (private val dataSource: DataSource) {
      */
     private fun selectFile(files: List<FileData>, size: String?): FileData? {
         return if (files.isEmpty()) null else {
-            val width = size?.replace(" ", "")?.toInt()
+            val width = size?.let { s -> Parsers.parseIntOpt(s) }
             if (width == null) {
                 files.firstOrNull()
             } else {
