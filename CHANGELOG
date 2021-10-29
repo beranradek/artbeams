@@ -2,6 +2,7 @@
 
 1.1.0 (24.10.2021)
 * Semi-automatic migration from Scala to Kotlin.
+* Support of Kotlin classes in Formio forms.
 
 1.0.5 (1.8.2021)
 * Storing width and height for uploaded images.
