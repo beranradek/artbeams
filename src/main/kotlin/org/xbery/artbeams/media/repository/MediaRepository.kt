@@ -82,7 +82,7 @@ open class MediaRepository (private val dataSource: DataSource) {
      * @return
      */
     open fun deleteFile(filename: String, size: String?): Boolean {
-        val widthOpt = size?.toInt()
+        val widthOpt = size?.replace(" ", "")?.toInt()
         var result = false
         val conn = dataSource.getConnection()
         try {
@@ -255,7 +255,7 @@ open class MediaRepository (private val dataSource: DataSource) {
      */
     private fun selectFile(files: List<FileData>, size: String?): FileData? {
         return if (files.isEmpty()) null else {
-            val width = size?.toInt()
+            val width = size?.replace(" ", "")?.toInt()
             if (width == null) {
                 files.firstOrNull()
             } else {

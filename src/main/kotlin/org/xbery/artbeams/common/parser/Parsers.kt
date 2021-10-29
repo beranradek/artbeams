@@ -7,7 +7,7 @@ package org.xbery.artbeams.common.parser
 object Parsers {
     fun parseIntOpt(s: String): Int? {
         return try {
-            s.toInt()
+            s.replace(" ", "").toInt()
         } catch (e: Exception) {
             null
         }
