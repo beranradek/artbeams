@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest
 @Service
 open class LoginServiceImpl(private val userRepository: UserRepository, private val roleRepository: RoleRepository) : LoginService {
     private val passwordHashing: PasswordHashing = PasswordHashing()
+
     override fun login(username: String, password: String): User? {
         assert( username != null) { "Username should be specified" }
         val user = userRepository.findByLogin(username)

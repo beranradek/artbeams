@@ -22,7 +22,7 @@ import org.xbery.artbeams.common.mailer.config.MailerConfig
 open class Mailer(private val mailerConfig: MailerConfig) {
     private val Logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    fun sendMail(subject: String, body: String, to: String): Unit {
+    open fun sendMail(subject: String, body: String, to: String) {
         Logger.info("Sending email ${subject} to ${to}")
         val mailerApiUrl =
             "https://api:${mailerConfig.apiKey}@api.mailgun.net/v2/${mailerConfig.domain}/messages"

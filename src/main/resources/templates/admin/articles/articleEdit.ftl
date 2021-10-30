@@ -16,17 +16,17 @@
   <div class="form-group row">
     <label>Slug
       <input type="text" name="${fields.slug.name}" value="${fields.slug.value!}" size="30"/>
-    </label>
+    </label>&nbsp;
     <label>Title
       <input type="text" name="${fields.title.name}" value="${fields.title.value!}" size="30"/>
-    </label>
+    </label>&nbsp;
     <label>Image
       <input type="text" name="${fields.image.name}" value="${fields.image.value!}" size="30"/>
     </label>
   </div>
 
   <div class="form-group row">
-    <label for="${fields.perex.elementId}">Perex</label>
+    <label for="${fields.perex.elementId}">Perex&nbsp;</label>
     <textarea name="${fields.perex.name}" id="${fields.perex.elementId}" rows="2" cols="160">${fields.perex.value!}</textarea>
   </div>
 

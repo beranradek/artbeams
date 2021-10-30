@@ -23,7 +23,7 @@ open class EvernoteImporter(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
-    fun importArticles(): List<Article> {
+    open fun importArticles(): List<Article> {
         val operationMsg = "Import of Evernote notes"
         logger.info("$operationMsg: started")
         return try {

@@ -26,6 +26,7 @@ open class ArticleServiceImpl(
     private val evernoteApi: EvernoteApi
 ) : ArticleService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
+
     override fun findArticles(): List<Article> {
         logger.trace("Finding articles")
         return articleRepository.findArticles()

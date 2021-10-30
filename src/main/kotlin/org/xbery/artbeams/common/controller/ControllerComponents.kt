@@ -14,10 +14,11 @@ import javax.servlet.http.HttpServletRequest
  */
 @Service
 open class ControllerComponents(val loginService: LoginService, val userAccessService: UserAccessService, val localisationRepository: LocalisationRepository) {
-  fun getLoggedUser(request: HttpServletRequest): User? {
+  open fun getLoggedUser(request: HttpServletRequest): User? {
     return loginService.getLoggedUser(request)
   }
-  fun getOperationCtx(request: HttpServletRequest): OperationCtx {
+
+  open fun getOperationCtx(request: HttpServletRequest): OperationCtx {
     return OperationCtx(loginService.getLoggedUser(request))
   }
 }
