@@ -16,13 +16,11 @@ open class RoleRepository(dataSource: DataSource) :
     AssetRepository<Role, RoleFilter>(dataSource, RoleMapper.Instance) {
     private val DefaultOrdering: List<Order> = listOf(Order((entityMapper as RoleMapper).nameAttr, false))
 
-    open fun findRoles(): List<Role> {
-        return this.findByOverview(Overview<RoleFilter>(RoleFilter.Empty, DefaultOrdering))
-    }
+    open fun findRoles(): List<Role> = this.findByOverview(Overview(RoleFilter.Empty, DefaultOrdering))
 
     open fun findRolesOfUser(userId: String): List<Role> {
         return this.findByOverview(
-            Overview<RoleFilter>(
+            Overview(
                 RoleFilter.Empty.copy(userId = userId),
                 DefaultOrdering
             )

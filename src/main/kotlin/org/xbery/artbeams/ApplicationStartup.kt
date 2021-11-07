@@ -35,7 +35,7 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         val userService: UserService = context.getBean(UserService::class.java)
         val configRepository: ConfigRepository = context.getBean(ConfigRepository::class.java)
         val localisationRepository: LocalisationRepository = context.getBean(LocalisationRepository::class.java)
-        val adminRole: Role = findOrCreateAdminRole(roleRepository)
+        val adminRole = findOrCreateAdminRole(roleRepository)
         findOrCreateAdminUser(userRepository, userService, adminRole)
         loadConfig(configRepository)
         loadLocalisation(localisationRepository)
