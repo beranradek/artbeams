@@ -89,6 +89,9 @@ dependencies {
     // Working with PDF documents
     implementation("org.apache.pdfbox:pdfbox:2.0.17")
 
+    // Working with webp and other images
+    implementation("com.drewnoakes:metadata-extractor:2.16.0")
+
     // Testing Spring Boot application
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
@@ -49,8 +50,8 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
     }
 
     @PostMapping("/admin/media/{filename}/delete")
-    fun deleteFile(request: HttpServletRequest, @PathVariable filename: String, size: Optional<String>): Any {
-        val success: Boolean = mediaRepository.deleteFile(filename, size.orElse(null))
+    fun deleteFile(request: HttpServletRequest, @PathVariable filename: String, @RequestParam(value = "size", required = false) size: String?): Any {
+        val success: Boolean = mediaRepository.deleteFile(filename, size)
         return if (success) {
             redirect("/admin/media")
         } else {
@@ -60,7 +61,7 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
 
     // Allow all characters at the end of path (regex addon for filename variable):
     @GetMapping("/media/{filename:.+}")
-    fun findFile(request: HttpServletRequest, @PathVariable filename: String?, size: String?): ResponseEntity<*> {
+    fun findFile(request: HttpServletRequest, @PathVariable filename: String?, @RequestParam(value = "size", required = false) size: String?): ResponseEntity<*> {
         return if (filename != null) {
             val fileData = mediaRepository.findFile(filename, size)
             if (fileData != null) {

@@ -1,5 +1,7 @@
 package org.xbery.artbeams.media.repository
 
+import com.drew.imaging.ImageMetadataReader
+import com.drew.metadata.webp.WebpDirectory
 import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
@@ -116,7 +118,7 @@ open class MediaRepository (private val dataSource: DataSource) {
      * @param filename
      * @return
      */
-    open fun findFile(filename: String, size: String?): FileData? {
+    open fun findFile(filename: String, requestedSize: String?): FileData? {
         var files = mutableListOf<FileData>()
         val conn = dataSource.getConnection()
         try {
@@ -161,7 +163,7 @@ open class MediaRepository (private val dataSource: DataSource) {
                 conn.close()
             }
         }
-        return selectFile(files, size)
+        return selectFile(files, requestedSize)
     }
 
     /**
@@ -220,12 +222,14 @@ open class MediaRepository (private val dataSource: DataSource) {
     private fun isWebpImage(contentType: String): Boolean = contentType == "image/webp"
 
     private fun getWebpImageDimensions(imgBytes: ByteArray): Pair<Int, Int>? {
-        return if (imgBytes.size < 30) {
-            null
+        val metadata = ImageMetadataReader.readMetadata(ByteArrayInputStream(imgBytes))
+        return if (metadata.containsDirectoryOfType(WebpDirectory::class.java)) {
+            val directory = metadata.getFirstDirectoryOfType(WebpDirectory::class.java)
+            val imageWidth = directory.getInteger(WebpDirectory.TAG_IMAGE_WIDTH)
+            val imageHeight = directory.getInteger(WebpDirectory.TAG_IMAGE_HEIGHT)
+            Pair(imageWidth, imageHeight)
         } else {
-            val width = (imgBytes[27].toInt() and 0xff) shl 8 or (imgBytes[26].toInt() and 0xff)
-            val height = (imgBytes[29].toInt() and 0xff) shl 8 or (imgBytes[28].toInt() and 0xff)
-            Pair(width, height)
+            null
         }
     }
 
