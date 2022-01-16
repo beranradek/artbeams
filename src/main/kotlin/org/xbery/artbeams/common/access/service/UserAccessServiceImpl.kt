@@ -6,8 +6,12 @@ import com.blueconic.browscap.UserAgentParser
 import com.blueconic.browscap.UserAgentService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpHeaders
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.xbery.artbeams.common.Dates.AppZoneIdString
 import org.xbery.artbeams.common.access.domain.*
 import org.xbery.artbeams.common.access.repository.EntityAccessCountRepository
 import org.xbery.artbeams.common.access.repository.UserAccessRepository
@@ -53,6 +57,7 @@ open class UserAccessServiceImpl(
         return report
     }
 
+    // Spring @Async is limited only to public methods and does not work for calls within the same class
     private fun registerUserAccess(
         entityKey: EntityKey,
         ipAddress: String,
@@ -71,11 +76,15 @@ open class UserAccessServiceImpl(
         }
     }
 
+    @Cacheable(EntityAccessCount.CacheName)
     override fun findCountOfVisits(entityKey: EntityKey): Long {
         val entityFilter: EntityAccessCountFilter = EntityAccessCountFilter.Empty.copy(entityKey = entityKey)
         return entityAccessCountRepository.findByFilter(entityFilter, listOf()).firstOrNull()?.let { it.count } ?: 0L
     }
 
+    // Cron pattern: second, minute, hour, day, month, weekday
+    @Scheduled(cron = "0 1 0 * * *", zone = AppZoneIdString)
+    @CacheEvict(value = [ EntityAccessCount.CacheName ], allEntries = true)
     override fun aggregateUserAccesses() {
         val operationMsg = "User access aggregation task"
         logger.info("$operationMsg - started")

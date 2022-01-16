@@ -1,9 +1,8 @@
-import java.time.ZoneId
+package org.xbery.artbeams.common
 
 /**
  * @author Radek Beran
  */
 object Dates {
-    val AppZoneIdString = "Europe/Prague" // usable as constant in annotations
-    val AppZoneId = ZoneId.of(AppZoneIdString)
+    const val AppZoneIdString = "Europe/Prague" // usable as constant in annotations
 }
