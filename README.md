@@ -7,6 +7,7 @@ Main features:
 * Simple and rich repository layer for rapid development.
 * Markdown and WYSIWYG editor.
 * Evernote integration.
+  * Real applications authenticate with Evernote using OAuth, but for the purpose of exploring the API, you can get a developer token that allows you to access your own Evernote account. To get a developer token, visit https://www.evernote.com/api/DeveloperToken.action
 * Built with Spring Boot, Kotlin, Freemarker and Bootstrap. 
 
 ## Development
