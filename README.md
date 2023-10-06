@@ -12,6 +12,11 @@ Main features:
 
 ## Development
 
+## GIT branches
+
+* One remote "origin" for github and one remote "master" for heroku.
+* Pushing from local master to both remotes: "origin" (for github git) and "master" (for deployment).
+
 ### Gradle build
 
 Build using `./gradlew build`
