@@ -65,10 +65,6 @@
   <!-- Bootstrap -->
   <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
 
-  <!-- FontAwesome Icons -->
-  <#-- See https://fontawesome.com/v5.7.2/icons?d=gallery for available icons. Example of usage: class="fas fa-user" -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-
   <#-- lightbox.css must be in head so the popup in product page works! -->
   <link rel="stylesheet" type="text/css" href="/static/css/lightbox.css?v210718" />
 
@@ -114,7 +110,7 @@
       <nav class="navbar navbar-expand-md">
         <a class="navbar-brand" href="/">${xlat['website.title']}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"><i class="fas fa-bars"></i></span>
+          <span class="navbar-toggler-icon"><svg xmlns="http://www.w3.org/2000/svg" height="17px" viewBox="0 0 448 512"><!--! bars-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#949494}</style><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
@@ -162,7 +158,7 @@
             <#if _loggedUser??>
             <ul class="navbar-nav mr-4">
               <li class="nav-item dropdown logged-user">
-                <a class="nav-link" href="#" id="dropdownUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-user"></span> ${_loggedUser.login}</a>
+                <a class="nav-link" href="#" id="dropdownUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#949494}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg> ${_loggedUser.login}</a>
                 <div class="dropdown-menu" aria-labelledby="dropdownUser">
                   <#if _loggedUser.roleNames?seq_contains("admin")><a class="dropdown-item" href="/admin">${xlat['administration']}</a></#if>
                   <a class="dropdown-item" href="/logout">${xlat['logout']}</a>
