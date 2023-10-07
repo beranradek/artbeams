@@ -312,8 +312,9 @@
     </div>
   </footer>
   <div class="cookie-info-bar">
-    ${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['personal-data.protection.url']}">${xlat['cookies.info.more']}</a>.
-    <a class="cookie-info-button btn btn-primary btn-sm" href="#" role="button">${xlat['cookies.agreement.action']}</a>
+    ${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}">${xlat['cookies.info.more']}</a>.
+    <#if xlat['cookies.acceptAll']??><a class="cookie-agreement-set btn btn-primary btn-sm" href="#" role="button">${xlat['cookies.acceptAll']}</a></#if>
+    <a class="cookie-info-close btn btn-secondary btn-sm" href="#" role="button">X</a>
   </div>
 
   <!-- Bootstrap core JavaScript -->
@@ -323,10 +324,22 @@
     if (document.cookie.indexOf("cookies_confirmed=") >= 0) {
         jQuery(".cookie-info-bar").remove();
     }
-    jQuery(".cookie-info-button").click(function () {
+    jQuery(".cookie-agreement-set").click(function () {
         var exdate = new Date();
         exdate.setDate(exdate.getDate() + 36500);
         document.cookie = 'cookies_confirmed=1; path=/; expires=' + exdate.toGMTString();
+        jQuery(".cookie-info-bar").remove();
+        return false;
+    });
+    jQuery(".cookie-agreement-unset").click(function () {
+        var Cookies = document.cookie.split(';');
+        // set 1 Jan, 1970 expiry for every cookies
+        for (var i = 0; i < Cookies.length; i++)
+        document.cookie = Cookies[i] + "=;expires=" + new Date(0).toUTCString();
+        location.reload();
+        return false;
+    });
+    jQuery(".cookie-info-close").click(function () {
         jQuery(".cookie-info-bar").remove();
         return false;
     });

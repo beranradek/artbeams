@@ -154,7 +154,11 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     box-sizing: border-box;
 }
 
-.cookie-info-button {
+.cookie-agreement-set {
+    margin-left: 1rem;
+}
+
+.cookie-info-close {
     margin-left: 1rem;
 }
 

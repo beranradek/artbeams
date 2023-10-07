@@ -51,12 +51,15 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('articles.newest', 'Ne
 INSERT INTO localisation (entry_key, entry_value) VALUES ('articles.rubrics', 'Rubriky');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('social.networks', 'Sociální sítě');
 
+INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.url', '/cookies');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.title', 'Cookies');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('personal-data.protection.url', '/ochrana-osobnich-udaju');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('personal-data.protection.title', 'Zpracování a ochrana osobních údajů');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('goto.up', 'Nahoru');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.info', 'Na webu používáme cookies. Prohlížením webu s jejich používáním souhlasíte.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.info', 'Na webu používáme nezbytné a statistické cookies.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.info.more', 'Více informací');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.agreement.action', 'Rozumím');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.acceptAll', 'Přijmout vše ');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.rejectAll', 'Odmítnout vše');
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.url', '/admin/articles/???/edit');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.title', 'Examples');
