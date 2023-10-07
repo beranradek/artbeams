@@ -87,7 +87,15 @@ open class ProductController(
             val email = findEmailInRequest(request)
             if (email != null) {
                 // User must exist and confirm the consent before he/she can download the product
-                val user = userService.findByEmail(email)
+                var user = userService.findByEmail(email)
+                if (user == null) {
+                    // User does not exist in database yet,
+                    // TODO: we could verify his consent against the remote mailing list,
+                    // and then register him in database:
+                    val fullNameOpt = findNameInRequest(request)
+                    userSubscriptionService.confirmConsent(fullNameOpt, email, product.id)
+                    user = userService.findByEmail(email)
+                }
                 if (user != null) {
                     // Update user with full name from request if it is present (and not set in user entity yet)
                     updateUserWithFullName(request, user)
@@ -182,7 +190,7 @@ open class ProductController(
 
     private fun updateUserWithFullName(request: HttpServletRequest, user: User): User {
         val fullName = findNameInRequest(request) ?: ""
-        return if (user.firstName == "" && user.lastName == "" && !fullName.isEmpty()) {
+        return if (user.firstName == "" && user.lastName == "" && fullName.isNotEmpty()) {
             val names = User.namesFromFullName(fullName)
             userService.updateUser(user.copy(firstName = names.first, lastName = names.second))
         } else {
@@ -219,19 +227,14 @@ open class ProductController(
         }
     }
 
-    private fun findEmailInRequest(request: HttpServletRequest): String? {
-        val email = request.getParameter("email")
-        return if (email != null && !email.isEmpty()) {
-            email.replace(' ', '+')
-        } else {
-            null
-        }
-    }
+    private fun findEmailInRequest(request: HttpServletRequest): String? = findParamInRequest(request, "email")
 
-    private fun findNameInRequest(request: HttpServletRequest): String? {
-        val name = request.getParameter("name")
-        return if (name != null && !name.isEmpty()) {
-            name
+    private fun findNameInRequest(request: HttpServletRequest): String? = findParamInRequest(request, "name")
+
+    private fun findParamInRequest(request: HttpServletRequest, paramName: String): String? {
+        val value = request.getParameter(paramName)
+        return if (value != null && value.isNotEmpty()) {
+            value
         } else {
             null
         }
