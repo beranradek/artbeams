@@ -298,10 +298,16 @@
   </main>
 
   <footer class="footer mt-auto py-3">
-    <div class="container">
-      <span class="text-muted"><a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a></span><br><br>
+    <div class="container align-center">
+        <#if xlat['personal-data.protection.url']??>
+            <span class="text-muted"><a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a></span>
+        </#if>
+        <#if xlat['cookies.url']??>
+            <#if xlat['personal-data.protection.url']??> | </#if>
+            <span class="text-muted"><a href="${xlat['cookies.url']}">${xlat['cookies.title']}</a></span>
+        </#if>
     </div>
-    <div class="container">
+    <div class="container align-center">
       <span class="text-muted">&copy; ${xlat['website.title']} | ${xlat['website.disclaimer']} | <a href="#">${xlat['goto.up']}</a></span>
     </div>
   </footer>

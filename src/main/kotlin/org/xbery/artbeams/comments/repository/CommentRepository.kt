@@ -5,7 +5,6 @@ import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.common.assets.repository.AssetRepository
 import org.xbery.overview.Order
 import org.xbery.overview.Overview
-import java.util.*
 import javax.sql.DataSource
 
 /**
@@ -16,7 +15,7 @@ import javax.sql.DataSource
 open class CommentRepository(dataSource: DataSource) :
     AssetRepository<Comment, CommentFilter>(dataSource, CommentMapper.Instance) {
 
-    private val defaultOrdering: List<Order> = Arrays.asList(Order((entityMapper as CommentMapper).createdAttr, false))
+    private val defaultOrdering = listOf(Order((entityMapper as CommentMapper).createdAttr, false))
 
     open fun findComments(): List<Comment> {
         val overview: Overview<CommentFilter> = Overview(CommentFilter.Empty, defaultOrdering)

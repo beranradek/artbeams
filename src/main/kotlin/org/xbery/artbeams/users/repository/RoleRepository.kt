@@ -14,7 +14,7 @@ import javax.sql.DataSource
 @Repository
 open class RoleRepository(dataSource: DataSource) :
     AssetRepository<Role, RoleFilter>(dataSource, RoleMapper.Instance) {
-    private val DefaultOrdering: List<Order> = listOf(Order((entityMapper as RoleMapper).nameAttr, false))
+    private val DefaultOrdering = listOf(Order((entityMapper as RoleMapper).nameAttr, false))
 
     open fun findRoles(): List<Role> = this.findByOverview(Overview(RoleFilter.Empty, DefaultOrdering))
 

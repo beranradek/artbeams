@@ -55,6 +55,6 @@ open class UserMapper : AssetMapper<User, UserFilter>() {
     override fun entityWithCommonAttributes(entity: User, common: AssetAttributes): User = entity.copy(common = common)
 
     companion object {
-        val Instance: UserMapper = UserMapper()
+        val Instance = UserMapper()
     }
 }

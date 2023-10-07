@@ -22,10 +22,10 @@ data class User(
     val consent: Instant?) : Asset(), Serializable {
 
     val roleNames: List<String> = roles.map { it.name }
-    val fullName: String = firstName + if (lastName.isEmpty()) "" else " " + lastName
+    val fullName: String = firstName + if (lastName.isEmpty()) "" else " $lastName"
 
     fun updatedWith(edited: EditedUser, rolesCodebook: List<Role>, userId: String): User {
-        val updatedPassword: String = if (!edited.password.trim().isEmpty() && !edited.password2.trim().isEmpty() && edited.password == edited.password2) {
+        val updatedPassword = if (edited.password.trim().isNotEmpty() && edited.password2.trim().isNotEmpty() && edited.password == edited.password2) {
             PasswordHashing().createPasswordHash(edited.password.trim())
         } else {
             this.password
@@ -47,7 +47,7 @@ data class User(
     }
 
     companion object {
-        val Empty: User = User(AssetAttributes.Empty, "", "", "", "", "", emptyList(), null)
+        val Empty = User(AssetAttributes.Empty, "", "", "", "", "", emptyList(), null)
 
         fun namesFromFullName(fullName: String): Pair<String, String> {
             return if (fullName.isEmpty()) {
