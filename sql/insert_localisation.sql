@@ -40,6 +40,9 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.id1', '??
 INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.id2', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.popup-form', '???');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form.title', '???');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form.text', '???');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form.success.url', '/produkt/???/potvrzeni?email=');
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('website.about.header', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('website.title', '???');

@@ -273,4 +273,13 @@ body {
   height: 500px;
 }
 
+.ml-form-embedContent {
+  color: #000000;
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  margin: 0 0 10px 0;
+  text-align: left;
+}
 </#macro>
