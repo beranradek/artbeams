@@ -32,6 +32,8 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.app-id', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.page.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.page.title', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.sdk.url', '???');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.nonce', 'aoF5vNxe');
+
 INSERT INTO localisation (entry_key, entry_value) VALUES ('google-tag.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('google-tag.config', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.id1', '???');

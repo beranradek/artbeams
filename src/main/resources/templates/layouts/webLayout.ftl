@@ -103,7 +103,7 @@
     <div id="fb-root"></div>
     <#-- Facebook SDK for comments; and for FB fanpage appId is added -->
     <#if xlat['fb.sdk.url']??>
-    <script async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"></script>
+    <script async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"<#if xlat['fb.nonce']??> nonce="${xlat['fb.nonce']}"</#if>></script>
     </#if>
     <header class="header">
       <!-- Fixed navbar -->
@@ -266,9 +266,11 @@
         <div class="p-4">
           <h4>${xlat['social.networks']}</h4>
           <#if xlat['fb.page.url']??>
-            <div class="fb-page" data-href="${xlat['fb.page.url']}" data-tabs="timeline" data-width="" data-height="" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+            <div class="fb-page" data-href="${xlat['fb.page.url']}"
+            data-tabs="timeline" data-width="" data-height="" data-small-header="true"
+            data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false">
               <blockquote cite="${xlat['fb.page.url']}" class="fb-xfbml-parse-ignore">
-                  <a href="${xlat['fb.page.url']}">${xlat['fb.page.title']}</a>
+                <a href="${xlat['fb.page.url']}">${xlat['fb.page.title']}</a>
               </blockquote>
             </div>
           </#if>
