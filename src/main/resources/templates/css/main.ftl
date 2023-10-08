@@ -68,7 +68,7 @@ a.navbar-brand {
 }
 
 .item-title a, .item-title a:active, .item-title a:hover, .item-title a:visited {
-    color: Chocolate;
+    color: #d2691e; /* Orange-chocolate-like */
 }
 
 a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
@@ -78,7 +78,7 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
 
 .btn {
     color: white;
-    background-color: Chocolate !important;
+    background-color: #d2691e !important; /* Orange-chocolate-like */
 }
 
 .btn-search {
@@ -129,7 +129,7 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
 
 .category-header {
     text-align: center;
-    background-color: Chocolate;
+    background-color: #d2691e; /* Orange-chocolate-like */
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
 }

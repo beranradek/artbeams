@@ -200,7 +200,7 @@
              </script>
 
              <#if xlat['mailer-lite.popup-form']??>
-               <a class="open-lightbox btn" href="#">${xlat['headline.offer.action']}</a>
+               <a class="open-lightbox btn" href="#" style="font-weight:500;font-size:18px">${xlat['headline.offer.action']}</a>
                <div style="display: none;">
                  <div id="headline-offer1-form">
                    <div class="ml-embedded" data-form="${xlat['mailer-lite.popup-form']}"></div>

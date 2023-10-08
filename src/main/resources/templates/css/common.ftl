@@ -16,6 +16,10 @@ cite {
   line-height: 1.8rem;
 }
 
+.btn {
+  font-weight: 500;
+}
+
 blockquote {
   margin-bottom: 2.3rem;
   margin-top: 1rem;
@@ -61,7 +65,7 @@ blockquote:before {
 .blog-main h5, .blog-sidebar h5,
 .blog-main h6, .blog-sidebar h6 {
   margin-top: 0;
-  font-weight: normal;
+  font-weight: 500;
   color: Chocolate;
 }
 
