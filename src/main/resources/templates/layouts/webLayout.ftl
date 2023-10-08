@@ -267,7 +267,7 @@
           <h4>${xlat['social.networks']}</h4>
           <#if xlat['fb.page.url']??>
             <div class="fb-page" data-href="${xlat['fb.page.url']}"
-            data-tabs="timeline" data-width="" data-height="" data-small-header="true"
+            data-tabs="timeline" data-width="292" data-height="500" data-small-header="true"
             data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false">
               <blockquote cite="${xlat['fb.page.url']}" class="fb-xfbml-parse-ignore">
                 <a href="${xlat['fb.page.url']}">${xlat['fb.page.title']}</a>

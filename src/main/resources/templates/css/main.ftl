@@ -268,4 +268,9 @@ body {
   text-align: center;
 }
 
+.fb-page {
+  width: 292px;
+  height: 500px;
+}
+
 </#macro>
