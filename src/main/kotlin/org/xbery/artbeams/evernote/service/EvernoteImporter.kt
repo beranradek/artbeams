@@ -2,6 +2,7 @@ package org.xbery.artbeams.evernote.service
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.repository.ArticleRepository
@@ -23,6 +24,7 @@ open class EvernoteImporter(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
+    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
     open fun importArticles(): List<Article> {
         val operationMsg = "Import of Evernote notes"
         logger.info("$operationMsg: started")
