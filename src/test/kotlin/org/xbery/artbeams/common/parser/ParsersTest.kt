@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.*
 /**
  * @author Radek Beran
  */
-class ParsersTest {
+internal class ParsersTest {
 
     @Test
     fun parseIntOpt() {

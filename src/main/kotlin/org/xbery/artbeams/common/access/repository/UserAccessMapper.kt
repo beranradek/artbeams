@@ -24,8 +24,8 @@ open class UserAccessMapper() : DynamicEntityMapper<UserAccess, UserAccessFilter
     val idAttr: Attribute<UserAccess, String> = add(Attr.ofString(cls, "id").get { e -> e.id }.primary())
     val timeAttr: Attribute<UserAccess, Instant> = add(Attr.ofInstant(cls, "access_time").get { e -> e.time })
     val dateAttr: Attribute<UserAccess, Date> = add(
-        Attr.of(cls, java.sql.Date::class.java, "access_date")
-            .get { e -> if (e.time != null) java.sql.Date(e.time.toEpochMilli()) else null })
+        Attr.of(cls, Date::class.java, "access_date")
+            .get { e -> if (e.time != null) Date(e.time.toEpochMilli()) else null })
     val ipAttr: Attribute<UserAccess, String> = add(Attr.ofString(cls, "ip").get { e -> e.ip })
     val userAgentAttr: Attribute<UserAccess, String> = add(Attr.ofString(cls, "user_agent").get { e -> e.userAgent })
     val entityTypeAttr: Attribute<UserAccess, String> =

@@ -6,10 +6,15 @@ import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
+import org.xbery.artbeams.common.file.TempFiles
+import org.xbery.artbeams.common.file.TempPath
 import org.xbery.artbeams.common.parser.Parsers
+import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.media.domain.FileData
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
+import org.xbery.artbeams.media.domain.ImageFormat
+import org.xbery.artbeams.media.service.ImageTransformer
+import java.io.*
+import java.nio.file.Files
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
@@ -22,30 +27,33 @@ import javax.sql.DataSource
  * @author Radek Beran
  */
 @Repository
-open class MediaRepository (private val dataSource: DataSource) {
+open class MediaRepository (
+    private val dataSource: DataSource,
+    private val imageTransformer: ImageTransformer,
+    private val localisationRepository: LocalisationRepository
+) {
+    companion object {
+        val CONTENT_TYPE_IMAGE_WEBP = "image/webp"
+    }
 
-    open fun storeFile(file: MultipartFile, privateAccess: Boolean): Boolean {
-        var result = false
-        val conn = dataSource.getConnection()
-        try {
+    open fun storeFile(file: MultipartFile, privateAccess: Boolean): Boolean =
+        storeFile(file.inputStream, file.originalFilename, file.size, file.contentType, privateAccess)
+
+    open fun storeFile(inputStream: InputStream, filename: String?, size: Long, contentType: String?, privateAccess: Boolean): Boolean {
+        var result: Boolean
+        dataSource.connection.use { conn ->
             val ps: PreparedStatement =
                 conn.prepareStatement("INSERT INTO media (filename, content_type, size, data, private_access, width, height) VALUES (?, ?, ?, ?, ?, ?, ?)")
-            val inputStream = file.inputStream
             try {
-                val filename = file.originalFilename
-                val size: Long = file.size
-                val contentType = file.contentType
                 ps.setString(1, filename)
                 ps.setString(2, contentType)
-                ps.setLong(3, file.size)
+                ps.setLong(3, size)
                 val isImg = contentType != null && isImage(contentType)
                 ps.setBoolean(5, privateAccess)
                 var width: Int? = null
                 var height: Int? = null
                 if (isImg) {
-                    val baos = ByteArrayOutputStream()
-                    IOUtils.copy(inputStream, baos)
-                    val imgBytes = baos.toByteArray()
+                    val imgBytes = streamToBytes(inputStream)
                     val dimensions = if (contentType != null) getImageDimensions(imgBytes, contentType) else Pair<Int?, Int?>(null, null)
                     width = dimensions.first
                     height = dimensions.second
@@ -53,30 +61,28 @@ open class MediaRepository (private val dataSource: DataSource) {
                 } else {
                     ps.setBinaryStream(4, inputStream, size)
                 }
-                if (width == null) ps.setNull(6, Types.INTEGER) else ps.setInt(
-                    6,
-                    width
-                )
-                if (height == null) ps.setNull(7, Types.INTEGER) else ps.setInt(
-                    7,
-                    height
-                )
+                width?.let { ps.setInt(6, it) } ?: ps.setNull(6, Types.INTEGER)
+                height?.let { ps.setInt(7, it) } ?: ps.setNull(7, Types.INTEGER)
                 val updatedCount: Int = ps.executeUpdate()
                 result = updatedCount == 1
             } finally {
-                if (ps != null) {
-                    ps.close()
-                }
-                if (inputStream != null) {
-                    inputStream.close()
-                }
-            }
-        } finally {
-            if (conn != null) {
-                conn.close()
+                ps.close()
+                inputStream.close()
             }
         }
         return result
+    }
+
+    open fun storeArticleImage(file: MultipartFile): Boolean {
+        TempFiles.createTempFilePath("article-image-" + file.originalFilename).use { inputFileTempPath ->
+            Files.copy(file.inputStream, inputFileTempPath.path)
+            val localisations = localisationRepository.getEntries()
+            val bigImgWidth = localisations.getOrElse("article.img.big.width") { "730" }.toInt()
+            val smallImgWidth = localisations.getOrElse("article.img.small.width") { "260" }.toInt()
+            storeArticleImageWithWidth(file.originalFilename, bigImgWidth, inputFileTempPath)
+            storeArticleImageWithWidth(file.originalFilename, smallImgWidth, inputFileTempPath)
+        }
+        return true
     }
 
     /**
@@ -86,27 +92,19 @@ open class MediaRepository (private val dataSource: DataSource) {
      */
     open fun deleteFile(filename: String, size: String?): Boolean {
         val widthOpt = size?.let { s -> Parsers.parseIntOpt(s) }
-        var result = false
-        val conn = dataSource.getConnection()
-        try {
+        var result: Boolean
+        val conn = dataSource.connection
+        conn.use { conn ->
             val ps: PreparedStatement =
                 conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { _ -> " AND width = ?" }
                     ?: ""))
-            try {
+            ps.use { ps ->
                 ps.setString(1, filename)
                 if (widthOpt != null) {
                     ps.setInt(2, widthOpt)
                 }
                 val updatedCount: Int = ps.executeUpdate()
                 result = updatedCount == 1
-            } finally {
-                if (ps != null) {
-                    ps.close()
-                }
-            }
-        } finally {
-            if (conn != null) {
-                conn.close()
             }
         }
         return result
@@ -120,14 +118,13 @@ open class MediaRepository (private val dataSource: DataSource) {
      */
     open fun findFile(filename: String, requestedSize: String?): FileData? {
         var files = mutableListOf<FileData>()
-        val conn = dataSource.getConnection()
-        try {
+        dataSource.connection.use { conn ->
             val ps: PreparedStatement =
                 conn.prepareStatement("SELECT filename, content_type, size, data, private_access, width, height FROM media WHERE filename = ?")
             ps.setString(1, filename)
-            try {
+            ps.use { ps ->
                 val rs: ResultSet = ps.executeQuery()
-                try {
+                rs.use { rs ->
                     while (rs.next()) {
                         val filename = rs.getString(1)
                         val contentType = rs.getString(2)
@@ -139,7 +136,7 @@ open class MediaRepository (private val dataSource: DataSource) {
                         files.add(
                             FileData(
                                 filename,
-                                if (contentType == null) MediaType.APPLICATION_OCTET_STREAM_VALUE else contentType,
+                                contentType ?: MediaType.APPLICATION_OCTET_STREAM_VALUE,
                                 size,
                                 data,
                                 privateAccess,
@@ -148,19 +145,7 @@ open class MediaRepository (private val dataSource: DataSource) {
                             )
                         )
                     }
-                } finally {
-                    if (rs != null) {
-                        rs.close()
-                    }
                 }
-            } finally {
-                if (ps != null) {
-                    ps.close()
-                }
-            }
-        } finally {
-            if (conn != null) {
-                conn.close()
             }
         }
         return selectFile(files, requestedSize)
@@ -173,13 +158,9 @@ open class MediaRepository (private val dataSource: DataSource) {
      */
     open fun listFiles(): List<FileData> {
         var files = mutableListOf<FileData>()
-        val conn = dataSource.getConnection()
-        try {
-            val ps: PreparedStatement =
-                conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media")
-            try {
-                val rs: ResultSet = ps.executeQuery()
-                try {
+        dataSource.connection.use { conn ->
+            conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media").use { ps ->
+                ps.executeQuery().use { rs ->
                     while (rs.next()) {
                         val filename = rs.getString(1)
                         val contentType = rs.getString(2)
@@ -199,19 +180,7 @@ open class MediaRepository (private val dataSource: DataSource) {
                             )
                         )
                     }
-                } finally {
-                    if (rs != null) {
-                        rs.close()
-                    }
                 }
-            } finally {
-                if (ps != null) {
-                    ps.close()
-                }
-            }
-        } finally {
-            if (conn != null) {
-                conn.close()
             }
         }
         return files.toList()
@@ -219,7 +188,7 @@ open class MediaRepository (private val dataSource: DataSource) {
 
     private fun isImage(contentType: String): Boolean = contentType.startsWith("image/")
 
-    private fun isWebpImage(contentType: String): Boolean = contentType == "image/webp"
+    private fun isWebpImage(contentType: String): Boolean = contentType == CONTENT_TYPE_IMAGE_WEBP
 
     private fun getWebpImageDimensions(imgBytes: ByteArray): Pair<Int, Int>? {
         val metadata = ImageMetadataReader.readMetadata(ByteArrayInputStream(imgBytes))
@@ -270,7 +239,7 @@ open class MediaRepository (private val dataSource: DataSource) {
                 } else {
                     val minWidth = width / 2
                     val maxWidth = width * 2
-                    file = files.find { f -> f.width != null && valueInInterval(f.width, minWidth, maxWidth) }
+                    file = files.find { f -> f.width != null && (f.width in minWidth..maxWidth) }
                     file
                         ?: if (files.all { f -> f.width != null && f.width > width }) {
                             // All images are bigger than requested size, choose the smallest
@@ -287,5 +256,35 @@ open class MediaRepository (private val dataSource: DataSource) {
         }
     }
 
-    private fun valueInInterval(value: Int, intMin: Int, intMax: Int): Boolean = value in intMin..intMax
+    private fun streamToBytes(inputStream: InputStream): ByteArray {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        IOUtils.copy(inputStream, byteArrayOutputStream)
+        return byteArrayOutputStream.toByteArray()
+    }
+
+    private fun storeArticleImageWithWidth(
+        fileName: String?,
+        targetWidth: Int,
+        inputFileTempPath: TempPath
+    ) {
+        TempFiles.createTempFilePath("article-image-$fileName-$targetWidth")
+            .use { transformedImageTempPath ->
+                val targetImageFormat = ImageFormat.WEBP
+                val targetContentType = CONTENT_TYPE_IMAGE_WEBP
+                imageTransformer.transform(
+                    FileInputStream(inputFileTempPath.path.toFile()),
+                    transformedImageTempPath.path,
+                    targetImageFormat,
+                    targetWidth = targetWidth
+                )
+                val transformedImageTempFile = transformedImageTempPath.path.toFile()
+                storeFile(
+                    FileInputStream(transformedImageTempFile),
+                    fileName,
+                    transformedImageTempFile.length(),
+                    targetContentType,
+                    false
+                )
+            }
+    }
 }

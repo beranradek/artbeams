@@ -2,7 +2,7 @@
   <div class="blog-item row border rounded overflow-hidden shadow-sm" style="width:100%">
     <#if article.image??>
       <div class="blog-item-image">
-        <a href="/${article.slug}"><img alt="${article.image}" src="/media/${article.image}?size=260" loading="lazy" height="260" width="260" /></a>
+        <a href="/${article.slug}"><img alt="${article.image}" src="/media/${article.image}?size=${xlat['article.img.small.width']}" loading="lazy" height="${xlat['article.img.small.width']}" width="${xlat['article.img.small.width']}" /></a>
       </div>
     </#if>
     <div class="blog-item-text<#if article.image??> col-md-6<#else> col-md-12</#if>">

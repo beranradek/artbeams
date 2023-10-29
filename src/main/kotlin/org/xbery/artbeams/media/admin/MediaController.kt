@@ -30,7 +30,7 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
     fun listFiles(request: HttpServletRequest): Any {
         val files = mediaRepository.listFiles()
         val model = createModel(request, Pair("files", files))
-        return ModelAndView(TplBasePath + "/fileList", model)
+        return ModelAndView("$TplBasePath/fileList", model)
     }
 
     @PostMapping("/admin/media/upload")
@@ -43,6 +43,21 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
             val success = mediaRepository.storeFile(file, privateAccessBoolean)
             if (success) {
                 redirect("/admin/media")
+            } else {
+                internalServerError()
+            }
+        }
+    }
+
+    @PostMapping("/admin/media/upload-article-image")
+    fun uploadArticleImage(request: HttpServletRequest, file: MultipartFile): Any {
+        val originalFilename = file.originalFilename
+        return if (file.isEmpty || originalFilename == null || originalFilename.isEmpty()) {
+            badRequest()
+        } else {
+            val success = mediaRepository.storeArticleImage(file)
+            if (success) {
+                okResponse()
             } else {
                 internalServerError()
             }

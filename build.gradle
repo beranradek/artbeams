@@ -90,6 +90,8 @@ dependencies {
     implementation("org.apache.pdfbox:pdfbox:2.0.17")
 
     // Working with webp and other images
+    implementation("com.sksamuel.scrimage:scrimage-core:4.1.1")
+    implementation("com.sksamuel.scrimage:scrimage-webp:4.1.1")
     implementation("com.drewnoakes:metadata-extractor:2.16.0")
 
     // Testing Spring Boot application

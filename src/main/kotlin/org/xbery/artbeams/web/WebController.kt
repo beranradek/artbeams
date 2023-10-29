@@ -96,7 +96,7 @@ open class WebController(
     }
 
     @GetMapping(value = ["/robots", "/robots.txt", "/robot.txt"])
-    fun robots(request: HttpServletRequest, response: HttpServletResponse): Unit {
+    fun robots(request: HttpServletRequest, response: HttpServletResponse) {
         val resource: Resource = resourceLoader.getResource("classpath:robots.txt")
         val fileStream: InputStream = resource.inputStream
         try {
@@ -104,7 +104,7 @@ open class WebController(
                 CacheControl.maxAge(6, TimeUnit.HOURS).cachePublic()
             response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
             response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=robots.txt")
-            response.setContentType("text/plain")
+            response.contentType = "text/plain"
             IOUtils.copy(fileStream, response.outputStream)
             response.flushBuffer()
         } finally {
@@ -115,18 +115,13 @@ open class WebController(
     }
 
     @GetMapping("/sitemap.xml")
-    fun sitemap(request: HttpServletRequest, response: HttpServletResponse): Unit {
+    fun sitemap(request: HttpServletRequest, response: HttpServletResponse) {
         val cacheControl: CacheControl = CacheControl.maxAge(6, TimeUnit.HOURS).cachePublic()
         response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=sitemap.xml")
-        response.setContentType("application/xml")
-        val writer: PrintWriter = response.writer
-        try {
+        response.contentType = "application/xml"
+        response.writer.use { writer ->
             writeSitemap(this.getUrlBase(request), writer)
-        } finally {
-            if (writer != null) {
-                writer.close()
-            }
         }
     }
 
@@ -199,7 +194,7 @@ open class WebController(
                 ModelAndView("search", model)
             }
         } finally {
-            searchCount = searchCount - 1
+            searchCount -= 1
         }
     }
 

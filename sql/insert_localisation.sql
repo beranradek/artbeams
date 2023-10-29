@@ -68,3 +68,6 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.rejectAll', '
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.url', '/admin/articles/???/edit');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.title', 'Examples');
+
+INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.small.width', '260');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.big.width', '730');

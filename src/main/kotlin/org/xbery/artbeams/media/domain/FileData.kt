@@ -7,7 +7,7 @@ import org.springframework.http.MediaType
  *
  * @author Radek Beran
  */
-data class FileData(
+class FileData(
     val filename: String,
     val contentType: String,
     val size: Long,
