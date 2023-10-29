@@ -15,6 +15,7 @@ import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.service.ImageTransformer
 import java.io.*
 import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Types
@@ -74,8 +75,8 @@ open class MediaRepository (
     }
 
     open fun storeArticleImage(file: MultipartFile): Boolean {
-        TempFiles.createTempFilePath("article-image-" + file.originalFilename).use { inputFileTempPath ->
-            Files.copy(file.inputStream, inputFileTempPath.path)
+        TempFiles.createTempFilePath("article-image-", "-" + file.originalFilename).use { inputFileTempPath ->
+            Files.copy(file.inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
             val localisations = localisationRepository.getEntries()
             val bigImgWidth = localisations.getOrElse("article.img.big.width") { "730" }.toInt()
             val smallImgWidth = localisations.getOrElse("article.img.small.width") { "260" }.toInt()
