@@ -97,9 +97,7 @@ open class WebController(
 
     @GetMapping(value = ["/robots", "/robots.txt", "/robot.txt"])
     fun robots(request: HttpServletRequest, response: HttpServletResponse) {
-        val resource: Resource = resourceLoader.getResource("classpath:robots.txt")
-        val fileStream: InputStream = resource.inputStream
-        try {
+        resourceLoader.getResource("classpath:robots.txt").inputStream.use { fileStream ->
             val cacheControl: CacheControl =
                 CacheControl.maxAge(6, TimeUnit.HOURS).cachePublic()
             response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
@@ -107,10 +105,6 @@ open class WebController(
             response.contentType = "text/plain"
             IOUtils.copy(fileStream, response.outputStream)
             response.flushBuffer()
-        } finally {
-            if (fileStream != null) {
-                fileStream.close()
-            }
         }
     }
 
@@ -176,7 +170,7 @@ open class WebController(
     @GetMapping("/search")
     fun search(request: HttpServletRequest): Any {
         return try {
-            searchCount = searchCount + 1
+            searchCount += 1
             if (searchCount > 1) {
                 ModelAndView("searchOverloaded", createBlogModel(request))
             } else {

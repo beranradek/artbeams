@@ -248,7 +248,7 @@ open class ProductController(
     private fun sendProductDownloadedNotification(product: Product, user: User) {
         val productAuthor = userService.findById(product.createdBy)
         if (productAuthor != null) {
-            if (productAuthor.email != null && !productAuthor.email.isEmpty()) {
+            if (productAuthor.email != null && productAuthor.email.isNotEmpty()) {
                 val subject =
                     normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName} downloaded ${product.title}")
                 val body =

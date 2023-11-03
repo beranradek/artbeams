@@ -76,7 +76,7 @@ open class CommentServiceImpl(
                 val userOpt: Optional<User> = userRepository.findById(article.createdBy)
                 if (userOpt.isPresent) {
                     val user: User = userOpt.get()
-                    if (user.email != null && !user.email.isEmpty()) {
+                    if (user.email != null && user.email.isNotEmpty()) {
                         val subject: String =
                             normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
                         val body: String =

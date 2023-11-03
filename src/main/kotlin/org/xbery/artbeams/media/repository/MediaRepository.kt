@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
+import org.xbery.artbeams.common.file.FileNames
 import org.xbery.artbeams.common.file.TempFiles
 import org.xbery.artbeams.common.file.TempPath
 import org.xbery.artbeams.common.parser.Parsers
@@ -13,7 +14,10 @@ import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.media.domain.FileData
 import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.service.ImageTransformer
-import java.io.*
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.FileInputStream
+import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.sql.PreparedStatement
@@ -40,6 +44,11 @@ open class MediaRepository (
     open fun storeFile(file: MultipartFile, privateAccess: Boolean): Boolean =
         storeFile(file.inputStream, file.originalFilename, file.size, file.contentType, privateAccess)
 
+    /**
+     * Stores file into DB.
+     *
+     * @param inputStream input stream, closed after writing
+     */
     open fun storeFile(inputStream: InputStream, filename: String?, size: Long, contentType: String?, privateAccess: Boolean): Boolean {
         var result: Boolean
         dataSource.connection.use { conn ->
@@ -74,16 +83,20 @@ open class MediaRepository (
         return result
     }
 
-    open fun storeArticleImage(file: MultipartFile): Boolean {
-        TempFiles.createTempFilePath("article-image-", "-" + file.originalFilename).use { inputFileTempPath ->
-            Files.copy(file.inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
+    /**
+     * Stores article image with various size variants for article list and detail and
+     * returns name of resulting image if images were stored successfully
+     * (all size variants have the same name, only stored image width/size differs).
+     */
+    open fun storeArticleImage(inputStream: InputStream, originalFileName: String): String? {
+        return TempFiles.createTempFilePath("article-image-", "-$originalFileName").use { inputFileTempPath ->
+            Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
             val localisations = localisationRepository.getEntries()
             val bigImgWidth = localisations.getOrElse("article.img.big.width") { "730" }.toInt()
             val smallImgWidth = localisations.getOrElse("article.img.small.width") { "260" }.toInt()
-            storeArticleImageWithWidth(file.originalFilename, bigImgWidth, inputFileTempPath)
-            storeArticleImageWithWidth(file.originalFilename, smallImgWidth, inputFileTempPath)
+            storeArticleImageWithWidth(originalFileName, bigImgWidth, inputFileTempPath)
+            return storeArticleImageWithWidth(originalFileName, smallImgWidth, inputFileTempPath)
         }
-        return true
     }
 
     /**
@@ -94,12 +107,8 @@ open class MediaRepository (
     open fun deleteFile(filename: String, size: String?): Boolean {
         val widthOpt = size?.let { s -> Parsers.parseIntOpt(s) }
         var result: Boolean
-        val conn = dataSource.connection
-        conn.use { conn ->
-            val ps: PreparedStatement =
-                conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { _ -> " AND width = ?" }
-                    ?: ""))
-            ps.use { ps ->
+        dataSource.connection.use { conn ->
+            conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { _ -> " AND width = ?" } ?: "")).use { ps ->
                 ps.setString(1, filename)
                 if (widthOpt != null) {
                     ps.setInt(2, widthOpt)
@@ -124,8 +133,7 @@ open class MediaRepository (
                 conn.prepareStatement("SELECT filename, content_type, size, data, private_access, width, height FROM media WHERE filename = ?")
             ps.setString(1, filename)
             ps.use { ps ->
-                val rs: ResultSet = ps.executeQuery()
-                rs.use { rs ->
+                ps.executeQuery().use { rs ->
                     while (rs.next()) {
                         val filename = rs.getString(1)
                         val contentType = rs.getString(2)
@@ -153,9 +161,7 @@ open class MediaRepository (
     }
 
     /**
-     * Retrieves metadata of files from dababase, does not load their binary data.
-     * @param filename
-     * @return
+     * Retrieves metadata of files from database, does not load their binary data.
      */
     open fun listFiles(): List<FileData> {
         var files = mutableListOf<FileData>()
@@ -263,15 +269,20 @@ open class MediaRepository (
         return byteArrayOutputStream.toByteArray()
     }
 
+    /**
+     * Transforms image to webp and returns name of resulting image if it was stored successfully.
+     */
     private fun storeArticleImageWithWidth(
-        fileName: String?,
+        fileName: String,
         targetWidth: Int,
         inputFileTempPath: TempPath
-    ) {
-        TempFiles.createTempFilePath("article-image-$fileName-$targetWidth")
+    ): String? {
+        return TempFiles.createTempFilePath("article-image-", "-$targetWidth-$fileName")
             .use { transformedImageTempPath ->
                 val targetImageFormat = ImageFormat.WEBP
                 val targetContentType = CONTENT_TYPE_IMAGE_WEBP
+                val targetExt = "webp"
+                val targetFileName = FileNames.replaceOrAddExtension(fileName, targetExt)
                 imageTransformer.transform(
                     FileInputStream(inputFileTempPath.path.toFile()),
                     transformedImageTempPath.path,
@@ -279,13 +290,14 @@ open class MediaRepository (
                     targetWidth = targetWidth
                 )
                 val transformedImageTempFile = transformedImageTempPath.path.toFile()
-                storeFile(
+                val success = storeFile(
                     FileInputStream(transformedImageTempFile),
-                    fileName,
+                    targetFileName,
                     transformedImageTempFile.length(),
                     targetContentType,
                     false
                 )
+                if (success) targetFileName else null
             }
     }
 }

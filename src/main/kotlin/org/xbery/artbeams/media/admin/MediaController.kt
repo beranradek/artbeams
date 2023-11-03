@@ -13,7 +13,6 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.parser.Parsers
 import org.xbery.artbeams.media.repository.MediaRepository
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
 
@@ -43,21 +42,6 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
             val success = mediaRepository.storeFile(file, privateAccessBoolean)
             if (success) {
                 redirect("/admin/media")
-            } else {
-                internalServerError()
-            }
-        }
-    }
-
-    @PostMapping("/admin/media/upload-article-image")
-    fun uploadArticleImage(request: HttpServletRequest, file: MultipartFile): Any {
-        val originalFilename = file.originalFilename
-        return if (file.isEmpty || originalFilename == null || originalFilename.isEmpty()) {
-            badRequest()
-        } else {
-            val success = mediaRepository.storeArticleImage(file)
-            if (success) {
-                okResponse()
             } else {
                 internalServerError()
             }

@@ -6,14 +6,7 @@
 
 <#assign fields = editForm.fields>
 
-<form action="/admin/media/upload-article-image" method="POST" enctype="multipart/form-data" class="form-horizontal">
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-    <div class="form-group row">
-        <label>Upload article image <input type="file" name="file" /></label>
-        <button type="submit" class="btn btn-primary">OK</button>
-    </div>
-</form>
-<form action="/admin/articles/save" method="post" class="form-horizontal">
+<form action="/admin/articles/save" method="POST" class="form-horizontal" enctype="multipart/form-data">
   <div>
     <#-- <button type="submit" name="save" accesskey="s" class="btn btn-sm" style="float:right">Save</button> -->
     <h1>${fields.title.value!}</h1>
@@ -29,6 +22,7 @@
     </label>&nbsp;
     <label>Image
       <input type="text" name="${fields.image.name}" value="${fields.image.value!}" size="30"/>
+      <input type="file" name="${fields.file.name}" />
     </label>
   </div>
 

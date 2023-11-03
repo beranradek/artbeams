@@ -1,5 +1,6 @@
 package org.xbery.artbeams.articles.domain
 
+import net.formio.upload.UploadedFile
 import org.xbery.artbeams.common.assets.domain.EditedTimeValidity
 import java.util.*
 
@@ -13,6 +14,7 @@ data class EditedArticle(
     val slug: String,
     val title: String,
     val image: String?,
+    val file: UploadedFile?,
     val perex: String,
     val bodyMarkdown: String,
     override val validFrom: Date,

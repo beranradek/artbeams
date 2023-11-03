@@ -5,7 +5,6 @@ import org.apache.http.NameValuePair
 import org.apache.http.StatusLine
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpPost
-import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
@@ -20,14 +19,13 @@ import org.xbery.artbeams.common.mailer.config.MailerConfig
  */
 @Service
 open class Mailer(private val mailerConfig: MailerConfig) {
-    private val Logger: Logger = LoggerFactory.getLogger(this::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     open fun sendMail(subject: String, body: String, to: String) {
-        Logger.info("Sending email ${subject} to ${to}")
+        logger.info("Sending email ${subject} to ${to}")
         val mailerApiUrl =
             "https://api:${mailerConfig.apiKey}@api.mailgun.net/v2/${mailerConfig.domain}/messages"
-        val httpClient: CloseableHttpClient = HttpClients.createDefault()
-        try {
+        HttpClients.createDefault().use { httpClient ->
             val httpPost = HttpPost(mailerApiUrl)
             val params = mutableListOf<NameValuePair>()
             params.add(BasicNameValuePair("from", mailerConfig.from))
@@ -44,27 +42,20 @@ open class Mailer(private val mailerConfig: MailerConfig) {
             // Please note that if response content is not fully consumed the underlying
             // connection cannot be safely re-used and will be shut down and discarded
             // by the connection manager.
-            val response = httpClient.execute(httpPost)
-            try {
+            httpClient.execute(httpPost).use { response ->
                 val statusLine: StatusLine = response.statusLine
                 val status: Int = statusLine.statusCode
                 val responseEntity: HttpEntity = response.entity
-                Logger.info("Response status: ${statusLine}")
-                if (status >= 200 && status < 300 ) {
+                logger.info("Response status: ${statusLine}")
+                if (status in 200..299) {
                     EntityUtils.consume(responseEntity)
-                    Logger.info("Email ${subject} to ${to} was successfully sent.")
+                    logger.info("Email ${subject} to ${to} was successfully sent.")
                 } else {
                     val response: String =
                         if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
-                            Logger.error("Error while sending email ${subject} to ${to}. Unexpected response status ${status} with response ${response}")
-                }
-            } finally {
-                if (response != null) {
-                    response.close()
+                    logger.error("Error while sending email ${subject} to ${to}. Unexpected response status ${status} with response ${response}")
                 }
             }
-        } finally {
-            httpClient.close()
         }
     }
 }

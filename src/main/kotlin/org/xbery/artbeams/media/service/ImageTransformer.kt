@@ -24,7 +24,7 @@ class ImageTransformer {
      * Transforms file read from given input stream to target format and width (in pixels), using given compression level.
      * Defaults for compression level and quality were tested on WEBP for the same good quality/size ratio as achieved via IrfanView.
      *
-     * @param inputStream input file
+     * @param inputStream input file, closed after transformation
      * @param targetPath path of output file
      * @param targetFormat Format of output file. Defaults to [ImageFormat.WEBP].
      * @param compressionLevel compression level of output file, must be between 0 (none) and 9 (max), defaults to 8
@@ -40,10 +40,12 @@ class ImageTransformer {
         quality: Int = 90,
         targetWidth: Int? = null,
         scaleMethod: ScaleMethod = ScaleMethod.Lanczos3) {
-        val writer = getImageWriter(targetFormat, compressionLevel, quality)
-        var image = ImmutableImage.loader().fromStream(inputStream)
-        targetWidth?.let { image = image.scaleToWidth(it, scaleMethod, true) }
-        image.output(writer, targetPath)
+        inputStream.use { iStream ->
+            val writer = getImageWriter(targetFormat, compressionLevel, quality)
+            var image = ImmutableImage.loader().fromStream(iStream)
+            targetWidth?.let { image = image.scaleToWidth(it, scaleMethod, true) }
+            image.output(writer, targetPath)
+        }
     }
 
     private fun getImageWriter(format: ImageFormat, compressionLevel: Int, quality: Int): ImageWriter {

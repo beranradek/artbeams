@@ -1,6 +1,6 @@
 # Overridden configuration for production
 
 # Templates configuration
-spring.freemarker.cache=true
+spring.freemarker.cache: true
 
-# admin.allowed-ip=89.177.133.190
+# admin.allowed-ip: 89.177.133.190

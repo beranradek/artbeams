@@ -2,41 +2,41 @@
 # Application configuration
 # #########################
 
-server.error.whitelabel.enabled=false
+server.error.whitelabel.enabled: false
 # Session timeout. Longer for editing articles without saving them "each minute".
-server.servlet.session.timeout=120m
-spring.jackson.serialization.indent-output=true
-spring.messages.fallback-to-system-locale=false
-spring.servlet.multipart.max-file-size=4MB
-spring.servlet.multipart.max-request-size=4MB
+server.servlet.session.timeout: 120m
+spring.jackson.serialization.indent-output: true
+spring.messages.fallback-to-system-locale: false
+spring.servlet.multipart.max-file-size: 4MB
+spring.servlet.multipart.max-request-size: 4MB
 
 # Database configuration
 # ----------------------
-spring.datasource.driverClassName=org.postgresql.Driver
-#spring.datasource.url=jdbc:postgresql://localhost:5432/artbeams
-#spring.datasource.username=postgres
-#spring.datasource.password=postgres
-spring.datasource.url=${JDBC_DATABASE_URL}
-spring.datasource.username=${JDBC_DATABASE_USERNAME}
-spring.datasource.password=${JDBC_DATABASE_PASSWORD}
-spring.datasource.maxActive=10
-spring.datasource.maxIdle=5
-spring.datasource.minIdle=2
-spring.datasource.initialSize=5
-spring.datasource.removeAbandoned=true
+spring.datasource.driverClassName: org.postgresql.Driver
+#spring.datasource.url: jdbc:postgresql://localhost:5432/artbeams
+#spring.datasource.username: postgres
+#spring.datasource.password: postgres
+spring.datasource.url: ${JDBC_DATABASE_URL}
+spring.datasource.username: ${JDBC_DATABASE_USERNAME}
+spring.datasource.password: ${JDBC_DATABASE_PASSWORD}
+spring.datasource.maxActive: 10
+spring.datasource.maxIdle: 5
+spring.datasource.minIdle: 2
+spring.datasource.initialSize: 5
+spring.datasource.removeAbandoned: true
 
 # Mailer configuration
 # --------------------
 # Using Config Vars in Heroku Settings
-mailer.api-key=${MAILGUN_API_KEY}
-mailer.domain=${MAILGUN_DOMAIN}
-# Configured in DB: mailer.from=
+mailer.api-key: ${MAILGUN_API_KEY}
+mailer.domain: ${MAILGUN_DOMAIN}
+# Configured in DB: mailer.from
 
 # Templates configuration
 # -----------------------
-spring.freemarker.cache=false
+spring.freemarker.cache: false
 # Spring Boot recently changed the default extension from .ftl to .ftlh:
-spring.freemarker.suffix=.ftl
+spring.freemarker.suffix: .ftl
 
 # Resources configuration
 # -----------------------
@@ -51,18 +51,18 @@ spring.freemarker.suffix=.ftl
 # https://memorynotfound.com/spring-mvc-static-resources-webjars-caching/
 
 # Enable GZip compression of static resources
-server.compression.enabled=true
+server.compression.enabled: true
 
 # Cache-Control for static resources
 # Max-age for Cache-Control header in seconds
 # NOTE: Does not work, set in MvcConfig!
-# spring.resources.cache-period=3600
+# spring.resources.cache-period: 3600
 
 # Spring Security
 # ---------------
 # IP address or subnet that is allowed to access administration, see http://forum.springsource.org/showthread.php?102783-How-to-use-hasIpAddress&p=343971#post343971
 # IP address is processed by Spring Security's IpAddressMatcher. E.g. 192.168.0/24 for local subnetwork, 0:0:0:0:0:0:0:1 for IPv7 localhost
-# admin.allowed-ip=0:0:0:0:0:0:0:1
+# admin.allowed-ip: 0:0:0:0:0:0:0:1
 
 # Other configuration
 # -------------------

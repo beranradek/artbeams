@@ -47,6 +47,7 @@ data class Article(
             this.slug,
             this.title,
             this.image,
+            null,
             this.perex,
             this.bodyMarkdown,
             if (this.validFrom == null || this.validFrom == AssetAttributes.EmptyDate) {
