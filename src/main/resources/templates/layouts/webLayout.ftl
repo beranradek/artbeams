@@ -1,6 +1,6 @@
 <#macro page>
-<#import "/css/common.ftl" as commonCss>
-<#import "/css/main.ftl" as mainCss>
+<#import "/css/commonStyles.ftl" as commonCss>
+<#import "/css/mainStyles.ftl" as mainCss>
 <!DOCTYPE html>
 <html lang="cs">
  <head>

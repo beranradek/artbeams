@@ -1,5 +1,5 @@
 <#macro page>
-<#import "/css/common.ftl" as commonCss>
+<#import "/css/commonStyles.ftl" as commonCss>
 <#import "/css/mainAdmin.ftl" as mainAdminCss>
 <!DOCTYPE html>
 <html lang="en">

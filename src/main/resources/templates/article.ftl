@@ -1,7 +1,7 @@
 <#import "/layouts/webLayout.ftl" as layout>
 <#import "/author.ftl" as author>
 <#import "/metadata.ftl" as metadata>
-<#import "/share.ftl" as share>
+<#import "/socialShare.ftl" as socialShare>
 <#-- <#import "/fbComments.ftl" as fbComments> -->
 <#import "/comments/commentAdd.ftl" as commentAdd>
 <#import "/comments/commentList.ftl" as commentList>
@@ -22,11 +22,11 @@
 
     <#if article.showOnBlog>
       <@metadata.metadata></@metadata.metadata>
-      <@share.share></@share.share>
+      <@socialShare.share></@socialShare.share>
     </#if>
     <div>${article.body!}</div>
     <#if article.showOnBlog>
-      <@share.share></@share.share>
+      <@socialShare.share></@socialShare.share>
       <#-- <@fbComments.fbComments></@fbComments.fbComments> -->
       <@commentList.commentList title="${article.title!}"></@commentList.commentList>
       <#if commentForm??>

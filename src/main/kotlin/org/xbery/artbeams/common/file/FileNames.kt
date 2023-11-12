@@ -14,4 +14,13 @@ object FileNames {
         }
         return "$fileName.$ext"
     }
+
+    fun getExtension(fileName: String): String? {
+        if (fileName.isEmpty()) return null
+        val lastDotIndex = fileName.lastIndexOf('.')
+        if (lastDotIndex >= 0) {
+            return fileName.substring(lastDotIndex + 1)
+        }
+        return null
+    }
 }

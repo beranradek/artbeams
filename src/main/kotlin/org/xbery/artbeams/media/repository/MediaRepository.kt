@@ -21,7 +21,6 @@ import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.sql.PreparedStatement
-import java.sql.ResultSet
 import java.sql.Types
 import javax.imageio.ImageIO
 import javax.sql.DataSource
@@ -32,24 +31,73 @@ import javax.sql.DataSource
  * @author Radek Beran
  */
 @Repository
-open class MediaRepository (
+open class MediaRepository(
     private val dataSource: DataSource,
     private val imageTransformer: ImageTransformer,
     private val localisationRepository: LocalisationRepository
 ) {
-    companion object {
-        val CONTENT_TYPE_IMAGE_WEBP = "image/webp"
-    }
 
     open fun storeFile(file: MultipartFile, privateAccess: Boolean): Boolean =
         storeFile(file.inputStream, file.originalFilename, file.size, file.contentType, privateAccess)
+
+    open fun storeFile(
+        inputStream: InputStream,
+        filename: String,
+        size: Long,
+        contentType: String?,
+        targetFormat: String?,
+        targetWidth: Int?,
+        privateAccess: Boolean
+    ): Boolean {
+        if ((targetFormat == null || targetFormat.isEmpty()) && targetWidth == null) {
+            // Storing file without transformation
+            return storeFile(inputStream, filename, size, contentType, privateAccess)
+        }
+        return TempFiles.createTempFilePath("uploaded-media-file-", "-$filename").use { inputFileTempPath ->
+            Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
+            return TempFiles.createTempFilePath(
+                "uploaded-media-file-transformed-",
+                "-$targetFormat-$targetWidth-$filename"
+            ).use { transformedImageTempPath ->
+                val imageFormat = (
+                        if (targetFormat != null && targetFormat.isNotEmpty()) {
+                            ImageFormat.fromFormatName(targetFormat)
+                        } else {
+                            ImageFormat.fromFileName(filename)
+                        }
+                ) ?: ImageFormat.WEBP
+                val targetFileName = FileNames.replaceOrAddExtension(filename, imageFormat.name.lowercase())
+                val targetContentType = imageFormat.contentType
+                imageTransformer.transform(
+                    inputFileTempPath.path,
+                    transformedImageTempPath.path,
+                    imageFormat,
+                    targetWidth = targetWidth
+                )
+                val transformedImageTempFile = transformedImageTempPath.path.toFile()
+                return storeFile(
+                    FileInputStream(transformedImageTempFile),
+                    targetFileName,
+                    transformedImageTempFile.length(),
+                    targetContentType,
+                    privateAccess
+                )
+            }
+        }
+    }
 
     /**
      * Stores file into DB.
      *
      * @param inputStream input stream, closed after writing
      */
-    open fun storeFile(inputStream: InputStream, filename: String?, size: Long, contentType: String?, privateAccess: Boolean): Boolean {
+    open fun storeFile(
+        inputStream: InputStream,
+        filename: String?,
+        size: Long,
+        contentType: String?,
+        privateAccess: Boolean
+    ): Boolean {
         var result: Boolean
         dataSource.connection.use { conn ->
             val ps: PreparedStatement =
@@ -64,7 +112,11 @@ open class MediaRepository (
                 var height: Int? = null
                 if (isImg) {
                     val imgBytes = streamToBytes(inputStream)
-                    val dimensions = if (contentType != null) getImageDimensions(imgBytes, contentType) else Pair<Int?, Int?>(null, null)
+                    val dimensions =
+                        if (contentType != null) getImageDimensions(imgBytes, contentType) else Pair<Int?, Int?>(
+                            null,
+                            null
+                        )
                     width = dimensions.first
                     height = dimensions.second
                     ps.setBinaryStream(4, ByteArrayInputStream(imgBytes), size)
@@ -108,7 +160,8 @@ open class MediaRepository (
         val widthOpt = size?.let { s -> Parsers.parseIntOpt(s) }
         var result: Boolean
         dataSource.connection.use { conn ->
-            conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { _ -> " AND width = ?" } ?: "")).use { ps ->
+            conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { _ -> " AND width = ?" }
+                ?: "")).use { ps ->
                 ps.setString(1, filename)
                 if (widthOpt != null) {
                     ps.setInt(2, widthOpt)
@@ -166,36 +219,37 @@ open class MediaRepository (
     open fun listFiles(): List<FileData> {
         var files = mutableListOf<FileData>()
         dataSource.connection.use { conn ->
-            conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media").use { ps ->
-                ps.executeQuery().use { rs ->
-                    while (rs.next()) {
-                        val filename = rs.getString(1)
-                        val contentType = rs.getString(2)
-                        val size = rs.getLong(3)
-                        val privateAccess = rs.getBoolean(4)
-                        val width = rs.getInt(5)
-                        val height = rs.getInt(6)
-                        files.add(
-                            FileData(
-                                filename,
-                                contentType ?: MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                                size,
-                                ByteArray(0),
-                                privateAccess,
-                                width,
-                                height
+            conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media")
+                .use { ps ->
+                    ps.executeQuery().use { rs ->
+                        while (rs.next()) {
+                            val filename = rs.getString(1)
+                            val contentType = rs.getString(2)
+                            val size = rs.getLong(3)
+                            val privateAccess = rs.getBoolean(4)
+                            val width = rs.getInt(5)
+                            val height = rs.getInt(6)
+                            files.add(
+                                FileData(
+                                    filename,
+                                    contentType ?: MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                                    size,
+                                    ByteArray(0),
+                                    privateAccess,
+                                    width,
+                                    height
+                                )
                             )
-                        )
+                        }
                     }
                 }
-            }
         }
         return files.toList()
     }
 
     private fun isImage(contentType: String): Boolean = contentType.startsWith("image/")
 
-    private fun isWebpImage(contentType: String): Boolean = contentType == CONTENT_TYPE_IMAGE_WEBP
+    private fun isWebpImage(contentType: String): Boolean = contentType == ImageFormat.WEBP.contentType
 
     private fun getWebpImageDimensions(imgBytes: ByteArray): Pair<Int, Int>? {
         val metadata = ImageMetadataReader.readMetadata(ByteArrayInputStream(imgBytes))
@@ -280,8 +334,8 @@ open class MediaRepository (
         return TempFiles.createTempFilePath("article-image-", "-$targetWidth-$fileName")
             .use { transformedImageTempPath ->
                 val targetImageFormat = ImageFormat.WEBP
-                val targetContentType = CONTENT_TYPE_IMAGE_WEBP
-                val targetExt = "webp"
+                val targetContentType = targetImageFormat.contentType
+                val targetExt = targetImageFormat.name.lowercase()
                 val targetFileName = FileNames.replaceOrAddExtension(fileName, targetExt)
                 imageTransformer.transform(
                     FileInputStream(inputFileTempPath.path.toFile()),

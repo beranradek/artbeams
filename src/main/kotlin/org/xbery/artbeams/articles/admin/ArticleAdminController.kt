@@ -2,9 +2,7 @@ package org.xbery.artbeams.articles.admin
 
 import net.formio.FormData
 import net.formio.FormMapping
-import net.formio.servlet.ServletRequestParams
 import net.formio.validation.ValidationResult
-import org.apache.commons.io.IOUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
@@ -24,8 +22,6 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.form.SpringHttpServletRequestParams
 import org.xbery.artbeams.media.repository.MediaRepository
-import java.io.File
-import java.io.FileOutputStream
 import java.nio.channels.Channels
 import javax.servlet.http.HttpServletRequest
 
@@ -55,7 +51,7 @@ open class ArticleAdminController(
                     to articles, "emptyId"
                     to AssetAttributes.EmptyId
         )
-        return ModelAndView(tplBasePath + "/articleList", model)
+        return ModelAndView("$tplBasePath/articleList", model)
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
@@ -117,12 +113,12 @@ open class ArticleAdminController(
         validationResult: ValidationResult,
         errorMessage: String?
     ): Any {
-        val editForm: FormMapping<EditedArticle> = editFormDef.fill(FormData<EditedArticle>(edited, validationResult))
+        val editForm: FormMapping<EditedArticle> = editFormDef.fill(FormData(edited, validationResult))
         // Fetch categories codebook
         val categories: List<Category> = categoryRepository.findCategories()
         val model = createModel(
             request, "editForm" to editForm, "errorMessage" to errorMessage, "categories" to categories
         )
-        return ModelAndView(tplBasePath + "/articleEdit", model)
+        return ModelAndView("$tplBasePath/articleEdit", model)
     }
 }

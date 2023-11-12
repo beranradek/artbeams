@@ -1,6 +1,8 @@
 package org.xbery.artbeams.articles.admin
 
-import net.formio.*
+import net.formio.Field
+import net.formio.FormMapping
+import net.formio.Forms
 import net.formio.upload.UploadedFile
 import org.xbery.artbeams.articles.domain.EditedArticle
 import org.xbery.artbeams.common.form.FormUtils
@@ -24,6 +26,7 @@ open class ArticleForm {
                 Field.TEXT
             )
             .field<Boolean>("showOnBlog", Field.CHECK_BOX)
-            .field<List<String>>("categories", Field.DROP_DOWN_CHOICE).build(FormUtils.CzConfig)
+            .field<List<String>>("categories", Field.DROP_DOWN_CHOICE)
+            .build(FormUtils.CzConfig)
     }
 }
