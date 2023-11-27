@@ -1,4 +1,3 @@
-<#macro common>
 /** Styles common for both administration and public web */
 code {
   font-size: 80%;
@@ -9,7 +8,15 @@ img {
 }
 
 cite {
-    font-style: italic;
+  font-style: italic;
+}
+
+.page-content .form-control {
+  margin-bottom: 0.5rem;
+}
+
+.login-form .form-control {
+  margin-bottom: 0.5rem;
 }
 
 .blog-sidebar {
@@ -20,7 +27,8 @@ cite {
   font-weight: 500;
 }
 
-blockquote {
+/* Blockquote scoped to main blog column. Also Facebook page in sidebar markup uses the blockquote. */
+.blog-main blockquote {
   margin-bottom: 2.3rem;
   margin-top: 1rem;
   padding: 2rem 2rem 2rem 2rem;
@@ -30,7 +38,7 @@ blockquote {
   overflow: auto;
 }
 
-blockquote:before {
+.blog-main blockquote:before {
   content: "“";
   font-family: "Times New Roman", Times, serif;
   font-size: 3rem;
@@ -199,5 +207,3 @@ blockquote:before {
   /* Otherwise label does not start right bellow above inputs */
   padding-left:0;
 }
-
-</#macro>

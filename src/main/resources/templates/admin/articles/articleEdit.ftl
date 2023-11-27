@@ -1,4 +1,4 @@
-<#import "/layouts/adminLayout.ftl" as layout>
+<#import "/adminLayout.ftl" as layout>
 <@layout.page>
 <#if errorMessage??>
   <div class="alert alert-danger" role="alert">${errorMessage}</div>
@@ -6,14 +6,13 @@
 
 <#assign fields = editForm.fields>
 
-<form action="/admin/articles/save" method="POST" class="form-horizontal" enctype="multipart/form-data">
+<form action="/admin/articles/save" method="POST" enctype="multipart/form-data" style="margin:0.5rem">
   <div>
-    <#-- <button type="submit" name="save" accesskey="s" class="btn btn-sm" style="float:right">Save</button> -->
     <h1>${fields.title.value!}</h1>
   </div>
   <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}"/>
   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-  <div class="form-group row">
+  <div class="form-group" style="padding-bottom:0.5rem">
     <label>Slug
       <input type="text" name="${fields.slug.name}" value="${fields.slug.value!}" size="30"/>
     </label>&nbsp;
@@ -22,22 +21,22 @@
     </label>&nbsp;
     <label>Image
       <input type="text" name="${fields.image.name}" value="${fields.image.value!}" size="30"/>
-      <input type="file" name="${fields.file.name}" />
+      <input type="file" name="${fields.file.name}"/>
     </label>
   </div>
 
-  <div class="form-group row">
+  <div class="form-group">
     <label for="${fields.perex.elementId}">Perex&nbsp;</label>
-    <textarea name="${fields.perex.name}" id="${fields.perex.elementId}" rows="2" cols="160">${fields.perex.value!}</textarea>
+    <textarea name="${fields.perex.name}" id="${fields.perex.elementId}" rows="2" cols="160" style="max-width:100%">${fields.perex.value!}</textarea>
   </div>
 
   <div class="container">
   <div class="row">
     <div class="col-sm-6">
-        <button type="submit" name="save" accesskey="s" class="btn btn-sm align-right">Save</button>
+        <button type="submit" name="save" accesskey="s" class="btn btn-secondary btn-sm align-right">Save</button>
         <div class="align-left"><label for="markdown-content">Article body</label></div>
         <textarea name="${fields.bodyMarkdown.name}" id="markdown-content" rows="32">${fields.bodyMarkdown.value!}</textarea>
-        <button type="submit" name="save" accesskey="s" class="btn btn-sm align-right">Save</button>
+        <button type="submit" name="save" accesskey="s" class="btn btn-secondary btn-sm align-right">Save</button>
     </div>
     <div class="col-sm-6">
         <#-- Preview of HTML rendered from markdown -->
@@ -54,47 +53,50 @@
 
   <div class="form-group row">
     <label for="${fields.externalId.elementId}" class="col-form-label col-sm-2 label-fix">External ID</label>
-    <div class="col-sm-10">
-        <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value!}" id="${fields.externalId.elementId}"/>
+    <div class="col-sm-3">
+        <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value!}" id="${fields.externalId.elementId}" class="form-control"/>
     </div>
   </div>
   <div class="form-group row">
     <label for="${fields.validFrom.elementId}" class="col-form-label col-sm-2 label-fix">Valid from</label>
-    <div class="col-sm-10">
-        <input type="text" name="${fields.validFrom.name}" value="${fields.validFrom.value}" id="${fields.validFrom.elementId}"/>
+    <div class="col-sm-3">
+        <input type="text" name="${fields.validFrom.name}" value="${fields.validFrom.value}" id="${fields.validFrom.elementId}" class="form-control"/>
     </div>
   </div>
   <div class="form-group row">
     <label for="${fields.validTo.elementId}" class="col-form-label col-sm-2 label-fix">Valid to</label>
-    <div class="col-sm-10">
-        <input type="text" name="${fields.validTo.name}" value="${fields.validTo.value!}" id="${fields.validTo.elementId}"/>
+    <div class="col-sm-3">
+        <input type="text" name="${fields.validTo.name}" value="${fields.validTo.value!}" id="${fields.validTo.elementId}" class="form-control"/>
     </div>
   </div>
   <div class="form-group row">
     <label for="${fields.keywords.elementId}" class="col-form-label col-sm-2 label-fix">Keywords</label>
-    <div class="col-sm-10">
-        <input type="text" name="${fields.keywords.name}" value="${fields.keywords.value!}" id="${fields.keywords.elementId}"/>
+    <div class="col-sm-3">
+        <input type="text" name="${fields.keywords.name}" value="${fields.keywords.value!}" id="${fields.keywords.elementId}" class="form-control"/>
     </div>
   </div>
   <div class="form-group row">
     <label for="${fields.showOnBlog.elementId}" class="col-form-label col-sm-2 label-fix">Show on blog</label>
-    <div class="col-sm-10">
-        <input type="text" name="${fields.showOnBlog.name}" value="${fields.showOnBlog.value!}" id="${fields.showOnBlog.elementId}" />
+    <div class="col-sm-2">
+        <input type="text" name="${fields.showOnBlog.name}" value="${fields.showOnBlog.value!}" id="${fields.showOnBlog.elementId}" class="form-control"/>
     </div>
   </div>
   <div class="form-group row">
     <label for="${fields.categories.elementId}" class="col-form-label col-sm-2 label-fix">Categories</label>
-    <div class="col-sm-10">
-        <select name="${fields.categories.name}" multiple size="5" id="${fields.categories.elementId}">
+    <div class="col-sm-2">
+        <select name="${fields.categories.name}" multiple size="5" id="${fields.categories.elementId}" class="form-control">
           <#list categories as category>
             <option value="${category.id}"<#if fields.categories.filledObjects?seq_contains(category.id)> selected</#if>>${category.title}</option>
           </#list>
         </select>
     </div>
   </div>
-  <div class="form-group">
-    <button type="submit" class="btn btn-primary">Save and leave</button>
-    <button type="submit" name="save" accesskey="s" class="btn btn-secondary">Save</button>
+  <div class="form-group row">
+    <div class="col-sm-2 col-form-label"></div>
+    <div class="col-sm-10">
+        <button type="submit" class="btn btn-primary">Save and leave</button>
+        <button type="submit" name="save" accesskey="s" class="btn btn-secondary">Save</button>
+    </div>
   </div>
 </form>
 
@@ -105,32 +107,55 @@ Extracted from NPM package markdown-it-attrs-3.0.3.tgz:
 -->
 <script src="/static/js/markdown-it-attrs.browser-3.0.3.js?v190420"></script>
 <script>
-// On page load handler:
+<!-- Document on ready implementation -->
+function ready(callback) {
+    // in case the document is already rendered
+    if (document.readyState!='loading') callback();
+    // modern browsers
+    else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
+    // IE <= 8
+    else document.attachEvent('onreadystatechange', function(){
+      if (document.readyState=='complete') callback();
+    });
+}
+
 var md = null;
-document.addEventListener('DOMContentLoaded', function() {
+var markdownContentElement = document.getElementById('markdown-content');
+function updateResult(md) {
+    if (md) {
+        if (markdownContentElement) {
+            var markdown = markdownContentElement.value;
+            var html = md.render(markdown);
+            var markdownOutputElement = document.getElementById('markdown-output');
+            if (markdownOutputElement) {
+                markdownOutputElement.innerHTML = html;
+            }
+        }
+    }
+}
+
+ready(function() {
     markdownItAttrs = window.markdownItAttrs;
     md = window.markdownit().use(markdownItAttrs);
     updateResult(md);
-}, false);
+});
 
 var oldVal = "";
-$('#markdown-content').on("change keyup paste", function() {
-    var currentVal = $(this).val();
-    if(currentVal == oldVal) {
-        return; //check to prevent multiple simultaneous triggers
+function onMarkdownChange() {
+    var currentVal = markdownContentElement.value;
+    if (currentVal == oldVal) {
+      return; // check to prevent multiple simultaneous triggers
     }
 
     oldVal = currentVal;
     // action to be performed on textarea changed
     updateResult(md);
-});
+}
 
-function updateResult(md) {
-    if (md) {
-        var markdown = $('#markdown-content').val();
-        var html = md.render(markdown);
-        $('#markdown-output').html(html);
-    }
+if (markdownContentElement) {
+    markdownContentElement.addEventListener('change', onMarkdownChange, false);
+    markdownContentElement.addEventListener('keyup', onMarkdownChange, false);
+    markdownContentElement.addEventListener('paste', onMarkdownChange, false);
 }
 </script>
 </@layout.page>

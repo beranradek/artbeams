@@ -1,4 +1,4 @@
-<#import "/layouts/webLayout.ftl" as layout>
+<#import "/webLayout.ftl" as layout>
 <#import "/articleCard.ftl" as articleCard>
 <@layout.page>
   <#list articles as article>

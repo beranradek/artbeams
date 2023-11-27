@@ -1,12 +1,10 @@
 <#macro page>
-<#import "/css/commonStyles.ftl" as commonCss>
-<#import "/css/mainStyles.ftl" as mainCss>
 <!DOCTYPE html>
 <html lang="cs">
  <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="${xlat['author.name']}" />
   <#assign description = "${xlat['website.description']}">
   <#if article??>
@@ -58,15 +56,80 @@
 
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 
-  <script src="/webjars/jquery/3.0.0/jquery.min.js?v210718"></script>
-  <#-- colorbox JS must be in head and without async/defer so the popup in product page works! -->
-  <script src="/static/js/jquery.colorbox-min.js?v210718"></script>
-
   <!-- Bootstrap -->
-  <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/4.1.3/css/bootstrap.min.css" />
+  <!-- Based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
+  <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+  
+  <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
 
-  <#-- lightbox.css must be in head so the popup in product page works! -->
-  <link rel="stylesheet" type="text/css" href="/static/css/lightbox.css?v210718" />
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .b-example-divider {
+        width: 100%;
+        height: 3rem;
+        background-color: rgba(0, 0, 0, .1);
+        border: solid rgba(0, 0, 0, .15);
+        border-width: 1px 0;
+        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+      }
+
+      .b-example-vr {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 100vh;
+      }
+
+      .bi {
+        vertical-align: -.125em;
+        fill: currentColor;
+      }
+
+      .nav-scroller {
+        position: relative;
+        z-index: 2;
+        height: 2.75rem;
+        overflow-y: hidden;
+      }
+
+      .nav-scroller .nav {
+        display: flex;
+        flex-wrap: nowrap;
+        padding-bottom: 1rem;
+        margin-top: -1px;
+        overflow-x: auto;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .btn-bd-primary {
+        --bd-violet-bg: #712cf9;
+        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+        --bs-btn-font-weight: 600;
+        --bs-btn-color: var(--bs-white);
+        --bs-btn-bg: var(--bd-violet-bg);
+        --bs-btn-border-color: var(--bd-violet-bg);
+        --bs-btn-hover-color: var(--bs-white);
+        --bs-btn-hover-bg: #6528e0;
+        --bs-btn-hover-border-color: #6528e0;
+        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+        --bs-btn-active-color: var(--bs-btn-hover-color);
+        --bs-btn-active-bg: #5a23c8;
+        --bs-btn-active-border-color: #5a23c8;
+      }
+  </style>
 
   <#if xlat['google-tag.url']??>
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -91,85 +154,84 @@
     <!-- End MailerLite Universal -->
   </#if>
 
-  <#-- Embedding critical CSSs as recommended by Google PageSpeed Insights -->
-  <style>
-    <@commonCss.common></@commonCss.common>
-    <@mainCss.main></@mainCss.main>
-  </style>
+  <#-- NOTE: Improvement: Embedding critical CSSs as recommended by Google PageSpeed Insights -->
+  <!-- Custom styles for this template -->
+  <link rel="stylesheet" type="text/css" href="/static/css/common-styles.css" />
+  <link rel="stylesheet" type="text/css" href="/static/css/main-styles.css" />
 
   </head>
   <body class="d-flex flex-column h-100">
-    <#-- Layout based on https://getbootstrap.com/docs/4.2/examples/starter-template/ -->
     <div id="fb-root"></div>
     <#-- Facebook SDK for comments; and for FB fanpage appId is added -->
     <#if xlat['fb.sdk.url']??>
-    <script async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"<#if xlat['fb.nonce']??> nonce="${xlat['fb.nonce']}"</#if>></script>
+        <script async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"<#if xlat['fb.nonce']??> nonce="${xlat['fb.nonce']}"</#if>></script>
     </#if>
-    <header class="header">
-      <!-- Fixed navbar -->
-      <nav class="navbar navbar-expand-md">
-        <a class="navbar-brand" href="/">${xlat['website.title']}</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"><svg xmlns="http://www.w3.org/2000/svg" height="17px" viewBox="0 0 448 512"><!--! bars-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#949494}</style><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav mr-auto">
-              <#if xlat['menu.item1.title']??>
-                <li class="nav-item">
-                  <a class="nav-link" href="${xlat['menu.item1.url']}">${xlat['menu.item1.title']}</a>
+
+    <header>
+      <!-- Navbar, not fixed to the top (fixed-top), but static -->
+      <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">${xlat['website.title']}</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+              <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <#if xlat['menu.item1.title']??>
+                  <li class="nav-item">
+                    <a class="nav-link" href="${xlat['menu.item1.url']}">${xlat['menu.item1.title']}</a>
+                  </li>
+                </#if>
+                <#--
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Submenu 1</a>
+                  <div class="dropdown-menu" aria-labelledby="dropdown01">
+                -->
+                    <#-- <a class="dropdown-item" href="/item-url">Item title</a> -->
+                <#--
+                  </div>
                 </li>
-              </#if>
-              <#--
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Submenu 1</a>
-                <div class="dropdown-menu" aria-labelledby="dropdown01">
-              -->
-                  <#-- <a class="dropdown-item" href="/item-url">Item title</a> -->
-              <#--
-                </div>
-              </li>
-              -->
-              <#if xlat['menu.item2.title']??>
-                <li class="nav-item">
-                  <a class="nav-link" href="${xlat['menu.item2.url']}">${xlat['menu.item2.title']}</a>
-                </li>
-              </#if>
-              <#if xlat['menu.item3.title']??>
-                <li class="nav-item">
-                  <a class="nav-link" href="${xlat['menu.item3.url']}">${xlat['menu.item3.title']}</a>
-                </li>
-              </#if>
-              <#if xlat['menu.item4.title']??>
-                <li class="nav-item">
-                  <a class="nav-link" href="${xlat['menu.item4.url']}">${xlat['menu.item4.title']}</a>
-                </li>
-              </#if>
-              <#if xlat['menu.item5.title']??>
-                <li class="nav-item">
-                  <a class="nav-link" href="${xlat['menu.item5.url']}">${xlat['menu.item5.title']}</a>
-                </li>
-              </#if>
-              <#if xlat['menu.item6.title']??>
-                <li class="nav-item">
-                  <a class="nav-link" href="${xlat['menu.item6.url']}">${xlat['menu.item6.title']}</a>
-                </li>
-              </#if>
-            </ul>
-            <#if _loggedUser??>
-            <ul class="navbar-nav mr-4">
-              <li class="nav-item dropdown logged-user">
-                <a class="nav-link" href="#" id="dropdownUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#949494}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg> ${_loggedUser.login}</a>
-                <div class="dropdown-menu" aria-labelledby="dropdownUser">
-                  <#if _loggedUser.roleNames?seq_contains("admin")><a class="dropdown-item" href="/admin">${xlat['administration']}</a></#if>
-                  <a class="dropdown-item" href="/logout">${xlat['logout']}</a>
-                </div>
-              </li>
-            </ul>
-            </#if>
-            <form method="get" action="/search" class="form-inline my-2 my-lg-0">
-              <input type="text" name="query" class="form-control mr-sm-2" placeholder="Hledat" aria-label="${xlat['search']}">
-              <button class="btn my-2 my-sm-0 btn-search" type="submit">${xlat['search']}</button>
-            </form>
+                -->
+                <#if xlat['menu.item2.title']??>
+                  <li class="nav-item">
+                    <a class="nav-link" href="${xlat['menu.item2.url']}">${xlat['menu.item2.title']}</a>
+                  </li>
+                </#if>
+                <#if xlat['menu.item3.title']??>
+                  <li class="nav-item">
+                    <a class="nav-link" href="${xlat['menu.item3.url']}">${xlat['menu.item3.title']}</a>
+                  </li>
+                </#if>
+                <#if xlat['menu.item4.title']??>
+                  <li class="nav-item">
+                    <a class="nav-link" href="${xlat['menu.item4.url']}">${xlat['menu.item4.title']}</a>
+                  </li>
+                </#if>
+                <#if xlat['menu.item5.title']??>
+                  <li class="nav-item">
+                    <a class="nav-link" href="${xlat['menu.item5.url']}">${xlat['menu.item5.title']}</a>
+                  </li>
+                </#if>
+                <#if xlat['menu.item6.title']??>
+                  <li class="nav-item">
+                    <a class="nav-link" href="${xlat['menu.item6.url']}">${xlat['menu.item6.title']}</a>
+                  </li>
+                </#if>
+                <#if _loggedUser??>
+                  <li class="nav-item dropdown logged-user">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#949494}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg> ${_loggedUser.login}</a>
+                    <ul class="dropdown-menu">
+                      <#if _loggedUser.roleNames?seq_contains("admin")><li><a class="dropdown-item" href="/admin">${xlat['administration']}</a></li></#if>
+                      <li><a class="dropdown-item" href="/logout">${xlat['logout']}</a></li>
+                    </ul>
+                  </li>
+                </#if>
+              </ul>
+              <form method="get" action="/search" class="d-flex" role="search">
+                <input type="search" name="query" class="form-control me-2" placeholder="Hledat" aria-label="${xlat['search']}">
+                <button class="btn btn-search" type="submit" style="background-color:#2b5989!important">${xlat['search']}</button>
+              </form>
+         </div>
        </div>
      </nav>
      <#if showHeadline??>
@@ -192,23 +254,25 @@
                 </a>
              </p>
              <p>${xlat['headline.offer.description']}</p>
+
              <div id="headline-offer1" style="margin-top:1.3rem;text-align:center">
-             <script>
-                 jQuery(document).ready(function($) {
-                     $("#headline-offer1 .open-lightbox").colorbox({inline:true,href:"#headline-offer1-form",width:"90%",maxWidth:"600px"});
-                 });
-             </script>
-
-             <#if xlat['mailer-lite.popup-form']??>
-               <a class="open-lightbox btn" href="#" style="font-weight:500;font-size:18px">${xlat['headline.offer.action']}</a>
-               <div style="display: none;">
-                 <div id="headline-offer1-form">
-                   <div class="ml-embedded" data-form="${xlat['mailer-lite.popup-form']}"></div>
+               <#if xlat['mailer-lite.popup-form']??>
+                 <button type="button" data-bs-toggle="modal" data-bs-target="#headline-offer1-modal" class="btn headline-offer1-button">${xlat['headline.offer.action']}</button>
+                 <div id="headline-offer1-modal" class="modal fade" tabindex="-1" aria-labelledby="headline-offer1-modal-label" aria-hidden="true">
+                     <div class="modal-dialog">
+                         <div class="modal-content">
+                             <div class="modal-header no-title">
+                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+                             </div>
+                             <div class="modal-body">
+                                 <div class="ml-embedded" data-form="${xlat['mailer-lite.popup-form']}"></div>
+                             </div>
+                         </div>
+                     </div>
                  </div>
-               </div>
-             </#if>
-
+               </#if>
              </div>
+           
            </div>
            <div class="col-md-3"></div>
            <div class="col-md-3"></div>
@@ -946,7 +1010,8 @@
              }
           </style>
           <div id="mlb2-8308481" class="ml-form-embedContainer ml-subscribe-form ml-subscribe-form-8308481">
-             <div class="ml-form-align-center ">
+            <!-- NOTE: ml-form-align-left instead of ml-form-align-center (like social networks box) -->
+             <div class="ml-form-align-left">
                 <div class="ml-form-embedWrapper embedForm">
                    <div class="ml-form-embedHeader">
                       <img src="https://bucket.mlcdn.com/a/1442/1442900/images/624b89a78edc8f47fd1326963494846b06d05c80.jpeg" alt="Západ slunce" width="292" height="219" border="0" style="display: block;">
@@ -1036,54 +1101,122 @@
       </div>
     </#if>
   </main>
-
-  <footer class="footer mt-auto py-3">
+  
+  <footer class="footer mt-auto py-3 bg-body-tertiary">
     <div class="container align-center">
-        <#if xlat['personal-data.protection.url']??>
-            <span class="text-muted"><a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a></span>
-        </#if>
-        <#if xlat['cookies.url']??>
-            <#if xlat['personal-data.protection.url']??> | </#if>
-            <span class="text-muted"><a href="${xlat['cookies.url']}">${xlat['cookies.title']}</a></span>
-        </#if>
+      <#if xlat['personal-data.protection.url']??>
+          <span class="text-body-secondary"><a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a></span>
+      </#if>
+      <#if xlat['cookies.url']??>
+          <#if xlat['personal-data.protection.url']??> | </#if>
+          <span class="text-body-secondary"><a href="${xlat['cookies.url']}">${xlat['cookies.title']}</a></span>
+      </#if>
     </div>
     <div class="container align-center">
       <span class="text-muted">&copy; ${xlat['website.title']} | ${xlat['website.disclaimer']} | <a href="#">${xlat['goto.up']}</a></span>
     </div>
+    <div id="cookie-disclaimer" class="cookie-disclaimer">
+      <div class="cookie-close"><i class="fa fa-times"></i></div>
+      <div class="container">
+        <p>${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}">${xlat['cookies.info.more']}</a>.
+
+        <#if xlat['cookies.acceptAll']??>&nbsp;<button type="button" id="accept-cookie" class="btn btn-success">${xlat['cookies.acceptAll']}</button></#if>
+        <button type="button" id="close-cookie" class="btn btn-secondary">X</button></p>
+      </div>
+    </div>
   </footer>
-  <div class="cookie-info-bar">
-    ${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}">${xlat['cookies.info.more']}</a>.
-    <#if xlat['cookies.acceptAll']??><a class="cookie-agreement-set btn btn-primary btn-sm" href="#" role="button">${xlat['cookies.acceptAll']}</a></#if>
-    <a class="cookie-info-close btn btn-secondary btn-sm" href="#" role="button">X</a>
-  </div>
 
   <!-- Bootstrap core JavaScript -->
-  <script src="/webjars/popper.js/1.14.3/popper.min.js"></script>
-  <script src="/webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+
   <script>
-    if (document.cookie.indexOf("cookies_confirmed=") >= 0) {
-        jQuery(".cookie-info-bar").remove();
-    }
-    jQuery(".cookie-agreement-set").click(function () {
-        var exdate = new Date();
-        exdate.setDate(exdate.getDate() + 36500);
-        document.cookie = 'cookies_confirmed=1; path=/; expires=' + exdate.toGMTString();
-        jQuery(".cookie-info-bar").remove();
-        return false;
-    });
-    jQuery(".cookie-agreement-unset").click(function () {
-        var Cookies = document.cookie.split(';');
-        // set 1 Jan, 1970 expiry for every cookies
-        for (var i = 0; i < Cookies.length; i++)
-        document.cookie = Cookies[i] + "=;expires=" + new Date(0).toUTCString();
-        location.reload();
-        return false;
-    });
-    jQuery(".cookie-info-close").click(function () {
-        jQuery(".cookie-info-bar").remove();
-        return false;
-    });
-    </script>
+      function registerOnClickHandler(elementId, handler) {
+        var element = document.getElementById(elementId);
+        if (element) {
+            if (element.addEventListener) {
+              element.addEventListener('click', handler, false);
+            } else if (acceptCookie.attachEvent) {
+              // this is for IE, because it doesn't support addEventListener
+              // this strange part for making the keyword 'this' indicate the clicked anchor:
+              element.attachEvent('onclick', function() { return handler.apply(element, [window.event]) });
+            }
+        }
+      }
+
+      <!-- Document on ready implementation -->
+      function ready(callback) {
+          // in case the document is already rendered
+          if (document.readyState!='loading') callback();
+          // modern browsers
+          else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
+          // IE <= 8
+          else document.attachEvent('onreadystatechange', function(){
+              if (document.readyState=='complete') callback();
+          });
+      }
+
+      ready(function() {
+            <!-- Cookies confirmation -->
+            var cookie = false;
+            var cookieContent = document.getElementById('cookie-disclaimer');
+            var cookieName = 'cookies_confirmed';
+
+            checkCookie();
+
+            if (cookie === true) {
+                cookieContent.style.visibility = "hidden";
+            }
+
+            function setCookie(cname, cvalue, exdays) {
+              var d = new Date();
+              d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+              var expires = "expires=" + d.toGMTString();
+              document.cookie = cname + "=" + cvalue + "; " + expires;
+            }
+
+            function getCookie(cname) {
+              var name = cname + "=";
+              var ca = document.cookie.split(';');
+              for (var i = 0; i < ca.length; i++) {
+                var c = ca[i].trim();
+                if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
+              }
+              return "";
+            }
+
+            function checkCookie() {
+              var check = getCookie(cookieName);
+              if (check !== "") {
+                return cookie = true;
+              } else {
+                  return cookie = false; //setCookie(cookieName, "accepted", 365);
+              }
+            }
+
+            function acceptCookieHandler() {
+                setCookie(cookieName, "accepted", 365);
+                cookieContent.style.visibility = "hidden";
+            }
+
+            function unsetCookiesHandler() {
+                var Cookies = document.cookie.split(';');
+                // set 1 Jan, 1970 expiry for every cookies
+                for (var i = 0; i < Cookies.length; i++) {
+                    document.cookie = Cookies[i] + "=;expires=" + new Date(0).toUTCString();
+                }
+                location.reload();
+                return false;
+            }
+
+            function closeCookieHandler() {
+                cookieContent.style.visibility = "hidden";
+            }
+
+            registerOnClickHandler('accept-cookie', acceptCookieHandler);
+            registerOnClickHandler('close-cookie', closeCookieHandler);
+            registerOnClickHandler('unset-cookies', unsetCookiesHandler);
+      });
+  </script>
  </body>
 </html>
 </#macro>

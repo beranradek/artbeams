@@ -1,4 +1,4 @@
-<#import "/layouts/adminLayout.ftl" as layout>
+<#import "/adminLayout.ftl" as layout>
 <@layout.page>
 <#if errorMessage??>
   <div class="alert alert-danger" role="alert">${errorMessage}</div>

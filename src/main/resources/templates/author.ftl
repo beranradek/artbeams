@@ -1,11 +1,15 @@
 <#macro author>
-<div class="media pt-3 author">
-  <img alt="${xlat['author.name']}" src="${xlat['author.img.src']}" loading="lazy" width="${xlat['author.img.width']}" height="${xlat['author.img.height']}" class="rounded avatar" />
-  <div class="media-body pb-3 mb-0 lh-125 border-gray">
-    <div class="d-flex justify-content-between align-items-center w-100">
-      <strong class="text-gray-dark">${xlat['author.name']}</strong>
+<div class="card mb-3 author">
+  <div class="row g-0">
+    <div class="col-md-1">
+      <img alt="${xlat['author.name']}" src="${xlat['author.img.src']}" loading="lazy" width="${xlat['author.img.width']}" height="${xlat['author.img.height']}" class="img-fluid rounded-start avatar" />
     </div>
-    <span class="d-block">${xlat['author.about']}</span>
+    <div class="col-md-11">
+      <div class="card-body">
+        <strong class="card-title text-gray-dark">${xlat['author.name']}</strong>
+        <p class="card-text"><small class="text-body-secondary">${xlat['author.about']}</small></p>
+      </div>
+    </div>
   </div>
 </div>
 </#macro>

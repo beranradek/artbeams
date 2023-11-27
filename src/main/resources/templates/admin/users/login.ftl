@@ -1,4 +1,4 @@
-<#import "/layouts/adminLayout.ftl" as layout>
+<#import "/adminLayout.ftl" as layout>
 <@layout.page>
 
 <div class="login-form">
@@ -13,13 +13,13 @@
     <form action="/login" method="post" class="form-horizontal">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <div class="form-group">
-            <label for="username" class="col-sm-12 control-label">Login: </label>
+            <label for="username" class="col-sm-12 col-form-label">Login: </label>
             <div class="col-sm-12">
                 <input type="text" id="username" name="username" class="form-control" />
             </div>
         </div>
         <div class="form-group">
-            <label for="password" class="col-sm-12 control-label">Heslo: </label>
+            <label for="password" class="col-sm-12 col-form-label">Heslo: </label>
             <div class="col-sm-12">
                 <input type="password" id="password" name="password" class="form-control" />
             </div>

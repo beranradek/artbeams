@@ -45,10 +45,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") // mandatory as of Spring Framework 5
 
-    // Web libraries
-    implementation("org.webjars:webjars-locator:0.36")
-    implementation("org.webjars:bootstrap:4.1.3")
-
     // Spring Boot: Thanks to Spring Boot Gradle Plugin, versions can be omitted
     // Support for Web MVC, Freemarker templates, database layer, security
     implementation("org.springframework.boot:spring-boot-starter-web")

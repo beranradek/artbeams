@@ -1,4 +1,4 @@
-<#import "/layouts/adminLayout.ftl" as layout>
+<#import "/adminLayout.ftl" as layout>
 <@layout.page>
 
 <a class="btn btn-primary" href="/admin/products/${emptyId}/edit" role="button">New Product</a>

@@ -6,7 +6,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.resource.EncodedResourceResolver
-import org.springframework.web.servlet.resource.WebJarsResourceResolver
 import java.util.concurrent.TimeUnit
 
 /**
@@ -22,6 +21,6 @@ open class MvcConfig() : WebMvcConfigurer {
                 .setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS).cachePublic())
                 .resourceChain(true)
                 .addResolver(EncodedResourceResolver())
-                .addResolver(WebJarsResourceResolver())
+                // .addResolver(WebJarsResourceResolver()) // if webjars are used
   }
 }

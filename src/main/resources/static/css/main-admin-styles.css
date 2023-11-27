@@ -1,22 +1,16 @@
-<#macro mainAdmin>
 /* Globals */
-.bd-placeholder-img {
-  font-size: 1.125rem;
-  text-anchor: middle;
-}
-
-@media (min-width: 768px) {
-  .bd-placeholder-img-lg {
-    font-size: 3.5rem;
-  }
-}
-
-body {
-  padding-top: 5rem;
-}
-
 img {
   max-width: 100%;
+}
+
+.navbar-dark {
+  /* Navbar links color, see https://getbootstrap.com/docs/5.3/components/navbar/ */
+  --bs-navbar-color: white;
+  --bs-navbar-hover-color: white;
+  --bs-navbar-disabled-color: white;
+  --bs-navbar-active-color: white;
+  --bs-navbar-brand-color: white;
+  --bs-navbar-brand-hover-color: white;
 }
 
 /* My layout customizations... */
@@ -30,6 +24,7 @@ img {
 
 .login-form {
   margin: auto;
+  margin-top: 4rem;
   width: 380px;
 }
 
@@ -58,5 +53,3 @@ img {
 #markdown-content {
   width: 100%;
 }
-
-</#macro>
