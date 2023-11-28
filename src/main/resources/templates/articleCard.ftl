@@ -1,15 +1,13 @@
 <#macro articleCard article>
-  <div class="blog-item row border rounded overflow-hidden shadow-sm" style="width:100%">
+
+  <div class="blog-item border rounded overflow-hidden shadow-sm p-3">
     <#if article.image??>
-      <div class="blog-item-image">
-        <a href="/${article.slug}"><img alt="${article.image}" src="/media/${article.image}?size=${xlat['article.img.small.width']}" loading="lazy" height="${xlat['article.img.small.width']}" width="${xlat['article.img.small.width']}" /></a>
-      </div>
+      <a href="/${article.slug}" class="blog-item-image"><img alt="${article.image}" src="/media/${article.image}?size=${xlat['article.img.small.width']}" loading="lazy" height="${xlat['article.img.small.width']}" width="${xlat['article.img.small.width']}" /></a>
     </#if>
-    <div class="blog-item-text<#if article.image??> col-md-6<#else> col-md-12</#if>">
-      <h3 class="item-title mb-0"><a href="/${article.slug}">${article.title}</a></h3>
-      <div class="item-date mb-1 text-muted">${article.validFrom?string["d.M.yyyy, HH:mm"]}</div>
-      <p class="item-perex mb-auto">${(article.perex)[0..*350]}</p>
-    </div>
+    <span class="blog-item-text">
+        <h3 class="item-title mb-0"><a href="/${article.slug}">${article.title}</a></h3>
+        <span class="item-date mb-1 text-muted">${article.validFrom?string["d.M.yyyy, HH:mm"]}</span>
+        <p class="item-perex mb-auto">${(article.perex)[0..*350]}</p>
+    </span>
   </div>
-  <div style="clear:both"></div>
 </#macro>

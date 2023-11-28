@@ -226,28 +226,19 @@ body {
 }
 
 .blog-item {
-  margin-bottom: 25px;
+  width: 100%;
+  margin-bottom: 1.5rem;
   float: left;
 }
 
 .blog-item-image {
   float: left;
-  box-sizing: border-box;
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  min-width: 260px;
-  display: block;
+  padding-bottom: 1rem;
+  padding-right: 1.5rem;
 }
 
 .blog-item-text {
-  float: right;
-  box-sizing: border-box;
-  padding-left: 20px;
-  padding-right: 10px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  display: block;
+  min-width: 4rem;
 }
 
 .share-buttons {
