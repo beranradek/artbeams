@@ -56,9 +56,9 @@
 
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 
-  <!-- Bootstrap -->
-  <!-- Based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
-  <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+  <!-- Only one CSS file composed from Bootstrap, common-styles and public-styles: -->
+  <!-- Boostrap template is based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
+  <link href="/static/css/styles.css" type="text/css" rel="stylesheet">
   
   <style>
       .bd-placeholder-img {
@@ -154,11 +154,6 @@
     <!-- End MailerLite Universal -->
   </#if>
 
-  <#-- NOTE: Improvement: Embedding critical CSSs as recommended by Google PageSpeed Insights -->
-  <!-- Custom styles for this template -->
-  <link rel="stylesheet" type="text/css" href="/static/css/common-styles.css" />
-  <link rel="stylesheet" type="text/css" href="/static/css/main-styles.css" />
-
   </head>
   <body class="d-flex flex-column h-100">
     <div id="fb-root"></div>
@@ -182,16 +177,6 @@
                     <a class="nav-link" href="${xlat['menu.item1.url']}">${xlat['menu.item1.title']}</a>
                   </li>
                 </#if>
-                <#--
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Submenu 1</a>
-                  <div class="dropdown-menu" aria-labelledby="dropdown01">
-                -->
-                    <#-- <a class="dropdown-item" href="/item-url">Item title</a> -->
-                <#--
-                  </div>
-                </li>
-                -->
                 <#if xlat['menu.item2.title']??>
                   <li class="nav-item">
                     <a class="nav-link" href="${xlat['menu.item2.url']}">${xlat['menu.item2.title']}</a>
@@ -215,15 +200,6 @@
                 <#if xlat['menu.item6.title']??>
                   <li class="nav-item">
                     <a class="nav-link" href="${xlat['menu.item6.url']}">${xlat['menu.item6.title']}</a>
-                  </li>
-                </#if>
-                <#if _loggedUser??>
-                  <li class="nav-item dropdown logged-user">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#949494}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg> ${_loggedUser.login}</a>
-                    <ul class="dropdown-menu">
-                      <#if _loggedUser.roleNames?seq_contains("admin")><li><a class="dropdown-item" href="/admin">${xlat['administration']}</a></li></#if>
-                      <li><a class="dropdown-item" href="/logout">${xlat['logout']}</a></li>
-                    </ul>
                   </li>
                 </#if>
               </ul>
@@ -250,7 +226,7 @@
              <p style="font-size: 1.1rem;line-height: 1.6rem;">${xlat['headline.offer.header']}</p>
              <p class="align-center" style="margin-bottom:0.5rem">
                 <a href="${xlat['headline.offer.url']}">
-                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}"/>
+                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}" style="min-width:${xlat['headline.offer.img.width']}px" />
                 </a>
              </p>
              <p>${xlat['headline.offer.description']}</p>
@@ -1127,7 +1103,7 @@
   </footer>
 
   <!-- Bootstrap core JavaScript -->
-  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
 
   <script>
       function registerOnClickHandler(elementId, handler) {

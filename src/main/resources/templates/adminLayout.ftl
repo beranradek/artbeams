@@ -88,7 +88,7 @@
     <#-- NOTE: Improvement: Embedding critical CSSs as recommended by Google PageSpeed Insights -->
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="/static/css/common-styles.css" />
-    <link rel="stylesheet" type="text/css" href="/static/css/main-admin-styles.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/admin-styles.css" />
     
   </head>
   <body class="d-flex flex-column h-100">
@@ -134,11 +134,14 @@
               <a class="nav-link" href="/">Public web</a>
             </li>
             <#if _loggedUser??>
-            <li class="nav-item dropdown logged-user">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg> ${_loggedUser.login}</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/logout">${xlat['logout']}</a></li>
-              </ul>
+            <li class="nav-item logged-user">
+              <a class="nav-link href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                ${_loggedUser.login}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">${xlat['logout']}</a>
             </li>
             </#if>
           </ul>
@@ -159,7 +162,7 @@
     </#if>
     
     <!-- Bootstrap core JavaScript -->
-  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
   </body>
 </html>
 </#macro>
