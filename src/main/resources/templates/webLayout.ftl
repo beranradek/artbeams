@@ -217,7 +217,7 @@
              <#if !userAccessReport?? || !userAccessReport.mobileDevice>
                <div id="headline-portrait">
                  <div id="headline-portrait-holder">
-                   <a href="${xlat['headline.portrait.url']}"><img alt="Portrét" src="${xlat['headline.portrait.src']}" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" /></a>
+                   <a href="${xlat['headline.portrait.url']}"><img alt="Portrét" src="${xlat['headline.portrait.src']}" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" style="min-width:${xlat['headline.portrait.width']}px" /></a>
                  </div>
                </div>
              </#if>
