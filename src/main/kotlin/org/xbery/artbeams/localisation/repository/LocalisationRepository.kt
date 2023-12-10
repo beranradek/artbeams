@@ -1,7 +1,7 @@
 package org.xbery.artbeams.localisation.repository
 
 import org.springframework.stereotype.Repository
-import org.xbery.artbeams.common.mapping.repository.MapRepository
+import org.xbery.artbeams.common.mapping.repository.CachedSqlRepository
 import javax.sql.DataSource
 
 /**
@@ -10,4 +10,4 @@ import javax.sql.DataSource
  * @author Radek Beran
  */
 @Repository
-open class LocalisationRepository(dataSource: DataSource) : MapRepository("localisation", dataSource)
+open class LocalisationRepository(dataSource: DataSource) : CachedSqlRepository("localisation", dataSource)

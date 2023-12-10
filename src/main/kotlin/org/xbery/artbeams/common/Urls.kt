@@ -16,15 +16,15 @@ object Urls {
             if (url.endsWith("?") || url.endsWith("&")) {
                 url + paramQueryString
             } else {
-                url + "&" + paramQueryString
+                "$url&$paramQueryString"
             }
         } else {
-            url + "?" + paramQueryString
+            "$url?$paramQueryString"
         }
     }
 
     fun urlWithAnchor(url: String, anchor: String): String {
-        val anchorString = "#" + anchor
+        val anchorString = "#$anchor"
         return if (url.isEmpty()) {
             anchor
         } else if (url.endsWith(anchorString)) {

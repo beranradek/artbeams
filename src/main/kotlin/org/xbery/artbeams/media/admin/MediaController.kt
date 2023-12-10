@@ -51,7 +51,7 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
             if (!formData.isValid) {
                 val msg = "Media file upload form with validation errors: " + formData.validationResult
                 logger.warn(msg)
-                return listFilesWithVariables(
+                listFilesWithVariables(
                     request,
                     variablesForMediaFileUploadForm(formData.data, formData.validationResult, msg)
                 )
@@ -60,10 +60,10 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
                     var edited: UploadedMediaFile = formData.data
                     val uploadedFile = edited.file
                     val originalFileName = uploadedFile?.fileName
-                    return if (edited.file == null || originalFileName == null || originalFileName.isEmpty()) {
+                    if (edited.file == null || originalFileName == null || originalFileName.isEmpty()) {
                         val msg = "File not given or with unrecognized filename"
                         logger.warn(msg)
-                        return listFilesWithVariables(
+                        listFilesWithVariables(
                             request,
                             variablesForMediaFileUploadForm(formData.data, formData.validationResult, msg)
                         )
@@ -83,7 +83,7 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
                         } else {
                             val msg = "Processing of media file upload form failed while storing the file"
                             logger.error(msg)
-                            return listFilesWithVariables(
+                            listFilesWithVariables(
                                 request,
                                 variablesForMediaFileUploadForm(formData.data, formData.validationResult, msg)
                             )
@@ -91,7 +91,7 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
                     }
                 } catch (ex: Exception) {
                     logger.error("Processing of media file upload form failed: " + ex.message, ex)
-                    return listFilesWithVariables(
+                    listFilesWithVariables(
                         request,
                         variablesForMediaFileUploadForm(formData.data, formData.validationResult, "Processing of media file upload form failed")
                     )

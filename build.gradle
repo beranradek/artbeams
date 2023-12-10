@@ -82,6 +82,15 @@ dependencies {
     // HTTP client for communication with external services
     implementation("org.apache.httpcomponents:httpclient:4.5.10")
 
+    // JSON API
+    implementation "com.fasterxml.jackson.core:jackson-core:2.16.0"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.16.0"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.16.0"
+    implementation "com.fasterxml.jackson.module:jackson-modules-java8:2.16.0"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.16.0"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.16.0"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.0"
+
     // Working with PDF documents
     implementation("org.apache.pdfbox:pdfbox:2.0.17")
 

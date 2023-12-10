@@ -55,7 +55,7 @@ open class MediaRepository(
         }
         return TempFiles.createTempFilePath("uploaded-media-file-", "-$filename").use { inputFileTempPath ->
             Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
-            return TempFiles.createTempFilePath(
+            TempFiles.createTempFilePath(
                 "uploaded-media-file-transformed-",
                 "-$targetFormat-$targetWidth-$filename"
             ).use { transformedImageTempPath ->
@@ -75,7 +75,7 @@ open class MediaRepository(
                     targetWidth = targetWidth
                 )
                 val transformedImageTempFile = transformedImageTempPath.path.toFile()
-                return storeFile(
+                storeFile(
                     FileInputStream(transformedImageTempFile),
                     targetFileName,
                     transformedImageTempFile.length(),
@@ -147,7 +147,7 @@ open class MediaRepository(
             val bigImgWidth = localisations.getOrElse("article.img.big.width") { "730" }.toInt()
             val smallImgWidth = localisations.getOrElse("article.img.small.width") { "260" }.toInt()
             storeArticleImageWithWidth(originalFileName, bigImgWidth, inputFileTempPath)
-            return storeArticleImageWithWidth(originalFileName, smallImgWidth, inputFileTempPath)
+            storeArticleImageWithWidth(originalFileName, smallImgWidth, inputFileTempPath)
         }
     }
 
@@ -185,10 +185,10 @@ open class MediaRepository(
             val ps: PreparedStatement =
                 conn.prepareStatement("SELECT filename, content_type, size, data, private_access, width, height FROM media WHERE filename = ?")
             ps.setString(1, filename)
-            ps.use { ps ->
-                ps.executeQuery().use { rs ->
+            ps.use { preparedStatement ->
+                preparedStatement.executeQuery().use { rs ->
                     while (rs.next()) {
-                        val filename = rs.getString(1)
+                        val rsFilename = rs.getString(1)
                         val contentType = rs.getString(2)
                         val size = rs.getLong(3)
                         val data = rs.getBytes(4)
@@ -197,7 +197,7 @@ open class MediaRepository(
                         val height = rs.getInt(7)
                         files.add(
                             FileData(
-                                filename,
+                                rsFilename,
                                 contentType ?: MediaType.APPLICATION_OCTET_STREAM_VALUE,
                                 size,
                                 data,

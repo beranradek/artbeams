@@ -8,9 +8,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
-import org.xbery.artbeams.comments.admin.CommentForm
 import org.xbery.artbeams.comments.domain.EditedComment
-import org.xbery.artbeams.comments.repository.CommentRepository
 import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.Urls
 import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
@@ -25,10 +23,9 @@ import javax.servlet.http.HttpServletRequest
 @Controller
 @RequestMapping("/comments")
 open class CommentController(
-    private val commentRepository: CommentRepository,
     private val commentService: CommentService,
     private val antispamQuizRepository: AntispamQuizRepository,
-    private val common: ControllerComponents
+    common: ControllerComponents
 ) : BaseController(common) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -38,7 +35,7 @@ open class CommentController(
         val formData = commentFormDef.bind(params)
         return if (!formData.isValid) {
             val validationResult = formData.validationResult
-            logger.warn("Form with validation errors: " + validationResult)
+            logger.warn("Form with validation errors: $validationResult")
             val referrer = getReferrerUrl(request)
             val url = Urls.urlWithAnchor(
               Urls.urlWithParam(referrer, "commentInvalidForm", "invalid-form"), "comment-add")

@@ -28,6 +28,11 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.offer.img.he
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.offer.description', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('headline.offer.action', '???');
 
+INSERT INTO localisation (entry_key, entry_value) VALUES ('sidebar.offer.img.src', '/media/zapad_slunce.webp');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('sidebar.offer.img.alt', 'Západ slunce');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('sidebar.offer.img.width', '300');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('sidebar.offer.img.height', '225');
+
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.app-id', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.page.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.page.title', '???');
@@ -36,13 +41,8 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.nonce', 'aoF5vNxe'
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('google-tag.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('google-tag.config', '???');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.id1', '???');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.id2', '???');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form', '???');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.popup-form', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form.title', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form.text', '???');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('mailer-lite.form.success.url', '/produkt/???/potvrzeni?email=');
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('website.about.header', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('website.title', '???');

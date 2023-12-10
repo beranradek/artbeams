@@ -23,11 +23,11 @@ import org.xbery.artbeams.users.service.UserService
  */
 @Component
 open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
-    private val AdminRoleName: String = "admin"
-    private val AdminUserLogin: String = "admin"
+    private val adminRoleName: String = "admin"
+    private val adminUserLogin: String = "admin"
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun onApplicationEvent(event: ApplicationReadyEvent): Unit {
+    override fun onApplicationEvent(event: ApplicationReadyEvent) {
         logger.info("Application initialization - started")
         val context: ConfigurableApplicationContext = event.applicationContext
         val roleRepository: RoleRepository = context.getBean(RoleRepository::class.java)
@@ -43,37 +43,37 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
     }
 
     private fun findOrCreateAdminUser(userRepository: UserRepository, userService: UserService, adminRole: Role): User {
-        val user = userRepository.findByLogin(AdminUserLogin)
+        val user = userRepository.findByLogin(adminUserLogin)
         return if (user != null) {
             user
         } else {
             val defaultPass = "adminadmin"
-            val adminUser = EditedUser(AssetAttributes.EmptyId, AdminUserLogin, defaultPass, defaultPass, "Admin", "Admin", "", listOf(adminRole.id))
-            val userOpt = userService.saveUser(adminUser, OperationCtx(null))
+            val adminUser = EditedUser(AssetAttributes.EmptyId, adminUserLogin, defaultPass, defaultPass, "Admin", "Admin", "", listOf(adminRole.id))
+            val savedUser = requireNotNull(userService.saveUser(adminUser, OperationCtx(null)))
             logger.info("Default admin user created")
-            userOpt!!
+            savedUser
         }
     }
 
     private fun findOrCreateAdminRole(roleRepository: RoleRepository): Role {
         val roles = roleRepository.findRoles()
-        var adminRole = roles.find { it.name == AdminRoleName }
+        var adminRole = roles.find { it.name == adminRoleName }
         return if (adminRole != null) {
             adminRole
         } else {
-            adminRole = Role(AssetAttributes.Empty.updatedWith(AssetAttributes.EmptyId), AdminRoleName)
+            adminRole = Role(AssetAttributes.Empty.updatedWith(AssetAttributes.EmptyId), adminRoleName)
             adminRole = roleRepository.create(adminRole)
             logger.info("Default admin role created")
             adminRole
         }
     }
 
-    private fun loadConfig(repository: ConfigRepository): Unit {
+    private fun loadConfig(repository: ConfigRepository) {
         logger.info("Loading config")
         repository.reloadEntries()
     }
 
-    private fun loadLocalisation(repository: LocalisationRepository): Unit {
+    private fun loadLocalisation(repository: LocalisationRepository) {
         logger.info("Loading localisations")
         repository.reloadEntries()
     }

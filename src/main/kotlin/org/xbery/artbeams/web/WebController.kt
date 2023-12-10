@@ -4,7 +4,6 @@ import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
 import org.apache.commons.io.IOUtils
-import org.springframework.core.io.Resource
 import org.springframework.core.io.ResourceLoader
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpHeaders
@@ -15,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.service.ArticleService
 import org.xbery.artbeams.categories.service.CategoryService
-import org.xbery.artbeams.comments.admin.CommentForm
+import org.xbery.artbeams.comments.controller.CommentForm
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.comments.domain.EditedComment
 import org.xbery.artbeams.comments.service.CommentService
@@ -25,8 +24,6 @@ import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.products.service.ProductService
-import java.io.InputStream
-import java.io.PrintWriter
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest

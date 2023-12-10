@@ -49,11 +49,11 @@ open class Mailer(private val mailerConfig: MailerConfig) {
                 logger.info("Response status: ${statusLine}")
                 if (status in 200..299) {
                     EntityUtils.consume(responseEntity)
-                    logger.info("Email ${subject} to ${to} was successfully sent.")
+                    logger.info("Email $subject to $to was successfully sent.")
                 } else {
-                    val response: String =
+                    val responseString: String =
                         if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
-                    logger.error("Error while sending email ${subject} to ${to}. Unexpected response status ${status} with response ${response}")
+                    logger.error("Error while sending email $subject to ${to}. Unexpected response status $status with response $responseString")
                 }
             }
         }

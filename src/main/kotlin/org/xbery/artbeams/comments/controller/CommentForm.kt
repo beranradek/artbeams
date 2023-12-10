@@ -1,4 +1,4 @@
-package org.xbery.artbeams.comments.admin
+package org.xbery.artbeams.comments.controller
 
 import net.formio.Field
 import net.formio.FormMapping

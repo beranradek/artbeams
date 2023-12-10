@@ -154,7 +154,7 @@ CREATE INDEX idx_comments_entity_id ON comments (entity_id);
 
 CREATE TABLE config (
 	entry_key VARCHAR(120) NOT NULL PRIMARY KEY,
-	entry_value VARCHAR(512) NOT NULL
+	entry_value VARCHAR(1024) NOT NULL
 );
 
 CREATE TABLE localisation (
