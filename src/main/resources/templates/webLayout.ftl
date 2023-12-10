@@ -201,7 +201,7 @@
      </nav>
      <#if showHeadline??>
        <div id="headline" style="background-image: url('/media/headline<#if userAccessReport?? && userAccessReport.mobileDevice>-mobile</#if>.webp')">
-         <div class="row">
+       <div class="row">
            <div class="col-md-3">
              <#if !userAccessReport?? || !userAccessReport.mobileDevice>
                <div id="headline-portrait">
@@ -230,10 +230,11 @@
            <div class="col-md-3"></div>
            <div class="col-md-3"></div>
        </div>
+       </div>
      </#if>
 
      <#if xlat['mailer-lite.form.title']??>
-       <div id="headline-offer1-modal" class="modal fade" tabindex="-1" aria-labelledby="headline-offer1-modal-label" aria-hidden="true">
+       <div id="headline-offer1-modal" class="modal fade" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header no-title">
