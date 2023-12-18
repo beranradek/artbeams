@@ -113,10 +113,15 @@ open class ProductController(
             val fullNameOpt = findNameInRequest(request)
             val emailOpt = findEmailInRequest(request)
             if (emailOpt != null) {
-                userSubscriptionService.confirmConsent(fullNameOpt, emailOpt.replace(' ', '+'), product.id)
-                mailingApi.subscribeToGroup(emailOpt, fullNameOpt ?: "", requireNotNull(product.mailingGroupId))
-                // Redirect to this page without email and name parameters shown in URL
-                redirect("/produkt/$slug/odeslano")
+                var user = userService.findByEmail(emailOpt)
+                if (user != null) {
+                    userSubscriptionService.confirmConsent(fullNameOpt, user.email, product.id)
+                    mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId))
+                    // Redirect to this page without email and name parameters shown in URL
+                    redirect("/produkt/$slug/odeslano")
+                } else {
+                    unauthorized()
+                }
             } else {
                 renderProductArticle(request, product, product.slug + "-odeslano", false)
             }
@@ -137,14 +142,6 @@ open class ProductController(
             if (email != null) {
                 // User must exist and confirm the consent before he/she can download the product
                 var user = userService.findByEmail(email)
-                if (user == null) {
-                    // User does not exist in database yet,
-                    // TODO: we could verify his consent against the remote mailing list,
-                    // and then register him in database:
-                    val fullNameOpt = findNameInRequest(request)
-                    userSubscriptionService.confirmConsent(fullNameOpt, email, product.id)
-                    user = userService.findByEmail(email)
-                }
                 if (user != null) {
                     // Update user with full name from request if it is present (and not set in user entity yet)
                     updateUserWithFullName(request, user)
