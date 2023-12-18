@@ -7,5 +7,7 @@ data class EditedProduct(
     val id: String,
     val slug: String,
     val title: String,
-    val fileName: String?
+    val fileName: String?,
+    val confirmationMailingGroupId: String?,
+    val mailingGroupId: String?
 )

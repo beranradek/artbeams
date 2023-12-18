@@ -45,13 +45,12 @@ class PasswordHashing {
     }
 
     fun verifyPasswordHash(passwHash: String?, password: String?): Boolean {
-        if (passwHash == null || password == null || passwHash.trim { it <= ' ' }.length == 0) return false
+        if (passwHash == null || password == null || passwHash.trim { it <= ' ' }.isEmpty()) return false
         val pwdHash = Base64.getDecoder().decode(passwHash.toByteArray(StandardCharsets.UTF_8))
         // check if salt length is too big - either truncated data or some
         if (SALT_LENGTH >= pwdHash.size) // random garbage
             return false
-        val md: MessageDigest
-        md = try {
+        val md = try {
             MessageDigest.getInstance(DIGEST_ALGORITHM)
         } catch (e: NoSuchAlgorithmException) {
             throw IllegalStateException("error initializing MessageDigest: " + e.message, e)

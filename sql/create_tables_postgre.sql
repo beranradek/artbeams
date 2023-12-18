@@ -85,7 +85,9 @@ CREATE TABLE products (
 	modified_by VARCHAR(40) DEFAULT NULL,
 	slug VARCHAR(128) DEFAULT NULL,
 	title VARCHAR(128) DEFAULT NULL,
-	filename VARCHAR(128) DEFAULT NULL
+	filename VARCHAR(128) DEFAULT NULL,
+	confirmation_mailing_group_id VARCHAR(128) DEFAULT NULL,
+	mailing_group_id VARCHAR(128) DEFAULT NULL
 );
 
 CREATE TABLE user_access (

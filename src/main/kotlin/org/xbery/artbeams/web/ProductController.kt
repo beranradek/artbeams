@@ -1,5 +1,7 @@
 package org.xbery.artbeams.web
 
+import net.formio.FormMapping
+import net.formio.servlet.ServletRequestParams
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
 import org.slf4j.Logger
@@ -11,14 +13,19 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.service.ArticleService
+import org.xbery.artbeams.common.Urls
 import org.xbery.artbeams.common.access.domain.EntityKey
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.mailer.service.Mailer
 import org.xbery.artbeams.common.text.NormalizationHelper
+import org.xbery.artbeams.mailing.api.MailingApi
+import org.xbery.artbeams.mailing.controller.SubscriptionForm
+import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.media.domain.FileData
 import org.xbery.artbeams.media.repository.MediaRepository
 import org.xbery.artbeams.orders.service.OrderService
@@ -44,43 +51,85 @@ open class ProductController(
     private val userService: UserService,
     private val orderService: OrderService,
     private val mediaRepository: MediaRepository,
-    private val mailer: Mailer
+    private val mailer: Mailer,
+    private val mailingApi: MailingApi,
 ) : BaseController(controllerComponents) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
-    @GetMapping("/produkt/{slug}/potvrzeni")
-    fun productConfirmInfo(request: HttpServletRequest, @PathVariable slug: String): Any {
+    @PostMapping("/produkt/{slug}/subscribe")
+    fun subscribe(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.findBySlug(slug)
         return if (product != null) {
-            val fullNameOpt = findNameInRequest(request)
-            val emailOpt = findEmailInRequest(request)
-            emailOpt?.let { email ->
-                userSubscriptionService.subscribe(fullNameOpt, email, product.id)
+            val params = ServletRequestParams(request)
+            val formData = subscriptionFormDef.bind(params)
+            return if (!formData.isValid) {
+                val validationResult = formData.validationResult
+                logger.warn("Form with validation errors: $validationResult")
+                val referrer = getReferrerUrl(request)
+                val url = Urls.urlWithParam(referrer, "subscriptionInvalidForm", "invalid-form")
+                redirect(url)
+            } else {
+                val formData: SubscriptionFormData = formData.data
+                try {
+                    userSubscriptionService.subscribe(formData.name, formData.email, product.id)
+                    mailingApi.subscribeToGroup(formData.email, formData.name, requireNotNull(product.confirmationMailingGroupId))
+                    redirect("/produkt/$slug/potvrzeni")
+                } catch (ex: Exception) {
+                    logger.error("Error while subscribing user ${formData.email}/${formData.name} to product ${slug}: ${ex.message}", ex)
+                    val referrer = getReferrerUrl(request)
+                    val url = Urls.urlWithParam(referrer, "subscriptionError", "subscription-error")
+                    redirect(url)
+                }
             }
+        } else {
+            notFound()
+        }
+    }
+
+    /**
+     * Shows confirmation page after subscription request to given product.
+     * Just read operation without side effect.
+     */
+    @GetMapping("/produkt/{slug}/potvrzeni")
+    fun showSubscriptionInfo(request: HttpServletRequest, @PathVariable slug: String): Any {
+        val product = productService.findBySlug(slug)
+        return if (product != null) {
             renderProductArticle(request, product, product.slug + "-potvrzeni", false)
         } else {
             notFound()
         }
     }
 
+    /**
+     * Confirms user's consent with subscription and subscribes user to mailing group related to given product.
+     * This subscription sends an email with the digital product itself.
+     * Finally, an HTML page about sending of the product is rendered.
+     */
     @GetMapping("/produkt/{slug}/odeslano")
-    fun productSent(request: HttpServletRequest, @PathVariable slug: String): Any {
+    fun confirmSubscriptionAndSendProduct(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.findBySlug(slug)
         return if (product != null) {
             val fullNameOpt = findNameInRequest(request)
             val emailOpt = findEmailInRequest(request)
-            emailOpt?.let { email ->
-                userSubscriptionService.confirmConsent(fullNameOpt, email, product.id)
+            if (emailOpt != null) {
+                userSubscriptionService.confirmConsent(fullNameOpt, emailOpt.replace(' ', '+'), product.id)
+                mailingApi.subscribeToGroup(emailOpt, fullNameOpt ?: "", requireNotNull(product.mailingGroupId))
+                // Redirect to this page without email and name parameters shown in URL
+                redirect("/produkt/$slug/odeslano")
+            } else {
+                renderProductArticle(request, product, product.slug + "-odeslano", false)
             }
-            renderProductArticle(request, product, product.slug + "-odeslano", false)
         } else {
             notFound()
         }
     }
 
+    /**
+     * Serves binary data of product to user identified by email in the request.
+     */
     @GetMapping("/produkt/{slug}/download")
-    fun findFile(request: HttpServletRequest, @PathVariable slug: String): ResponseEntity<*> {
+    fun serveProductData(request: HttpServletRequest, @PathVariable slug: String): ResponseEntity<*> {
         val product = productService.findBySlug(slug)
         val productFileName = product?.fileName
         return if (product != null && productFileName != null) {
@@ -148,7 +197,7 @@ open class ProductController(
     }
 
     /**
-     * GET product detail.
+     * GET product detail HTML page.
      */
     @GetMapping("/produkt/{slug}")
     fun productDetail(request: HttpServletRequest, @PathVariable slug: String): Any {
@@ -179,7 +228,7 @@ open class ProductController(
             val urlBase: String = getUrlBase(request)
             val customerInfo =
                 customer.email + (if (customer.fullName.isEmpty()) "" else " (" + customer.fullName + ")")
-            pdfMetadata.creator = urlBase + " for " + customerInfo
+            pdfMetadata.creator = "$urlBase for $customerInfo"
             pdfDocument.documentInformation = pdfMetadata
             pdfDocument.save(pdfOutputStream)
         } finally {
@@ -222,12 +271,15 @@ open class ProductController(
             )
             ModelAndView("productArticle", model)
         } else {
-            logger.error("Article ${articleSlug} not found")
+            logger.error("Article $articleSlug not found")
             notFound()
         }
     }
 
-    private fun findEmailInRequest(request: HttpServletRequest): String? = findParamInRequest(request, "email")
+    private fun findEmailInRequest(request: HttpServletRequest): String? {
+        val param = findParamInRequest(request, "email")
+        return param?.replace(' ', '+') ?: param // support of emails containing '+'
+    }
 
     private fun findNameInRequest(request: HttpServletRequest): String? = findParamInRequest(request, "name")
 
@@ -256,5 +308,9 @@ open class ProductController(
                 mailer.sendMail(subject, body, productAuthor.email)
             }
         }
+    }
+
+    companion object {
+        val subscriptionFormDef: FormMapping<SubscriptionFormData> = SubscriptionForm.definition
     }
 }

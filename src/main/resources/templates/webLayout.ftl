@@ -241,7 +241,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
                   </div>
                   <div class="modal-body">
-                     <@subscriptionForm.subscriptionForm></@subscriptionForm.subscriptionForm>
+                     <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug']></@subscriptionForm.subscriptionForm>
                   </div>
               </div>
           </div>
@@ -312,7 +312,7 @@
         <#if xlat['mailer-lite.form.title']??>
         <div class="p-4" style="max-width:360px">
             <img src="${xlat['sidebar.offer.img.src']}" alt="${xlat['sidebar.offer.img.alt']}" width="${xlat['sidebar.offer.img.width']}" height="${xlat['sidebar.offer.img.height']}" border="0">
-            <@subscriptionForm.subscriptionForm></@subscriptionForm.subscriptionForm>
+            <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug']></@subscriptionForm.subscriptionForm>
         </div>
         </#if>
       </aside><!-- /.blog-sidebar -->

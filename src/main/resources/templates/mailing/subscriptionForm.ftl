@@ -1,4 +1,4 @@
-<#macro subscriptionForm>
+<#macro subscriptionForm productSlug>
 <#-- MailerLite form -->
   <style type="text/css">
      100% {
@@ -625,7 +625,7 @@
                  <h4>${xlat['mailer-lite.form.title']}</h4>
                  <#if xlat['mailer-lite.form.text']??>${xlat['mailer-lite.form.text']}</#if>
               </div>
-              <form class="ml-block-form" action="/subscriptions" data-code="" method="post" target="_blank">
+              <form class="ml-block-form" action="/produkt/${productSlug}/subscribe" data-code="" method="post" target="_blank">
                  <div class="ml-form-formContent">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <div class="ml-form-fieldRow">

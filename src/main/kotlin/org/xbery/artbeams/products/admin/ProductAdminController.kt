@@ -34,7 +34,7 @@ open class ProductAdminController(
     private val common: ControllerComponents
 ) : BaseController(common) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    private val TplBasePath = "admin/products"
+    private val tplBasePath = "admin/products"
     private val editFormDef: FormMapping<EditedProduct> = ProductForm.definition
 
     @GetMapping
@@ -46,7 +46,7 @@ open class ProductAdminController(
                     to products, "emptyId"
                     to AssetAttributes.EmptyId
         )
-        return ModelAndView(TplBasePath + "/productList", model)
+        return ModelAndView("$tplBasePath/productList", model)
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
@@ -102,6 +102,6 @@ open class ProductAdminController(
                     to editForm, "errorMessage"
                     to errorMessage
         )
-        return ModelAndView(TplBasePath + "/productEdit", model)
+        return ModelAndView("$tplBasePath/productEdit", model)
     }
 }

@@ -29,7 +29,7 @@ open class UserSubscriptionServiceImpl(
         if (email.isEmpty()) {
             throw IllegalArgumentException("Cannot subscribe user with empty e-mail, fullName $fullName, productId $productId")
         }
-        val user: User = findOrRegisterUser(fullName, email)
+        val user = findOrRegisterUser(fullName, email)
         findOrCreateOrderItem(user.id, productId)
     }
 
@@ -61,14 +61,14 @@ open class UserSubscriptionServiceImpl(
 
     private fun registerUser(fullName: String?, email: String): User {
         if (email.isEmpty()) {
-            throw IllegalArgumentException("Cannot register user with empty e-mail, fullName ${fullName}")
+            throw IllegalArgumentException("Cannot register user with empty e-mail, fullName $fullName")
         }
         val names = User.namesFromFullName(fullName ?: "")
-        val password: String = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()
+        val password = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()
         val user = EditedUser(
           AssetAttributes.EmptyId, email, password, password, names.first, names.second, email, listOf())
-        val registeredUser: User = userService.saveUser(user, OperationCtx(null)) ?:
-            throw IllegalStateException("Error while saving new user ${email}")
+        val registeredUser = userService.saveUser(user, OperationCtx(null)) ?:
+            throw IllegalStateException("Error while saving new user $email")
         logger.info("User ${registeredUser.id}/${registeredUser.login} was registered")
         return registeredUser
     }
@@ -77,7 +77,7 @@ open class UserSubscriptionServiceImpl(
         val commonAttributes: AssetAttributes = AssetAttributes.Empty.updatedWith(userId)
         val item =
             OrderItem(commonAttributes, AssetAttributes.EmptyId, productId, 1, null)
-        val order: Order = Order(commonAttributes, listOf(item))
+        val order = Order(commonAttributes, listOf(item))
         return orderService.createOrder(order)
     }
 }

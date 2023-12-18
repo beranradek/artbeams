@@ -18,6 +18,8 @@ open class ProductForm {
                 .field<String>("slug", Field.TEXT)
                 .field<String>("title", Field.TEXT)
                 .field<String>("fileName", Field.TEXT)
+                .field<String?>("confirmationMailingGroupId", Field.TEXT)
+                .field<String?>("mailingGroupId", Field.TEXT)
                 .build(FormUtils.CzConfig)
     }
 }

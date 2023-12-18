@@ -26,8 +26,8 @@ open class UserServiceImpl(
         val rolesCodebook = roleRepository.findRoles()
         val userId = ctx.loggedUser?.id ?: AssetAttributes.EmptyId
         return if (edited.id == AssetAttributes.EmptyId) {
-            val newUser: User = User.Empty.updatedWith(edited, rolesCodebook, userId)
-            val createdUser: User = userRepository.create(newUser)
+            val newUser = User.Empty.updatedWith(edited, rolesCodebook, userId)
+            val createdUser = userRepository.create(newUser)
             val created: User? = createdUser
             updateRoles(createdUser.id, newUser.roles)
             created

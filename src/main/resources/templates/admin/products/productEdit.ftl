@@ -23,6 +23,14 @@
     <div class="col-sm-3"><input type="text" name="${fields.fileName.name}" value="${fields.fileName.value!}" id="${fields.fileName.elementId}" size="80" class="form-control"/></div>
   </div>
   <div class="form-group row">
+    <label for="${fields.confirmationMailingGroupId.elementId}" class="col-sm-2 col-form-label">Confirmation mailing group id</label>
+    <div class="col-sm-3"><input type="text" name="${fields.confirmationMailingGroupId.name}" value="${fields.confirmationMailingGroupId.value!}" id="${fields.confirmationMailingGroupId.elementId}" size="80" class="form-control"/></div>
+  </div>
+  <div class="form-group row">
+    <label for="${fields.mailingGroupId.elementId}" class="col-sm-2 col-form-label">Mailing group id</label>
+    <div class="col-sm-3"><input type="text" name="${fields.mailingGroupId.name}" value="${fields.mailingGroupId.value!}" id="${fields.mailingGroupId.elementId}" size="80" class="form-control"/></div>
+  </div>
+  <div class="form-group row">
     <div class="col-sm-2 col-form-label"></div>
     <div class="col-sm-3"><button type="submit" class="btn btn-primary">Submit</button></div>
   </div>

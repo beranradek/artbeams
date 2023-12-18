@@ -25,10 +25,6 @@ open class MailingApiConfig(
     // Clients of API must send this token as Authorization Bearer HTTP header.
     open val token: String by lazy { configRepository.requireConfig("mailing.api.token") }
 
-    open val offer1SubscriptionGroupId: String? by lazy { configRepository.findConfig("mailing.offer1.subscription.groupId") }
-
-    open val offer1SubscriptionRedirectUri: String? by lazy { configRepository.findConfig("mailing.offer1.subscription.redirectUri") }
-
     /**
      * Rest template has to be managed by Spring (created by RestTemplateBuilder) to provide metrics.
      * @param builder Spring managed RestTemplateBuilder

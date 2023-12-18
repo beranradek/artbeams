@@ -33,6 +33,8 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('sidebar.offer.img.alt
 INSERT INTO localisation (entry_key, entry_value) VALUES ('sidebar.offer.img.width', '300');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('sidebar.offer.img.height', '225');
 
+INSERT INTO localisation (entry_key, entry_value) VALUES ('offer1.productSlug', '???');
+
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.app-id', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.page.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('fb.page.title', '???');

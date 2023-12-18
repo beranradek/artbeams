@@ -21,19 +21,24 @@ open class ProductMapper : AssetMapper<Product, ProductFilter>() {
     val titleAttr: Attribute<Product, String> = add(Attr.ofString(cls(), "title").get { e -> e.title })
     val fileNameAttr: Attribute<Product, String> =
         add(Attr.ofString(cls(), "filename").get { e -> e.fileName })
+    val confirmationMailingGroupIdAttr: Attribute<Product, String> =
+        add(Attr.ofString(cls(), "confirmation_mailing_group_id").get { e -> e.confirmationMailingGroupId })
+    val mailingGroupIdAttr: Attribute<Product, String> =
+        add(Attr.ofString(cls(), "mailing_group_id").get { e -> e.mailingGroupId })
 
     override fun createEntity(
         attributeSource: AttributeSource,
         attributes: List<Attribute<Product, *>>,
         aliasPrefix: String?
     ): Product {
-        val assetAttributes: AssetAttributes =
-            createAssetAttributes(attributeSource, attributes as List<Attribute<*, *>>, aliasPrefix)
+        val assetAttributes = createAssetAttributes(attributeSource, attributes as List<Attribute<*, *>>, aliasPrefix)
         return Product(
             assetAttributes,
             slugAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
             titleAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
-            fileNameAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            fileNameAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
+            confirmationMailingGroupIdAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
+            mailingGroupIdAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
         )
     }
 
