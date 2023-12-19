@@ -24,7 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class SubscriptionRequest(
     @JsonProperty("email") val email: String,
     @JsonProperty("fields") val fields: SubscriberFields,
-    @JsonProperty("groups") val groups: List<String>
+    @JsonProperty("groups") val groups: List<String>,
+    @JsonProperty("ip_address") val ipAddress: String?
 )
 
 data class SubscriberFields(

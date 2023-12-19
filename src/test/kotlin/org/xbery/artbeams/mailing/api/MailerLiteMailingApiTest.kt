@@ -18,7 +18,7 @@ internal class MailerLiteMailingApiTest {
         val config = TestMailingApiConfig
         val api = MailerLiteMailingApi(config.mailerLiteApiRestTemplate(RestTemplateBuilder()), config)
         val email = "radek.bn+231209t@gmail.com"
-        val response = api.subscribeToGroup(email, "Radek", "FILL IN SUBSCRIPTION GROUP ID")
+        val response = api.subscribeToGroup(email, "Radek", "FILL IN SUBSCRIPTION GROUP ID", "94.112.8.102")
         assertEquals(email, response.data.email)
         assertNotNull(response.data.id)
     }

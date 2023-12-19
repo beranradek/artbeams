@@ -73,7 +73,7 @@ open class ProductController(
                 val formData: SubscriptionFormData = formData.data
                 try {
                     userSubscriptionService.subscribe(formData.name, formData.email, product.id)
-                    mailingApi.subscribeToGroup(formData.email, formData.name, requireNotNull(product.confirmationMailingGroupId))
+                    mailingApi.subscribeToGroup(formData.email, formData.name, requireNotNull(product.confirmationMailingGroupId), request.remoteAddr)
                     redirect("/produkt/$slug/potvrzeni")
                 } catch (ex: Exception) {
                     logger.error("Error while subscribing user ${formData.email}/${formData.name} to product ${slug}: ${ex.message}", ex)
@@ -116,7 +116,7 @@ open class ProductController(
                 var user = userService.findByEmail(emailOpt)
                 if (user != null) {
                     userSubscriptionService.confirmConsent(fullNameOpt, user.email, product.id)
-                    mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId))
+                    mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
                     // Redirect to this page without email and name parameters shown in URL
                     redirect("/produkt/$slug/odeslano")
                 } else {

@@ -22,10 +22,9 @@ class MailerLiteMailingApi(
     private val mailingApiConfig: MailingApiConfig
 ) : AbstractJsonApi(MailingApiConfig.FEATURE_NAME, restTemplate), MailingApi {
 
-    override fun subscribeToGroup(email: String, name: String, subscriberGroupId: String): SubscriptionResponse {
-        // TODO: Send also IP for correct location stats
+    override fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): SubscriptionResponse {
         val url = mailingApiConfig.baseUrl + "/api/subscribers"
-        val subscriberRequest = SubscriptionRequest(email, SubscriberFields(name, null), listOf(subscriberGroupId))
+        val subscriberRequest = SubscriptionRequest(email, SubscriberFields(name, null), listOf(subscriberGroupId), ipAddress)
         return exchangeData(HttpMethod.POST, url, mapOf(), subscriberRequest, SubscriptionResponse::class.java)
     }
 
