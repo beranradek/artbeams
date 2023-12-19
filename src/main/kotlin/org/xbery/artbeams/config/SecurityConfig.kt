@@ -39,6 +39,13 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
             .and()
             .logout()
             .permitAll()
+            .and()
+            .headers().xssProtection()
+            .and()
+            .contentSecurityPolicy("style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' connect.facebook.net www.googletagmanager.com www.google-analytics.com; form-action 'self'");
+
+        // For Content Security Policy header configuration, see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+        // and https://www.baeldung.com/spring-security-csp
 
         // By default, Spring Security rewrites all cache headers to disable caching totally for all requests.
         // So we need to disable Spring Security for static resources; or configure Spring security to send
