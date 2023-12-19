@@ -42,7 +42,7 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
             .and()
             .headers().xssProtection()
             .and()
-            .contentSecurityPolicy("style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' connect.facebook.net www.googletagmanager.com www.google-analytics.com; form-action 'self'");
+            .contentSecurityPolicy("style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' connect.facebook.net www.googletagmanager.com www.google-analytics.com; object-src 'none'; form-action 'self'");
 
         // For Content Security Policy header configuration, see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
         // and https://www.baeldung.com/spring-security-csp
