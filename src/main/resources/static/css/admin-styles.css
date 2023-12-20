@@ -22,6 +22,22 @@ img {
   max-width: 1640px;
 }
 
+.form-config-reload {
+    margin-right: 4px;
+}
+
+.form-article-edit {
+    margin: 0.5rem;
+}
+
+.form-article-edit .article-basic-attributes {
+    padding-bottom: 0.5rem;
+}
+
+.form-localisations-reload {
+    margin-right: 4px;
+}
+
 .login-form {
   margin: auto;
   margin-top: 4rem;
@@ -48,6 +64,10 @@ img {
   display: block;
   margin: 0 auto;
   text-align: center;
+}
+
+.max-width-100-percent {
+    max-width: 100%;
 }
 
 #markdown-content {

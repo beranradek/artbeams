@@ -20,7 +20,7 @@
   </div>
   <div class="form-group row">
     <label for="${fields.description.elementId}" class="col-sm-2 col-form-label">Description</label>
-    <div class="col-sm-6"><textarea name="${fields.description.name}" id="${fields.description.elementId}" rows="2" cols="160" class="form-control" style="max-width:100%">${fields.description.value!}</textarea></div>
+    <div class="col-sm-6"><textarea name="${fields.description.name}" id="${fields.description.elementId}" rows="2" cols="160" class="form-control" class="max-width-100-percent">${fields.description.value!}</textarea></div>
   </div>
   <div class="form-group row">
     <label for="${fields.validFrom.elementId}" class="col-sm-2 col-form-label">Valid from</label>

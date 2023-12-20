@@ -24,6 +24,10 @@
     background-color: #f5f5f5!important;
 }
 
+.btn-search-blue {
+    background-color:#2b5989!important;
+}
+
 /* Bolder first navbar item */
 a.navbar-brand {
     font-weight: 600;
@@ -55,6 +59,14 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     background-color: #2b5989 !important;
 }
 
+.headline-mobile {
+    background-image: url('/media/headline-mobile.webp');
+}
+
+.headline-desktop {
+    background-image: url('/media/headline.webp')
+}
+
 #headline {
     background-position: center center;
     background-repeat: no-repeat;
@@ -79,10 +91,28 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     min-width: 360px; /* min-width so the column does not become too narrow on tablets  */
 }
 
+#headline-offer1 {
+    margin-top:1.3rem;
+    text-align:center;
+}
+
 .headline-offer1-button {
     font-weight:500;
     font-size:18px;
     padding:0.7rem 1.2rem 0.7rem 1.2rem;
+}
+
+.headline-offer-header {
+    font-size: 1.1rem;
+    line-height: 1.6rem;
+}
+
+.headline-offer-img-holder {
+    margin-bottom:0.5rem;
+}
+
+.headline-offer-img-holder img {
+    min-width:275px;
 }
 
 #headline-portrait {
@@ -99,6 +129,10 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     border: solid 3px #0f283d;
     background-color: #192d3d;
     border-radius: 0.8rem;
+}
+
+#headline-portrait-holder img {
+    min-width: 253px;
 }
 
 .modal-dialog .no-title {
@@ -261,4 +295,13 @@ body {
   font-size: 0.9rem;
   line-height: 20px;
   text-align: left;
+}
+
+.ml-form-embedPermissions {
+    margin-bottom: 0px;
+    padding-bottom: 5px;
+}
+
+.sidebar-offer-form-holder {
+    max-width:360px;
 }

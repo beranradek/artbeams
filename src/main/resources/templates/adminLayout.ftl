@@ -14,7 +14,7 @@
     <!-- Based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
     <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">
 
-    <style>
+    <style nonce="${_cspNonce}">
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -119,12 +119,12 @@
             </li>
           </ul>
   
-          <form class="form-inline my-2 my-lg-0" action="/admin/config/reload" method="POST" style="margin-right:4px">
+          <form class="form-inline my-2 my-lg-0 form-config-reload" action="/admin/config/reload" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Reload config</button>
           </form>
   
-          <form class="form-inline my-2 my-lg-0" action="/admin/localisations/reload" method="POST" style="margin-right:4px">
+          <form class="form-inline my-2 my-lg-0 form-localisations-reload" action="/admin/localisations/reload" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Reload localisations</button>
           </form>
@@ -136,7 +136,7 @@
             <#if _loggedUser??>
             <li class="nav-item logged-user">
               <a class="nav-link href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style>svg{fill:#ffffff}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style nonce="${_cspNonce}">svg{fill:#ffffff}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
                 ${_loggedUser.login}
               </a>
             </li>
@@ -162,7 +162,7 @@
     </#if>
     
     <!-- Bootstrap core JavaScript -->
-  <script src="/static/js/bootstrap.min.js"></script>
+    <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
   </body>
 </html>
 </#macro>

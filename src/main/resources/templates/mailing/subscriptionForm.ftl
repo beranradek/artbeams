@@ -1,6 +1,6 @@
 <#macro subscriptionForm productSlug>
 <#-- MailerLite form -->
-  <style type="text/css">
+  <style type="text/css" nonce="${_cspNonce}">
      100% {
      transform: rotate(360deg);
      }
@@ -497,7 +497,7 @@
      .ml-form-formContent.horozintalForm .ml-button-horizontal.labelsOn { padding-top: 0px!important; }
      }
   </style>
-  <style type="text/css">
+  <style type="text/css" nonce="${_cspNonce}">
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions { text-align: left; float: left; width: 100%; }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent {
      margin: 0 0 15px 0;
@@ -645,7 +645,7 @@
                  </div>
                  <!-- Privacy policy -->
                  <!-- /Privacy policy -->
-                 <div class="ml-form-embedPermissions" style="margin-bottom: 0px; padding-bottom: 5px;">
+                 <div class="ml-form-embedPermissions">
                     <div class="ml-form-embedPermissionsContent default">
                        <p><em>Vaše osobní údaje (jméno, e-mailová adresa) jsou u mě v bezpečí a budu je na základě vašeho souhlasu zpracovávat podle&nbsp;<a href="${xlat['personal-data.protection.url']}" target="_blank">zásad ochrany osobních údajů</a>, které vycházejí z české a evropské legislativy.</em></p>
                        <p><em>Stisknutím tlačítka vyjadřujete svůj souhlas s tímto zpracováním potřebným pro zaslání e-booku a dalších newsletterů ode mě, které se budou týkat souvisejícího tématu.</em></p>

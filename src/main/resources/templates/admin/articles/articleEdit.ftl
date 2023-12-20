@@ -6,13 +6,13 @@
 
 <#assign fields = editForm.fields>
 
-<form action="/admin/articles/save" method="POST" enctype="multipart/form-data" style="margin:0.5rem">
+<form action="/admin/articles/save" method="POST" enctype="multipart/form-data" class="form-article-edit">
   <div>
     <h1>${fields.title.value!}</h1>
   </div>
   <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}"/>
   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-  <div class="form-group" style="padding-bottom:0.5rem">
+  <div class="form-group article-basic-attributes">
     <label>Slug
       <input type="text" name="${fields.slug.name}" value="${fields.slug.value!}" size="30"/>
     </label>&nbsp;
@@ -27,7 +27,7 @@
 
   <div class="form-group">
     <label for="${fields.perex.elementId}">Perex&nbsp;</label>
-    <textarea name="${fields.perex.name}" id="${fields.perex.elementId}" rows="2" cols="160" style="max-width:100%">${fields.perex.value!}</textarea>
+    <textarea name="${fields.perex.name}" id="${fields.perex.elementId}" rows="2" cols="160" class="max-width-100-percent">${fields.perex.value!}</textarea>
   </div>
 
   <div class="container">
@@ -100,13 +100,13 @@
   </div>
 </form>
 
-<script src="/static/js/markdown-it.js?v190420"></script>
+<script nonce="${_cspNonce}" src="/static/js/markdown-it.js?v190420"></script>
 <#--
 markdown-it-attrs is extension/plugin of markdown-it that allows custom styles using attributes such as {.text-box}
 Extracted from NPM package markdown-it-attrs-3.0.3.tgz:
 -->
-<script src="/static/js/markdown-it-attrs.browser-3.0.3.js?v190420"></script>
-<script>
+<script nonce="${_cspNonce}" src="/static/js/markdown-it-attrs.browser-3.0.3.js?v190420"></script>
+<script nonce="${_cspNonce}">
 <!-- Document on ready implementation -->
 function ready(callback) {
     // in case the document is already rendered

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.xbery.artbeams.common.Urls
 import org.xbery.artbeams.common.context.OperationCtx
+import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 import javax.servlet.http.HttpServletRequest
 
 /**
@@ -17,6 +18,7 @@ abstract class BaseController(private val common: ControllerComponents) {
         // Global template variables
         model["_url"] = this.getFullUrl(request)
         model["_urlBase"] = this.getUrlBase(request)
+        model["_cspNonce"] = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
         val loggedUser = common.getLoggedUser(request)
         if (loggedUser != null) {
             model["_loggedUser"] = loggedUser

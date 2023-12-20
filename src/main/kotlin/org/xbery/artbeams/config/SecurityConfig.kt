@@ -13,6 +13,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.xbery.artbeams.users.service.CmsAuthenticationProvider
+import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
+import java.security.SecureRandom
 
 /**
  * Spring security configuration. Defines secured paths of application and authentication manager implementation.
@@ -21,6 +23,8 @@ import org.xbery.artbeams.users.service.CmsAuthenticationProvider
 @EnableWebSecurity
 @Configuration
 open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) : WebSecurityConfigurerAdapter() {
+
+    private val secureRandom = SecureRandom()
 
     override fun configure(http: HttpSecurity) {
 
@@ -42,10 +46,21 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
             .and()
             .headers().xssProtection()
             .and()
-            .contentSecurityPolicy("style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' connect.facebook.net www.googletagmanager.com www.google-analytics.com; object-src 'none'; form-action 'self'");
+            .addHeaderWriter { request, response ->
+                // For Content Security Policy header configuration,
+                // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+                // and https://www.baeldung.com/spring-security-csp
+                // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
+                if (!response.containsHeader(CSP_HEADER_NAME)) {
+                    val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+                    response.setHeader(
+                        CSP_HEADER_NAME,
+                        "style-src 'self' 'nonce-$nonce' 'strict-dynamic' 'unsafe-inline'; script-src 'self' 'nonce-$nonce' 'strict-dynamic' 'unsafe-inline'; object-src 'none'; form-action 'self'"
+                    )
+                }
+            }
 
-        // For Content Security Policy header configuration, see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-        // and https://www.baeldung.com/spring-security-csp
+        // For Content Security Policy header configuration, see also ContentSecurityPolicyServletFilter.
 
         // By default, Spring Security rewrites all cache headers to disable caching totally for all requests.
         // So we need to disable Spring Security for static resources; or configure Spring security to send
@@ -86,5 +101,6 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
 
     companion object {
         val ResourcePaths = arrayOf("/webjars/**", "/media/**", "/static/**")
+        const val CSP_HEADER_NAME = "Content-Security-Policy"
     }
 }

@@ -61,7 +61,7 @@
   <!-- Boostrap template is based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
   <link href="/static/css/styles.css" type="text/css" rel="stylesheet">
   
-  <style>
+  <style nonce="${_cspNonce}">
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -134,8 +134,8 @@
 
   <#if xlat['google-tag.url']??>
     <!-- Global site tag (gtag JavaScript) - Google Analytics -->
-    <script async src="${xlat['google-tag.url']}"></script>
-    <script>
+    <script nonce="${_cspNonce}" async src="${xlat['google-tag.url']}"></script>
+    <script nonce="${_cspNonce}">
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -148,7 +148,7 @@
     <div id="fb-root"></div>
     <#-- Facebook SDK for comments; and for FB fanpage appId is added -->
     <#if xlat['fb.sdk.url']??>
-        <script async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"<#if xlat['fb.nonce']??> nonce="${xlat['fb.nonce']}"</#if>></script>
+        <script nonce="${_cspNonce}" async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"></script>
     </#if>
 
     <header>
@@ -194,33 +194,33 @@
               </ul>
               <form method="get" action="/search" class="d-flex" role="search">
                 <input type="search" name="query" class="form-control me-2" placeholder="Hledat" aria-label="${xlat['search']}">
-                <button class="btn btn-search" type="submit" style="background-color:#2b5989!important">${xlat['search']}</button>
+                <button class="btn btn-search btn-search-blue" type="submit">${xlat['search']}</button>
               </form>
          </div>
        </div>
      </nav>
      <#if showHeadline??>
-       <div id="headline" style="background-image: url('/media/headline<#if userAccessReport?? && userAccessReport.mobileDevice>-mobile</#if>.webp')">
+       <div id="headline" class="<#if userAccessReport?? && userAccessReport.mobileDevice>headline-mobile<#else>headline-desktop</#if>">
        <div class="row">
            <div class="col-md-3">
              <#if !userAccessReport?? || !userAccessReport.mobileDevice>
                <div id="headline-portrait">
                  <div id="headline-portrait-holder">
-                   <a href="${xlat['headline.portrait.url']}"><img alt="Portrét" src="${xlat['headline.portrait.src']}" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" style="min-width:${xlat['headline.portrait.width']}px" /></a>
+                   <a href="${xlat['headline.portrait.url']}"><img alt="Portrét" src="${xlat['headline.portrait.src']}" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" /></a>
                  </div>
                </div>
              </#if>
            </div>
            <div class="col-md-3" id="headline-offer">
-             <p style="font-size: 1.1rem;line-height: 1.6rem;">${xlat['headline.offer.header']}</p>
-             <p class="align-center" style="margin-bottom:0.5rem">
+             <p class="headline-offer-header">${xlat['headline.offer.header']}</p>
+             <p class="align-center" class="headline-offer-img-holder">
                 <a href="${xlat['headline.offer.url']}">
-                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}" style="min-width:${xlat['headline.offer.img.width']}px" />
+                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}" />
                 </a>
              </p>
              <p>${xlat['headline.offer.description']}</p>
 
-             <div id="headline-offer1" style="margin-top:1.3rem;text-align:center">
+             <div id="headline-offer1">
                <#if xlat['headline.offer.action']??>
                  <button type="button" data-bs-toggle="modal" data-bs-target="#headline-offer1-modal" class="btn headline-offer1-button">${xlat['headline.offer.action']}</button>
                </#if>
@@ -310,7 +310,7 @@
         </div>
 
         <#if xlat['mailer-lite.form.title']??>
-        <div class="p-4" style="max-width:360px">
+        <div class="p-4 sidebar-offer-form-holder">
             <img src="${xlat['sidebar.offer.img.src']}" alt="${xlat['sidebar.offer.img.alt']}" width="${xlat['sidebar.offer.img.width']}" height="${xlat['sidebar.offer.img.height']}" border="0">
             <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug']></@subscriptionForm.subscriptionForm>
         </div>
@@ -352,9 +352,9 @@
   </footer>
 
   <!-- Bootstrap core JavaScript -->
-  <script src="/static/js/bootstrap.min.js"></script>
+  <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
 
-  <script>
+  <script nonce="${_cspNonce}">
       function registerOnClickHandler(elementId, handler) {
         var element = document.getElementById(elementId);
         if (element) {
