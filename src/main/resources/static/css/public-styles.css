@@ -67,6 +67,12 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     background-image: url('/media/headline.webp')
 }
 
+.headline-offer-modal-button-holder {
+    margin-top: 1.6rem;
+    margin-bottom: 1.3rem;
+    text-align: center;
+}
+
 #headline {
     background-position: center center;
     background-repeat: no-repeat;

@@ -65,6 +65,10 @@ cite {
 }
 
 /** The following inlined styles were rewritten to CSS classes due to strict Content Security Policy */
+.color-orange {
+    color: #d2691e;
+}
+
 .cursor-help {
     cursor:help;
 }
@@ -79,6 +83,10 @@ cite {
 
 .max-width-100-percent {
     max-width: 100%;
+}
+
+.padding-2-2-1-rem {
+    padding: 2rem 2rem 1rem;
 }
 
 .text-align-right {
