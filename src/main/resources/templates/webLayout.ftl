@@ -149,7 +149,7 @@
     <div id="fb-root" nonce="${_cspNonce}"></div>
     <#-- Facebook SDK for comments; and for FB fanpage appId is added -->
     <#if xlat['fb.sdk.url']??>
-        <script nonce="${_cspNonce}" async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"></script>
+        <script nonce="${_cspNonce}" async defer crossorigin="anonymous" data-type="lazy" data-src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"></script>
     </#if>
 
     <header>
@@ -357,6 +357,33 @@
   <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
 
   <script nonce="${_cspNonce}">
+      <#-- Lazy loading of data-type='lazy' scripts and iframes -->
+      const loadScriptsTimer = setTimeout(loadScripts, 5000);
+      const userInteractionEvents = ["mouseover","keydown","touchmove","touchstart","wheel"];
+      userInteractionEvents.forEach(function (event) {
+          window.addEventListener(event, triggerScriptLoader, {
+              passive: true
+          });
+      });
+      function triggerScriptLoader() {
+          loadScripts();
+          clearTimeout(loadScriptsTimer);
+          userInteractionEvents.forEach(function (event) {
+              window.removeEventListener(event, triggerScriptLoader, {
+                  passive: true
+              });
+          });
+      }
+      function loadScripts() {
+          document.querySelectorAll("script[data-type='lazy']").forEach(function (elem) {
+              elem.setAttribute("src", elem.getAttribute("data-src"));
+          });
+          document.querySelectorAll("iframe[data-type='lazy']").forEach(function (elem) {
+              elem.setAttribute("src", elem.getAttribute("data-src"));
+          });
+      }
+      <#-- /Lazy loading of data-type='lazy' scripts and iframes -->
+
       function registerOnClickHandler(elementId, handler) {
         var element = document.getElementById(elementId);
         if (element) {
