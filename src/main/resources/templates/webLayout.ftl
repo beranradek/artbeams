@@ -302,7 +302,8 @@
           <#if xlat['fb.page.url']??>
             <div class="fb-page" data-href="${xlat['fb.page.url']}"
             data-tabs="timeline" data-width="292" data-height="500" data-small-header="true"
-            data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false">
+            data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false"
+            data-lazy="true">
               <blockquote cite="${xlat['fb.page.url']}" class="fb-xfbml-parse-ignore">
                 <a href="${xlat['fb.page.url']}">${xlat['fb.page.title']}</a>
               </blockquote>
@@ -312,7 +313,7 @@
 
         <#if xlat['mailer-lite.form.title']??>
         <div class="p-4 sidebar-offer-form-holder">
-            <img src="${xlat['sidebar.offer.img.src']}" alt="${xlat['sidebar.offer.img.alt']}" width="${xlat['sidebar.offer.img.width']}" height="${xlat['sidebar.offer.img.height']}" border="0">
+            <img src="${xlat['sidebar.offer.img.src']}" loading="lazy" alt="${xlat['sidebar.offer.img.alt']}" width="${xlat['sidebar.offer.img.width']}" height="${xlat['sidebar.offer.img.height']}" border="0">
             <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug']></@subscriptionForm.subscriptionForm>
         </div>
         </#if>

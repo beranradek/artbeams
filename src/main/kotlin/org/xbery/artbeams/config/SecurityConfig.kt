@@ -55,7 +55,7 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
                     val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
                     response.setHeader(
                         CSP_HEADER_NAME,
-                        "style-src 'self' connect.facebook.net www.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com"
+                        "style-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com"
                     )
                 }
             }
