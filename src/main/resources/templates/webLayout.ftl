@@ -31,6 +31,8 @@
     <meta property="fb:app_id" content="${xlat['fb.app-id']}" />
   </#if>
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
+  <#-- Preload of Largest Contentful Paint (LCP) image with a high fetch priority so it starts loading with the stylesheet. -->
+  <link rel="preload" fetchpriority="high" as="image" href="/media/<#if userAccessReport?? && userAccessReport.mobileDevice>headline-mobile<#else>headline</#if>.webp" type="image/webp">
 
   <!-- Open Graph data -->
   <#if article??>

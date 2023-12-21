@@ -60,10 +60,12 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
 }
 
 .headline-mobile {
+    /* See also preload of this image in webLayout's head. */
     background-image: url('/media/headline-mobile.webp');
 }
 
 .headline-desktop {
+    /* See also preload of this image in webLayout's head. */
     background-image: url('/media/headline.webp')
 }
 

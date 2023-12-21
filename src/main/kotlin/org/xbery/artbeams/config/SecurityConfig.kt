@@ -53,6 +53,7 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
                 // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
                 if (!response.containsHeader(CSP_HEADER_NAME)) {
                     val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+                    // sha256 is included for style element added additionally by Facebook's sdk.js
                     response.setHeader(
                         CSP_HEADER_NAME,
                         "style-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com web.facebook.com"
