@@ -48,28 +48,6 @@ img {
   background-color: #f5f5f5;
 }
 
-.align-left {
-  float: left;
-  margin-right: 20px;
-  margin-bottom: 5px;
-}
-
-.align-right {
-  float: right;
-  margin-left: 20px;
-  margin-bottom: 5px
-}
-
-.align-center {
-  display: block;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.max-width-100-percent {
-    max-width: 100%;
-}
-
 #markdown-content {
   width: 100%;
 }

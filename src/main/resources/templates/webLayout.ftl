@@ -2,7 +2,8 @@
 <#macro page>
 <!DOCTYPE html>
 <html lang="cs">
- <head>
+ <head nonce="${_cspNonce}">
+ <#-- Facebook appends scripts and styles as child elements of head tag -->
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -135,9 +136,9 @@
   <#if xlat['google-tag.url']??>
     <!-- Global site tag (gtag JavaScript) - Google Analytics -->
     <script nonce="${_cspNonce}" async src="${xlat['google-tag.url']}"></script>
-    <script nonce="${_cspNonce}">
+    <script nonce="${_cspNonce}" async>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+          function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', '${xlat['google-tag.config']}');
     </script>
@@ -145,7 +146,7 @@
 
   </head>
   <body class="d-flex flex-column h-100">
-    <div id="fb-root"></div>
+    <div id="fb-root" nonce="${_cspNonce}"></div>
     <#-- Facebook SDK for comments; and for FB fanpage appId is added -->
     <#if xlat['fb.sdk.url']??>
         <script nonce="${_cspNonce}" async defer crossorigin="anonymous" src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"></script>

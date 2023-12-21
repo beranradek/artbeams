@@ -64,6 +64,27 @@ cite {
   text-align: center;
 }
 
+/** The following inlined styles were rewritten to CSS classes due to strict Content Security Policy */
+.cursor-help {
+    cursor:help;
+}
+
+.max-width-30-percent {
+    max-width: 30%;
+}
+
+.max-width-70-percent {
+    max-width: 70%;
+}
+
+.max-width-100-percent {
+    max-width: 100%;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
 /** Blog-nested styles are used in public web and for preview of article in administration */
 
 .blog-main h1, .blog-sidebar h1,

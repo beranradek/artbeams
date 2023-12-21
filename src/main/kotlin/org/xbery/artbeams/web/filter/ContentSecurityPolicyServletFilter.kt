@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse
  * see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
  * and https://www.baeldung.com/spring-security-csp
  * and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
+ * and https://blog.sucuri.net/2023/04/how-to-set-up-a-content-security-policy-csp-in-3-steps.html
  *
  * @author Radek Beran
  */

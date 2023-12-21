@@ -281,6 +281,11 @@ body {
   padding-bottom: 1rem;
 }
 
+.article-date {
+    margin-left:0.5rem;
+    white-space:nowrap;
+}
+
 .article-image-detail {
   margin-top: 1.5rem;
   text-align: center;

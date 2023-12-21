@@ -53,14 +53,20 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
                 // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
                 if (!response.containsHeader(CSP_HEADER_NAME)) {
                     val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+                    // Header contains also sha256 hash for style element dynamically added as the child of header element
+                    // by facebook script (by https://connect.facebook.net/cs_CZ/sdk.js)
                     response.setHeader(
                         CSP_HEADER_NAME,
-                        "style-src 'self' 'nonce-$nonce' 'strict-dynamic' 'unsafe-inline'; script-src 'self' 'nonce-$nonce' 'strict-dynamic' 'unsafe-inline'; object-src 'none'; form-action 'self'"
+                        "style-src 'self' connect.facebook.net www.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com"
                     )
                 }
             }
 
         // For Content Security Policy header configuration, see also ContentSecurityPolicyServletFilter.
+        // See also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+        // and https://www.baeldung.com/spring-security-csp
+        // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
+        // and https://blog.sucuri.net/2023/04/how-to-set-up-a-content-security-policy-csp-in-3-steps.html
 
         // By default, Spring Security rewrites all cache headers to disable caching totally for all requests.
         // So we need to disable Spring Security for static resources; or configure Spring security to send

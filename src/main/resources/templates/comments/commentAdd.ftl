@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="form-group row">
-        <label style="cursor:help" title="Kontrolní otázka - ochrana proti robotům" for="${fields.antispamAnswer.elementId}" class="col-form-label col-sm-6 label-fix">${fields.antispamQuestion.value!} *</label>
+        <label class="cursor-help" title="Kontrolní otázka - ochrana proti robotům" for="${fields.antispamAnswer.elementId}" class="col-form-label col-sm-6 label-fix">${fields.antispamQuestion.value!} *</label>
         <div class="col-sm-6">
             <input type="text" class="form-control" id="${fields.antispamAnswer.elementId}" name="${fields.antispamAnswer.name}" value="${fields.antispamAnswer.value!}" size="64" required="required"/>
         </div>
