@@ -1,15 +1,14 @@
 package org.xbery.artbeams.web
 
+import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
+import net.formio.validation.ValidationResult
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.CacheControl
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,6 +18,7 @@ import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.service.ArticleService
 import org.xbery.artbeams.common.Urls
 import org.xbery.artbeams.common.access.domain.EntityKey
+import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.mailer.service.Mailer
@@ -51,6 +51,7 @@ open class ProductController(
     private val userService: UserService,
     private val orderService: OrderService,
     private val mediaRepository: MediaRepository,
+    private val antispamQuizRepository: AntispamQuizRepository,
     private val mailer: Mailer,
     private val mailingApi: MailingApi,
 ) : BaseController(controllerComponents) {
@@ -70,16 +71,31 @@ open class ProductController(
                 val url = Urls.urlWithParam(referrer, "subscriptionInvalidForm", "invalid-form")
                 redirect(url)
             } else {
-                val formData: SubscriptionFormData = formData.data
-                try {
-                    userSubscriptionService.subscribe(formData.name, formData.email, product.id)
-                    mailingApi.subscribeToGroup(formData.email, formData.name, requireNotNull(product.confirmationMailingGroupId), request.remoteAddr)
-                    redirect("/produkt/$slug/potvrzeni")
-                } catch (ex: Exception) {
-                    logger.error("Error while subscribing user ${formData.email}/${formData.name} to product ${slug}: ${ex.message}", ex)
-                    val referrer = getReferrerUrl(request)
-                    val url = Urls.urlWithParam(referrer, "subscriptionError", "subscription-error")
-                    redirect(url)
+                val formData = formData.data
+                val antispamQuizAnswered = antispamQuizRepository.questionHasAnswer(formData.antispamQuestion, formData.antispamAnswer)
+                if (!antispamQuizAnswered) {
+                    logger.warn("Antispam quiz not answered" + " correctly for subscription for email=${formData.email}, name=${formData.name}, question=${formData.antispamQuestion}")
+                    val errorMessage = "Nesprávná odpověď. Prosím vyplňte znovu správnou odpověď na kontrolní otázku (ochranu proti robotům) na předchozí záložce."
+                    renderProductArticle(request, product, product.slug, true, errorMessage)
+                } else {
+                    try {
+                        userSubscriptionService.subscribe(formData.name, formData.email, product.id)
+                        mailingApi.subscribeToGroup(
+                            formData.email,
+                            formData.name,
+                            requireNotNull(product.confirmationMailingGroupId),
+                            request.remoteAddr
+                        )
+                        redirect("/produkt/$slug/potvrzeni")
+                    } catch (ex: Exception) {
+                        logger.error(
+                            "Error while subscribing user ${formData.email}/${formData.name} to product ${slug}: ${ex.message}",
+                            ex
+                        )
+                        val referrer = getReferrerUrl(request)
+                        val url = Urls.urlWithParam(referrer, "subscriptionError", "subscription-error")
+                        redirect(url)
+                    }
                 }
             }
         } else {
@@ -248,7 +264,8 @@ open class ProductController(
         request: HttpServletRequest,
         product: Product,
         articleSlug: String,
-        saveUserAccess: Boolean
+        saveUserAccess: Boolean,
+        errorMessage: String? = null
     ): Any {
         val article = articleService.findBySlug(articleSlug)
         return if (article != null) {
@@ -260,11 +277,18 @@ open class ProductController(
             } else {
                 controllerComponents.userAccessService.getUserAccessReport(request)
             }
+
+            val antispamQuiz = antispamQuizRepository.findRandom()
+            val subscriptionData = SubscriptionFormData.Empty.copy(antispamQuestion = antispamQuiz.question)
+            val subscriptionForm = WebController.subscriptionFormDef.fill(FormData(subscriptionData, ValidationResult.empty))
+
             val model = createModel(
                 request,
-                Pair("product", product),
-                Pair("article", article),
-                Pair("userAccessReport", userAccessReport)
+                "product" to product,
+                "article" to article,
+                "subscriptionFormMapping" to subscriptionForm,
+                "userAccessReport" to userAccessReport,
+                "errorMessage" to errorMessage
             )
             ModelAndView("productArticle", model)
         } else {

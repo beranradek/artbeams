@@ -19,10 +19,11 @@ import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.comments.domain.EditedComment
 import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.access.domain.EntityKey
-import org.xbery.artbeams.common.antispam.domain.AntispamQuiz
 import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.mailing.controller.SubscriptionForm
+import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -36,10 +37,10 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 open class WebController(
     val articleService: ArticleService,
-    val categoryService: CategoryService,
+    private val categoryService: CategoryService,
     val productService: ProductService,
     val commentService: CommentService,
-    val antispamQuizRepository: AntispamQuizRepository,
+    private val antispamQuizRepository: AntispamQuizRepository,
     val controllerComponents: ControllerComponents,
     val resourceLoader: ResourceLoader
 ) : BaseController(controllerComponents), SitemapWriter {
@@ -65,6 +66,7 @@ open class WebController(
         val userAccessReport = controllerComponents.userAccessService.getUserAccessReport(request)
         val model = createBlogModel(
             request,
+            FormData(SubscriptionFormData.Empty, ValidationResult.empty),
             "articles" to articles,
             "showHeadline" to true,
             "userAccessReport" to userAccessReport
@@ -80,6 +82,7 @@ open class WebController(
                 val articles = articleService.findByCategoryId(category.id, ArticlesPerPageLimit)
                 val model = createBlogModel(
                     request,
+                    FormData(SubscriptionFormData.Empty, ValidationResult.empty),
                     "category" to category,
                     "articles" to articles
                 )
@@ -135,9 +138,8 @@ open class WebController(
                     CompletableFuture.supplyAsync { controllerComponents.userAccessService.findCountOfVisits(entityKey) }
                 val fCommentsWithForm = CompletableFuture.supplyAsync {
                     if (article.showOnBlog) {
-                        val antispamQuiz: AntispamQuiz = antispamQuizRepository.findRandom()
-                        val newComment: EditedComment = Comment.Empty.toEdited(antispamQuiz.question)
-                            .copy(entityId = article.id)
+                        val antispamQuiz = antispamQuizRepository.findRandom()
+                        val newComment = Comment.Empty.toEdited(antispamQuiz.question).copy(entityId = article.id)
                         val comments = commentService.findByEntityId(article.id)
                         val commentForm = commentFormDef.fill(FormData(newComment, ValidationResult.empty))
                         Pair<List<Comment>, FormMapping<EditedComment>?>(comments, commentForm)
@@ -149,6 +151,7 @@ open class WebController(
                 val commentsWithForm = fCommentsWithForm.get()
                 val model = createBlogModel(
                     request,
+                    FormData(SubscriptionFormData.Empty, ValidationResult.empty),
                     "article" to article,
                     "comments" to commentsWithForm.first,
                     "commentForm" to commentsWithForm.second,
@@ -169,7 +172,7 @@ open class WebController(
         return try {
             searchCount += 1
             if (searchCount > 1) {
-                ModelAndView("searchOverloaded", createBlogModel(request))
+                ModelAndView("searchOverloaded", createBlogModel(request, FormData(SubscriptionFormData.Empty, ValidationResult.empty)))
             } else {
                 val query: String = request.getParameter("query")
                 val articles = if (query == null || query.trim().length < 2) {
@@ -179,6 +182,7 @@ open class WebController(
                 }
                 val model = createBlogModel(
                     request,
+                    FormData(SubscriptionFormData.Empty, ValidationResult.empty),
                     "query" to query,
                     "articles" to articles
                 )
@@ -189,21 +193,28 @@ open class WebController(
         }
     }
 
-    private fun createBlogModel(request: HttpServletRequest, vararg args: Pair<String, Any?>): Map<String, Any?> {
+    private fun createBlogModel(request: HttpServletRequest, subscriptionFormData: FormData<SubscriptionFormData>, vararg args: Pair<String, Any?>): Map<String, Any?> {
         val model = createModel(request, *args)
-        return appendSidebarData(model)
+        return appendSidebarData(subscriptionFormData, model)
     }
 
-    private fun appendSidebarData(model: MutableMap<String, Any?>): MutableMap<String, Any?> {
+    private fun appendSidebarData(subscriptionFormData: FormData<SubscriptionFormData>, model: MutableMap<String, Any?>): MutableMap<String, Any?> {
         val fLatestArticles = CompletableFuture.supplyAsync { articleService.findLatest(LatestArticlesSidebarLimit) }
         val fArticleCategories = CompletableFuture.supplyAsync { categoryService.findCategories() }
-        CompletableFuture.allOf(fLatestArticles, fArticleCategories).join()
+        val fAntispamQuiz = CompletableFuture.supplyAsync { antispamQuizRepository.findRandom() }
+        CompletableFuture.allOf(fLatestArticles, fArticleCategories, fAntispamQuiz).join()
         model["latestArticles"] = fLatestArticles.get()
         model["articleCategories"] = fArticleCategories.get()
+
+        val antispamQuiz = fAntispamQuiz.get()
+        val subscriptionData = subscriptionFormData.data.copy(antispamQuestion = antispamQuiz.question)
+        val subscriptionForm = subscriptionFormDef.fill(FormData(subscriptionData, subscriptionFormData.validationResult))
+        model["subscriptionFormMapping"] = subscriptionForm
         return model
     }
 
     companion object {
         val commentFormDef: FormMapping<EditedComment> = CommentForm.definition
+        val subscriptionFormDef: FormMapping<SubscriptionFormData> = SubscriptionForm.definition
     }
 }

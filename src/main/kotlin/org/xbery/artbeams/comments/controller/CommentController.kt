@@ -44,13 +44,11 @@ open class CommentController(
             val edited: EditedComment = formData.data
             val ipAddress: String = request.remoteAddr
             val userAgent: String = request.getHeader(HttpHeaders.USER_AGENT)
-            val antispamQuizAnswered =
-                antispamQuizRepository.questionHasAnswer(edited.antispamQuestion, edited.antispamAnswer)
+            val antispamQuizAnswered = antispamQuizRepository.questionHasAnswer(edited.antispamQuestion, edited.antispamAnswer)
             if (!antispamQuizAnswered) {
-                logger.warn("Antispam quiz not answered correctly for new comment from email=${edited.email}, IP=${ipAddress}, User-Agent=${userAgent}")
-                val referrer: String = getReferrerUrl(request)
-                val url = Urls.urlWithAnchor(
-                  Urls.urlWithParam(referrer, "commentError", "invalid-answer"), "comment-add")
+                logger.warn("Antispam quiz not answered correctly for new comment from email=${edited.email}, IP=${ipAddress}, User-Agent=${userAgent}, question=${edited.antispamQuestion}")
+                val referrer = getReferrerUrl(request)
+                val url = Urls.urlWithAnchor(Urls.urlWithParam(referrer, "commentError", "invalid-answer"), "comment-add")
                 redirect(url)
             } else {
                 try {

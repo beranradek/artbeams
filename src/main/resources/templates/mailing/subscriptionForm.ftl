@@ -1,5 +1,4 @@
-<#macro subscriptionForm productSlug>
-<#-- MailerLite form -->
+<#macro subscriptionForm productSlug subscriptionFormMapping>
   <style type="text/css" nonce="${_cspNonce}">
      100% {
      transform: rotate(360deg);
@@ -106,7 +105,7 @@
      color: #333333;
      font-size: 14px;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-     font-weight: bold; font-style: normal; text-decoration: none;;
+     font-style: normal; text-decoration: none;;
      display: inline-block;
      line-height: 20px;
      }
@@ -625,26 +624,28 @@
                  <h4>${xlat['mailer-lite.form.title']}</h4>
                  <#if xlat['mailer-lite.form.text']??>${xlat['mailer-lite.form.text']}</#if>
               </div>
+              <#assign fields = subscriptionFormMapping.fields>
               <form class="ml-block-form" action="/produkt/${productSlug}/subscribe" data-code="" method="post" target="_blank">
                  <div class="ml-form-formContent">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <input type="hidden" name="${fields.antispamQuestion.name}" value="${fields.antispamQuestion.value!}"/>
                     <div class="ml-form-fieldRow">
                        <div class="ml-field-group ml-field-name">
-                          <!-- input -->
-                          <input aria-label="name" type="text" class="form-control" data-inputmask="" name="subscription-name" placeholder="Jméno" autocomplete="given-name">
-                          <!-- /input -->
+                          <input type="text" class="form-control" name="${fields.name.name}" value="${fields.name.value!}" aria-label="name" data-inputmask="" placeholder="Jméno" autocomplete="given-name">
+                       </div>
+                    </div>
+                    <div class="ml-form-fieldRow">
+                       <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
+                          <input type="email" class="form-control" name="${fields.email.name}" value="${fields.email.value!}" aria-label="email" aria-required="true" required data-inputmask="" placeholder="Email" autocomplete="email">
                        </div>
                     </div>
                     <div class="ml-form-fieldRow ml-last-item">
-                       <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
-                          <!-- input -->
-                          <input aria-label="email" aria-required="true" type="email" class="form-control" required data-inputmask="" name="subscription-email" placeholder="Email" autocomplete="email">
-                          <!-- /input -->
+                       <div class="ml-field-group ml-validate-required">
+                          <label class="col-form-label cursor-help  ml-form-embedContent" title="Kontrolní otázka - ochrana proti robotům">${fields.antispamQuestion.value!}</label><br/>
+                          <input type="text" class="form-control" name="${fields.antispamAnswer.name}" value="${fields.antispamAnswer.value!}" required data-inputmask=""/>
                        </div>
                     </div>
                  </div>
-                 <!-- Privacy policy -->
-                 <!-- /Privacy policy -->
                  <div class="ml-form-embedPermissions">
                     <div class="ml-form-embedPermissionsContent default">
                        <p><em>Vaše osobní údaje (jméno, e-mailová adresa) jsou u mě v bezpečí a budu je na základě vašeho souhlasu zpracovávat podle&nbsp;<a href="${xlat['personal-data.protection.url']}" target="_blank">zásad ochrany osobních údajů</a>, které vycházejí z české a evropské legislativy.</em></p>
@@ -662,5 +663,4 @@
         </div>
      </div>
   </div>
-<#-- /MailerLite form -->
 </#macro>

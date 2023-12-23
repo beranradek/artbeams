@@ -236,21 +236,27 @@
        </div>
      </#if>
 
-     <#if xlat['mailer-lite.form.title']??>
-       <div id="headline-offer1-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header no-title">
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
-                  </div>
-                  <div class="modal-body">
-                     <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug']></@subscriptionForm.subscriptionForm>
+     <#if subscriptionFormMapping??>
+         <#if xlat['mailer-lite.form.title']??>
+           <div id="headline-offer1-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header no-title">
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+                      </div>
+                      <div class="modal-body">
+                         <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping></@subscriptionForm.subscriptionForm>
+                      </div>
                   </div>
               </div>
-          </div>
-       </div>
+           </div>
+         </#if>
      </#if>
   </header>
+
+  <#if errorMessage??>
+    <div class="alert alert-danger" role="alert">${errorMessage}</div>
+  </#if>
 
   <#if category??>
     <div class="row category-header">
@@ -313,11 +319,13 @@
           </#if>
         </div>
 
-        <#if xlat['mailer-lite.form.title']??>
-        <div class="p-4 sidebar-offer-form-holder">
-            <img src="${xlat['sidebar.offer.img.src']}" loading="lazy" alt="${xlat['sidebar.offer.img.alt']}" width="${xlat['sidebar.offer.img.width']}" height="${xlat['sidebar.offer.img.height']}" border="0">
-            <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug']></@subscriptionForm.subscriptionForm>
-        </div>
+        <#if subscriptionFormMapping??>
+            <#if xlat['mailer-lite.form.title']??>
+            <div class="p-4 sidebar-offer-form-holder">
+                <img src="${xlat['sidebar.offer.img.src']}" loading="lazy" alt="${xlat['sidebar.offer.img.alt']}" width="${xlat['sidebar.offer.img.width']}" height="${xlat['sidebar.offer.img.height']}" border="0">
+                <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping></@subscriptionForm.subscriptionForm>
+            </div>
+            </#if>
         </#if>
       </aside><!-- /.blog-sidebar -->
 
