@@ -662,29 +662,4 @@
         </div>
      </div>
   </div>
-
-    <#--
-    <script nonce="${_cspNonce}">
-        <!-- Function registered on document ready -->
-        ready(function() {
-          <!-- Handling forms using AJAX -->
-          document.querySelector('.${formClass}').addEventListener('submit', function (event) {
-            event.preventDefault();
-            var data = this;
-            const formData = new FormData(data);
-            const searchParams = new URLSearchParams(formData);
-            fetch(data.getAttribute('action'), {
-                method: data.getAttribute('method'),
-                body: searchParams
-            })
-            .then(res => {
-                // window.alert('Submitted with response: ' + res.text());
-            })
-            .then(function (data) {
-                window.alert('Submitted with response data: ' + data);
-             });
-          });
-        });
-    </script>
-    -->
 </#macro>
