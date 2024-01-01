@@ -1,7 +1,7 @@
 package org.xbery.artbeams.users.service
 
 import org.xbery.artbeams.users.domain.User
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * User login operations.

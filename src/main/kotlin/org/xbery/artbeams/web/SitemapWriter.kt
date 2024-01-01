@@ -65,7 +65,7 @@ interface SitemapWriter {
     private fun buildUrl(url: String, modifiedOpt: Instant?): String {
         val sb = StringBuilder()
         sb.append("  <url>")
-        sb.append("<loc>" + url + "</loc>")
+        sb.append("<loc>$url</loc>")
         modifiedOpt?.let { modified ->
             sb.append("<lastmod>" + SitemapDateFormat.format(java.util.Date(modified.toEpochMilli())) + "</lastmod>")
         }

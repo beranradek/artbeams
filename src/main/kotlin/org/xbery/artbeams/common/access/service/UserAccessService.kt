@@ -2,7 +2,7 @@ package org.xbery.artbeams.common.access.service
 
 import org.xbery.artbeams.common.access.domain.EntityKey
 import org.xbery.artbeams.common.access.domain.UserAccessReport
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Operations for user accesses.

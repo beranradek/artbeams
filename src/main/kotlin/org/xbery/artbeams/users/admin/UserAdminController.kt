@@ -22,7 +22,7 @@ import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 import org.xbery.artbeams.users.service.UserService
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * User administration routes.

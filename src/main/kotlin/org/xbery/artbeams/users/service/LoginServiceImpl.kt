@@ -6,7 +6,7 @@ import org.xbery.artbeams.common.security.PasswordHashing
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Implementation of {@link LoginService}.
@@ -36,7 +36,7 @@ open class LoginServiceImpl(private val userRepository: UserRepository, private 
         return if (token is UsernamePasswordAuthenticationToken) {
             // authorities contain names of roles
             // val authorities = if (token.getAuthorities != null) token.getAuthorities() else setOf<GrantedAuthority>()
-            val principalParts = token.getName().split(CmsAuthenticationProvider.PrincipalSeparator)
+            val principalParts = token.getName().split(CmsAuthenticationProvider.PRINCIPAL_SEPARATOR)
             if (principalParts.size >= 2) {
                 val userId = principalParts[0]
                 val user = userRepository.findByIdAsOpt(userId)

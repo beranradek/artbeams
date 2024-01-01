@@ -6,7 +6,7 @@ import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.users.service.LoginService
 import org.xbery.artbeams.users.domain.User
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Common controller components.

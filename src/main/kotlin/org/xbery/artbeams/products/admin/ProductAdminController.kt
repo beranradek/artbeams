@@ -20,7 +20,7 @@ import org.xbery.artbeams.products.domain.EditedProduct
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.repository.ProductRepository
 import org.xbery.artbeams.products.service.ProductService
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Product administration routes.

@@ -14,7 +14,7 @@ import org.xbery.artbeams.common.Urls
 import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Comment routes.

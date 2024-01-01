@@ -1,5 +1,7 @@
 package org.xbery.artbeams.web
 
+import jakarta.servlet.RequestDispatcher
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
@@ -7,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import javax.servlet.RequestDispatcher
-import javax.servlet.http.HttpServletRequest
 
 /**
  * Error pages.
@@ -26,6 +26,4 @@ open class ApplicationErrorController(private val common: ControllerComponents) 
             if (status != null && status.toString().toInt() == HttpStatus.NOT_FOUND.value()) "error404" else "error"
         return ModelAndView(tplName, model)
     }
-
-    override fun getErrorPath(): String ="/error"
 }

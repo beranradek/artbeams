@@ -146,6 +146,34 @@
     </script>
   </#if>
 
+    <script nonce="${_cspNonce}">
+        /* Function for running handler on click event on given element. */
+        function registerOnClickHandler(elementId, handler) {
+            var element = document.getElementById(elementId);
+            if (element) {
+                if (element.addEventListener) {
+                    element.addEventListener('click', handler, false);
+                } else if (acceptCookie.attachEvent) {
+                    // this is for IE, because it doesn't support addEventListener
+                    // this strange part for making the keyword 'this' indicate the clicked anchor:
+                    element.attachEvent('onclick', function() { return handler.apply(element, [window.event]) });
+                }
+            }
+        }
+
+        /* Document on ready implementation */
+        function ready(callback) {
+            // in case the document is already rendered
+            if (document.readyState != 'loading') callback();
+            // modern browsers
+            else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
+            // IE <= 8
+            else document.attachEvent('onreadystatechange', function() {
+                if (document.readyState=='complete') callback();
+            });
+        }
+    </script>
+
   </head>
   <body class="d-flex flex-column h-100">
     <div id="fb-root" nonce="${_cspNonce}"></div>
@@ -245,7 +273,7 @@
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
                       </div>
                       <div class="modal-body">
-                         <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping></@subscriptionForm.subscriptionForm>
+                         <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-header-subscription-form'></@subscriptionForm.subscriptionForm>
                       </div>
                   </div>
               </div>
@@ -323,7 +351,7 @@
             <#if xlat['mailer-lite.form.title']??>
             <div class="p-4 sidebar-offer-form-holder">
                 <img src="${xlat['sidebar.offer.img.src']}" loading="lazy" alt="${xlat['sidebar.offer.img.alt']}" width="${xlat['sidebar.offer.img.width']}" height="${xlat['sidebar.offer.img.height']}" border="0">
-                <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping></@subscriptionForm.subscriptionForm>
+                <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-sidebar-subscription-form'></@subscriptionForm.subscriptionForm>
             </div>
             </#if>
         </#if>
@@ -394,31 +422,7 @@
       }
       <#-- /Lazy loading of data-type='lazy' scripts and iframes -->
 
-      function registerOnClickHandler(elementId, handler) {
-        var element = document.getElementById(elementId);
-        if (element) {
-            if (element.addEventListener) {
-              element.addEventListener('click', handler, false);
-            } else if (acceptCookie.attachEvent) {
-              // this is for IE, because it doesn't support addEventListener
-              // this strange part for making the keyword 'this' indicate the clicked anchor:
-              element.attachEvent('onclick', function() { return handler.apply(element, [window.event]) });
-            }
-        }
-      }
-
-      <!-- Document on ready implementation -->
-      function ready(callback) {
-          // in case the document is already rendered
-          if (document.readyState!='loading') callback();
-          // modern browsers
-          else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
-          // IE <= 8
-          else document.attachEvent('onreadystatechange', function(){
-              if (document.readyState=='complete') callback();
-          });
-      }
-
+      <!-- Function registered on document ready -->
       ready(function() {
             <!-- Cookies confirmation -->
             var cookie = false;

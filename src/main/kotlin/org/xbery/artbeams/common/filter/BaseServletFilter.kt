@@ -1,7 +1,7 @@
 package org.xbery.artbeams.common.filter
 
-import javax.servlet.Filter
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.Filter
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Base HTTP servlet filter for application.

@@ -4,7 +4,7 @@ import net.formio.AbstractRequestParams
 import net.formio.upload.RequestProcessingError
 import net.formio.upload.UploadedFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Form request params for Spring web.

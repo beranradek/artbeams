@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity
 import org.xbery.artbeams.common.Urls
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Base controller for all pages.
@@ -19,6 +19,9 @@ abstract class BaseController(private val common: ControllerComponents) {
         model["_url"] = this.getFullUrl(request)
         model["_urlBase"] = this.getUrlBase(request)
         model["_cspNonce"] = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+        model["_requestParameterError"] = request.getAttribute("error")
+        model["_requestParameterLogout"] = request.getAttribute("logout")
+
         val loggedUser = common.getLoggedUser(request)
         if (loggedUser != null) {
             model["_loggedUser"] = loggedUser

@@ -8,7 +8,7 @@ import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.evernote.service.EvernoteImporter
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Evernote import routes.

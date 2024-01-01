@@ -20,7 +20,7 @@ import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.repository.MediaRepository
 import java.nio.channels.Channels
 import java.util.concurrent.TimeUnit
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Image upload/serving controller.

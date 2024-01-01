@@ -36,7 +36,7 @@ import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.users.service.UserSubscriptionService
 import java.io.ByteArrayOutputStream
 import java.time.Instant
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Product routes.

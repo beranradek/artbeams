@@ -3,10 +3,10 @@
 
 <div class="login-form">
     <h2>${xlat['website.title']}</h2>
-    <#if RequestParameters.error??>
+    <#if _requestParameterError??>
         <div class="alert alert-danger" role="alert">Neplatný login nebo heslo.</div>
     </#if>
-    <#if RequestParameters.logout??>
+    <#if _requestParameterLogout??>
         <div class="alert alert-success" role="alert">Byl(a) jste úspěšně odhlášen(a).</div>
     </#if>
 

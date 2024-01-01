@@ -23,7 +23,7 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.form.SpringHttpServletRequestParams
 import org.xbery.artbeams.media.repository.MediaRepository
 import java.nio.channels.Channels
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 
 /**

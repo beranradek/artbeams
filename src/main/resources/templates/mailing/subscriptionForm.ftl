@@ -1,4 +1,4 @@
-<#macro subscriptionForm productSlug subscriptionFormMapping>
+<#macro subscriptionForm productSlug subscriptionFormMapping formClass>
   <style type="text/css" nonce="${_cspNonce}">
      100% {
      transform: rotate(360deg);
@@ -97,10 +97,10 @@
      color: #000000;
      text-decoration: underline;
      }
-     .ml-form-embedContainer .ml-form-embedWrapper .ml-block-form .ml-field-group {
+     .ml-form-embedContainer .ml-form-embedWrapper .subscription-form .ml-field-group {
      text-align: left!important;
      }
-     .ml-form-embedContainer .ml-form-embedWrapper .ml-block-form .ml-field-group label {
+     .ml-form-embedContainer .ml-form-embedWrapper .subscription-form .ml-field-group label {
      margin-bottom: 5px;
      color: #333333;
      font-size: 14px;
@@ -495,8 +495,7 @@
      .ml-form-formContent.horozintalForm .ml-button-horizontal { width: 100%!important; }
      .ml-form-formContent.horozintalForm .ml-button-horizontal.labelsOn { padding-top: 0px!important; }
      }
-  </style>
-  <style type="text/css" nonce="${_cspNonce}">
+
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions { text-align: left; float: left; width: 100%; }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent {
      margin: 0 0 15px 0;
@@ -625,7 +624,7 @@
                  <#if xlat['mailer-lite.form.text']??>${xlat['mailer-lite.form.text']}</#if>
               </div>
               <#assign fields = subscriptionFormMapping.fields>
-              <form class="ml-block-form" action="/produkt/${productSlug}/subscribe" data-code="" method="post" target="_blank">
+              <form class="subscription-form ${formClass}" action="/produkt/${productSlug}/subscribe" data-code="" method="post" target="_blank">
                  <div class="ml-form-formContent">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <input type="hidden" name="${fields.antispamQuestion.name}" value="${fields.antispamQuestion.value!}"/>
@@ -663,4 +662,29 @@
         </div>
      </div>
   </div>
+
+    <#--
+    <script nonce="${_cspNonce}">
+        <!-- Function registered on document ready -->
+        ready(function() {
+          <!-- Handling forms using AJAX -->
+          document.querySelector('.${formClass}').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var data = this;
+            const formData = new FormData(data);
+            const searchParams = new URLSearchParams(formData);
+            fetch(data.getAttribute('action'), {
+                method: data.getAttribute('method'),
+                body: searchParams
+            })
+            .then(res => {
+                // window.alert('Submitted with response: ' + res.text());
+            })
+            .then(function (data) {
+                window.alert('Submitted with response data: ' + data);
+             });
+          });
+        });
+    </script>
+    -->
 </#macro>

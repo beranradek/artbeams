@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.config.repository.ConfigRepository
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Config administration routes.

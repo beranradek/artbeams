@@ -1,20 +1,21 @@
 package org.xbery.artbeams.config
 
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.header.writers.CacheControlHeadersWriter
 import org.springframework.security.web.header.writers.DelegatingRequestMatcherHeaderWriter
 import org.springframework.security.web.util.matcher.AndRequestMatcher
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
-import org.xbery.artbeams.users.service.CmsAuthenticationProvider
+import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
-import java.security.SecureRandom
+
 
 /**
  * Spring security configuration. Defines secured paths of application and authentication manager implementation.
@@ -22,43 +23,45 @@ import java.security.SecureRandom
  */
 @EnableWebSecurity
 @Configuration
-open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) : WebSecurityConfigurerAdapter() {
+@EnableWebMvc
+open class SecurityConfig {
 
-    private val secureRandom = SecureRandom()
-
-    override fun configure(http: HttpSecurity) {
-
-        // Common Spring Security configuration
-        http.authorizeRequests()
-            .antMatchers(*ResourcePaths)
-            .permitAll()
-            .antMatchers("/admin/**")
-            .hasAuthority("admin")
-            .anyRequest()
-            .permitAll()
-            .and()
-            .formLogin()
-            .loginPage("/login")
-            .permitAll()
-            .and()
-            .logout()
-            .permitAll()
-            .and()
-            .headers().xssProtection()
-            .and()
-            .addHeaderWriter { request, response ->
-                // For Content Security Policy header configuration,
-                // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-                // and https://www.baeldung.com/spring-security-csp
-                // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
-                if (!response.containsHeader(CSP_HEADER_NAME)) {
-                    val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
-                    // sha256 is included for style element added additionally by Facebook's sdk.js
-                    response.setHeader(
-                        CSP_HEADER_NAME,
-                        "style-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com web.facebook.com"
-                    )
-                }
+    @Bean
+    @Throws(Exception::class)
+    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .authorizeHttpRequests { requestMatcher: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
+                requestMatcher
+                    .requestMatchers(*ResourcePaths)
+                    .permitAll()
+                    .requestMatchers("/admin/**")
+                    .hasAuthority("admin")
+                    .anyRequest()
+                    .permitAll()
+                    .and()
+                    .formLogin()
+                    .loginPage("/login")
+                    .permitAll()
+                    .and()
+                    .logout()
+                    .permitAll()
+                    .and()
+                    .headers().xssProtection()
+                    .and()
+                    .addHeaderWriter { request, response ->
+                        // For Content Security Policy header configuration,
+                        // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+                        // and https://www.baeldung.com/spring-security-csp
+                        // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
+                        if (!response.containsHeader(CSP_HEADER_NAME)) {
+                            val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+                            // sha256 is included for style element added additionally by Facebook's sdk.js
+                            response.setHeader(
+                                CSP_HEADER_NAME,
+                                "style-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com web.facebook.com"
+                            )
+                        }
+                    }
             }
 
         // For Content Security Policy header configuration, see also ContentSecurityPolicyServletFilter.
@@ -83,7 +86,9 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
         // Allowing CSRF requests for future public API
         // CORS headers should be configured for future public API
-        http.csrf().ignoringAntMatchers("/api/**").configure(http)
+        http.csrf().ignoringRequestMatchers("/api/**").configure(http)
+
+        return http.build()
     }
 
     //  @Bean def corsConfigurationSource: UrlBasedCorsConfigurationSource = {
@@ -98,11 +103,6 @@ open class SecurityConfig(private val authProvider: CmsAuthenticationProvider) :
     //    source.registerCorsConfiguration("/**", configuration)
     //    source
     //  }
-
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        assert(this.authProvider != null) { "authProvider is not specified!" }
-        auth.authenticationProvider(this.authProvider)
-    }
 
     companion object {
         val ResourcePaths = arrayOf("/webjars/**", "/media/**", "/static/**")

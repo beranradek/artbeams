@@ -19,7 +19,7 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.parser.Parsers
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * @author Radek Beran

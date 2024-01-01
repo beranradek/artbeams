@@ -7,7 +7,7 @@ import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.access.service.UserAccessService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Routes for operations with user accesses.
