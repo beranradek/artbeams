@@ -55,8 +55,6 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
 
     private val resourceAccessType = "offline"
 
-    private var localServerReceiver: LocalServerReceiver? = null
-
     /**
      * Directory to store Google auth tokens for this application.
      */
@@ -89,7 +87,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
         // https://googleapis.github.io/google-api-java-client/oauth-2.0.html
         // for Google OAuth2 authorization flow description:
         val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-        val receiver = getOrCreateLocalServerReceiver()
+        val receiver = createLocalServerReceiver()
         val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize(applicationUserId)
         return credential
     }
@@ -108,7 +106,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      * Returns URL for new authorization request (initiating Google API OAuth2 authorization).
      */
     open fun getAuthorizationUrl(scopes: List<String>): String {
-        val receiver = getOrCreateLocalServerReceiver()
+        val receiver = createLocalServerReceiver()
         try {
             val flow = buildOAuth2AuthorizationCodeFlow(scopes)
             val redirectUri = receiver.redirectUri
@@ -119,12 +117,8 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
         }
     }
 
-    private fun getOrCreateLocalServerReceiver(): LocalServerReceiver {
-        if (localServerReceiver == null) {
-            localServerReceiver = LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
-        }
-        localServerReceiver?.stop() // To ensure receiver's server from possible previous check/authorization is stopped
-        return requireNotNull(localServerReceiver)
+    private fun createLocalServerReceiver(): LocalServerReceiver {
+        return LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
     }
 
     private fun buildOAuth2AuthorizationCodeFlow(scopes: List<String>): AuthorizationCodeFlow {
