@@ -105,7 +105,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      * Returns URL for new authorization request (initiating Google API OAuth2 authorization).
      */
     open fun getAuthorizationUrl(scopes: List<String>): String {
-        val receiver = LocalServerReceiver.Builder().setPort(oAuthFlowReceiverPort).build()
+        val receiver = LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
         try {
             val flow = buildOAuth2AuthorizationCodeFlow(scopes)
             val redirectUri = receiver.redirectUri
