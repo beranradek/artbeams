@@ -46,4 +46,3 @@ does not invoke application restart because it is not necessary - templates are 
 
 * Add Heroku Procfile (provided)
 * In Heroku CLI run command: heroku ps:scale web=1 (so the application has associated one dyno required for application run and application can start)
-
