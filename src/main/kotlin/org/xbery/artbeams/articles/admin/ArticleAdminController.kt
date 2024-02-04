@@ -81,7 +81,7 @@ open class ArticleAdminController(
 
                 val uploadedFile = edited.file
                 val originalFileName = uploadedFile?.fileName
-                if (uploadedFile != null && originalFileName != null && originalFileName.isNotEmpty()) {
+                if (uploadedFile != null && !originalFileName.isNullOrEmpty()) {
                     val imageName = mediaRepository.storeArticleImage(Channels.newInputStream(uploadedFile.content), originalFileName)
                     imageName?.let { edited = edited.copy(image = it) }
                 }

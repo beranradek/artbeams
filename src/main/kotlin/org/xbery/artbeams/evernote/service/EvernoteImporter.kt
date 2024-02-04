@@ -1,5 +1,6 @@
 package org.xbery.artbeams.evernote.service
 
+import com.evernote.edam.notestore.NoteStore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
@@ -43,19 +44,8 @@ open class EvernoteImporter(
             val noteStoreClient = evernoteApi.getEvernoteStoreClient()
             val updatedArticles = mutableListOf<Article>()
             for (article in articles) {
-                if (article.externalId != null) {
-                    val noteOpt =
-                        evernoteApi.findNoteWithCleanedContentByGuid(
-                            article.externalId,
-                            noteStoreClient
-                        )
-                    if (noteOpt != null) {
-                        val updatedArticle = updateArticleWithNoteData(article, noteOpt)
-                        if (updatedArticle != null) {
-                            updatedArticles.add(updatedArticle)
-                        }
-                    }
-                }
+                val updatedArticle = updateArticleWithNote(article, noteStoreClient)
+                updatedArticle?.let { updatedArticles.add(it) }
             }
 
             // Older sync logic with pairing article's slug with note's normalized title
@@ -72,6 +62,32 @@ open class EvernoteImporter(
         }
     }
 
+    /**
+     * Updates article with the content of corresponding Evernote note. Returns updated article,
+     * or null if it was not updated (note not found, or article has not an externalId - id of note).
+     */
+    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
+    open fun updateArticleWithNote(
+        article: Article,
+        noteStoreClient: NoteStore.Client = evernoteApi.getEvernoteStoreClient()
+    ): Article? {
+        if (article.externalId == null || !isEvernoteIdentifier(article.externalId)) {
+            // Article without pairing to note id, or with different identifier than for Evernote
+            return null
+        }
+        val noteOpt =
+            evernoteApi.findNoteWithCleanedContentByGuid(
+                article.externalId,
+                noteStoreClient
+            )
+        if (noteOpt != null) {
+            return updateArticleWithNoteData(article, noteOpt) ?: null
+        }
+        return null
+    }
+
+    fun isEvernoteIdentifier(noteId: String): Boolean = noteId.contains('-')
+
     private fun updateArticleWithNoteBySlug(note: Note): Article? {
         val slug = this.normalizationHelper.toSlug(note.title)
         var article = this.articleRepository.findBySlug(slug)
@@ -85,19 +101,22 @@ open class EvernoteImporter(
     }
 
     private fun updateArticleWithNoteData(article: Article, note: Note): Article? {
-        val htmlBody: String = if (note.body != null && !note.body.isEmpty()) {
+        val htmlBody: String = if (note.body != null && note.body.isNotEmpty()) {
             markdownConverter.markdownToHtml(note.body)
         } else {
             ""
         }
+        if (article.bodyMarkdown == note.body && article.body == htmlBody && article.title == note.title) {
+            logger.info("Nothing to update from Evernote (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
+            return article
+        }
         val updatedArticleOpt =
             articleRepository.updateEntity(article.copy(
-                externalId = note.guid,
                 title = note.title,
                 bodyMarkdown = note.body,
                 body = htmlBody
             ))
-        updatedArticleOpt?.let { updatedArticle -> logger.info("Updated: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}") }
+        updatedArticleOpt?.let { updatedArticle -> logger.info("Updated from Evernote: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}") }
         return updatedArticleOpt
     }
 }

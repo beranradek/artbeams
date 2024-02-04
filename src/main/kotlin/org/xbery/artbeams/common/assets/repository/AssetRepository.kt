@@ -24,7 +24,7 @@ abstract class AssetRepository<T : Asset, F : AssetFilter>(
     open fun create(entity: T): T {
         val now: Instant = Instant.now()
         // TODO: Set also created by, modified by...
-        val entityWithId: T = (getEntityMapper() as AssetMapper).entityWithCommonAttributes(
+        val entityWithId: T = (entityMapper as AssetMapper).entityWithCommonAttributes(
             entity,
             entity.common.copy(
                 id = AssetAttributes.newId(),
@@ -39,7 +39,7 @@ abstract class AssetRepository<T : Asset, F : AssetFilter>(
         val now: Instant = Instant.now()
         // TODO: Set also created by, modified by...
         return super.create(
-            (getEntityMapper() as AssetMapper).entityWithCommonAttributes(
+            (entityMapper as AssetMapper).entityWithCommonAttributes(
                 entity,
                 entity.common.copy(
                     created = now,
@@ -53,7 +53,7 @@ abstract class AssetRepository<T : Asset, F : AssetFilter>(
         val now: Instant = Instant.now()
         // TODO: Set also modified by...
         return super.update(
-            (getEntityMapper() as AssetMapper).entityWithCommonAttributes(
+            (entityMapper as AssetMapper).entityWithCommonAttributes(
                 entity, entity.common.copy(
                     modified = now
                 )

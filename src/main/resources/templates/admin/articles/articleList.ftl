@@ -3,6 +3,7 @@
 
 <a class="btn btn-primary" href="/admin/articles/${emptyId}/edit" role="button">New Article</a>
 <a class="btn btn-secondary" href="/admin/evernote/import" role="button">Sync with Evernote</a>
+<a class="btn btn-secondary" href="/admin/google-docs/authorization" role="button">Authorize Google Docs</a>
 
 <table class="table table-sm">
   <thead>

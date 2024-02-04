@@ -39,7 +39,8 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
 
     // See https://dev.evernote.com/doc/reference/NoteStore.html#Fn_NoteStore_updateNote
     fun updateNote(noteGuid: String, content: String) {
-        Logger.info("Updating note ${noteGuid} in Evernote")
+        val opName = "Updating note $noteGuid in Evernote"
+        Logger.info(opName)
         val noteStoreClient: Client = getEvernoteStoreClient()
         val note = findNoteByGuid(noteGuid, noteStoreClient)
         // \R  matches any line separator
@@ -49,7 +50,7 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         note.content = evernoteContent
         note.updated = Instant.now().toEpochMilli()
         noteStoreClient.updateNote(evernoteConfig.developerToken, note)
-        Logger.info("Updating note ${noteGuid} in Evernote - finished")
+        Logger.info("$opName - finished")
     }
 
     private fun findNoteByGuid(noteGuid: String, noteStoreClient: Client): Note {
@@ -77,7 +78,7 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
      * @return
      */
     fun loadNotes(notebookName: String): List<org.xbery.artbeams.evernote.domain.Note> {
-        Logger.info("Loading notes from Evernote notebook ${notebookName}")
+        Logger.info("Loading notes from Evernote notebook $notebookName")
         val noteStoreClient: Client = getEvernoteStoreClient()
         val notebook = findNotebook(noteStoreClient, notebookName)
         return if (notebook != null) {
@@ -136,17 +137,17 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
     private fun listNotes(evernoteStoreClient: Client, notebookGuid: String): List<Note> {
         Logger.info("Listing notes")
         // Search for the notes in notebook, ordered by creation date
-        val filter: NoteFilter = NoteFilter()
+        val filter = NoteFilter()
         filter.notebookGuid = notebookGuid
         filter.order = NoteSortOrder.CREATED.value
-        filter.setAscending(true)
+        filter.isAscending = true
         var notes = mutableListOf<Note>()
         var offset: Int = 0
         var totalNotes: Int = 0
         do {
             val noteList = evernoteStoreClient.findNotes(evernoteConfig.developerToken, filter, offset, NOTES_LIMIT)
             totalNotes = noteList.getTotalNotes()
-            offset = offset + NOTES_LIMIT
+            offset += NOTES_LIMIT
             notes.addAll(noteList.notes)
         } while (offset < totalNotes)
         return notes
@@ -175,9 +176,9 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
             if (developerToken == null || developerToken.trim().isEmpty()) {
                 throw  IllegalStateException("Invalid Evernote developer token: $developerToken")
             }
-        val notestoreUrl = userStore.getNoteStoreUrl(developerToken)
+        val noteStoreUrl = userStore.getNoteStoreUrl(developerToken)
         // Set up the NoteStore client
-        val noteStoreTrans = THttpClient(notestoreUrl)
+        val noteStoreTrans = THttpClient(noteStoreUrl)
         noteStoreTrans.setCustomHeader("User-Agent", USER_AGENT)
         val noteStoreProtocol = TBinaryProtocol(noteStoreTrans)
         return Client(noteStoreProtocol, noteStoreProtocol)

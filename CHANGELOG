@@ -1,5 +1,8 @@
 # Changelog
 
+1.3.0 (4.2.2024)
+* Synchronization of articles with Google Documents.
+
 1.2.0 (12.11.2023)
 * Image transformations in media gallery, article image upload.
 

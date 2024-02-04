@@ -21,7 +21,7 @@ abstract class ExtendedSqlRepository<T, K, F>(dataSource: DataSource, entityMapp
 
     open fun findOneByFilter(filter: F): T? {
         val list = this.findByFilter(filter, listOf())
-        return if (!list.isEmpty()) {
+        return if (list.isNotEmpty()) {
             list[0]
         } else {
             null

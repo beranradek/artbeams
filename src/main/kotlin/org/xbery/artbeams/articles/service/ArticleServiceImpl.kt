@@ -14,6 +14,8 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.markdown.MarkdownConverter
 import org.xbery.artbeams.evernote.service.EvernoteApi
+import org.xbery.artbeams.evernote.service.EvernoteImporter
+import org.xbery.artbeams.google.docs.GoogleDocsService
 
 /**
  * @author Radek Beran
@@ -23,7 +25,9 @@ open class ArticleServiceImpl(
     private val articleRepository: ArticleRepository,
     private val articleCategoryRepository: ArticleCategoryRepository,
     private val markdownConverter: MarkdownConverter,
-    private val evernoteApi: EvernoteApi
+    private val evernoteApi: EvernoteApi,
+    private val evernoteImporter: EvernoteImporter,
+    private val googleDocsService: GoogleDocsService
 ) : ArticleService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -53,26 +57,44 @@ open class ArticleServiceImpl(
             }
             if (updatedArticle != null) {
                 articleCategoryRepository.updateArticleCategories(updatedArticle.id, edited.categories)
-                // Update article's markdown in Evernote
-                updatedArticle.externalId?.let { externalId ->
-                    if (externalId != "" && updatedArticle.bodyMarkdown.trim() != "") {
-                        // External id is set and also some content that can be synced to Evernote was created
-                        evernoteApi.updateNote(externalId, updatedArticle.bodyMarkdown)
 
+                // Update article's markdown in Evernote, or Google Document
+                updatedArticle.externalId?.let { externalId ->
+                    if (externalId != "") {
+                        if (updatedArticle.bodyMarkdown.trim() != "") {
+                            // External id is set and also some content that can be synced was created
+                            // (so we do not replace the remote content accidentally with nothing!)
+                            if (evernoteImporter.isEvernoteIdentifier(externalId)) {
+                                evernoteApi.updateNote(externalId, updatedArticle.bodyMarkdown)
+                            } else {
+                                googleDocsService.writeGoogleDoc(externalId, updatedArticle.bodyMarkdown)
+                            }
+                        }
                     }
                 }
             }
             updatedArticle
         } catch (ex: Exception) {
-            logger.error("Update of article ${edited.id} finished with error ${ex}", ex)
+            logger.error("Update of article ${edited.id} finished with error ${ex.message}", ex)
             throw ex
         }
     }
 
     override fun findEditedArticle(id: String): EditedArticle? {
         return articleRepository.findByIdAsOpt(id)?.let { article ->
-            val categoryIds = findArticleCategories(article.id)
-            article.toEdited(categoryIds)
+            val articleUpdatedWithExternalData = if (article.externalId != null) {
+                if (evernoteImporter.isEvernoteIdentifier(article.externalId)) {
+                    // Evernote note identifier
+                    evernoteImporter.updateArticleWithNote(article) ?: article
+                } else {
+                    // Google doc identifier
+                    googleDocsService.updateArticleWithGoogleDoc(article) ?: article
+                }
+            } else {
+                article
+            }
+            val categoryIds = findArticleCategories(articleUpdatedWithExternalData.id)
+            articleUpdatedWithExternalData.toEdited(categoryIds)
         }
     }
 
