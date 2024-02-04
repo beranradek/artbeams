@@ -29,14 +29,16 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    private val oAuthFlowReceiverPort = 8888
+    private val oAuthFlowReceiverPort: Int by lazy {
+        configRepository.findConfig("google.oauth.receiver.port")?.toInt() ?: 8888
+    }
 
     /**
      * Name of application displayed to user to authorize access to his Google documents.
      */
     open val applicationName: String by lazy { configRepository.requireConfig("google.application-name") }
 
-    open val applicationDomain: String by lazy { configRepository.requireConfig("app.domain") }
+    open val applicationDomain: String by lazy { configRepository.findConfig("app.domain") ?: "localhost" }
 
     /**
      * Thread safe Google network HTTP transport.

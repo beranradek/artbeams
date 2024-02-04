@@ -81,7 +81,7 @@ open class EvernoteImporter(
                 noteStoreClient
             )
         if (noteOpt != null) {
-            return updateArticleWithNoteData(article, noteOpt) ?: null
+            return updateArticleWithNoteData(article, noteOpt)
         }
         return null
     }
