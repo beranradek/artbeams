@@ -6,6 +6,8 @@ Main features:
 
 * Simple and rich repository layer for rapid development.
 * Markdown and WYSIWYG editor.
+* Google Doc integration - syncing article content with Google Doc content.
+  Application is authorized to access content editor's Google documents via Google OAuth2.
 * Evernote integration.
   * Real applications authenticate with Evernote using OAuth, but for the purpose of exploring the API, you can get a developer token that allows you to access your own Evernote account. To get a developer token, visit https://www.evernote.com/api/DeveloperToken.action
 * Built with Spring Boot, Kotlin, Freemarker and Bootstrap. 

@@ -53,7 +53,14 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
     /**
      * Directory to store Google auth tokens for this application.
      */
-    private val tokensDirectoryPath = TempFiles.TEMP_DIR + "tokens"
+    private val tokensDirectoryPath: String by lazy {
+        val tempDir = TempFiles.TEMP_DIR
+        if (tempDir.endsWith(File.separator)) {
+            tempDir + "tokens"
+        } else {
+            tempDir + File.separator + "tokens"
+        }
+    }
 
     /**
      * JSON string with configuration of Google OAuth2 client_id, client_secret, redirect_uris, ...
