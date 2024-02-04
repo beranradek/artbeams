@@ -7,6 +7,7 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
@@ -43,7 +44,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
     /**
      * Thread safe Google network HTTP transport.
      */
-    open val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
+    open val httpTransport: NetHttpTransport = GoogleNetHttpTransport.newTrustedTransport()
 
     /**
      * Global instance of the JSON factory.
@@ -53,6 +54,8 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
     open val applicationUserId = "user"
 
     private val resourceAccessType = "offline"
+
+    private var localServerReceiver: LocalServerReceiver? = null
 
     /**
      * Directory to store Google auth tokens for this application.
@@ -86,7 +89,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
         // https://googleapis.github.io/google-api-java-client/oauth-2.0.html
         // for Google OAuth2 authorization flow description:
         val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-        val receiver = LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
+        val receiver = getOrCreateLocalServerReceiver()
         val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize(applicationUserId)
         return credential
     }
@@ -105,7 +108,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      * Returns URL for new authorization request (initiating Google API OAuth2 authorization).
      */
     open fun getAuthorizationUrl(scopes: List<String>): String {
-        val receiver = LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
+        val receiver = getOrCreateLocalServerReceiver()
         try {
             val flow = buildOAuth2AuthorizationCodeFlow(scopes)
             val redirectUri = receiver.redirectUri
@@ -114,6 +117,14 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
         } finally {
             receiver.stop()
         }
+    }
+
+    private fun getOrCreateLocalServerReceiver(): LocalServerReceiver {
+        if (localServerReceiver == null) {
+            localServerReceiver = LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
+        }
+        localServerReceiver?.stop() // To ensure receiver's server from possible previous check/authorization is stopped
+        return requireNotNull(localServerReceiver)
     }
 
     private fun buildOAuth2AuthorizationCodeFlow(scopes: List<String>): AuthorizationCodeFlow {
