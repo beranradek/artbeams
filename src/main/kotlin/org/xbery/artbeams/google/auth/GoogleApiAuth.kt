@@ -3,7 +3,6 @@ package org.xbery.artbeams.google.auth
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
@@ -30,10 +29,6 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    private val oAuthFlowReceiverPort: Int by lazy {
-        configRepository.findConfig("google.oauth.receiver.port")?.toInt() ?: 8888
-    }
-
     /**
      * Name of application displayed to user to authorize access to his Google documents.
      */
@@ -52,6 +47,8 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
     open val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
 
     open val applicationUserId = "user"
+
+    open var authCodeServerReceiver: AuthCodeServerReceiver? = null
 
     private val resourceAccessType = "offline"
 
@@ -117,8 +114,11 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
         }
     }
 
-    private fun createLocalServerReceiver(): LocalServerReceiver {
-        return LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
+    private fun createLocalServerReceiver(): AuthCodeServerReceiver {
+        if (authCodeServerReceiver == null) {
+            authCodeServerReceiver = AuthCodeServerReceiver(applicationDomain, "/admin/google/auth/callback")
+        }
+        return requireNotNull(authCodeServerReceiver)
     }
 
     private fun buildOAuth2AuthorizationCodeFlow(scopes: List<String>): AuthorizationCodeFlow {
