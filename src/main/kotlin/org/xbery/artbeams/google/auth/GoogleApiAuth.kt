@@ -36,6 +36,8 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      */
     open val applicationName: String by lazy { configRepository.requireConfig("google.application-name") }
 
+    open val applicationDomain: String by lazy { configRepository.requireConfig("app.domain") }
+
     /**
      * Thread safe Google network HTTP transport.
      */
@@ -82,7 +84,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
         // https://googleapis.github.io/google-api-java-client/oauth-2.0.html
         // for Google OAuth2 authorization flow description:
         val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-        val receiver = LocalServerReceiver.Builder().setPort(oAuthFlowReceiverPort).build()
+        val receiver = LocalServerReceiver.Builder().setHost(applicationDomain).setPort(oAuthFlowReceiverPort).build()
         val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize(applicationUserId)
         return credential
     }
