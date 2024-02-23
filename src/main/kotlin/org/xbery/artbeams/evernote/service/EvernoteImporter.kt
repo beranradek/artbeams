@@ -69,7 +69,7 @@ open class EvernoteImporter(
     @CacheEvict(value = [ Article.CacheName ], allEntries = true)
     open fun updateArticleWithNote(
         article: Article,
-        noteStoreClient: NoteStore.Client = evernoteApi.getEvernoteStoreClient()
+        noteStoreClient: NoteStore.Client? = null
     ): Article? {
         if (article.externalId == null || !isEvernoteIdentifier(article.externalId)) {
             // Article without pairing to note id, or with different identifier than for Evernote
@@ -78,7 +78,7 @@ open class EvernoteImporter(
         val noteOpt =
             evernoteApi.findNoteWithCleanedContentByGuid(
                 article.externalId,
-                noteStoreClient
+                noteStoreClient ?: evernoteApi.getEvernoteStoreClient()
             )
         if (noteOpt != null) {
             return updateArticleWithNoteData(article, noteOpt)
