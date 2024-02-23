@@ -34,7 +34,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      */
     open val applicationName: String by lazy { configRepository.requireConfig("google.application-name") }
 
-    open val applicationDomain: String by lazy { configRepository.findConfig("app.domain") ?: "localhost" }
+    open val applicationDomain: String by lazy { configRepository.findConfig("app.host-and-port") ?: "localhost:8080" }
 
     /**
      * Thread safe Google network HTTP transport.
