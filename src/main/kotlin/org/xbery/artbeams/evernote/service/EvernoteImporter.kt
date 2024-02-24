@@ -86,7 +86,7 @@ open class EvernoteImporter(
         return null
     }
 
-    fun isEvernoteIdentifier(noteId: String): Boolean = noteId.contains('-')
+    fun isEvernoteIdentifier(noteId: String): Boolean = noteId.count { it == '-'} >= 4
 
     private fun updateArticleWithNoteBySlug(note: Note): Article? {
         val slug = this.normalizationHelper.toSlug(note.title)
