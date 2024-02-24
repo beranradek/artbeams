@@ -101,11 +101,11 @@ open class EvernoteImporter(
     }
 
     private fun updateArticleWithNoteData(article: Article, note: Note): Article? {
-        val htmlBody: String = if (note.body != null && note.body.isNotEmpty()) {
-            markdownConverter.markdownToHtml(note.body)
-        } else {
-            ""
+        if (note.body == null || note.body.trim().isEmpty()) {
+            logger.info("Nothing to update from Evernote. Note is empty. Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
+            return article
         }
+        val htmlBody = markdownConverter.markdownToHtml(note.body)
         if (article.bodyMarkdown == note.body && article.body == htmlBody && article.title == note.title) {
             logger.info("Nothing to update from Evernote (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
             return article

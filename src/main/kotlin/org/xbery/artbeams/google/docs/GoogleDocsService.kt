@@ -92,11 +92,11 @@ open class GoogleDocsService(
             return null
         }
         val docContent = readGoogleDoc(article.externalId)
-        val htmlBody: String = if (docContent != null && docContent.isNotEmpty()) {
-            markdownConverter.markdownToHtml(docContent)
-        } else {
-            ""
+        if (docContent == null || docContent.trim().isEmpty()) {
+            logger.info("Nothing to update from Google Doc. Doc is empty. Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
+            return article
         }
+        val htmlBody = markdownConverter.markdownToHtml(docContent)
         if (article.bodyMarkdown == docContent && article.body == htmlBody) {
             logger.info("Nothing to update from Google Doc (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
             return article
