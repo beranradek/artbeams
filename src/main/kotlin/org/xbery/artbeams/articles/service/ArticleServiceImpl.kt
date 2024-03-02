@@ -81,12 +81,9 @@ open class ArticleServiceImpl(
         }
     }
 
-    /**
-     * @throws UnauthorizedException if user is not authorized to access Google documents or authorization has expired
-     */
-    override fun findEditedArticle(id: String): EditedArticle? {
+    override fun findEditedArticle(id: String, updateWithExternalData: Boolean): EditedArticle? {
         return articleRepository.findByIdAsOpt(id)?.let { article ->
-            val articleUpdatedWithExternalData = if (article.externalId != null) {
+            val articleUpdatedWithExternalData = if (article.externalId != null && updateWithExternalData) {
                 if (evernoteImporter.isEvernoteIdentifier(article.externalId)) {
                     // Evernote note identifier
                     evernoteImporter.updateArticleWithNote(article) ?: article

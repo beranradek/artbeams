@@ -37,10 +37,11 @@ open class ArticleAdminController(
     private val articleService: ArticleService,
     private val categoryRepository: CategoryRepository,
     private val mediaRepository: MediaRepository,
-    private val common: ControllerComponents
+    common: ControllerComponents
 ) : BaseController(common) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val tplBasePath: String = "admin/articles"
+    private val paramSaveWithinEditor: String = "saveWithinEditor"
     private val editFormDef: FormMapping<EditedArticle> = ArticleForm.definition
 
     @GetMapping
@@ -61,7 +62,10 @@ open class ArticleAdminController(
             renderEditForm(request, Article.EmptyEdited, ValidationResult.empty, null)
         } else {
             try {
-                val edited = articleService.findEditedArticle(id)
+                // We do not want to update article's content with external data right after saving its data
+                // to external storage without leaving editor for further editing (expensive and useless operation).
+                val updateWithExternalData = request.getParameter(paramSaveWithinEditor) == null
+                val edited = articleService.findEditedArticle(id, updateWithExternalData)
                 return if (edited != null) {
                     renderEditForm(request, edited, ValidationResult.empty, null)
                 } else {
@@ -96,7 +100,7 @@ open class ArticleAdminController(
                     if (article != null) {
                         if (params.getParamValue("save") != null) {
                             // Save without leave
-                            redirect("/admin/articles/${article.id}/edit")
+                            redirect("/admin/articles/${article.id}/edit?${paramSaveWithinEditor}=1")
                         } else {
                             redirect("/admin/articles")
                         }
