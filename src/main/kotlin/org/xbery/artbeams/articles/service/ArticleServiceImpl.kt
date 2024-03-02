@@ -10,6 +10,7 @@ import org.xbery.artbeams.articles.domain.EditedArticle
 import org.xbery.artbeams.articles.repository.ArticleCategoryFilter
 import org.xbery.artbeams.articles.repository.ArticleCategoryRepository
 import org.xbery.artbeams.articles.repository.ArticleRepository
+import org.xbery.artbeams.common.access.domain.UnauthorizedException
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.markdown.MarkdownConverter
@@ -80,6 +81,9 @@ open class ArticleServiceImpl(
         }
     }
 
+    /**
+     * @throws UnauthorizedException if user is not authorized to access Google documents or authorization has expired
+     */
     override fun findEditedArticle(id: String): EditedArticle? {
         return articleRepository.findByIdAsOpt(id)?.let { article ->
             val articleUpdatedWithExternalData = if (article.externalId != null) {

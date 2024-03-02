@@ -1,5 +1,6 @@
 package org.xbery.artbeams.google.docs.controller
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -8,9 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.xbery.artbeams.common.Urls
+import org.xbery.artbeams.common.controller.BaseController
+import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.google.auth.GoogleApiAuth
 import org.xbery.artbeams.google.docs.GoogleDocsService
-import java.net.URI
 import java.nio.charset.StandardCharsets
 
 /**
@@ -21,22 +24,23 @@ import java.nio.charset.StandardCharsets
  */
 @RestController
 @RequestMapping("/admin/google-docs")
-class GoogleDocsController(private val googleDocsService: GoogleDocsService, private val googleAuth: GoogleApiAuth) {
+class GoogleDocsController(
+    private val googleDocsService: GoogleDocsService,
+    private val googleAuth: GoogleApiAuth,
+    private val common: ControllerComponents): BaseController(common) {
 
     /**
      * Redirects to Google authorization URL if not authorized.
      */
     @GetMapping("/authorization")
-    fun authorization(): ResponseEntity<String> {
-        val headers = HttpHeaders()
-        headers.contentType = MediaType("text", "plain", StandardCharsets.UTF_8)
-
+    fun authorization(request: HttpServletRequest): Any {
+        val referrer = getReferrerUrl(request)
         if (!googleAuth.isUserAuthorized(googleDocsService.scopes)) {
-            headers.location = URI.create(googleAuth.getAuthorizationUrl(googleDocsService.scopes))
-            return ResponseEntity<String>(headers, HttpStatus.SEE_OTHER)
+            // Redirect to authorization URL with final return back to returnUrl (referrer)
+            val authorizationUrl = googleAuth.startAuthorizationFlow(googleDocsService.scopes, referrer)
+            return redirect(authorizationUrl)
         }
-
-        return ResponseEntity<String>("Already authorized", headers, HttpStatus.OK)
+        return redirect(Urls.urlWithParam(referrer, "alreadyAuthorized", "1"))
     }
 
     @GetMapping("/content/{documentId}")

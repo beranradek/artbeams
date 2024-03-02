@@ -24,6 +24,7 @@ import org.xbery.artbeams.common.form.SpringHttpServletRequestParams
 import org.xbery.artbeams.media.repository.MediaRepository
 import java.nio.channels.Channels
 import jakarta.servlet.http.HttpServletRequest
+import org.xbery.artbeams.common.access.domain.UnauthorizedException
 
 
 /**
@@ -59,11 +60,15 @@ open class ArticleAdminController(
         return if (id == null || AssetAttributes.EmptyId == id) {
             renderEditForm(request, Article.EmptyEdited, ValidationResult.empty, null)
         } else {
-            val edited = articleService.findEditedArticle(id)
-            return if (edited != null) {
-                renderEditForm(request, edited, ValidationResult.empty, null)
-            } else {
-                notFound()
+            try {
+                val edited = articleService.findEditedArticle(id)
+                return if (edited != null) {
+                    renderEditForm(request, edited, ValidationResult.empty, null)
+                } else {
+                    notFound()
+                }
+            } catch (ex: UnauthorizedException) {
+                redirect("/admin/google-docs/authorization")
             }
         }
     }

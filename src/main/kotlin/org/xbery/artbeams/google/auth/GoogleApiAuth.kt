@@ -20,7 +20,13 @@ import java.io.IOException
 import java.io.StringReader
 
 /**
- * Google API authentication and authorization.
+ * <p>Google API authentication and authorization.
+ *
+ * <p>Provides method {@link #getOrCreateAuthorizationTokens} to run the whole authorization code flow
+ * (with authorization URL to visit printed to standard output/log).
+ *
+ * <p>Alternatively, {@link #isUserAuthorized}, {@link #startAuthorizationFlow}, {@link #receiveAuthorizationCodeOrError},
+ * {@link #finishAuthorizationFlow} methods can be used to handle the flow in more custom, non-blocking way.
  *
  * @author Radek Beran
  */
@@ -34,8 +40,6 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      */
     open val applicationName: String by lazy { configRepository.requireConfig("google.application-name") }
 
-    open val applicationDomain: String by lazy { configRepository.findConfig("app.host-and-port") ?: "localhost:8080" }
-
     /**
      * Thread safe Google network HTTP transport.
      */
@@ -46,9 +50,13 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      */
     open val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
 
-    open val applicationUserId = "user"
+    private val applicationDomain: String by lazy { configRepository.findConfig("app.host-and-port") ?: "localhost:8080" }
 
-    open var authCodeServerReceiver: AuthCodeServerReceiver? = null
+    private val callbackPath: String = "/admin/google/auth/callback"
+
+    private val applicationUserId = "user"
+
+    private var authCodeServerReceiver: AuthCodeServerReceiver? = null
 
     private val resourceAccessType = "offline"
 
@@ -70,7 +78,13 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
     private val googleOAuthClientJson: String by lazy { configRepository.requireConfig("google.oauth.client.json") }
 
     /**
-     * Receives already valid user credentials (tokens), or runs Google OAuth2 authorization code flow, accepts new
+     * <p>Runs the whole authorization flow in the following way:
+     * Authorization URL to be visited (if user is not authorized yet) is printed to the standard output.
+     * This URL must be visited in the browser.
+     * Using local server receiver, authorization code is awaited in blocking way.
+     * Finally, local server receiver is released.
+     *
+     * <p>Receives already valid user credentials (tokens), or runs Google OAuth2 authorization code flow, accepts new
      * credentials (tokens) via temporary local receiver server listening on given port and stores credentials to tokens
      * directory on the filesystem. Returns resulting authorized credentials.
      *
@@ -78,15 +92,24 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    open fun getOrCreateAuthorizationTokens(scopes: List<String>): Credential {
-        // Build flow and trigger user authorization request.
+    open fun getOrCreateAuthorizationTokens(scopes: List<String>, returnUrl: String): Credential {
+        // Builds the flow and trigger user authorization request.
         // See https://cloud.google.com/java/docs/reference/google-api-client/latest/com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow,
         // https://googleapis.github.io/google-api-java-client/oauth-2.0.html
-        // for Google OAuth2 authorization flow description:
+        // for Google OAuth2 authorization flow description.
+
+        if (isUserAuthorized(scopes)) {
+            return getCredentials(scopes)
+        }
+
         val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-        val receiver = createLocalServerReceiver()
-        val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize(applicationUserId)
-        return credential
+        val receiver = createLocalServerReceiver(returnUrl)
+        try {
+            val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize(applicationUserId)
+            return credential
+        } finally {
+            receiver.stop()
+        }
     }
 
     /**
@@ -100,25 +123,60 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
     }
 
     /**
-     * Returns URL for new authorization request (initiating Google API OAuth2 authorization).
+     * Returns credentials if user is already authorized.
      */
-    open fun getAuthorizationUrl(scopes: List<String>): String {
-        val receiver = createLocalServerReceiver()
-        try {
-            val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-            val redirectUri = receiver.redirectUri
-            val authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri)
-            return authorizationUrl.build()
-        } finally {
-            receiver.stop()
+    fun getCredentials(scopes: List<String>): Credential {
+        val flow = buildOAuth2AuthorizationCodeFlow(scopes)
+        return flow.loadCredential(applicationUserId)
+    }
+
+    /**
+     * Starts a new authorization flow: Creates local server receiver that can accept authorization code or error
+     * during the authorization flow. Returns redirect URL that should be accessed to begin with the flow.
+     *
+     * @return redirect URL that should be accessed to begin with the flow
+     */
+    open fun startAuthorizationFlow(scopes: List<String>, returnUrl: String): String {
+        val receiver = createLocalServerReceiver(returnUrl)
+        val redirectUri = receiver.getRedirectUri()
+        val flow = buildOAuth2AuthorizationCodeFlow(scopes)
+        val authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri)
+        return authorizationUrl.build()
+    }
+
+    /**
+     * Method for accepting authorization code or error during an authorization flow.
+     */
+    open fun receiveAuthorizationCodeOrError(code: String?, error: String?) {
+        if (code != null && code.length > 60) {
+            // TODO: Validate code input, e.g. 4%2F0AfJohXnaRaPO1os9nfXxUDYUzgF6_L8VBr9KyIBqUxkweqDM0CClhAUM6roe2T-0YsvROg
+            authCodeServerReceiver?.code = code
+        }
+        if (!error.isNullOrEmpty()) {
+            authCodeServerReceiver?.error = error
         }
     }
 
-    private fun createLocalServerReceiver(): AuthCodeServerReceiver {
-        if (authCodeServerReceiver == null) {
-            authCodeServerReceiver = AuthCodeServerReceiver(applicationDomain, "/admin/google/auth/callback")
-        }
-        return requireNotNull(authCodeServerReceiver)
+    /**
+     * Method for releasing local server receiver after authorization flow has finished.
+     */
+    open fun finishAuthorizationFlow() {
+        authCodeServerReceiver?.stop()
+    }
+
+    /**
+     * Returns final return URL used within the authorization code flow.
+     */
+    internal fun getReturnUrl(): String? = authCodeServerReceiver?.returnUrl
+
+    /**
+     * Method that creates local server receiver in the beginning of authorization flow.
+     * Receiver can accept authorization code or error during the authorization flow.
+     */
+    private fun createLocalServerReceiver(returnUrl: String): AuthCodeServerReceiver {
+        val receiver = AuthCodeServerReceiver(applicationDomain, callbackPath, returnUrl)
+        authCodeServerReceiver = receiver
+        return receiver
     }
 
     private fun buildOAuth2AuthorizationCodeFlow(scopes: List<String>): AuthorizationCodeFlow {

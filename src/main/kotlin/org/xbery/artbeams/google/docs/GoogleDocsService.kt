@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.repository.ArticleRepository
+import org.xbery.artbeams.common.access.domain.UnauthorizedException
 import org.xbery.artbeams.common.markdown.MarkdownConverter
 import org.xbery.artbeams.google.auth.GoogleApiAuth
 
@@ -84,6 +85,8 @@ open class GoogleDocsService(
     /**
      * Updates article with the content of corresponding Google Document. Returns updated article,
      * or null if it was not updated (document not found, or article has not an externalId - id of document).
+     *
+     * @throws UnauthorizedException if user is not authorized to access Google documents or authorization has expired
      */
     @CacheEvict(value = [ Article.CacheName ], allEntries = true)
     open fun updateArticleWithGoogleDoc(article: Article): Article? {
@@ -93,12 +96,12 @@ open class GoogleDocsService(
         }
         val docContent = readGoogleDoc(article.externalId)
         if (docContent == null || docContent.trim().isEmpty()) {
-            logger.info("Nothing to update from Google Doc. Doc is empty. Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
+            logger.info("Nothing to update from Google Doc. Doc is empty. Article with slug ${article.slug}, externalId ${article.externalId}")
             return article
         }
         val htmlBody = markdownConverter.markdownToHtml(docContent)
         if (article.bodyMarkdown == docContent && article.body == htmlBody) {
-            logger.info("Nothing to update from Google Doc (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
+            logger.info("Nothing to update from Google Doc (already up to date): Article with slug ${article.slug}, externalId ${article.externalId}")
             return article
         }
         val updatedArticleOpt = articleRepository.updateEntity(
@@ -128,10 +131,17 @@ open class GoogleDocsService(
      * tokens and non-exact documentation) probably not thread-safe.
      * See also Google Docs API: https://developers.google.com/docs/api/how-tos/overview,
      * https://developers.google.com/docs/api/quickstart/java
+     *
+     * @param returnUrl Return URL if processing of Google doc authorization is needed
+     * @throws UnauthorizedException if user is not authorized or authorization has expired
      */
     private fun getDocsService(): Docs {
-        if (docs == null || !googleAuth.isUserAuthorized(scopes)) {
-            docs = Docs.Builder(googleAuth.httpTransport, googleAuth.jsonFactory, googleAuth.getOrCreateAuthorizationTokens(scopes))
+        if (!googleAuth.isUserAuthorized(scopes)) {
+            docs = null
+            throw UnauthorizedException("Unauthorized access to Google documents")
+        }
+        if (docs == null) {
+            docs = Docs.Builder(googleAuth.httpTransport, googleAuth.jsonFactory, googleAuth.getCredentials(scopes))
                 .setApplicationName(googleAuth.applicationName)
                 .build()
         }
