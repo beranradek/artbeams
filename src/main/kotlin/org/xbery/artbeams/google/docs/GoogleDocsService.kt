@@ -132,7 +132,6 @@ open class GoogleDocsService(
      * See also Google Docs API: https://developers.google.com/docs/api/how-tos/overview,
      * https://developers.google.com/docs/api/quickstart/java
      *
-     * @param returnUrl Return URL if processing of Google doc authorization is needed
      * @throws UnauthorizedException if user is not authorized or authorization has expired
      */
     private fun getDocsService(): Docs {

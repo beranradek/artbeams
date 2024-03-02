@@ -14,6 +14,7 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.google.auth.GoogleApiAuth
 import org.xbery.artbeams.google.docs.GoogleDocsService
+import java.net.URI
 import java.nio.charset.StandardCharsets
 
 /**
@@ -33,14 +34,17 @@ class GoogleDocsController(
      * Redirects to Google authorization URL if not authorized.
      */
     @GetMapping("/authorization")
-    fun authorization(request: HttpServletRequest): Any {
-        val referrer = getReferrerUrl(request)
+    fun authorization(request: HttpServletRequest): ResponseEntity<String> {
+        val headers = HttpHeaders()
+        val returnUrl = getFullUrl(request)
         if (!googleAuth.isUserAuthorized(googleDocsService.scopes)) {
             // Redirect to authorization URL with final return back to returnUrl (referrer)
-            val authorizationUrl = googleAuth.startAuthorizationFlow(googleDocsService.scopes, referrer)
-            return redirect(authorizationUrl)
+            val authorizationUrl = googleAuth.startAuthorizationFlow(googleDocsService.scopes, returnUrl)
+            headers.location = URI.create(authorizationUrl)
+            return ResponseEntity<String>(headers, HttpStatus.SEE_OTHER)
         }
-        return redirect(Urls.urlWithParam(referrer, "alreadyAuthorized", "1"))
+        headers.location = URI.create(Urls.urlWithParam(returnUrl, "alreadyAuthorized", "1"))
+        return ResponseEntity<String>(headers, HttpStatus.SEE_OTHER)
     }
 
     @GetMapping("/content/{documentId}")
