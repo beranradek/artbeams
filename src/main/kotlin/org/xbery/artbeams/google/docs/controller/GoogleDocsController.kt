@@ -36,7 +36,7 @@ class GoogleDocsController(
     @GetMapping("/authorization")
     fun authorization(request: HttpServletRequest): ResponseEntity<String> {
         val headers = HttpHeaders()
-        val returnUrl = getFullUrl(request)
+        val returnUrl = getReferrerUrl(request)
         if (!googleAuth.isUserAuthorized(googleDocsService.scopes)) {
             // Redirect to authorization URL with final return back to returnUrl (referrer)
             val authorizationUrl = googleAuth.startAuthorizationFlow(googleDocsService.scopes, returnUrl)

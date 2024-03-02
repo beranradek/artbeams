@@ -1,7 +1,6 @@
 package org.xbery.artbeams.google.auth
 
 import com.google.api.client.extensions.java6.auth.oauth2.VerificationCodeReceiver
-import org.xbery.artbeams.common.Urls
 import java.io.IOException
 import java.util.concurrent.Semaphore
 
@@ -18,7 +17,6 @@ internal class AuthCodeServerReceiver (
 ) : VerificationCodeReceiver {
 
     companion object {
-        const val PARAM_NAME_RETURN_URL = "returnUrl"
 
         fun getRedirectUri(host: String, callbackPath: String): String = "http://$host$callbackPath"
     }
@@ -27,7 +25,7 @@ internal class AuthCodeServerReceiver (
     internal var error: String? = null
     private val waitUnlessSignaled: Semaphore = Semaphore(0)
 
-    override fun getRedirectUri() = Urls.urlWithParam(getRedirectUri(this.host, this.callbackPath), PARAM_NAME_RETURN_URL, returnUrl)
+    override fun getRedirectUri() = getRedirectUri(this.host, this.callbackPath)
 
     override fun waitForCode(): String {
         waitUnlessSignaled.acquireUninterruptibly()
