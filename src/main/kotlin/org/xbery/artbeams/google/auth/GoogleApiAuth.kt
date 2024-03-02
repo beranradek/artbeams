@@ -102,13 +102,13 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
             return getCredentials(scopes)
         }
 
-        val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-        val receiver = createLocalServerReceiver(returnUrl)
         try {
+            val flow = buildOAuth2AuthorizationCodeFlow(scopes)
+            val receiver = createLocalServerReceiver(returnUrl)
             val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize(applicationUserId)
             return credential
         } finally {
-            receiver.stop()
+            finishAuthorizationFlow()
         }
     }
 
@@ -162,10 +162,12 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      */
     open fun finishAuthorizationFlow() {
         authCodeServerReceiver?.stop()
+        authCodeServerReceiver = null
     }
 
     /**
-     * Returns final return URL used within the authorization code flow.
+     * Returns final return URL used within the authorization code flow, before the authorization flow is finished.
+     * After {@link #finishAuthorizationFlow}, null URL is returned.
      */
     internal fun getReturnUrl(): String? = authCodeServerReceiver?.returnUrl
 
