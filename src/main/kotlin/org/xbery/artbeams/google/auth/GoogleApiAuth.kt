@@ -2,6 +2,7 @@ package org.xbery.artbeams.google.auth
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow
 import com.google.api.client.auth.oauth2.Credential
+import com.google.api.client.auth.oauth2.TokenResponse
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
@@ -104,7 +105,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
 
         try {
             val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-            val receiver = createLocalServerReceiver(returnUrl)
+            val receiver = createLocalServerReceiver(scopes, returnUrl)
             val credential = AuthorizationCodeInstalledApp(flow, receiver).authorize(applicationUserId)
             return credential
         } finally {
@@ -137,7 +138,7 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      * @return redirect URL that should be accessed to begin with the flow
      */
     open fun startAuthorizationFlow(scopes: List<String>, returnUrl: String): String {
-        val receiver = createLocalServerReceiver(returnUrl)
+        val receiver = createLocalServerReceiver(scopes, returnUrl)
         val redirectUri = receiver.getRedirectUri()
         val flow = buildOAuth2AuthorizationCodeFlow(scopes)
         val authorizationUrl = flow.newAuthorizationUrl().setRedirectUri(redirectUri)
@@ -150,7 +151,13 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
     open fun receiveAuthorizationCodeOrError(code: String?, error: String?) {
         if (code != null && code.length > 60) {
             // TODO: Validate code input, e.g. 4%2F0AfJohXnaRaPO1os9nfXxUDYUzgF6_L8VBr9KyIBqUxkweqDM0CClhAUM6roe2T-0YsvROg
-            authCodeServerReceiver?.code = code
+            if (authCodeServerReceiver != null) {
+                val receiver = requireNotNull(authCodeServerReceiver)
+                receiver.code = code
+                val flow = buildOAuth2AuthorizationCodeFlow(receiver.scopes)
+                val response: TokenResponse = flow.newTokenRequest(code).setRedirectUri(receiver.redirectUri).execute()
+                flow.createAndStoreCredential(response, applicationUserId)
+            }
         }
         if (!error.isNullOrEmpty()) {
             authCodeServerReceiver?.error = error
@@ -175,8 +182,8 @@ open class GoogleApiAuth(private val configRepository: ConfigRepository) {
      * Method that creates local server receiver in the beginning of authorization flow.
      * Receiver can accept authorization code or error during the authorization flow.
      */
-    private fun createLocalServerReceiver(returnUrl: String): AuthCodeServerReceiver {
-        val receiver = AuthCodeServerReceiver(applicationDomain, callbackPath, returnUrl)
+    private fun createLocalServerReceiver(scopes: List<String>, returnUrl: String): AuthCodeServerReceiver {
+        val receiver = AuthCodeServerReceiver(scopes, applicationDomain, callbackPath, returnUrl)
         authCodeServerReceiver = receiver
         return receiver
     }

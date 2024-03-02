@@ -11,9 +11,10 @@ import java.util.concurrent.Semaphore
  * @author Radek Beran
  */
 internal class AuthCodeServerReceiver (
+    val scopes: List<String>,
     private val host: String,
     private val callbackPath: String,
-    val returnUrl: String
+    val returnUrl: String,
 ) : VerificationCodeReceiver {
 
     companion object {
