@@ -64,6 +64,13 @@ cite {
   text-align: center;
 }
 
+.centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
 /** The following inlined styles were rewritten to CSS classes due to strict Content Security Policy */
 .color-orange {
     color: #d2691e;
