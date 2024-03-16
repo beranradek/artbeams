@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.header.writers.CacheControlHeadersWriter
@@ -18,7 +17,10 @@ import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 
 
 /**
- * Spring security configuration. Defines secured paths of application and authentication manager implementation.
+ * <p>Spring security configuration. Defines secured paths of application and authentication manager implementation.
+ *
+ * <p>See also https://www.marcobehler.com/guides/spring-security
+ *
  * @author Radek Beran
  */
 @EnableWebSecurity
@@ -28,40 +30,46 @@ open class SecurityConfig {
 
     @Bean
     @Throws(Exception::class)
-    open fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http
-            .authorizeHttpRequests { requestMatcher: AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry ->
-                requestMatcher
-                    .requestMatchers(*ResourcePaths)
-                    .permitAll()
-                    .requestMatchers("/admin/**")
+    open fun adminSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http.authorizeHttpRequests { request ->
+                request.requestMatchers(*ResourcePaths).permitAll()
+            }
+            .authorizeHttpRequests { request ->
+                request.requestMatchers(AntPathRequestMatcher("/admin/**"))
                     .hasAuthority("admin")
-                    .anyRequest()
-                    .permitAll()
-                    .and()
-                    .formLogin()
+            }
+            .authorizeHttpRequests { request ->
+                request.requestMatchers(AntPathRequestMatcher("/clenska-sekce/**"))
+                    .hasAuthority("member")
+            }
+            .authorizeHttpRequests { request ->
+                request.anyRequest().permitAll()
+            }
+            .formLogin { formLoginConfigurer ->
+                formLoginConfigurer
                     .loginPage("/login")
                     .permitAll()
-                    .and()
-                    .logout()
+            }
+            .logout { logoutConfigurer ->
+                logoutConfigurer
                     .permitAll()
-                    .and()
-                    .headers().xssProtection()
-                    .and()
-                    .addHeaderWriter { request, response ->
-                        // For Content Security Policy header configuration,
-                        // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-                        // and https://www.baeldung.com/spring-security-csp
-                        // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
-                        if (!response.containsHeader(CSP_HEADER_NAME)) {
-                            val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
-                            // sha256 is included for style element added additionally by Facebook's sdk.js
-                            response.setHeader(
-                                CSP_HEADER_NAME,
-                                "style-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com web.facebook.com"
-                            )
-                        }
-                    }
+            }
+            .exceptionHandling { it.accessDeniedPage("/accessDenied") }
+            .headers().xssProtection()
+            .and()
+            .addHeaderWriter { request, response ->
+                // For Content Security Policy header configuration,
+                // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+                // and https://www.baeldung.com/spring-security-csp
+                // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
+                if (!response.containsHeader(CSP_HEADER_NAME)) {
+                    val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+                    // sha256 is included for style element added additionally by Facebook's sdk.js
+                    response.setHeader(
+                        CSP_HEADER_NAME,
+                        "style-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; script-src 'self' connect.facebook.net www.facebook.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; object-src 'none'; form-action 'self'; base-uri 'self'; frame-src www.facebook.com web.facebook.com"
+                    )
+                }
             }
 
         // For Content Security Policy header configuration, see also ContentSecurityPolicyServletFilter.

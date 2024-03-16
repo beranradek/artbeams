@@ -7,6 +7,7 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 
 /**
  * CMS administration.
+ *
  * @author Radek Beran
  */
 @Controller

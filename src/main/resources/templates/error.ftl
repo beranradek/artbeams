@@ -1,4 +1,4 @@
-<#import "/webLayout.ftl" as webLayout>
+<#import "/errorLayout.ftl" as webLayout>
 <@webLayout.page>
     <h2>
       <#if status == 401>Stránka vyžaduje přihlášení

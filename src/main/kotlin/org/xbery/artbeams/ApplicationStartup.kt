@@ -24,6 +24,7 @@ import org.xbery.artbeams.users.service.UserService
 @Component
 open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
     private val adminRoleName: String = "admin"
+    private val memberRoleName: String = "member"
     private val adminUserLogin: String = "admin"
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -35,7 +36,8 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         val userService: UserService = context.getBean(UserService::class.java)
         val configRepository: ConfigRepository = context.getBean(ConfigRepository::class.java)
         val localisationRepository: LocalisationRepository = context.getBean(LocalisationRepository::class.java)
-        val adminRole = findOrCreateAdminRole(roleRepository)
+        val adminRole = findOrCreateRole(roleRepository, adminRoleName)
+        findOrCreateRole(roleRepository, memberRoleName)
         findOrCreateAdminUser(userRepository, userService, adminRole)
         loadConfig(configRepository)
         loadLocalisation(localisationRepository)
@@ -55,16 +57,16 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         }
     }
 
-    private fun findOrCreateAdminRole(roleRepository: RoleRepository): Role {
+    private fun findOrCreateRole(roleRepository: RoleRepository, roleName: String): Role {
         val roles = roleRepository.findRoles()
-        var adminRole = roles.find { it.name == adminRoleName }
-        return if (adminRole != null) {
-            adminRole
+        var role = roles.find { it.name == roleName }
+        return if (role != null) {
+            role
         } else {
-            adminRole = Role(AssetAttributes.Empty.updatedWith(AssetAttributes.EmptyId), adminRoleName)
-            adminRole = roleRepository.create(adminRole)
-            logger.info("Default admin role created")
-            adminRole
+            role = Role(AssetAttributes.Empty.updatedWith(AssetAttributes.EmptyId), roleName)
+            role = roleRepository.create(role)
+            logger.info("$roleName role created")
+            role
         }
     }
 

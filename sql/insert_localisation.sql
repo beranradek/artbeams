@@ -73,3 +73,5 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.tit
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.small.width', '260');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.big.width', '730');
+
+INSERT INTO localisation (entry_key, entry_value) VALUES ('member-section.title', 'Členská sekce');

@@ -19,11 +19,16 @@ open class ApplicationErrorController(private val common: ControllerComponents) 
     ErrorController {
 
     @RequestMapping("/error")
-    fun handleError(request: HttpServletRequest): Any {
-        val status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE)
-        val model = createModel(request, Pair("status", status))
-        val tplName =
-            if (status != null && status.toString().toInt() == HttpStatus.NOT_FOUND.value()) "error404" else "error"
+    open fun handleError(request: HttpServletRequest): Any {
+        val status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE) ?: 500
+        val model = createModel(request, "status" to status)
+        val tplName = if (status.toString().toInt() == HttpStatus.NOT_FOUND.value()) "error404" else "error"
         return ModelAndView(tplName, model)
+    }
+
+    @RequestMapping("/accessDenied")
+    open fun accessDenied(request: HttpServletRequest): Any {
+        val model = createModel(request, "status" to 403)
+        return ModelAndView("error", model)
     }
 }

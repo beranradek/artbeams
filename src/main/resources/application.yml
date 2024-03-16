@@ -3,7 +3,8 @@
 # #########################
 
 server.error.whitelabel.enabled: false
-server.error.path: "/error"
+server.error.path: /error
+
 # Session timeout. Longer for editing articles without saving them "each minute".
 server.servlet.session.timeout: 120m
 spring.jackson.serialization.indent-output: true
