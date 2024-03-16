@@ -42,6 +42,21 @@ data class User(
         )
     }
 
+    fun updatedWith(profile: MyProfile, userId: String): User {
+        val updatedPassword = if (profile.password.trim().isNotEmpty() && profile.password2.trim().isNotEmpty() && profile.password == profile.password2) {
+            PasswordHashing().createPasswordHash(profile.password.trim())
+        } else {
+            this.password
+        }
+        return this.copy(
+            common = this.common.updatedWith(userId),
+            password = updatedPassword,
+            firstName = profile.firstName,
+            lastName = profile.lastName,
+            email = profile.email.lowercase()
+        )
+    }
+
     fun toEdited(): EditedUser {
         return EditedUser(this.id, this.login, "", "", this.firstName, this.lastName, this.email, this.roles.map { it.id })
     }

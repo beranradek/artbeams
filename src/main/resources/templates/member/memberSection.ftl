@@ -1,4 +1,4 @@
-<#import "/memberLayout.ftl" as layout>
+<#import "/member/memberLayout.ftl" as layout>
 <@layout.page>
 Welcome in member section!
 </@layout.page>

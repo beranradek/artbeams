@@ -13,11 +13,11 @@ import org.xbery.artbeams.common.controller.ControllerComponents
  * @author Radek Beran
  */
 @Controller
-open class MemberSectionHomeController(common: ControllerComponents) : BaseController(common) {
+open class MemberSectionController(common: ControllerComponents) : BaseController(common) {
 
     @GetMapping("/clenska-sekce")
     fun memberSectionHome(request: HttpServletRequest): Any {
         val model = createModel(request)
-        return ModelAndView("member/memberHome", model)
+        return ModelAndView("member/memberSection", model)
     }
 }

@@ -89,13 +89,13 @@ open class UserAdminController(
         edited: EditedUser,
         validationResult: ValidationResult
     ): Any {
-        val editForm: FormMapping<EditedUser> = editFormDef.fill(FormData<EditedUser>(edited, validationResult))
+        val editForm: FormMapping<EditedUser> = editFormDef.fill(FormData(edited, validationResult))
         val roles: List<Role> = roleRepository.findRoles()
         val model = createModel(
             request, "editForm"
                     to editForm, "roles"
                     to roles
         )
-        return ModelAndView(TplBasePath + "/userEdit", model)
+        return ModelAndView("$TplBasePath/userEdit", model)
     }
 }

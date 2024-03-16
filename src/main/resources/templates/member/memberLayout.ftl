@@ -110,6 +110,9 @@
               </a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="/clenska-sekce/muj-profil">Můj profil</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="/logout">${xlat['logout']}</a>
             </li>
             </#if>
@@ -122,13 +125,6 @@
     <main role="main" class="container page-content">
         <#nested/>
     </main><!-- /.container -->
-    <#if !noHeader??>
-      <footer class="footer mt-auto py-3 bg-body-tertiary">
-        <div class="container align-right">
-          <a href="#">${xlat['goto.up']}</a>
-        </div>
-      </footer>
-    </#if>
     
     <!-- Bootstrap core JavaScript -->
     <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
