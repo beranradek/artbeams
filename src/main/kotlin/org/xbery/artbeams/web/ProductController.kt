@@ -58,6 +58,9 @@ open class ProductController(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
+    /**
+     * Processes form with subscription/ordering of given product.
+     */
     @PostMapping("/produkt/{slug}/subscribe")
     fun subscribe(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.findBySlug(slug)
@@ -98,6 +101,19 @@ open class ProductController(
                     }
                 }
             }
+        } else {
+            notFound()
+        }
+    }
+
+    /**
+     * Shows order page for given product (with possible details of order/integration of invoicing system).
+     */
+    @GetMapping("/produkt/{slug}/objednavka")
+    fun showProductOrder(request: HttpServletRequest, @PathVariable slug: String): Any {
+        val product = productService.findBySlug(slug)
+        return if (product != null) {
+            renderProductArticle(request, product, product.slug + "-objednavka", false)
         } else {
             notFound()
         }
