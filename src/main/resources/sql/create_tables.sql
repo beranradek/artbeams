@@ -67,9 +67,10 @@ CREATE TABLE article_category (
 );
 
 CREATE TABLE media (
-    filename VARCHAR(128) NOT NULL PRIMARY KEY,
-    content_type VARCHAR(40) DEFAULT NULL PRIMARY KEY,
-    size integer DEFAULT NULL PRIMARY KEY,
+    id VARCHAR(128) NOT NULL PRIMARY KEY,
+    filename VARCHAR(128) NOT NULL,
+    content_type VARCHAR(40) DEFAULT NULL,
+    size integer DEFAULT NULL,
     data bytea,
     private_access boolean DEFAULT FALSE,
     width integer DEFAULT NULL,

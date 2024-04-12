@@ -1,19 +1,27 @@
+import org.jooq.meta.jaxb.Logging
+
 buildscript {
-    ext {
-        springBootVersion = '3.2.1'
-        kotlinVersion = '1.9.22'
-    }
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         // The Spring Boot Gradle Plugin provides Spring Boot support in Gradle, 
         // allowing you to package executable jar or war archives, 
         // run Spring Boot applications and use the dependency management 
         // provided by spring-boot-dependencies.
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
     }
+}
+
+plugins {
+    // Automatically make certain annotated classes open for CGLIB proxies to work, e.g. @Configuration etc.
+    id "org.jetbrains.kotlin.plugin.spring" version "$kotlinVersion"
+    // Integrates the jOOQ code generation tool
+    id("nu.studer.jooq") version "$jooqPluginVersion"
+    // id("org.jooq.jooq-codegen-gradle") version "jooqPluginVersion" // not compatible with Spring Boot yet, maybe later
 }
 
 apply plugin: 'java'
@@ -24,8 +32,6 @@ apply plugin: 'io.spring.dependency-management'
 group = 'org.xbery'
 version = '1.3.0-SNAPSHOT'
 def jvmTargetVersion = JavaVersion.VERSION_21
-kotlinVersion = '1.9.22'
-def jacksonVersion = '2.16.1'
 
 repositories {
     mavenCentral()
@@ -50,6 +56,19 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    // Database and repository libraries
+    // JOOQ
+    // Configuration described at https://www.baeldung.com/spring-boot-support-for-jooq
+    implementation "org.springframework.boot:spring-boot-starter-jooq:$springBootVersion"
+    implementation("org.xbery:overview-repo-sql:1.2.0")
+
+    // JOOQ Code generation specific dependencies, like JDBC drivers, codegen extensions, etc.
+    jooqGenerator "org.postgresql:postgresql:$postgresqlVersion"
+    // Extension for org.jooq.meta.extensions.ddl.DDLDatabase, ...
+    jooqGenerator "org.jooq:jooq-meta-extensions:$jooqVersion"
+
+    runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
+
     implementation("com.google.api-client:google-api-client:2.2.0")
 
     // OAuth 2.0 Verification Code Receiver For Google OAuth Client Library For Java.
@@ -63,10 +82,6 @@ dependencies {
 
     // Temporary migration report
     implementation("org.springframework.boot:spring-boot-properties-migrator")
-
-    // Database and repository libraries
-    runtimeOnly("org.postgresql:postgresql:9.4.1208")
-    implementation("org.xbery:overview-repo-sql:1.2.0")
 
     // Forms
     implementation("net.formio:formio:1.7.0")
@@ -110,6 +125,78 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
 }
+
+jooq {
+    version = property("jooqVersion")
+    configurations {
+        main {  // name of the jOOQ configuration
+            generationTool {
+                logging = Logging.WARN
+                generator {
+                    name = 'org.jooq.codegen.KotlinGenerator'
+                    strategy {
+                        name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+                    }
+                    database {
+                        // Script-defined database (DDLDatabase) does not require live connection to the database (jdbc config).
+                        // See https://www.jooq.org/doc/latest/manual/code-generation/codegen-ddl/ for properties of DDLDatabase
+                        name = "org.jooq.meta.extensions.ddl.DDLDatabase"
+                        properties {
+                            // Specify the location of your SQL script.
+                            // You may use ant-style file matching, e.g. /path/**/to/*.sql
+                            //
+                            // Where:
+                            // - ** matches any directory subtree
+                            // - * matches any number of characters in a directory / file name
+                            // - ? matches a single character in a directory / file name
+                            property {
+                                key = "scripts"
+                                value = "src/main/resources/sql/create_tables.sql"
+                            }
+                            // The default name case for unquoted objects:
+                            //
+                            // - as_is: unquoted object names are kept unquoted
+                            // (this means case insensitive, H2 and PostgreSQL can handle case insensitive object names)
+                            // - upper: unquoted object names are turned into upper case (most databases, also H2)
+                            // - lower: unquoted object names are turned into lower case (e.g. PostgreSQL)
+                            property {
+                                key = "defaultNameCase"
+                                value = "lower"
+                            }
+                            // public schema is used by default
+                            // property {
+                            //    key = "unqualifiedSchema"
+                            //    value = "public"
+                            //}
+                        }
+                    }
+                    generate {
+                        javaTimeTypes = true
+                    }
+                    target {
+                        // Generate to separate source set since it can clean also project files!
+                        packageName = 'org.xbery.artbeams.jooq.schema'
+                        directory = 'src/main/jooqGenerated'
+                    }
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    jooqGenerated {
+        java {
+            compileClasspath += main.output
+            runtimeClasspath += main.output
+        }
+    }
+}
+
+// force Spring Boot plugin to keep jOOQ version in sync
+ext["jooq.version"] = property("jooqVersion")
+
+tasks.named('generateJooq').configure { allInputsDeclared = true }
 
 // Task stage for Heroku deployment
 task stage(dependsOn: ['build', 'clean'])

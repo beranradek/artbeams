@@ -8,7 +8,7 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.stereotype.Component
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
-import org.xbery.artbeams.config.repository.ConfigRepository
+import org.xbery.artbeams.config.repository.AppConfigFetcher
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.Role
@@ -34,12 +34,12 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         val roleRepository: RoleRepository = context.getBean(RoleRepository::class.java)
         val userRepository: UserRepository = context.getBean(UserRepository::class.java)
         val userService: UserService = context.getBean(UserService::class.java)
-        val configRepository: ConfigRepository = context.getBean(ConfigRepository::class.java)
+        val appConfigFetcher: AppConfigFetcher = context.getBean(AppConfigFetcher::class.java)
         val localisationRepository: LocalisationRepository = context.getBean(LocalisationRepository::class.java)
         val adminRole = findOrCreateRole(roleRepository, adminRoleName)
         findOrCreateRole(roleRepository, memberRoleName)
         findOrCreateAdminUser(userRepository, userService, adminRole)
-        loadConfig(configRepository)
+        loadConfig(appConfigFetcher)
         loadLocalisation(localisationRepository)
         logger.info("Application initialization - finished")
     }
@@ -70,9 +70,9 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         }
     }
 
-    private fun loadConfig(repository: ConfigRepository) {
+    private fun loadConfig(appConfigFetcher: AppConfigFetcher) {
         logger.info("Loading config")
-        repository.reloadEntries()
+        appConfigFetcher.reloadConfigEntries()
     }
 
     private fun loadLocalisation(repository: LocalisationRepository) {

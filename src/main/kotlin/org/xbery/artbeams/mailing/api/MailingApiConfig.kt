@@ -5,7 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
-import org.xbery.artbeams.config.repository.ConfigRepository
+import org.xbery.artbeams.config.repository.AppConfigFetcher
 import java.time.Duration
 
 /**
@@ -14,16 +14,16 @@ import java.time.Duration
  */
 @Component
 open class MailingApiConfig(
-    configRepository: ConfigRepository
+    appConfigFetcher: AppConfigFetcher
 ) {
     companion object {
         const val FEATURE_NAME = "mailerlite.api"
     }
 
-    open val baseUrl: String by lazy { configRepository.requireConfig("mailing.api.baseUrl") }
+    open val baseUrl: String by lazy { appConfigFetcher.requireConfig("mailing.api.baseUrl") }
 
     // Clients of API must send this token as Authorization Bearer HTTP header.
-    open val token: String by lazy { configRepository.requireConfig("mailing.api.token") }
+    open val token: String by lazy { appConfigFetcher.requireConfig("mailing.api.token") }
 
     /**
      * Rest template has to be managed by Spring (created by RestTemplateBuilder) to provide metrics.

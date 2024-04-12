@@ -100,7 +100,7 @@ open class SecurityConfig {
     }
 
     //  @Bean def corsConfigurationSource: UrlBasedCorsConfigurationSource = {
-    //    // TODO: Configure CORS using application configuration (ConfigRepository)
+    //    // TODO: Configure CORS using application configuration
     //    // Only trusted origins should be allowed
     //    val configuration = new CorsConfiguration
     //    configuration.setAllowedOrigins(util.Arrays.asList("*"))

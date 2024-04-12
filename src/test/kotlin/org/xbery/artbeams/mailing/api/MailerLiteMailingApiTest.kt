@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.boot.web.client.RestTemplateBuilder
-import org.xbery.artbeams.config.repository.TestConfigRepository
+import org.xbery.artbeams.config.repository.TestAppConfigFetcher
 
 /**
  * @author Radek Beran
@@ -23,7 +23,7 @@ internal class MailerLiteMailingApiTest {
         assertNotNull(response.data.id)
     }
 
-    object TestMailingApiConfig: MailingApiConfig(TestConfigRepository(mapOf(
+    object TestMailingApiConfig: MailingApiConfig(TestAppConfigFetcher(mapOf(
         "mailerlite.api.baseUrl" to "https://connect.mailerlite.com",
         "mailerlite.api.token" to "FILL IN API TOKEN",
         "mailerlite.subscriber.group1" to "FILL IN SUBSCRIBER GROUP ID"
