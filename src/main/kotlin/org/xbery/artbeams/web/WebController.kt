@@ -49,7 +49,7 @@ open class WebController(
     override fun categoryService(): CategoryService = categoryService
     override fun productService(): ProductService = productService
 
-    private val ArticlesPerPageLimit: Int = 10
+    private val ArticlesPerPageLimit: Int = 20
     private val SearchLimit: Int = 20
     private val LatestArticlesSidebarLimit: Int = 5
     private var searchCount: Int = 0
