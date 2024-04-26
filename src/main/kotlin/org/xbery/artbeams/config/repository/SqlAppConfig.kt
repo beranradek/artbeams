@@ -1,22 +1,23 @@
 package org.xbery.artbeams.config.repository
 
-import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
-import org.xbery.artbeams.jooq.schema.tables.references.CONFIG
 import org.jooq.DSLContext
-import org.jooq.Table
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.common.repository.AbstractRecordFetcher
+import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
+import org.xbery.artbeams.jooq.schema.tables.references.CONFIG
 
 /**
- * Implementation of [AppConfigFetcher] that uses SQL database and caches config entries loaded
+ * Implementation of [AppConfig] that uses SQL database and caches config entries loaded
  * with the first request, until [#reloadConfigEntries] is called.
  *
  * @author Radek Beran
  */
 @Repository
-class SqlAppConfigFetcher(ctx: DSLContext) : AbstractRecordFetcher<ConfigRecord>(ctx), AppConfigFetcher {
+class SqlAppConfig(override val dsl: DSLContext) : AbstractRecordFetcher<ConfigRecord>, AppConfig {
+
+    override val table = CONFIG
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -39,6 +40,4 @@ class SqlAppConfigFetcher(ctx: DSLContext) : AbstractRecordFetcher<ConfigRecord>
         logger.info("Configuration loaded")
         return map
     }
-
-    override fun getTable(): Table<ConfigRecord> = CONFIG
 }

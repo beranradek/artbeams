@@ -1,10 +1,12 @@
 package org.xbery.artbeams.users.service
 
+import kotlinx.datetime.Clock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
+import org.xbery.artbeams.common.context.OriginStamp
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderItem
 import org.xbery.artbeams.orders.service.OrderService
@@ -66,8 +68,10 @@ open class UserSubscriptionServiceImpl(
         val names = User.namesFromFullName(fullName ?: "")
         val password = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()
         val user = EditedUser(
-          AssetAttributes.EmptyId, email, password, password, names.first, names.second, email, listOf())
-        val registeredUser = userService.saveUser(user, OperationCtx(null)) ?:
+          AssetAttributes.EmptyId, email, password, password, names.first, names.second, email, listOf()
+        )
+        val ctx = OperationCtx(null, OriginStamp(Clock.System.now(), "RegisterUserAfterConsent", null))
+        val registeredUser = userService.saveUser(user, ctx) ?:
             throw IllegalStateException("Error while saving new user $email")
         logger.info("User ${registeredUser.id}/${registeredUser.login} was registered")
         return registeredUser

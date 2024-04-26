@@ -7,4 +7,10 @@ import org.xbery.artbeams.users.domain.User
  *
  * @author Radek Beran
  */
-data class OperationCtx(val loggedUser: User?)
+data class OperationCtx(
+    val loggedUser: User?,
+    /**
+     * The "stamp of origin". Returns the same object for the whole operation.
+     */
+    val stamp: OriginStamp
+)

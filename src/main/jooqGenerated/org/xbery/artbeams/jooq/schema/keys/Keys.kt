@@ -10,6 +10,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.xbery.artbeams.jooq.schema.tables.AntispamQuiz
 import org.xbery.artbeams.jooq.schema.tables.Articles
+import org.xbery.artbeams.jooq.schema.tables.AuthCode
 import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
@@ -19,12 +20,14 @@ import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
+import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserRole
 import org.xbery.artbeams.jooq.schema.tables.Users
 import org.xbery.artbeams.jooq.schema.tables.records.AntispamQuizRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ArticlesRecord
+import org.xbery.artbeams.jooq.schema.tables.records.AuthCodeRecord
 import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
@@ -34,6 +37,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.MediaRecord
 import org.xbery.artbeams.jooq.schema.tables.records.OrderItemsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
+import org.xbery.artbeams.jooq.schema.tables.records.QueueRecord
 import org.xbery.artbeams.jooq.schema.tables.records.RolesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserAccessRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserRoleRecord
@@ -47,6 +51,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
 
 val CONSTRAINT_2: UniqueKey<AntispamQuizRecord> = Internal.createUniqueKey(AntispamQuiz.ANTISPAM_QUIZ, DSL.name("CONSTRAINT_2"), arrayOf(AntispamQuiz.ANTISPAM_QUIZ.QUESTION), true)
 val CONSTRAINT_B: UniqueKey<ArticlesRecord> = Internal.createUniqueKey(Articles.ARTICLES, DSL.name("CONSTRAINT_B"), arrayOf(Articles.ARTICLES.ID), true)
+val AUTH_CODE_PKEY: UniqueKey<AuthCodeRecord> = Internal.createUniqueKey(AuthCode.AUTH_CODE, DSL.name("auth_code_pkey"), arrayOf(AuthCode.AUTH_CODE.CODE, AuthCode.AUTH_CODE.PURPOSE, AuthCode.AUTH_CODE.USER_ID), true)
 val CONSTRAINT_4: UniqueKey<CategoriesRecord> = Internal.createUniqueKey(Categories.CATEGORIES, DSL.name("CONSTRAINT_4"), arrayOf(Categories.CATEGORIES.ID), true)
 val CONSTRAINT_DC: UniqueKey<CommentsRecord> = Internal.createUniqueKey(Comments.COMMENTS, DSL.name("CONSTRAINT_DC"), arrayOf(Comments.COMMENTS.ID), true)
 val CONSTRAINT_A: UniqueKey<ConfigRecord> = Internal.createUniqueKey(Config.CONFIG, DSL.name("CONSTRAINT_A"), arrayOf(Config.CONFIG.ENTRY_KEY), true)
@@ -56,6 +61,7 @@ val CONSTRAINT_62: UniqueKey<MediaRecord> = Internal.createUniqueKey(Media.MEDIA
 val CONSTRAINT_7: UniqueKey<OrderItemsRecord> = Internal.createUniqueKey(OrderItems.ORDER_ITEMS, DSL.name("CONSTRAINT_7"), arrayOf(OrderItems.ORDER_ITEMS.ID), true)
 val CONSTRAINT_C3: UniqueKey<OrdersRecord> = Internal.createUniqueKey(Orders.ORDERS, DSL.name("CONSTRAINT_C3"), arrayOf(Orders.ORDERS.ID), true)
 val CONSTRAINT_C: UniqueKey<ProductsRecord> = Internal.createUniqueKey(Products.PRODUCTS, DSL.name("CONSTRAINT_C"), arrayOf(Products.PRODUCTS.ID), true)
+val CONSTRAINT_66: UniqueKey<QueueRecord> = Internal.createUniqueKey(Queue.QUEUE, DSL.name("CONSTRAINT_66"), arrayOf(Queue.QUEUE.ID), true)
 val CONSTRAINT_6: UniqueKey<RolesRecord> = Internal.createUniqueKey(Roles.ROLES, DSL.name("CONSTRAINT_6"), arrayOf(Roles.ROLES.ID), true)
 val CONSTRAINT_D: UniqueKey<UserAccessRecord> = Internal.createUniqueKey(UserAccess.USER_ACCESS, DSL.name("CONSTRAINT_D"), arrayOf(UserAccess.USER_ACCESS.ID), true)
 val CONSTRAINT_6A: UniqueKey<UsersRecord> = Internal.createUniqueKey(Users.USERS, DSL.name("CONSTRAINT_6A"), arrayOf(Users.USERS.ID), true)

@@ -46,6 +46,9 @@ dependencies {
     // Kotlin language
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") // mandatory as of Spring Framework 5
+    // It is generally recommended to use kotlinx.datetime multiplatform library when working with Kotlin.
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTimeVersion"
+    implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
     // Spring Boot: Thanks to Spring Boot Gradle Plugin, versions can be omitted
     // Support for Web MVC, Freemarker templates, database layer, security
@@ -112,6 +115,9 @@ dependencies {
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+
+    // Password strength estimation library https://github.com/nulab/zxcvbn4j
+    implementation("com.nulab-inc:zxcvbn:$zxcvbnVersion")
 
     // Working with PDF documents
     implementation("org.apache.pdfbox:pdfbox:2.0.17")

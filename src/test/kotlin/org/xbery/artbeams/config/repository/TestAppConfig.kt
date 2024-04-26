@@ -3,7 +3,7 @@ package org.xbery.artbeams.config.repository
 /**
  * @author Radek Beran
  */
-class TestAppConfigFetcher(private val config: Map<String, String>): AppConfigFetcher {
+class TestAppConfig(private val config: Map<String, String>): AppConfig {
 
     override fun requireConfig(key: String): String {
         val value = getAllConfigEntries()[key]

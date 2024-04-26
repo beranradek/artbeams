@@ -8,3 +8,6 @@ INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.baseUrl', 'http
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.token', 'FILL IN API TOKEN');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.offer1.subscription.groupId', 'FILL IN SUBSCRIBER GROUP ID for offer1');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.offer1.subscription.redirectUri', 'FILL IN REDIRECT UR for offer1');
+
+INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSecret', 'FILL IN SECRET');
+INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSalt', 'FILL IN SALT');

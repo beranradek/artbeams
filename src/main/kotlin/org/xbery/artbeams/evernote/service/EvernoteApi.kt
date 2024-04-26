@@ -142,8 +142,8 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         filter.order = NoteSortOrder.CREATED.value
         filter.isAscending = true
         var notes = mutableListOf<Note>()
-        var offset: Int = 0
-        var totalNotes: Int = 0
+        var offset = 0
+        var totalNotes = 0
         do {
             val noteList = evernoteStoreClient.findNotes(evernoteConfig.developerToken, filter, offset, NOTES_LIMIT)
             totalNotes = noteList.getTotalNotes()

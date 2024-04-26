@@ -15,7 +15,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.file.TempFiles
-import org.xbery.artbeams.config.repository.AppConfigFetcher
+import org.xbery.artbeams.config.repository.AppConfig
 import java.io.File
 import java.io.IOException
 import java.io.StringReader
@@ -32,14 +32,14 @@ import java.io.StringReader
  * @author Radek Beran
  */
 @Service
-open class GoogleApiAuth(private val appConfigFetcher: AppConfigFetcher) {
+open class GoogleApiAuth(private val appConfig: AppConfig) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     /**
      * Name of application displayed to user to authorize access to his Google documents.
      */
-    open val applicationName: String by lazy { appConfigFetcher.requireConfig("google.application-name") }
+    open val applicationName: String by lazy { appConfig.requireConfig("google.application-name") }
 
     /**
      * Thread safe Google network HTTP transport.
@@ -51,7 +51,7 @@ open class GoogleApiAuth(private val appConfigFetcher: AppConfigFetcher) {
      */
     open val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
 
-    private val applicationDomain: String by lazy { appConfigFetcher.findConfig("app.host-and-port") ?: "localhost:8080" }
+    private val applicationDomain: String by lazy { appConfig.findConfig("app.host-and-port") ?: "localhost:8080" }
 
     private val callbackPath: String = "/admin/google/auth/callback"
 
@@ -76,7 +76,7 @@ open class GoogleApiAuth(private val appConfigFetcher: AppConfigFetcher) {
     /**
      * JSON string with configuration of Google OAuth2 client_id, client_secret, redirect_uris, ...
      */
-    private val googleOAuthClientJson: String by lazy { appConfigFetcher.requireConfig("google.oauth.client.json") }
+    private val googleOAuthClientJson: String by lazy { appConfig.requireConfig("google.oauth.client.json") }
 
     /**
      * <p>Runs the whole authorization flow in the following way:

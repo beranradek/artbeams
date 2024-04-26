@@ -1,5 +1,6 @@
 package org.xbery.artbeams
 
+import kotlinx.datetime.Clock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -8,7 +9,8 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.stereotype.Component
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
-import org.xbery.artbeams.config.repository.AppConfigFetcher
+import org.xbery.artbeams.common.context.OriginStamp
+import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.Role
@@ -34,12 +36,12 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         val roleRepository: RoleRepository = context.getBean(RoleRepository::class.java)
         val userRepository: UserRepository = context.getBean(UserRepository::class.java)
         val userService: UserService = context.getBean(UserService::class.java)
-        val appConfigFetcher: AppConfigFetcher = context.getBean(AppConfigFetcher::class.java)
+        val appConfig: AppConfig = context.getBean(AppConfig::class.java)
         val localisationRepository: LocalisationRepository = context.getBean(LocalisationRepository::class.java)
         val adminRole = findOrCreateRole(roleRepository, adminRoleName)
         findOrCreateRole(roleRepository, memberRoleName)
         findOrCreateAdminUser(userRepository, userService, adminRole)
-        loadConfig(appConfigFetcher)
+        loadConfig(appConfig)
         loadLocalisation(localisationRepository)
         logger.info("Application initialization - finished")
     }
@@ -51,7 +53,8 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         } else {
             val defaultPass = "adminadmin"
             val adminUser = EditedUser(AssetAttributes.EmptyId, adminUserLogin, defaultPass, defaultPass, "Admin", "Admin", "", listOf(adminRole.id))
-            val savedUser = requireNotNull(userService.saveUser(adminUser, OperationCtx(null)))
+            val operationCtx = OperationCtx(null, OriginStamp(Clock.System.now(), "ApplicationStartup", null))
+            val savedUser = requireNotNull(userService.saveUser(adminUser, operationCtx))
             logger.info("Default admin user created")
             savedUser
         }
@@ -70,9 +73,9 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         }
     }
 
-    private fun loadConfig(appConfigFetcher: AppConfigFetcher) {
+    private fun loadConfig(appConfig: AppConfig) {
         logger.info("Loading config")
-        appConfigFetcher.reloadConfigEntries()
+        appConfig.reloadConfigEntries()
     }
 
     private fun loadLocalisation(repository: LocalisationRepository) {

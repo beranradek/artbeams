@@ -7,8 +7,10 @@ package org.xbery.artbeams.jooq.schema.indexes
 import org.jooq.Index
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
+import org.xbery.artbeams.jooq.schema.tables.AuthCode
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Media
+import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 
 
@@ -17,6 +19,9 @@ import org.xbery.artbeams.jooq.schema.tables.UserAccess
 // INDEX definitions
 // -------------------------------------------------------------------------
 
+val IDX_AUTH_CODE_USER_ID: Index = Internal.createIndex(DSL.name("idx_auth_code_user_id"), AuthCode.AUTH_CODE, arrayOf(AuthCode.AUTH_CODE.USER_ID), false)
 val IDX_COMMENTS_ENTITY_ID: Index = Internal.createIndex(DSL.name("idx_comments_entity_id"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.ENTITY_ID), false)
 val IDX_MEDIA_FILENAME: Index = Internal.createIndex(DSL.name("idx_media_filename"), Media.MEDIA, arrayOf(Media.MEDIA.FILENAME), false)
+val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)
+val IDX_QUEUE_NEXT_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_queue_next_action_time"), Queue.QUEUE, arrayOf(Queue.QUEUE.NEXT_ACTION_TIME), false)
 val IDX_USER_ACCESS_UNIQUE: Index = Internal.createIndex(DSL.name("idx_user_access_unique"), UserAccess.USER_ACCESS, arrayOf(UserAccess.USER_ACCESS.ACCESS_DATE, UserAccess.USER_ACCESS.IP, UserAccess.USER_ACCESS.USER_AGENT, UserAccess.USER_ACCESS.ENTITY_TYPE, UserAccess.USER_ACCESS.ENTITY_ID), true)

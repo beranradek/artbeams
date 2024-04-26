@@ -48,11 +48,11 @@ open class UserServiceImpl(
         }
     }
 
-    override fun saveMyProfile(myProfile: MyProfile, ctx: OperationCtx): User? {
+    override fun saveMyProfile(profile: MyProfile, ctx: OperationCtx): User? {
         val login = findCurrentUserLogin()
         val user = if (login != null) userRepository.findByLogin(login) else null
         return if (user != null) {
-            val userToUpdate = user.updatedWith(myProfile, user.id)
+            val userToUpdate = user.updatedWith(profile, user.id)
             userRepository.updateEntity(userToUpdate)
         } else {
             null

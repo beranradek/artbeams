@@ -12,6 +12,7 @@ import org.jooq.impl.SchemaImpl
 import org.xbery.artbeams.jooq.schema.tables.AntispamQuiz
 import org.xbery.artbeams.jooq.schema.tables.ArticleCategory
 import org.xbery.artbeams.jooq.schema.tables.Articles
+import org.xbery.artbeams.jooq.schema.tables.AuthCode
 import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
@@ -21,6 +22,7 @@ import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
+import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserRole
@@ -54,6 +56,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>articles</code>.
      */
     val ARTICLES: Articles get() = Articles.ARTICLES
+
+    /**
+     * The table <code>auth_code</code>.
+     */
+    val AUTH_CODE: AuthCode get() = AuthCode.AUTH_CODE
 
     /**
      * The table <code>categories</code>.
@@ -101,6 +108,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val PRODUCTS: Products get() = Products.PRODUCTS
 
     /**
+     * The table <code>queue</code>.
+     */
+    val QUEUE: Queue get() = Queue.QUEUE
+
+    /**
      * The table <code>roles</code>.
      */
     val ROLES: Roles get() = Roles.ROLES
@@ -126,6 +138,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         AntispamQuiz.ANTISPAM_QUIZ,
         ArticleCategory.ARTICLE_CATEGORY,
         Articles.ARTICLES,
+        AuthCode.AUTH_CODE,
         Categories.CATEGORIES,
         Comments.COMMENTS,
         Config.CONFIG,
@@ -135,6 +148,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         OrderItems.ORDER_ITEMS,
         Orders.ORDERS,
         Products.PRODUCTS,
+        Queue.QUEUE,
         Roles.ROLES,
         UserAccess.USER_ACCESS,
         UserRole.USER_ROLE,

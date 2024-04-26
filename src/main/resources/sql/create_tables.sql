@@ -169,3 +169,33 @@ CREATE TABLE antispam_quiz (
     question VARCHAR(128) NOT NULL PRIMARY KEY,
     answer VARCHAR(64) NOT NULL
 );
+
+-- Template-to-copy for concrete queue
+CREATE TABLE queue (
+    id VARCHAR(60) NOT NULL PRIMARY KEY,
+    entered_time DATETIME NOT NULL,
+    entered_origin VARCHAR(60) NOT NULL,
+    attempts INT NOT NULL DEFAULT 0,
+    next_action_time DATETIME,
+    processed_time DATETIME,
+    processed_origin VARCHAR(60),
+    last_attempt_time DATETIME,
+    last_attempt_origin VARCHAR(60),
+    last_result TEXT,
+    expiration_time DATETIME
+);
+
+CREATE INDEX IDX_QUEUE_NEXT_ACTION_TIME ON queue (next_action_time);
+CREATE INDEX IDX_QUEUE_EXPIRATION ON queue (expiration_time);
+
+CREATE TABLE auth_code (
+    code VARCHAR(255) NOT NULL,
+    purpose VARCHAR(60) NOT NULL,
+    user_id VARCHAR(60) NOT NULL,
+    created DATETIME NOT NULL,
+    valid_to DATETIME NOT NULL,
+    used DATETIME
+);
+
+ALTER TABLE auth_code ADD CONSTRAINT AUTH_CODE_PKEY PRIMARY KEY (code, purpose, user_id);
+CREATE INDEX IDX_AUTH_CODE_USER_ID ON auth_code (user_id);

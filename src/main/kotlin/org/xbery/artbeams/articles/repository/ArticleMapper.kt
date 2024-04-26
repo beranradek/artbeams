@@ -45,7 +45,7 @@ open class ArticleMapper() : ValidityAssetMapper<Article, ArticleFilter>() {
         aliasPrefix: String?
     ): Article {
         val projectedAttributeNames: Set<String> =
-            attributes.map { it.getName() }.toSet()
+            attributes.map { it.name }.toSet()
         val assetAttributes: AssetAttributes =
             createAssetAttributes(attributeSource, attributes as List<Attribute<*, *>>, aliasPrefix)
         val validity: Validity = createValidity(attributeSource, attributes as List<Attribute<*, *>>, aliasPrefix)
@@ -76,9 +76,9 @@ open class ArticleMapper() : ValidityAssetMapper<Article, ArticleFilter>() {
         }
         filter.query?.let { query ->
             val params = mutableListOf<Any>()
-            params.add("%" + query + "%")
-            params.add("%" + query + "%")
-            params.add("%" + query + "%")
+            params.add("%$query%")
+            params.add("%$query%")
+            params.add("%$query%")
             conditions.add(
                 SqlCondition(
                     "(${titleAttr.name} ILIKE ? OR ${perexAttr.name} ILIKE ? OR ${bodyAttr.name} ILIKE ?)",

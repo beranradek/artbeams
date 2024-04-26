@@ -74,25 +74,25 @@ open class ProductController(
                 val url = Urls.urlWithParam(referrer, "subscriptionInvalidForm", "invalid-form")
                 redirect(url)
             } else {
-                val formData = formData.data
-                val antispamQuizAnswered = antispamQuizRepository.questionHasAnswer(formData.antispamQuestion, formData.antispamAnswer)
+                val data = formData.data
+                val antispamQuizAnswered = antispamQuizRepository.questionHasAnswer(data.antispamQuestion, data.antispamAnswer)
                 if (!antispamQuizAnswered) {
-                    logger.warn("Antispam quiz not answered" + " correctly for subscription for email=${formData.email}, name=${formData.name}, question=${formData.antispamQuestion}")
+                    logger.warn("Antispam quiz not answered" + " correctly for subscription for email=${data.email}, name=${data.name}, question=${data.antispamQuestion}")
                     val errorMessage = "Nesprávná odpověď. Prosím vyplňte znovu správnou odpověď na kontrolní otázku (ochranu proti robotům) na předchozí záložce."
                     renderProductArticle(request, product, product.slug, true, errorMessage)
                 } else {
                     try {
-                        userSubscriptionService.subscribe(formData.name, formData.email, product.id)
+                        userSubscriptionService.subscribe(data.name, data.email, product.id)
                         mailingApi.subscribeToGroup(
-                            formData.email,
-                            formData.name,
+                            data.email,
+                            data.name,
                             requireNotNull(product.confirmationMailingGroupId),
                             request.remoteAddr
                         )
                         redirect("/produkt/$slug/potvrzeni")
                     } catch (ex: Exception) {
                         logger.error(
-                            "Error while subscribing user ${formData.email}/${formData.name} to product ${slug}: ${ex.message}",
+                            "Error while subscribing user ${data.email}/${data.name} to product ${slug}: ${ex.message}",
                             ex
                         )
                         val referrer = getReferrerUrl(request)
@@ -246,9 +246,9 @@ open class ProductController(
     ): ByteArrayOutputStream {
         val pdfDocument: PDDocument = PDDocument.load(fileData.data)
         val pdfOutputStream = ByteArrayOutputStream()
-        try {
+        pdfDocument.use { pdfDoc ->
             val nowCalendar: java.util.Calendar = java.util.Calendar.getInstance()
-            val pdfMetadata: PDDocumentInformation = pdfDocument.documentInformation
+            val pdfMetadata: PDDocumentInformation = pdfDoc.documentInformation
             val productAuthorOpt = userService.findById(product.common.createdBy)
             pdfMetadata.author = ("")
             pdfMetadata.creationDate = nowCalendar
@@ -258,10 +258,8 @@ open class ProductController(
             val customerInfo =
                 customer.email + (if (customer.fullName.isEmpty()) "" else " (" + customer.fullName + ")")
             pdfMetadata.creator = "$urlBase for $customerInfo"
-            pdfDocument.documentInformation = pdfMetadata
-            pdfDocument.save(pdfOutputStream)
-        } finally {
-            pdfDocument.close()
+            pdfDoc.documentInformation = pdfMetadata
+            pdfDoc.save(pdfOutputStream)
         }
         return pdfOutputStream
     }

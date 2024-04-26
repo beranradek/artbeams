@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import org.xbery.artbeams.config.repository.AppConfigFetcher
+import org.xbery.artbeams.config.repository.AppConfig
 
 /**
  * Config administration routes.
@@ -15,13 +15,13 @@ import org.xbery.artbeams.config.repository.AppConfigFetcher
 @Controller
 @RequestMapping("/admin/config")
 open class ConfigAdminController(
-    private val appConfigFetcher: AppConfigFetcher,
+    private val appConfig: AppConfig,
     private val common: ControllerComponents
 ) : BaseController(common) {
 
     @PostMapping(path = ["/reload"])
     fun reload(request: HttpServletRequest): Any {
-        appConfigFetcher.reloadConfigEntries()
+        appConfig.reloadConfigEntries()
         return redirectToReferrerWitParam(request, "configReloaded", "1")
     }
 }
