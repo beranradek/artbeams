@@ -11,7 +11,7 @@ Main features:
 * Evernote integration.
   * Real applications authenticate with Evernote using OAuth, but for the purpose of exploring the API, you can get a developer token that allows you to access your own Evernote account. To get a developer token, visit https://www.evernote.com/api/DeveloperToken.action
 * Mailer for Mailgun transactional emails. 
-* Built with Spring Boot, Kotlin, Freemarker, Bootstrap and Formio. 
+* Built with Spring Boot, Kotlin, JOOQ, Freemarker, Bootstrap and Formio. 
 
 ## Development
 

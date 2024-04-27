@@ -61,7 +61,7 @@ protected constructor(
     protected open val repository: QueueEntryRepository<E>,
     protected open val clock: Clock
 ) : QueueEntryId<E>, SchedulingConfigurer {
-    protected open val serviceName: String = "queue"
+    protected open val serviceName: String = "$serviceId.queue"
 
     protected val logger: Logger = LoggerFactory.getLogger("$serviceId.queue")
 
@@ -196,6 +196,7 @@ protected constructor(
                 entry = findNextEntry()
             }
             logTaskDone(state)
+            deleteExpiredEntries(clock.now())
         } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
             // this is necessary
             // the method is usually run by Spring scheduler, which means the exception would not be visible anywhere
@@ -209,6 +210,15 @@ protected constructor(
             }
             throw ex
         }
+    }
+
+    /**
+     * Delete expired entries from the queue.
+     */
+    protected open fun deleteExpiredEntries(now: Instant) {
+        val startNanoTime = System.nanoTime()
+        val deletedCount = repository.deleteExpiredEntries(now)
+        logDeleteExpiredDone(deletedCount, startNanoTime)
     }
 
     protected open fun createTaskState(): QueueProcessingTaskState {
@@ -362,6 +372,11 @@ protected constructor(
             sb.append(", ").append(state.errors).append(" errors")
         }
         logger.info("queue.task.done: $sb")
+    }
+
+    protected open fun logDeleteExpiredDone(deletedCount: Int, startTimeNanos: Long) {
+        val nanos = System.nanoTime() - startTimeNanos
+        logger.info("$serviceName.task.expired.deletion: done in ${(nanos + 500000L) / 1000000L} ms, $deletedCount entries deleted")
     }
 
     protected open fun logEntryStart(entry: E) {
