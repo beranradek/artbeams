@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service
  */
 @Service
 open class MarkdownConverter {
-    private val markdownParser: Parser
-    private val htmlRenderer: HtmlRenderer
+    private lateinit var markdownParser: Parser
+    private lateinit var htmlRenderer: HtmlRenderer
 
     init {
         val options = MutableDataSet()

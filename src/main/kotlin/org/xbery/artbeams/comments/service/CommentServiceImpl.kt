@@ -81,7 +81,7 @@ open class CommentServiceImpl(
                             normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
                         val body: String =
                             normalizationHelper.removeDiacriticalMarks("${comment.userName}/${comment.email}:\n\n${comment.comment}")
-                        mailer.sendMail(subject, body, user.email)
+                        mailer.sendMail(subject, body, body, user.email)
                     } else {
                         logger.warn("Author ${user.login}/${user.firstName} ${user.lastName} has no email set.")
                     }

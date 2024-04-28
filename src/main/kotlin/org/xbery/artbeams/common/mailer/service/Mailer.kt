@@ -21,8 +21,8 @@ import org.xbery.artbeams.common.mailer.config.MailerConfig
 open class Mailer(private val mailerConfig: MailerConfig) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    open fun sendMail(subject: String, body: String, to: String) {
-        logger.info("Sending email ${subject} to ${to}")
+    open fun sendMail(subject: String, body: String, htmlBody: String, to: String) {
+        logger.info("Sending email $subject to $to")
         val mailerApiUrl =
             "https://api:${mailerConfig.apiKey}@api.mailgun.net/v2/${mailerConfig.domain}/messages"
         HttpClients.createDefault().use { httpClient ->
@@ -32,7 +32,7 @@ open class Mailer(private val mailerConfig: MailerConfig) {
             params.add(BasicNameValuePair("to", to))
             params.add(BasicNameValuePair("subject", subject))
             params.add(BasicNameValuePair("text", body))
-            params.add(BasicNameValuePair("html", body))
+            params.add(BasicNameValuePair("html", htmlBody))
             httpPost.entity = UrlEncodedFormEntity(params)
 
             // The underlying HTTP connection is still held by the response object
@@ -46,14 +46,14 @@ open class Mailer(private val mailerConfig: MailerConfig) {
                 val statusLine: StatusLine = response.statusLine
                 val status: Int = statusLine.statusCode
                 val responseEntity: HttpEntity = response.entity
-                logger.info("Response status: ${statusLine}")
+                logger.info("Response status: $statusLine")
                 if (status in 200..299) {
                     EntityUtils.consume(responseEntity)
                     logger.info("Email $subject to $to was successfully sent.")
                 } else {
                     val responseString: String =
                         if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
-                    logger.error("Error while sending email $subject to ${to}. Unexpected response status $status with response $responseString")
+                    logger.error("Error while sending email $subject to $to. Unexpected response status $status with response $responseString")
                 }
             }
         }

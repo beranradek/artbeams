@@ -340,7 +340,7 @@ open class ProductController(
                     normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName} downloaded ${product.title}")
                 val body =
                     normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName}/${user.email} has downloaded product ${product.title}.")
-                mailer.sendMail(subject, body, productAuthor.email)
+                mailer.sendMail(subject, body, body, productAuthor.email)
             }
         }
     }
