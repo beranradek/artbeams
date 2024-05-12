@@ -1,12 +1,13 @@
 package org.xbery.artbeams.users.service
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
-import org.xbery.artbeams.common.security.PasswordHashing
+import org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash
+import org.xbery.artbeams.common.security.credential.model.PasswordCredential
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Implementation of {@link LoginService}.
@@ -14,13 +15,13 @@ import jakarta.servlet.http.HttpServletRequest
  */
 @Service
 open class LoginServiceImpl(private val userRepository: UserRepository, private val roleRepository: RoleRepository) : LoginService {
-    private val passwordHashing: PasswordHashing = PasswordHashing()
+    private val passwordHash = Pbkdf2PasswordHash()
 
     override fun login(username: String, password: String): User? {
         assert( username != null) { "Username should be specified" }
         val user = userRepository.findByLogin(username)
         return if (user != null) {
-            if (passwordHashing.verifyPasswordHash(user.password, password)) {
+            if (passwordHash.verify(password, PasswordCredential.fromSerialized(user.password))) {
                 val roles = roleRepository.findRolesOfUser(user.id)
                 user.copy(roles = roles)
             } else {

@@ -16,6 +16,7 @@ import org.xbery.artbeams.common.auth.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.common.security.AESEncryption
 import org.xbery.artbeams.config.repository.AppConfig
+import kotlin.reflect.KClass
 
 /**
  * Validation of authorization codes.
@@ -88,6 +89,15 @@ class AuthorizationCodeValidator(
                 authorizationCode.right()
             }
         }
+    }
+
+    /**
+     * Returns payload decrypted and JSON-deserialized from given code.
+     */
+    fun <T : Any> decryptPayloadFromCode(code: String, payloadClass: KClass<T>): T {
+        val secretKey = AESEncryption.getKeyFromPassword(getEncryptionSecret(), getEncryptionSalt())
+        val decryptedString = AESEncryption.decryptPasswordBased(code, secretKey)
+        return objectMapper.readValue(decryptedString, payloadClass.java)
     }
 
     protected fun createObjectMapper(): ObjectMapper = ObjectMappers.DEFAULT_MAPPER

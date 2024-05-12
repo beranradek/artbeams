@@ -13,21 +13,19 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
  *
  * @author Radek Beran
  */
-class ObjectMappers {
+object ObjectMappers {
 
-    companion object {
-        val DEFAULT_MAPPER = createObjectMapper()
+    val DEFAULT_MAPPER = createObjectMapper()
 
-        private fun createObjectMapper(): ObjectMapper {
-            val objectMapper = jacksonObjectMapper()
-            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
-                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .configure(SerializationFeature.INDENT_OUTPUT, true)
-                .registerModule(Jdk8Module())
-                .registerModule(JavaTimeModule())
-            return objectMapper
-        }
+    private fun createObjectMapper(): ObjectMapper {
+        val objectMapper = jacksonObjectMapper()
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .registerModule(Jdk8Module())
+            .registerModule(JavaTimeModule())
+        return objectMapper
     }
 }

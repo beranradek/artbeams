@@ -2,7 +2,8 @@ package org.xbery.artbeams.users.domain
 
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
-import org.xbery.artbeams.common.security.PasswordHashing
+import org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash
+import org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash.Companion.PBKDF2_HMAC_SHA512_ITERATIONS
 import java.io.Serializable
 import java.time.Instant
 
@@ -26,7 +27,7 @@ data class User(
 
     fun updatedWith(edited: EditedUser, rolesCodebook: List<Role>, userId: String): User {
         val updatedPassword = if (edited.password.trim().isNotEmpty() && edited.password2.trim().isNotEmpty() && edited.password == edited.password2) {
-            PasswordHashing().createPasswordHash(edited.password.trim())
+            Pbkdf2PasswordHash().encodeToSerializedCredential(edited.password.trim(), PBKDF2_HMAC_SHA512_ITERATIONS)
         } else {
             this.password
         }
@@ -44,7 +45,7 @@ data class User(
 
     fun updatedWith(profile: MyProfile, userId: String): User {
         val updatedPassword = if (profile.password.trim().isNotEmpty() && profile.password2.trim().isNotEmpty() && profile.password == profile.password2) {
-            PasswordHashing().createPasswordHash(profile.password.trim())
+            Pbkdf2PasswordHash().encodeToSerializedCredential(profile.password.trim(), PBKDF2_HMAC_SHA512_ITERATIONS)
         } else {
             this.password
         }

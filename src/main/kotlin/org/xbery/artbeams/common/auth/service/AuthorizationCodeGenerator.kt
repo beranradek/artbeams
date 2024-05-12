@@ -70,6 +70,16 @@ class AuthorizationCodeGenerator(
         return code
     }
 
+    /**
+     * Encrypts the given payload. Resulting code is not stored by this method.
+     * Code is composed of given payload serialized to JSON and encrypted.
+     */
+    fun <T> createEncryptedCodeFromPayload(payload: T): String {
+        val secretKey = AESEncryption.getKeyFromPassword(getEncryptionSecret(), getEncryptionSalt())
+        val payloadString = objectMapper.writeValueAsString(payload)
+        return AESEncryption.encryptPasswordBased(payloadString, secretKey)
+    }
+
     protected fun getCodeValidityDuration(purpose: String): Duration {
         return appConfig.findConfigOrDefault(
             Long::class,
