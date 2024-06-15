@@ -74,3 +74,9 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.small.wid
 INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.big.width', '730');
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('member-section.title', 'Členská sekce');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('member.passwordSetup.header', 'Nastavení hesla');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('createAccount', 'Vytvořit účet');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('password', 'Heslo');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('password.again-for-control', 'Heslo (znovu pro kontrolu)');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('username.cannot-be-changed', 'Uživatelské jméno (nelze změnit)');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('newPassword', 'Nové heslo');

@@ -4,21 +4,18 @@ import net.formio.Field
 import net.formio.FormMapping
 import net.formio.Forms
 import org.xbery.artbeams.common.form.FormUtils
-import org.xbery.artbeams.users.domain.MyProfile
+import org.xbery.artbeams.users.domain.PasswordSetupData
 
 /**
- * My profile edit form.
+ * New password setup form.
  *
  * @author Radek Beran
  */
-open class MyProfileForm {
+open class PasswordSetupForm {
     companion object {
-        val definition: FormMapping<MyProfile> =
-            Forms.basic(MyProfile::class.java, "myProfile")
+        val definition: FormMapping<PasswordSetupData> =
+            Forms.basic(PasswordSetupData::class.java, "passwordSetup")
                 .field<String>("login", Field.TEXT)
-                .field<String>("firstName", Field.TEXT)
-                .field<String>("lastName", Field.TEXT)
-                .field<String>("email", Field.TEXT)
                 // TODO RBe: Validation of password strength and match
                 .field<String>("password", Field.PASSWORD)
                 .field<String>("password2", Field.PASSWORD)

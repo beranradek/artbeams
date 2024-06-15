@@ -7,10 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
-import org.xbery.artbeams.users.domain.EditedUser
-import org.xbery.artbeams.users.domain.MyProfile
-import org.xbery.artbeams.users.domain.Role
-import org.xbery.artbeams.users.domain.User
+import org.xbery.artbeams.users.domain.*
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 import java.time.Instant
@@ -59,6 +56,16 @@ open class UserServiceImpl(
         }
     }
 
+    override fun setPassword(passwordSetupData: PasswordSetupData, ctx: OperationCtx): User? {
+        val user = findByLogin(passwordSetupData.login)
+        return if (user != null) {
+            val userToUpdate = user.updatedWith(toEditedProfile(user, passwordSetupData.password), user.id)
+            userRepository.updateEntity(userToUpdate)
+        } else {
+            null
+        }
+    }
+
     override fun findCurrentUserLogin(): String? {
         val authentication = SecurityContextHolder.getContext().authentication
         if (authentication != null && authentication !is AnonymousAuthenticationToken) {
@@ -69,6 +76,10 @@ open class UserServiceImpl(
             return principalName
         }
         return null
+    }
+
+    override fun findByLogin(login: String): User? {
+        return userRepository.findByLogin(login)
     }
 
     override fun findByEmail(email: String): User? {
@@ -96,5 +107,9 @@ open class UserServiceImpl(
 
     private fun updateRoles(userId: String, roles: List<Role>) {
         roleRepository.updateRolesOfUser(userId, roles)
+    }
+
+    private fun toEditedProfile(user: User, validatedPassword: String): MyProfile {
+        return MyProfile(user.login, user.firstName, user.lastName, user.email, validatedPassword, validatedPassword)
     }
 }

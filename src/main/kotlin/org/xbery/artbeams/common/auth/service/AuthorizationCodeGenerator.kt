@@ -32,7 +32,7 @@ class AuthorizationCodeGenerator(
 
     /**
      * Generates new authorization code for given purpose and user, with possible custom length and characters.
-     * The code is stored returned in an encrypted form suitable for e.g. for email links.
+     * The code is stored to database and returned in an encrypted form suitable for e.g. for email links.
      */
     fun generateEncryptedAuthorizationCode(
         purpose: String,

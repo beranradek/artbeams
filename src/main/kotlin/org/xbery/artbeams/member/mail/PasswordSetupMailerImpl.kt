@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils
 import org.xbery.artbeams.common.auth.service.AuthorizationCodeGenerator
 import org.xbery.artbeams.common.mailer.service.Mailer
+import org.xbery.artbeams.users.domain.PasswordSetupData
 
 /**
  * @author Radek Beran
@@ -20,8 +21,8 @@ open class PasswordSetupMailerImpl(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun sendPasswordSetupMail(username: String) {
-        val authToken = authorizationCodeGenerator.generateEncryptedAuthorizationCode(AUTH_CODE_PURPOSE, username)
-        val passwordSetupUrl = "https://yourwebsite.com/password-setup?token=$authToken"
+        val authToken = authorizationCodeGenerator.generateEncryptedAuthorizationCode(PasswordSetupData.TOKEN_PURPOSE, username)
+        val passwordSetupUrl = "https://yourwebsite.com/nastaveni-hesla?${PasswordSetupData.TOKEN_PARAM_NAME}=$authToken"
         val tplModel = mapOf("passwordSetupUrl" to passwordSetupUrl)
         val body = processTemplateIntoString(freemarkerConfig.getTemplate("member/mail/passwordSetup.body.ftl"), tplModel)
         val htmlBody = processTemplateIntoString(freemarkerConfig.getTemplate("member/mail/passwordSetup.body.html.ftl"), tplModel)
@@ -31,9 +32,5 @@ open class PasswordSetupMailerImpl(
 
     private fun processTemplateIntoString(template: freemarker.template.Template, model: Any): String {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model)
-    }
-
-    companion object {
-        private const val AUTH_CODE_PURPOSE = "PASSWORD_SETUP"
     }
 }
