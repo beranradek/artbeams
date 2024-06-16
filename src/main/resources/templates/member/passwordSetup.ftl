@@ -1,12 +1,11 @@
-<#import "/member/memberLayout.ftl" as layout>
-<@layout.page>
+<#import "/adminLayout.ftl" as layout>
+<@layout.page pageTitle="${xlat['member.passwordSetup.header']}">
 <#assign fields = passwordSetupForm.fields>
 
 <form action="/nastaveni-hesla" method="post" class="form-horizontal">
   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-  <h2>${xlat['website.title']}</h2>
-  <h3>${xlat['member.passwordSetup.header']}</h3>
+  <h3>${xlat['website.title']} ::: ${xlat['member.passwordSetup.header']}</h3>
 
   <div class="form-group row">
     <label for="${fields.login.elementId}" class="col-sm-2 col-form-label">${xlat['username.cannot-be-changed']}</label>
@@ -14,9 +13,6 @@
       <input type="text" name="${fields.login.name}" value="${fields.login.value!}" id="${fields.login.elementId}" readonly size="30" class="form-control"/>
     </div>
   </div>
-
-  <h3>${xlat['newPassword']}</h3>
-
   <div class="form-group row">
     <label for="${fields.password.elementId}" class="col-sm-2 col-form-label">${xlat['password']}</label>
     <div class="col-sm-3">

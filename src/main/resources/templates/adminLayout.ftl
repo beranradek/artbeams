@@ -1,13 +1,13 @@
-<#macro page>
+<#macro page pageTitle>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="CMS" />
+    <meta name="description" content="" />
     <meta name="keywords" content=""/>
-    <title>CMS Administration</title>
+    <title><#if pageTitle??>${pageTitle}<#else><#if title??>${title}<#else>CMS Administration | </#if></#if>${xlat['website.title']}</title>
     <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
     
     <!-- Bootstrap -->
