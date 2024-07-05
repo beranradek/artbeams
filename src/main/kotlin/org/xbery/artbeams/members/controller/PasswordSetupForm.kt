@@ -1,4 +1,4 @@
-package org.xbery.artbeams.member.controller
+package org.xbery.artbeams.members.controller
 
 import net.formio.Field
 import net.formio.FormMapping
@@ -19,6 +19,6 @@ open class PasswordSetupForm {
                 // TODO RBe: Validation of password strength and match
                 .field<String>("password", Field.PASSWORD)
                 .field<String>("password2", Field.PASSWORD)
-                .build(FormUtils.CzConfig)
+                .build(FormUtils.CZ_CONFIG)
     }
 }

@@ -1,4 +1,4 @@
-package org.xbery.artbeams.member.controller
+package org.xbery.artbeams.members.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller

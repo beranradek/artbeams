@@ -1,4 +1,4 @@
-package org.xbery.artbeams.mailing.dto
+package org.xbery.artbeams.mailing.api.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
@@ -21,14 +21,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
  *
  * @author Radek Beran
  */
-data class SubscriptionRequest(
+data class MailerLiteSubscriptionRequest(
     @JsonProperty("email") val email: String,
-    @JsonProperty("fields") val fields: SubscriberFields,
+    @JsonProperty("fields") val fields: MailerLiteSubscriberFields,
     @JsonProperty("groups") val groups: List<String>,
     @JsonProperty("ip_address") val ipAddress: String?
 )
 
-data class SubscriberFields(
+data class MailerLiteSubscriberFields(
     @JsonProperty("name") val name: String,
     @JsonProperty("last_name") val lastName: String?
 )

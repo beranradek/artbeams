@@ -1,11 +1,11 @@
-package org.xbery.artbeams.common.auth.service
+package org.xbery.artbeams.common.authcode.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.datetime.Clock
 import org.springframework.stereotype.Service
-import org.xbery.artbeams.common.auth.domain.AuthorizationCode
-import org.xbery.artbeams.common.auth.domain.TokenPayload
-import org.xbery.artbeams.common.auth.repository.AuthorizationCodeRepository
+import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
+import org.xbery.artbeams.common.authcode.domain.TokenPayload
+import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.common.security.AESEncryption
 import org.xbery.artbeams.common.security.SecureTokens

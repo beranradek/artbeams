@@ -25,6 +25,6 @@ open class SubscriptionForm {
                 .field<String>("name", Field.TEXT)
                 .field(Forms.field<Any>("antispamQuestion", Field.HIDDEN).validator(NotEmptyValidator.getInstance() as Validator<Any>))
                 .field(Forms.field<Any>("antispamAnswer", Field.TEXT).validator(NotEmptyValidator.getInstance() as Validator<Any>))
-                .build(FormUtils.CzConfig)
+                .build(FormUtils.CZ_CONFIG)
     }
 }

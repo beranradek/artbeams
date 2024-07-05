@@ -1,9 +1,9 @@
-package org.xbery.artbeams.common.auth.repository
+package org.xbery.artbeams.common.authcode.repository
 
 import org.jooq.DSLContext
 import org.jooq.Table
 import org.springframework.stereotype.Repository
-import org.xbery.artbeams.common.auth.domain.AuthorizationCode
+import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
 import org.xbery.artbeams.common.repository.AbstractRecordFetcher
 import org.xbery.artbeams.common.repository.AbstractRecordStorage
 import org.xbery.artbeams.jooq.schema.tables.records.AuthCodeRecord

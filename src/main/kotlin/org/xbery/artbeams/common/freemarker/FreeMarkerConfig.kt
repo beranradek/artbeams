@@ -8,7 +8,7 @@ import freemarker.template.Configuration
  * @author Radek Beran
  */
 @org.springframework.context.annotation.Configuration
-open class FreemarkerConfig(public val configuration: Configuration) {
+open class FreemarkerConfig(val configuration: Configuration) {
     init {
         // Sets the object wrapper used to wrap objects to TemplateModel(s).
         configuration.objectWrapper = Java8ObjectWrapper(Configuration.VERSION_2_3_31)

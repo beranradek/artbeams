@@ -1,4 +1,4 @@
-package org.xbery.artbeams.common.auth.domain
+package org.xbery.artbeams.common.authcode.domain
 
 /**
  * Reasons why an authorization code is invalid.

@@ -1,4 +1,4 @@
-package org.xbery.artbeams.common.mapping.repository
+package org.xbery.artbeams.common.repository.keyvalue
 
 import org.xbery.overview.filter.Condition
 import org.xbery.overview.mapper.Attr

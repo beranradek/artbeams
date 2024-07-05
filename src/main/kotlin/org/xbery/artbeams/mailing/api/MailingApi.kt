@@ -1,6 +1,6 @@
 package org.xbery.artbeams.mailing.api
 
-import org.xbery.artbeams.mailing.dto.SubscriptionResponse
+import org.xbery.artbeams.mailing.api.dto.MailerLiteSubscriptionResponse
 
 /**
  * MailerLite API as described at https://developers.mailerlite.com/docs/#mailerlite-api.
@@ -14,5 +14,5 @@ interface MailingApi {
      * If a subscriber already exists, it will be updated with new values.
      * This is non-destructive operation, so omitting fields or groups will not remove them from subscriber.
      */
-    fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): SubscriptionResponse
+    fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse
 }

@@ -11,7 +11,7 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpHeaders
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import org.xbery.artbeams.common.Dates.AppZoneIdString
+import org.xbery.artbeams.common.Dates.APP_ZONE_ID
 import org.xbery.artbeams.common.access.domain.*
 import org.xbery.artbeams.common.access.repository.EntityAccessCountRepository
 import org.xbery.artbeams.common.access.repository.UserAccessRepository
@@ -83,7 +83,7 @@ open class UserAccessServiceImpl(
     }
 
     // Cron pattern: second, minute, hour, day, month, weekday
-    @Scheduled(cron = "0 1 0 * * *", zone = AppZoneIdString)
+    @Scheduled(cron = "0 1 0 * * *", zone = APP_ZONE_ID)
     @CacheEvict(value = [ EntityAccessCount.CacheName ], allEntries = true)
     override fun aggregateUserAccesses() {
         val operationMsg = "User access aggregation task"

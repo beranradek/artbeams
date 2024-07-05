@@ -19,6 +19,6 @@ open class MediaFileUploadForm {
             .field<String?>("format", Field.DROP_DOWN_CHOICE)
             .field<Int?>("width", Field.TEXT)
             .field<Boolean?>("privateAccess", Field.CHECK_BOX)
-            .build(FormUtils.CzConfig)
+            .build(FormUtils.CZ_CONFIG)
     }
 }

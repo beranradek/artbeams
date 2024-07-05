@@ -14,8 +14,8 @@ open class CategoryForm {
             .field<String>("slug", Field.TEXT)
             .field<String>("title", Field.TEXT)
             .field<String>("description", Field.TEXT)
-            .field(Forms.field<Date>("validFrom", Field.DATE_TIME).pattern(FormUtils.DateTimePattern).build())
-            .field(Forms.field<Date?>("validTo", Field.DATE_TIME).pattern(FormUtils.DateTimePattern).build())
-            .build(FormUtils.CzConfig)
+            .field(Forms.field<Date>("validFrom", Field.DATE_TIME).pattern(FormUtils.DATE_TIME_PATTERN).build())
+            .field(Forms.field<Date?>("validTo", Field.DATE_TIME).pattern(FormUtils.DATE_TIME_PATTERN).build())
+            .build(FormUtils.CZ_CONFIG)
     }
 }

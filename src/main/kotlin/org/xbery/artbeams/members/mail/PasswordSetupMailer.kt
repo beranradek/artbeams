@@ -1,4 +1,4 @@
-package org.xbery.artbeams.member.mail
+package org.xbery.artbeams.members.mail
 
 /**
  * Sends member section invitation mail with password setup and login.

@@ -1,4 +1,4 @@
-package org.xbery.artbeams.common.mapping.repository
+package org.xbery.artbeams.common.repository.keyvalue
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,7 +9,7 @@ import javax.sql.DataSource
  * Stores key-value pairs.
  * @author Radek Beran
  */
-open class CachedSqlRepository(private val tableName: String, dataSource: DataSource) : ExtendedSqlRepository<Pair<String, String>, String, MapFilter>(dataSource, MapMapper(tableName)) {
+open class CachedKeyValueRepository(private val tableName: String, dataSource: DataSource) : ExtendedSqlRepository<Pair<String, String>, String, MapFilter>(dataSource, MapMapper(tableName)) {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
     protected var mapOpt: Map<String, String>? = null
 

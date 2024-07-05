@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletRequest
 abstract class BaseServletFilter : Filter {
     protected fun getFullUrl(request: HttpServletRequest): String {
         val reqUrl = StringBuilder(request.requestURL.toString())
-        val queryString = request.queryString
-        if (queryString == null) {
-            return reqUrl.toString()
-        }
+        val queryString = request.queryString ?: return reqUrl.toString()
         return reqUrl.append("?").append(queryString).toString()
     }
 }

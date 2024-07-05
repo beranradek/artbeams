@@ -1,4 +1,4 @@
-package org.xbery.artbeams.common.auth.service
+package org.xbery.artbeams.common.authcode.service
 
 import arrow.core.Either
 import arrow.core.flatMap
@@ -9,10 +9,10 @@ import kotlinx.datetime.Clock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.xbery.artbeams.common.auth.domain.AuthorizationCode
-import org.xbery.artbeams.common.auth.domain.InvalidCode
-import org.xbery.artbeams.common.auth.domain.TokenPayload
-import org.xbery.artbeams.common.auth.repository.AuthorizationCodeRepository
+import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
+import org.xbery.artbeams.common.authcode.domain.InvalidCode
+import org.xbery.artbeams.common.authcode.domain.TokenPayload
+import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.common.security.AESEncryption
 import org.xbery.artbeams.config.repository.AppConfig

@@ -19,14 +19,14 @@ open class ArticleForm {
             .field<UploadedFile>("file", Field.FILE_UPLOAD)
             .field<String>("perex", Field.TEXT_AREA)
             .field<String>("bodyMarkdown", Field.TEXT_AREA)
-            .field(Forms.field<Date>("validFrom", Field.DATE_TIME).pattern(FormUtils.DateTimePattern).build())
-            .field(Forms.field<Date?>("validTo", Field.DATE_TIME).pattern(FormUtils.DateTimePattern).build())
+            .field(Forms.field<Date>("validFrom", Field.DATE_TIME).pattern(FormUtils.DATE_TIME_PATTERN).build())
+            .field(Forms.field<Date?>("validTo", Field.DATE_TIME).pattern(FormUtils.DATE_TIME_PATTERN).build())
             .field<String>(
                 "keywords",
                 Field.TEXT
             )
             .field<Boolean>("showOnBlog", Field.CHECK_BOX)
             .field<List<String>>("categories", Field.DROP_DOWN_CHOICE)
-            .build(FormUtils.CzConfig)
+            .build(FormUtils.CZ_CONFIG)
     }
 }

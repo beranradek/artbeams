@@ -1,4 +1,4 @@
-package org.xbery.artbeams.member.controller
+package org.xbery.artbeams.members.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
-import org.xbery.artbeams.common.auth.domain.InvalidCode
-import org.xbery.artbeams.common.auth.service.AuthorizationCodeValidator
+import org.xbery.artbeams.common.authcode.domain.InvalidCode
+import org.xbery.artbeams.common.authcode.service.AuthorizationCodeValidator
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.users.domain.PasswordSetupData

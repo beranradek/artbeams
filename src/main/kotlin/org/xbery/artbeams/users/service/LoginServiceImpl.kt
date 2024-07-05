@@ -33,7 +33,7 @@ open class LoginServiceImpl(private val userRepository: UserRepository, private 
     }
 
     override fun getLoggedUser(request: HttpServletRequest): User? {
-        val token = request.getUserPrincipal()
+        val token = request.userPrincipal
         return if (token is UsernamePasswordAuthenticationToken) {
             // authorities contain names of roles
             // val authorities = if (token.getAuthorities != null) token.getAuthorities() else setOf<GrantedAuthority>()

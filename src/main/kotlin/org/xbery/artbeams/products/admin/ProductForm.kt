@@ -20,6 +20,6 @@ open class ProductForm {
                 .field<String>("fileName", Field.TEXT)
                 .field<String?>("confirmationMailingGroupId", Field.TEXT)
                 .field<String?>("mailingGroupId", Field.TEXT)
-                .build(FormUtils.CzConfig)
+                .build(FormUtils.CZ_CONFIG)
     }
 }

@@ -1,6 +1,6 @@
-package org.xbery.artbeams.common.auth.repository
+package org.xbery.artbeams.common.authcode.repository
 
-import org.xbery.artbeams.common.auth.domain.AuthorizationCode
+import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
 
 /**
  * Storage for authorization codes.

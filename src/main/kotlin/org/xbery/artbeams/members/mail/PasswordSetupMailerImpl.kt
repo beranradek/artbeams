@@ -1,11 +1,11 @@
-package org.xbery.artbeams.member.mail
+package org.xbery.artbeams.members.mail
 
 import freemarker.template.Configuration
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils
-import org.xbery.artbeams.common.auth.service.AuthorizationCodeGenerator
+import org.xbery.artbeams.common.authcode.service.AuthorizationCodeGenerator
 import org.xbery.artbeams.common.mailer.service.Mailer
 import org.xbery.artbeams.users.domain.PasswordSetupData
 

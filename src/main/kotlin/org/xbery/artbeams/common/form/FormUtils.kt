@@ -1,5 +1,6 @@
 package org.xbery.artbeams.common.form
 
+import net.formio.Config
 import net.formio.Forms
 import net.formio.format.Location
 
@@ -8,9 +9,9 @@ import net.formio.format.Location
  * @author Radek Beran
  */
 object FormUtils {
-    const val DateTimePattern = "d.M.yyyy HH:mm"
+    const val DATE_TIME_PATTERN = "d.M.yyyy HH:mm"
 
     private fun configBuilder() = Forms.config().defaultInstantiator(DataClassInstantiator())
 
-    val CzConfig = configBuilder().location(Location.CZECH).build()
+    val CZ_CONFIG: Config = configBuilder().location(Location.CZECH).build()
 }

@@ -1,4 +1,4 @@
-package org.xbery.artbeams.common.mapping.repository
+package org.xbery.artbeams.common.repository.keyvalue
 
 /**
  * Filter for key-value entities.

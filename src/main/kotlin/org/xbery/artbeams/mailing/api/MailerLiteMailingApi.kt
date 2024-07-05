@@ -6,9 +6,9 @@ import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.xbery.artbeams.common.api.AbstractJsonApi
-import org.xbery.artbeams.mailing.dto.SubscriberFields
-import org.xbery.artbeams.mailing.dto.SubscriptionRequest
-import org.xbery.artbeams.mailing.dto.SubscriptionResponse
+import org.xbery.artbeams.mailing.api.dto.MailerLiteSubscriberFields
+import org.xbery.artbeams.mailing.api.dto.MailerLiteSubscriptionRequest
+import org.xbery.artbeams.mailing.api.dto.MailerLiteSubscriptionResponse
 
 /**
  * Mailing implemented using MailerLite API.
@@ -22,10 +22,10 @@ class MailerLiteMailingApi(
     private val mailingApiConfig: MailingApiConfig
 ) : AbstractJsonApi(MailingApiConfig.FEATURE_NAME, restTemplate), MailingApi {
 
-    override fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): SubscriptionResponse {
+    override fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse {
         val url = mailingApiConfig.baseUrl + "/api/subscribers"
-        val subscriberRequest = SubscriptionRequest(email, SubscriberFields(name, null), listOf(subscriberGroupId), ipAddress)
-        return exchangeData(HttpMethod.POST, url, mapOf(), subscriberRequest, SubscriptionResponse::class.java)
+        val subscriberRequest = MailerLiteSubscriptionRequest(email, MailerLiteSubscriberFields(name, null), listOf(subscriberGroupId), ipAddress)
+        return exchangeData(HttpMethod.POST, url, mapOf(), subscriberRequest, MailerLiteSubscriptionResponse::class.java)
     }
 
     override fun appendHeaders(headers: HttpHeaders) {

@@ -1,7 +1,6 @@
 package org.xbery.artbeams.users.service
 
 import org.xbery.artbeams.common.context.OperationCtx
-import org.xbery.artbeams.member.controller.PasswordSetupForm
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.MyProfile
 import org.xbery.artbeams.users.domain.PasswordSetupData

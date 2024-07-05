@@ -22,6 +22,6 @@ open class UserForm {
                 .field<String>("lastName", Field.TEXT)
                 .field<String>("email", Field.TEXT)
                 .field<List<String>>("roleIds")
-                .build(FormUtils.CzConfig)
+                .build(FormUtils.CZ_CONFIG)
     }
 }
