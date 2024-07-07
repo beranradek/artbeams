@@ -39,6 +39,8 @@ import java.time.Instant
 import jakarta.servlet.http.HttpServletRequest
 import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.UnauthorizedException
+import org.xbery.artbeams.common.error.requireAuthorized
+import org.xbery.artbeams.common.error.requireFound
 
 /**
  * Product routes.
@@ -170,23 +172,29 @@ open class ProductController(
     @GetMapping("/produkt/{slug}/download")
     fun serveProductData(request: HttpServletRequest, @PathVariable slug: String): Any {
         return tryOrErrorResponse(request) {
-            val product = productService.findBySlug(slug) ?: throw NotFoundException("Product $slug was not found")
-            val productFileName = product.fileName ?: throw NotFoundException("Product $slug has no file name")
-            val email = findEmailInRequest(request) ?: throw UnauthorizedException("Email is missing")
+            val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
+            val productFileName = requireFound(product.fileName) { "Product $slug has no file name" }
+            val email = requireAuthorized(findEmailInRequest(request)) { "Email is missing" }
 
             // User must exist and must confirm the consent before he/she can download the product
-            var user = userService.findByEmail(email) ?: throw UnauthorizedException("User with email $email was not found")
+            var user = requireAuthorized(userService.findByEmail(email)) { "User with email $email was not found" }
             if (user.consent == null) throw UnauthorizedException("User with email $email has not confirmed the consent")
 
             // Update user with full name from request if it is present (and not set in user entity yet)
             updateUserWithFullName(request, user)
 
             // Check an order of the product for given user exists
-            val orderItem = orderService.findOrderItemOfUser(user.id, product.id) ?: throw UnauthorizedException("User with email $email has not ordered product $slug")
-            if (orderItem.quantity <= 0) throw UnauthorizedException("User with email $email has not ordered product $slug")
+            val orderItem = requireAuthorized(orderService.findOrderItemOfUser(user.id, product.id)) {
+                "User with email $email has not ordered product $slug"
+            }
+            if (orderItem.quantity <= 0) throw UnauthorizedException(
+                "User with email $email has not ordered product $slug"
+            )
 
             // TODO: In case of paid product, check the order was already paid
-            val fileData = mediaRepository.findFile(productFileName, null) ?: throw NotFoundException("File $productFileName was not found")
+            val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
+                "File $productFileName was not found"
+            }
             val mediaType = fileData.getMediaType()
             val documentOutputStream = if (MediaType.APPLICATION_PDF == mediaType) {
                 writeMetadataToPdf(request, product, user, fileData)
@@ -217,7 +225,7 @@ open class ProductController(
     @GetMapping("/produkt/{slug}")
     fun productDetail(request: HttpServletRequest, @PathVariable slug: String): Any {
         return tryOrErrorResponse(request) {
-            val product = productService.findBySlug(slug) ?: throw NotFoundException("Product $slug was not found")
+            val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
             renderProductArticle(request, product, product.slug, true)
         }
     }
@@ -323,7 +331,8 @@ open class ProductController(
                 val subject =
                     normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName} downloaded ${product.title}")
                 val body =
-                    normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName}/${user.email} has downloaded product ${product.title}.")
+                    normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName}/${user.email} " +
+                        "has downloaded product ${product.title}.")
                 mailer.sendMail(subject, body, body, productAuthor.email)
             }
         }

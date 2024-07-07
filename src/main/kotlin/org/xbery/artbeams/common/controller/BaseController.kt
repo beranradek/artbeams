@@ -1,27 +1,23 @@
 package org.xbery.artbeams.common.controller
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.xbery.artbeams.common.Urls
-import org.xbery.artbeams.common.context.OperationCtx
-import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
-import jakarta.servlet.http.HttpServletRequest
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatusCode
 import org.springframework.web.servlet.ModelAndView
+import org.xbery.artbeams.common.Urls
+import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.error.CommonErrorCode
 import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.error.OperationException
-import java.util.IllegalFormatException
+import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
+import java.util.*
 
 /**
  * Base controller for all pages.
  * @author Radek Beran
  */
 abstract class BaseController(private val common: ControllerComponents) {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     fun createModel(request: HttpServletRequest, vararg args: Pair<String, Any?>): MutableMap<String, Any?> {
         val model = mutableMapOf<String, Any?>()
@@ -64,9 +60,6 @@ abstract class BaseController(private val common: ControllerComponents) {
     fun redirect(path: String) = "redirect:$path"
 
     fun errorResponse(request: HttpServletRequest, operationEx: OperationException): Any {
-        if (operationEx.statusCode != StatusCode.EXPECTED) {
-            logger.info(operationEx.message)
-        }
         val status = statusCodeToHttpStatus(operationEx.statusCode)
         val model = createModel(request, "status" to status.value())
         return ModelAndView("error", model, status)
