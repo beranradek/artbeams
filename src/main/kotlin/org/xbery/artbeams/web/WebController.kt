@@ -88,10 +88,10 @@ open class WebController(
                 )
                 ModelAndView("category", model)
             } else {
-                notFound()
+                notFound(request)
             }
         } else {
-            notFound()
+            notFound(request)
         }
     }
 
@@ -160,10 +160,10 @@ open class WebController(
                 )
                 ModelAndView("article", model)
             } else {
-                notFound()
+                notFound(request)
             }
         } else {
-            notFound()
+            notFound(request)
         }
     }
 

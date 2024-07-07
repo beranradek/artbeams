@@ -108,18 +108,18 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
         return if (success) {
             redirect("/admin/media")
         } else {
-            internalServerError()
+            internalServerError(request)
         }
     }
 
     // Allow all characters at the end of path (regex addon for filename variable):
     @GetMapping("/media/{filename:.+}")
-    fun findFile(request: HttpServletRequest, @PathVariable filename: String?, @RequestParam(value = "size", required = false) size: String?): ResponseEntity<*> {
+    fun findFile(request: HttpServletRequest, @PathVariable filename: String?, @RequestParam(value = "size", required = false) size: String?): Any {
         return if (filename != null) {
             val fileData = mediaRepository.findFile(filename, size)
             if (fileData != null) {
                 if (fileData.privateAccess) {
-                    unauthorized()
+                    unauthorized(request)
                 } else {
                     val mediaType = fileData.getMediaType()
                     // Caching file on the client
@@ -130,10 +130,10 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
                         .body(fileData.data)
                 }
             } else {
-                notFound()
+                notFound(request)
             }
         } else {
-            notFound()
+            notFound(request)
         }
     }
 

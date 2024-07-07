@@ -37,6 +37,8 @@ import org.xbery.artbeams.users.service.UserSubscriptionService
 import java.io.ByteArrayOutputStream
 import java.time.Instant
 import jakarta.servlet.http.HttpServletRequest
+import org.xbery.artbeams.common.error.NotFoundException
+import org.xbery.artbeams.common.error.UnauthorizedException
 
 /**
  * Product routes.
@@ -102,7 +104,7 @@ open class ProductController(
                 }
             }
         } else {
-            notFound()
+            notFound(request)
         }
     }
 
@@ -115,7 +117,7 @@ open class ProductController(
         return if (product != null) {
             renderProductArticle(request, product, product.slug + "-objednavka", false)
         } else {
-            notFound()
+            notFound(request)
         }
     }
 
@@ -129,7 +131,7 @@ open class ProductController(
         return if (product != null) {
             renderProductArticle(request, product, product.slug + "-potvrzeni", false)
         } else {
-            notFound()
+            notFound(request)
         }
     }
 
@@ -152,13 +154,13 @@ open class ProductController(
                     // Redirect to this page without email and name parameters shown in URL
                     redirect("/produkt/$slug/odeslano")
                 } else {
-                    unauthorized()
+                    unauthorized(request)
                 }
             } else {
                 renderProductArticle(request, product, product.slug + "-odeslano", false)
             }
         } else {
-            notFound()
+            notFound(request)
         }
     }
 
@@ -166,62 +168,46 @@ open class ProductController(
      * Serves binary data of product to user identified by email in the request.
      */
     @GetMapping("/produkt/{slug}/download")
-    fun serveProductData(request: HttpServletRequest, @PathVariable slug: String): ResponseEntity<*> {
-        val product = productService.findBySlug(slug)
-        val productFileName = product?.fileName
-        return if (product != null && productFileName != null) {
-            val email = findEmailInRequest(request)
-            if (email != null) {
-                // User must exist and confirm the consent before he/she can download the product
-                var user = userService.findByEmail(email)
-                if (user != null) {
-                    // Update user with full name from request if it is present (and not set in user entity yet)
-                    updateUserWithFullName(request, user)
-                    if (user.consent != null) {
-                        val orderItem = orderService.findOrderItemOfUser(user.id, product.id)
-                        if (orderItem != null && orderItem.quantity > 0) {
-                            // An order of the product for given user exists
-                            // TODO: In case of paid product, check the order was already paid
-                            val fileData = mediaRepository.findFile(productFileName, null)
-                            if (fileData != null) {
-                                val mediaType = fileData.getMediaType()
-                                val documentOutputStream = if (MediaType.APPLICATION_PDF == mediaType) {
-                                    writeMetadataToPdf(request, product, user, fileData)
-                                } else {
-                                    val os = ByteArrayOutputStream()
-                                    os.write(fileData.data)
-                                    os
-                                }
+    fun serveProductData(request: HttpServletRequest, @PathVariable slug: String): Any {
+        return tryOrErrorResponse(request) {
+            val product = productService.findBySlug(slug) ?: throw NotFoundException("Product $slug was not found")
+            val productFileName = product.fileName ?: throw NotFoundException("Product $slug has no file name")
+            val email = findEmailInRequest(request) ?: throw UnauthorizedException("Email is missing")
 
-                                orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
-                                sendProductDownloadedNotification(product, user)
+            // User must exist and must confirm the consent before he/she can download the product
+            var user = userService.findByEmail(email) ?: throw UnauthorizedException("User with email $email was not found")
+            if (user.consent == null) throw UnauthorizedException("User with email $email has not confirmed the consent")
 
-                                ResponseEntity.ok()
-                                    .contentType(mediaType)
-                                    .contentLength(documentOutputStream.size().toLong())
-                                    .cacheControl(CacheControl.noStore()) // prevent browsers and proxies to cache the request
-                                    .header(
-                                        HttpHeaders.CONTENT_DISPOSITION,
-                                        "attachment; filename=" + fileData.filename
-                                    )
-                                    .body(documentOutputStream.toByteArray())
-                            } else {
-                                notFound()
-                            }
-                        } else {
-                            unauthorized()
-                        }
-                    } else {
-                        unauthorized()
-                    }
-                } else {
-                    unauthorized()
-                }
+            // Update user with full name from request if it is present (and not set in user entity yet)
+            updateUserWithFullName(request, user)
+
+            // Check an order of the product for given user exists
+            val orderItem = orderService.findOrderItemOfUser(user.id, product.id) ?: throw UnauthorizedException("User with email $email has not ordered product $slug")
+            if (orderItem.quantity <= 0) throw UnauthorizedException("User with email $email has not ordered product $slug")
+
+            // TODO: In case of paid product, check the order was already paid
+            val fileData = mediaRepository.findFile(productFileName, null) ?: throw NotFoundException("File $productFileName was not found")
+            val mediaType = fileData.getMediaType()
+            val documentOutputStream = if (MediaType.APPLICATION_PDF == mediaType) {
+                writeMetadataToPdf(request, product, user, fileData)
             } else {
-                unauthorized()
+                val os = ByteArrayOutputStream()
+                os.write(fileData.data)
+                os
             }
-        } else {
-            notFound()
+
+            orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
+            sendProductDownloadedNotification(product, user)
+
+            ResponseEntity.ok()
+                .contentType(mediaType)
+                .contentLength(documentOutputStream.size().toLong())
+                .cacheControl(CacheControl.noStore()) // prevent browsers and proxies to cache the request
+                .header(
+                    HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=" + fileData.filename
+                )
+                .body(documentOutputStream.toByteArray())
         }
     }
 
@@ -230,11 +216,9 @@ open class ProductController(
      */
     @GetMapping("/produkt/{slug}")
     fun productDetail(request: HttpServletRequest, @PathVariable slug: String): Any {
-        val product = productService.findBySlug(slug)
-        return if (product != null) {
+        return tryOrErrorResponse(request) {
+            val product = productService.findBySlug(slug) ?: throw NotFoundException("Product $slug was not found")
             renderProductArticle(request, product, product.slug, true)
-        } else {
-            notFound()
         }
     }
 
@@ -307,7 +291,7 @@ open class ProductController(
             ModelAndView("productArticle", model)
         } else {
             logger.error("Article $articleSlug not found")
-            notFound()
+            notFound(request)
         }
     }
 

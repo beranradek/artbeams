@@ -1,16 +1,13 @@
 package org.xbery.artbeams.common.authcode.service
 
-import arrow.core.Either
-import arrow.core.flatMap
-import arrow.core.left
-import arrow.core.right
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.datetime.Clock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
-import org.xbery.artbeams.common.authcode.domain.InvalidCode
+import org.xbery.artbeams.common.authcode.domain.InvalidAuthorizationCode
+import org.xbery.artbeams.common.authcode.domain.InvalidAuthorizationCodeException
 import org.xbery.artbeams.common.authcode.domain.TokenPayload
 import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.common.json.ObjectMappers
@@ -36,18 +33,18 @@ class AuthorizationCodeValidator(
      * Validates encrypted authorization code for given purpose and its time validity.
      * @param code authorization code
      * @param purpose purpose for which the code is expected to be used
+     * @throws InvalidAuthorizationCodeException if the code is invalid
      */
     fun validateEncryptedAuthorizationCode(
         code: String,
         purpose: String
-    ): Either<InvalidCode, AuthorizationCode> {
-        return getDecryptedCodePayload(code).flatMap { decryptedCodePayload ->
-            validateAuthorizationCode(decryptedCodePayload, purpose)
-        }.flatMap { authCode ->
-            // Update used time of the code
-            authorizationCodeRepository.updateCode(authCode.copy(used = Clock.System.now()))
-            findCode(TokenPayload(authCode.code, authCode.purpose, authCode.userId))
-        }
+    ): AuthorizationCode {
+        val decryptedCodePayload = getDecryptedCodePayload(code)
+        val authCode = validateAuthorizationCode(decryptedCodePayload, purpose)
+
+        // Update used time of the code
+        authorizationCodeRepository.updateCode(authCode.copy(used = Clock.System.now()))
+        return findCode(TokenPayload(authCode.code, authCode.purpose, authCode.userId))
     }
 
     /**
@@ -56,39 +53,48 @@ class AuthorizationCodeValidator(
      * in its plain form.
      * @param tokenPayload authorization code payload requested to be validated
      * @param purpose purpose for which the code is expected to be used
+     * @throws InvalidAuthorizationCodeException if the code is invalid
      */
     fun validateAuthorizationCode(
         tokenPayload: TokenPayload,
         purpose: String
-    ): Either<InvalidCode, AuthorizationCode> {
-        return findCode(tokenPayload).flatMap { authorizationCode ->
-            if (authorizationCode.purpose != purpose) {
-                logger.warn(
-                    "Authorization code purpose does not match: " +
-                        "code=${tokenPayload.code}, " +
-                        "userId=${tokenPayload.userId}, " +
-                        "purpose=${tokenPayload.purpose} ($purpose expected)",
-                    null
-                )
-                InvalidCode.ANOTHER_PURPOSE.left()
-            } else if (authorizationCode.validTo < Clock.System.now()) {
-                logger.warn(
-                    "Authorization code expired: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
-                        "purpose=${tokenPayload.purpose}",
-                    null
-                )
-                InvalidCode.EXPIRED.left()
-            } else if (authorizationCode.used != null) {
-                logger.info(
-                    "Authorization code was already used: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
-                        "purpose=${tokenPayload.purpose}",
-                    null
-                ) // but it does not matter if still valid
-                authorizationCode.right()
-            } else {
-                authorizationCode.right()
-            }
+    ): AuthorizationCode {
+        val authorizationCode = findCode(tokenPayload)
+        if (authorizationCode.purpose != purpose) {
+            val msg = "Authorization code purpose does not match: " +
+                    "code=${tokenPayload.code}, " +
+                    "userId=${tokenPayload.userId}, " +
+                    "purpose=${tokenPayload.purpose} ($purpose expected)"
+            logger.warn(
+                msg,
+                null
+            )
+            throw InvalidAuthorizationCodeException(
+                InvalidAuthorizationCode.ANOTHER_PURPOSE,
+                msg
+            )
         }
+        if (authorizationCode.validTo < Clock.System.now()) {
+            val msg = "Authorization code expired: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
+                    "purpose=${tokenPayload.purpose}"
+            logger.warn(
+                msg,
+                null
+            )
+            throw InvalidAuthorizationCodeException(
+                InvalidAuthorizationCode.EXPIRED,
+                msg
+            )
+        }
+        if (authorizationCode.used != null) {
+            val msg = "Authorization code was already used: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
+                    "purpose=${tokenPayload.purpose}"
+            logger.info(
+                msg,
+                null
+            ) // but it does not matter if still valid
+        }
+        return authorizationCode
     }
 
     /**
@@ -102,33 +108,40 @@ class AuthorizationCodeValidator(
 
     protected fun createObjectMapper(): ObjectMapper = ObjectMappers.DEFAULT_MAPPER
 
-    private fun getDecryptedCodePayload(code: String): Either<InvalidCode, TokenPayload> {
+    private fun getDecryptedCodePayload(code: String): TokenPayload {
         return try {
             val secretKey = AESEncryption.getKeyFromPassword(getEncryptionSecret(), getEncryptionSalt())
             val decryptedString = AESEncryption.decryptPasswordBased(code, secretKey)
             val tokenPayload = objectMapper.readValue(decryptedString, TokenPayload::class.java)
-            tokenPayload.right()
+            tokenPayload
         } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
-            logger.warn("Decryption of authorization code failed: code=$code, msg=${e.message}", e)
-            InvalidCode.DECRYPTION_FAILED.left()
+            val msg = "Decryption of authorization code failed: code=$code, msg=${e.message}"
+            logger.warn(msg, e)
+            throw InvalidAuthorizationCodeException(
+                InvalidAuthorizationCode.DECRYPTION_FAILED,
+                msg
+            )
         }
     }
 
-    private fun findCode(tokenPayload: TokenPayload): Either<InvalidCode, AuthorizationCode> {
+    private fun findCode(tokenPayload: TokenPayload): AuthorizationCode {
         val authorizationCode = authorizationCodeRepository.findByCodePurposeAndUserId(
             tokenPayload.code,
             tokenPayload.purpose,
             tokenPayload.userId
         )
-        return if (authorizationCode == null) {
+        if (authorizationCode == null) {
+            val msg = "Authorization code not found: code=${tokenPayload.code}, userId=${tokenPayload.userId}, purpose=${tokenPayload.purpose}"
             logger.warn(
-                "Authorization code not found: code=${tokenPayload.code}, userId=${tokenPayload.userId}, purpose=${tokenPayload.purpose}",
+                msg,
                 null
             )
-            InvalidCode.NOT_FOUND.left()
-        } else {
-            authorizationCode.right()
+            throw InvalidAuthorizationCodeException(
+                InvalidAuthorizationCode.NOT_FOUND,
+                msg
+            )
         }
+        return authorizationCode
     }
 
     protected fun getEncryptionSecret(): String {

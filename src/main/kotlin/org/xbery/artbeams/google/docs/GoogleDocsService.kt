@@ -9,9 +9,11 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.repository.ArticleRepository
-import org.xbery.artbeams.common.access.domain.UnauthorizedException
 import org.xbery.artbeams.common.markdown.MarkdownConverter
+import org.xbery.artbeams.error.OperationException
+import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.google.auth.GoogleApiAuth
+import org.xbery.artbeams.google.error.GoogleErrorCode
 
 /**
  * Google Document manipulation service.
@@ -95,7 +97,7 @@ open class GoogleDocsService(
             return null
         }
         val docContent = readGoogleDoc(article.externalId)
-        if (docContent == null || docContent.trim().isEmpty()) {
+        if (docContent.trim().isEmpty()) {
             logger.info("Nothing to update from Google Doc. Doc is empty. Article with slug ${article.slug}, externalId ${article.externalId}")
             return article
         }
@@ -132,12 +134,16 @@ open class GoogleDocsService(
      * See also Google Docs API: https://developers.google.com/docs/api/how-tos/overview,
      * https://developers.google.com/docs/api/quickstart/java
      *
-     * @throws UnauthorizedException if user is not authorized or authorization has expired
+     * @throws OperationException if user is not authorized or authorization has expired
      */
     private fun getDocsService(): Docs {
         if (!googleAuth.isUserAuthorized(scopes)) {
             docs = null
-            throw UnauthorizedException("Unauthorized access to Google documents")
+            throw OperationException(
+                GoogleErrorCode.UNAUTHORIZED,
+                "Unauthorized access to Google documents",
+                StatusCode.UNAUTHORIZED
+            )
         }
         if (docs == null) {
             docs = Docs.Builder(googleAuth.httpTransport, googleAuth.jsonFactory, googleAuth.getCredentials(scopes))

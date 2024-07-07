@@ -24,8 +24,8 @@ import org.xbery.artbeams.common.form.SpringHttpServletRequestParams
 import org.xbery.artbeams.media.repository.MediaRepository
 import java.nio.channels.Channels
 import jakarta.servlet.http.HttpServletRequest
-import org.xbery.artbeams.common.access.domain.UnauthorizedException
-
+import org.xbery.artbeams.error.OperationException
+import org.xbery.artbeams.google.error.GoogleErrorCode
 
 /**
  * Article administration routes.
@@ -69,10 +69,14 @@ open class ArticleAdminController(
                 return if (edited != null) {
                     renderEditForm(request, edited, ValidationResult.empty, null)
                 } else {
-                    notFound()
+                    notFound(request)
                 }
-            } catch (ex: UnauthorizedException) {
-                redirect("/admin/google-docs/authorization")
+            } catch (ex: OperationException) {
+                if (ex.errorCode == GoogleErrorCode.UNAUTHORIZED) {
+                    redirect("/admin/google-docs/authorization")
+                } else {
+                    throw ex
+                }
             }
         }
     }
@@ -105,7 +109,7 @@ open class ArticleAdminController(
                             redirect("/admin/articles")
                         }
                     } else {
-                        notFound()
+                        notFound(request)
                     }
                 } catch (ex: Exception) {
                     renderEditForm(request, formData.data, formData.validationResult, ex.toString())

@@ -63,7 +63,7 @@ open class ProductAdminController(
                     null
                 )
             } else {
-                notFound()
+                notFound(request)
             }
         }
     }
@@ -82,7 +82,7 @@ open class ProductAdminController(
                 if (product != null) {
                     redirect("/admin/products")
                 } else {
-                    notFound()
+                    notFound(request)
                 }
             } catch (ex: Exception) {
                 renderEditForm(request, formData.data, formData.validationResult, ex.toString())

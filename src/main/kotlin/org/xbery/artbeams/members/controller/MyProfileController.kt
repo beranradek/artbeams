@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.users.domain.MyProfile
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.UserRepository
@@ -32,28 +33,26 @@ open class MyProfileController(
 
     @GetMapping("/clenska-sekce/muj-profil")
     fun editForm(request: HttpServletRequest): Any {
-        val login = userService.findCurrentUserLogin()
-        val user = if (login != null) userRepository.findByLogin(login) else null
-        return if (user == null) {
-            notFound()
-        } else {
+        return tryOrErrorResponse(request) {
+            val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
+            val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
             renderEditForm(request, toEditedProfile(user), ValidationResult.empty)
         }
     }
 
     @PostMapping("/clenska-sekce/muj-profil")
     fun save(request: HttpServletRequest): Any {
-        val params = ServletRequestParams(request)
-        val formData = editFormDef.bind(params)
-        return if (!formData.isValid) {
-            renderEditForm(request, formData.data, formData.validationResult)
-        } else {
-            val myProfile = formData.data
-            val user = userService.saveMyProfile(myProfile, requestToOperationCtx(request))
-            return if (user != null) {
-                redirect("/clenska-sekce")
+        return tryOrErrorResponse(request) {
+            val params = ServletRequestParams(request)
+            val formData = editFormDef.bind(params)
+            if (!formData.isValid) {
+                renderEditForm(request, formData.data, formData.validationResult)
             } else {
-                notFound()
+                val myProfile = formData.data
+                userService.saveMyProfile(myProfile, requestToOperationCtx(request)) ?: throw NotFoundException(
+                    "User ${myProfile.login} was not found as currently logged user"
+                )
+                redirect("/clenska-sekce")
             }
         }
     }

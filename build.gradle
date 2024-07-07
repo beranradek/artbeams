@@ -48,7 +48,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") // mandatory as of Spring Framework 5
     // It is generally recommended to use kotlinx.datetime multiplatform library when working with Kotlin.
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTimeVersion"
-    implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
     // Spring Boot: Thanks to Spring Boot Gradle Plugin, versions can be omitted
     // Support for Web MVC, Freemarker templates, database layer, security

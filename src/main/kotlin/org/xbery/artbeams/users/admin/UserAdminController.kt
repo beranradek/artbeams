@@ -61,7 +61,7 @@ open class UserAdminController(
             return if (user != null) {
                 renderEditForm(request, user.toEdited(), ValidationResult.empty)
             } else {
-                notFound()
+                notFound(request)
             }
         }
     }
@@ -79,7 +79,7 @@ open class UserAdminController(
             return if (user != null) {
                 redirect("/admin/users")
             } else {
-                notFound()
+                notFound(request)
             }
         }
     }

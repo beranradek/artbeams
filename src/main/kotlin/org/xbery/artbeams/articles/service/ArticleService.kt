@@ -2,7 +2,6 @@ package org.xbery.artbeams.articles.service
 
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.domain.EditedArticle
-import org.xbery.artbeams.common.access.domain.UnauthorizedException
 import org.xbery.artbeams.common.context.OperationCtx
 
 /**

@@ -18,7 +18,6 @@ internal class AuthCodeServerReceiver (
 ) : VerificationCodeReceiver {
 
     companion object {
-
         fun getRedirectUri(host: String, callbackPath: String): String = "http://$host$callbackPath"
     }
 

@@ -62,7 +62,7 @@ open class CategoryAdminController(
                     null
                 )
             } else {
-                notFound()
+                notFound(request)
             }
         }
     }
@@ -81,7 +81,7 @@ open class CategoryAdminController(
                 if (category != null) {
                     redirect("/admin/categories")
                 } else {
-                    notFound()
+                    notFound(request)
                 }
             } catch (ex: Exception) {
                 renderEditForm(request, formData.data, formData.validationResult, ex.toString())

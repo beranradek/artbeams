@@ -59,7 +59,7 @@ open class CommentController(
                         val url = Urls.urlWithAnchor(Urls.urlWithParam(referrer, "commentAdded", "1"), "comment-add")
                         redirect(url)
                     } else {
-                        notFound()
+                        notFound(request)
                     }
                 } catch (ex: Exception) {
                     logger.error("Error while saving comment for entity ${edited.entityId} from ${edited.userName} with comment text ${edited.comment}: ${ex.message}", ex)
