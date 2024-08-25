@@ -1,11 +1,14 @@
 package org.xbery.artbeams.common.antispam.recaptcha.service
 
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
+import org.xbery.artbeams.common.antispam.recaptcha.config.RecaptchaConfig
 import org.xbery.artbeams.common.antispam.recaptcha.domain.RecaptchaResult
 import org.xbery.artbeams.common.antispam.recaptcha.domain.RecaptchaVerifyResponse
-import org.xbery.artbeams.config.repository.AppConfig
+import org.xbery.artbeams.common.api.AbstractJsonApi
 
 /**
  * Recaptcha service for verifying reCAPTCHA token (success of response)
@@ -17,27 +20,24 @@ import org.xbery.artbeams.config.repository.AppConfig
  */
 @Service
 class RecaptchaService(
-    private val appConfig: AppConfig,
-    private val restTemplate: RestTemplate
-) {
+    private val recaptchaConfig: RecaptchaConfig,
+    @Qualifier(RecaptchaConfig.FEATURE_NAME)
+    restTemplate: RestTemplate
+) : AbstractJsonApi(RecaptchaConfig.FEATURE_NAME, restTemplate) {
 
     fun verify(token: String, ipAddress: String): RecaptchaResult {
         val uri = UriComponentsBuilder.fromHttpUrl("https://www.google.com/recaptcha/api/siteverify")
             // The shared key between your site and reCAPTCHA.
-            .queryParam("secret", getSecretKey())
+            .queryParam("secret", recaptchaConfig.getSecretKey())
             // The user response token provided by the reCAPTCHA client-side integration on your site.
             .queryParam("response", token)
             // Optional. The user's IP address.
             .queryParam("remoteip", ipAddress)
             .toUriString()
-
-        val response = restTemplate.postForObject(uri, null, RecaptchaVerifyResponse::class.java)
+        val response = exchangeData(HttpMethod.POST, uri, mapOf(), null, RecaptchaVerifyResponse::class.java)
         return RecaptchaResult(
-            response?.success ?: false,
-            response?.score ?: 0.0
+            response.success,
+            response.score
         )
     }
-
-    private fun getSecretKey(): String =
-        appConfig.requireConfig("recaptcha.secretKey")
 }

@@ -1,14 +1,20 @@
 package org.xbery.artbeams.web
 
+import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
+import net.formio.validation.ConstraintViolationMessage
+import net.formio.validation.Severity
 import net.formio.validation.ValidationResult
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.*
+import org.springframework.http.CacheControl
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,11 +22,15 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.service.ArticleService
-import org.xbery.artbeams.common.Urls
 import org.xbery.artbeams.common.access.domain.EntityKey
-import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
+import org.xbery.artbeams.common.antispam.recaptcha.config.RecaptchaConfig
+import org.xbery.artbeams.common.antispam.recaptcha.domain.RecaptchaResult
+import org.xbery.artbeams.common.antispam.recaptcha.service.RecaptchaService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.error.UnauthorizedException
+import org.xbery.artbeams.common.error.requireAuthorized
+import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.mailer.service.Mailer
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.mailing.api.MailingApi
@@ -36,13 +46,6 @@ import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.users.service.UserSubscriptionService
 import java.io.ByteArrayOutputStream
 import java.time.Instant
-import jakarta.servlet.http.HttpServletRequest
-import net.formio.validation.ConstraintViolationMessage
-import net.formio.validation.Severity
-import org.xbery.artbeams.common.error.NotFoundException
-import org.xbery.artbeams.common.error.UnauthorizedException
-import org.xbery.artbeams.common.error.requireAuthorized
-import org.xbery.artbeams.common.error.requireFound
 
 /**
  * Product routes.
@@ -57,9 +60,9 @@ open class ProductController(
     private val userService: UserService,
     private val orderService: OrderService,
     private val mediaRepository: MediaRepository,
-    private val antispamQuizRepository: AntispamQuizRepository,
     private val mailer: Mailer,
     private val mailingApi: MailingApi,
+    private val recaptchaService: RecaptchaService
 ) : BaseController(controllerComponents) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
@@ -83,10 +86,21 @@ open class ProductController(
                 ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
             } else {
                 val data = formData.data
-                val antispamQuizAnswered = antispamQuizRepository.questionHasAnswer(data.antispamQuestion, data.antispamAnswer)
-                if (!antispamQuizAnswered) {
-                    logger.warn("Antispam quiz not answered" + " correctly for subscription for email=${data.email}, name=${data.name}, question=${data.antispamQuestion}")
-                    val errorMessage = ConstraintViolationMessage(Severity.WARNING, "Nesprávná odpověď. Prosím vyplňte znovu správnou odpověď na kontrolní otázku (ochranu proti robotům).", "captcha.ivalid", mapOf())
+                val recaptchaToken = request.getParameter(RecaptchaConfig.RECAPTCHA_TOKEN_PARAM)
+                val recaptchaResult = try {
+                    recaptchaService.verify(recaptchaToken, request.remoteAddr)
+                } catch (e: Exception) {
+                    logger.error("Error while verifying reCAPTCHA token: ${e.message}", e)
+                    RecaptchaResult(false, 0.0)
+                }
+                if (!recaptchaResult.success) {
+                    logger.warn("Captcha token was incorrect, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
+                    val errorMessage = ConstraintViolationMessage(
+                        Severity.WARNING,
+                        "Captcha token was incorrect.",
+                        "captcha.invalid",
+                        mapOf()
+                    )
                     val validationResult = ValidationResult(
                         formData.validationResult.fieldMessages,
                         listOf(errorMessage) + formData.validationResult.globalMessages
@@ -95,6 +109,7 @@ open class ProductController(
                     val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to errorFormData)
                     ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
                 } else {
+                    logger.info("Captcha token was correct, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
                     try {
                         userSubscriptionService.subscribe(data.name, data.email, product.id)
                         mailingApi.subscribeToGroup(
@@ -109,7 +124,12 @@ open class ProductController(
                             "Error while subscribing user ${data.email}/${data.name} to product ${slug}: ${ex.message}",
                             ex
                         )
-                        val errorMessage = ConstraintViolationMessage(Severity.ERROR, "Nastala interní chyba při subskripci.", "subscription.error", mapOf())
+                        val errorMessage = ConstraintViolationMessage(
+                            Severity.ERROR,
+                            "Internal subscription error.",
+                            "subscription.error",
+                            mapOf()
+                        )
                         val validationResult = ValidationResult(
                             formData.validationResult.fieldMessages,
                             listOf(errorMessage) + formData.validationResult.globalMessages
@@ -317,8 +337,7 @@ open class ProductController(
     }
 
     private fun fillSubscriptionForm(): FormMapping<SubscriptionFormData> {
-        val antispamQuiz = antispamQuizRepository.findRandom()
-        val subscriptionData = SubscriptionFormData.Empty.copy(antispamQuestion = antispamQuiz.question)
+        val subscriptionData = SubscriptionFormData.Empty
         return WebController.subscriptionFormDef.fill(FormData(subscriptionData, ValidationResult.empty))
     }
 

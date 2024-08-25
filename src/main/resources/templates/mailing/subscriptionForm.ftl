@@ -648,6 +648,6 @@
   </div>
   <script nonce="${_cspNonce}">
       <!-- Function registered on document ready -->
-      ready(ajaxHandleFormWithClass("${formClass}"));
+      ready(ajaxHandleFormWithClass("${formClass}", true));
   </script>
 </#macro>

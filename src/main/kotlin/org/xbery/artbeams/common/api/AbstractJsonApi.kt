@@ -22,7 +22,10 @@ abstract class AbstractJsonApi(
 
     protected val logger: Logger = LoggerFactory.getLogger(apiName)
 
-    protected open fun createRequestEntity(requestData: Any): HttpEntity<String> {
+    protected open fun createRequestEntity(requestData: Any?): HttpEntity<*> {
+        if (requestData == null) {
+            return HttpEntity.EMPTY
+        }
         val headers = HttpHeaders()
         appendHeaders(headers)
         val value = objectMapper.writeValueAsString(requestData)
@@ -49,7 +52,7 @@ abstract class AbstractJsonApi(
         method: HttpMethod,
         uri: String,
         uriVariables: Map<String, Any>,
-        requestData: Any,
+        requestData: Any?,
         responseClass: Class<T>
     ): T {
         return fromJson(exchangeEntity(method, uri, uriVariables, createRequestEntity(requestData)), responseClass)

@@ -1,5 +1,7 @@
 package org.xbery.artbeams.web
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
@@ -27,8 +29,6 @@ import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 
 /**
  * Common web routes.
@@ -201,14 +201,11 @@ open class WebController(
     private fun appendSidebarData(subscriptionFormData: FormData<SubscriptionFormData>, model: MutableMap<String, Any?>): MutableMap<String, Any?> {
         val fLatestArticles = CompletableFuture.supplyAsync { articleService.findLatest(LatestArticlesSidebarLimit) }
         val fArticleCategories = CompletableFuture.supplyAsync { categoryService.findCategories() }
-        val fAntispamQuiz = CompletableFuture.supplyAsync { antispamQuizRepository.findRandom() }
-        CompletableFuture.allOf(fLatestArticles, fArticleCategories, fAntispamQuiz).join()
+        CompletableFuture.allOf(fLatestArticles, fArticleCategories).join()
         model["latestArticles"] = fLatestArticles.get()
         model["articleCategories"] = fArticleCategories.get()
 
-        val antispamQuiz = fAntispamQuiz.get()
-        val subscriptionData = subscriptionFormData.data.copy(antispamQuestion = antispamQuiz.question)
-        val subscriptionForm = subscriptionFormDef.fill(FormData(subscriptionData, subscriptionFormData.validationResult))
+        val subscriptionForm = subscriptionFormDef.fill(subscriptionFormData)
         model["subscriptionFormMapping"] = subscriptionForm
         return model
     }
