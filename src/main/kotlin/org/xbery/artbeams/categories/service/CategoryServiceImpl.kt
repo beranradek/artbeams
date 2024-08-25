@@ -27,8 +27,8 @@ open class CategoryServiceImpl(private val categoryRepository: CategoryRepositor
     @CacheEvict(value = [Category.CacheName], allEntries = true)
     override fun saveCategory(edited: EditedCategory, ctx: OperationCtx): Category? {
         return try {
-            val userId = ctx.loggedUser?.id ?: AssetAttributes.EmptyId
-            val updatedCategoryOpt: Category? = if (edited.id == AssetAttributes.EmptyId) {
+            val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
+            val updatedCategoryOpt: Category? = if (edited.id == AssetAttributes.EMPTY_ID) {
                 categoryRepository.create(Category.Empty.updatedWith(edited, userId))
             } else {
                 val category = categoryRepository.findByIdAsOpt(edited.id)

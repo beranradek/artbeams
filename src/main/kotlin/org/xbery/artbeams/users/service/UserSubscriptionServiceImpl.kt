@@ -68,7 +68,7 @@ open class UserSubscriptionServiceImpl(
         val names = User.namesFromFullName(fullName ?: "")
         val password = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()
         val user = EditedUser(
-          AssetAttributes.EmptyId, email, password, password, names.first, names.second, email, listOf()
+          AssetAttributes.EMPTY_ID, email, password, password, names.first, names.second, email, listOf()
         )
         val ctx = OperationCtx(null, OriginStamp(Clock.System.now(), "RegisterUserAfterConsent", null))
         val registeredUser = userService.saveUser(user, ctx) ?:
@@ -80,7 +80,7 @@ open class UserSubscriptionServiceImpl(
     private fun createOrderOfProduct(userId: String, productId: String): Order {
         val commonAttributes: AssetAttributes = AssetAttributes.Empty.updatedWith(userId)
         val item =
-            OrderItem(commonAttributes, AssetAttributes.EmptyId, productId, 1, null)
+            OrderItem(commonAttributes, AssetAttributes.EMPTY_ID, productId, 1, null)
         val order = Order(commonAttributes, listOf(item))
         return orderService.createOrder(order)
     }

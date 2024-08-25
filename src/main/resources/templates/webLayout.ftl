@@ -172,6 +172,44 @@
                 if (document.readyState=='complete') callback();
             });
         }
+
+        /*
+         * AJAX handling of form submission and updating form content with AJAX response.
+         * Form is identified by given CSS class name
+         * and must contain sub-element with class name formClass + '-ajax-content' to replace
+         * its inner HTML content with htmlContent of AJAX response body.
+         */
+        function ajaxHandleFormWithClass(formClass) {
+            document.querySelector('.' + formClass).addEventListener('submit', function (event) {
+              event.preventDefault();
+              var formElement = this;
+              const formData = new FormData(formElement);
+              const searchParams = new URLSearchParams(formData);
+              // Submission of form data:
+              fetch(formElement.getAttribute('action'), {
+                  method: formElement.getAttribute('method'),
+                  body: searchParams
+              })
+              .then(res => {
+                // Parse response from server as JSON
+                var responseJson = res.json();
+                return responseJson;
+              })
+              .then(data => {
+                  if (data.redirectUri) {
+                    window.location.href = data.redirectUri; // Redirect to the URI if provided
+                  } else if (data.htmlContent) {
+                      const ajaxContentElement = document.querySelector('.' + formClass + '-ajax-content');
+                      if (ajaxContentElement) {
+                          ajaxContentElement.innerHTML = data.htmlContent;
+                      } else {
+                        console.error('Element to replace with AJAX data was not found.');
+                      }
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+            });
+          }
     </script>
 
   </head>
@@ -393,6 +431,8 @@
 
   <!-- Bootstrap core JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
+  <!-- reCaptcha -->
+  <script  nonce="${_cspNonce}" src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 
   <script nonce="${_cspNonce}">
       <#-- Lazy loading of data-type='lazy' scripts and iframes -->

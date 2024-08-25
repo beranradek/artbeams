@@ -17,7 +17,7 @@ data class AssetAttributes(val id: String, val created: Instant, val createdBy: 
                 } else {
                     this.created
                 },
-            createdBy = if (this.createdBy == EmptyId) {
+            createdBy = if (this.createdBy == EMPTY_ID) {
                     userId
                 } else {
                     this.createdBy
@@ -29,8 +29,8 @@ data class AssetAttributes(val id: String, val created: Instant, val createdBy: 
 
     companion object {
         fun newId(): String = UUID.randomUUID().toString()
-        const val EmptyId: String = "0"
+        const val EMPTY_ID: String = "0"
         val EmptyDate: Instant = Instant.EPOCH
-        val Empty: AssetAttributes = AssetAttributes(EmptyId, EmptyDate, EmptyId, EmptyDate, EmptyId)
+        val Empty: AssetAttributes = AssetAttributes(EMPTY_ID, EmptyDate, EMPTY_ID, EmptyDate, EMPTY_ID)
     }
 }

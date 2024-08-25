@@ -35,6 +35,8 @@ class Pbkdf2PasswordHashTest : ShouldSpec({
             serializedCredential.isNotBlank() shouldBe true
         }
 
+        // You can use this test to generate a serialized password credential for a user.
+        // serializedCredential should be stored in a database.
         should("serialize random password to JSON string") {
             val rawPassword = SecureTokens.generate()
             val serializedCredential = passwordHash.encodeToSerializedCredential(rawPassword, Pbkdf2PasswordHash.PBKDF2_HMAC_SHA512_ITERATIONS)

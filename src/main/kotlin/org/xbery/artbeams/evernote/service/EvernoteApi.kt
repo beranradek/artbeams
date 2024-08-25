@@ -49,13 +49,13 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
                     (if (content.isEmpty()) "" else content.replace(ReturnRegex, "<br />")) + "</en-note>"
         note.content = evernoteContent
         note.updated = Instant.now().toEpochMilli()
-        noteStoreClient.updateNote(evernoteConfig.developerToken, note)
+        noteStoreClient.updateNote(evernoteConfig.getDeveloperToken(), note)
         Logger.info("$opName - finished")
     }
 
     private fun findNoteByGuid(noteGuid: String, noteStoreClient: Client): Note {
         return noteStoreClient.getNote(
-            evernoteConfig.developerToken,
+            evernoteConfig.getDeveloperToken(),
             noteGuid, true, true, false, false
         )
     }
@@ -63,7 +63,7 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
     private fun findNoteOptByGuid(noteGuid: String, noteStoreClient: Client): Note? {
         return try {
             noteStoreClient.getNote(
-                evernoteConfig.developerToken,
+                evernoteConfig.getDeveloperToken(),
                 noteGuid, true, true, false, false
             )
         } catch (_: EDAMNotFoundException) {
@@ -123,7 +123,7 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
 
     private fun findNotebook(noteStoreClient: Client, notebookName: String): Notebook? {
         val notebookNameNormalized: String = normalizationHelper.normalize(notebookName)
-        val notebooks = noteStoreClient.listNotebooks(evernoteConfig.developerToken)
+        val notebooks = noteStoreClient.listNotebooks(evernoteConfig.getDeveloperToken())
         Logger.info("${notebooks.size} notebooks found")
         return notebooks.find { nb ->
             val nbNameNorm: String = normalizationHelper.normalize(nb.name)
@@ -143,10 +143,10 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         filter.isAscending = true
         var notes = mutableListOf<Note>()
         var offset = 0
-        var totalNotes = 0
+        var totalNotes: Int
         do {
-            val noteList = evernoteStoreClient.findNotes(evernoteConfig.developerToken, filter, offset, NOTES_LIMIT)
-            totalNotes = noteList.getTotalNotes()
+            val noteList = evernoteStoreClient.findNotes(evernoteConfig.getDeveloperToken(), filter, offset, NOTES_LIMIT)
+            totalNotes = noteList.totalNotes
             offset += NOTES_LIMIT
             notes.addAll(noteList.notes)
         } while (offset < totalNotes)
@@ -172,7 +172,7 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         // When your application authenticates using OAuth, the NoteStore URL
         // will be returned along with the auth token in the final OAuth request.
         // In that case, you don't need to make this call.
-        val developerToken = evernoteConfig.developerToken
+        val developerToken = evernoteConfig.getDeveloperToken()
             if (developerToken == null || developerToken.trim().isEmpty()) {
                 throw  IllegalStateException("Invalid Evernote developer token: $developerToken")
             }

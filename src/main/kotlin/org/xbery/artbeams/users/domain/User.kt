@@ -2,6 +2,7 @@ package org.xbery.artbeams.users.domain
 
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.common.error.InvalidInputException
 import org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash
 import org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash.Companion.PBKDF2_HMAC_SHA512_ITERATIONS
 import java.io.Serializable
@@ -44,7 +45,10 @@ data class User(
     }
 
     fun updatedWith(profile: MyProfile, userId: String): User {
-        val updatedPassword = if (profile.password.trim().isNotEmpty() && profile.password2.trim().isNotEmpty() && profile.password == profile.password2) {
+        val updatedPassword = if (profile.password.trim().isNotEmpty() || profile.password2.trim().isNotEmpty()) {
+            if (profile.password != profile.password2) {
+                throw InvalidInputException("Passwords do not match")
+            }
             Pbkdf2PasswordHash().encodeToSerializedCredential(profile.password.trim(), PBKDF2_HMAC_SHA512_ITERATIONS)
         } else {
             this.password

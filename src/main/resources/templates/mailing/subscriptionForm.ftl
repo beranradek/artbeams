@@ -623,27 +623,11 @@
                  <h4>${xlat['mailer-lite.form.title']}</h4>
                  <#if xlat['mailer-lite.form.text']??>${xlat['mailer-lite.form.text']}</#if>
               </div>
-              <#assign fields = subscriptionFormMapping.fields>
               <form class="subscription-form ${formClass}" action="/produkt/${productSlug}/subscribe" data-code="" method="post" target="_blank">
-                 <div class="ml-form-formContent">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <input type="hidden" name="${fields.antispamQuestion.name}" value="${fields.antispamQuestion.value!}"/>
-                    <div class="ml-form-fieldRow">
-                       <div class="ml-field-group ml-field-name">
-                          <input type="text" class="form-control" name="${fields.name.name}" value="${fields.name.value!}" aria-label="name" data-inputmask="" placeholder="Jméno" autocomplete="given-name">
-                       </div>
-                    </div>
-                    <div class="ml-form-fieldRow">
-                       <div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
-                          <input type="email" class="form-control" name="${fields.email.name}" value="${fields.email.value!}" aria-label="email" aria-required="true" required data-inputmask="" placeholder="Email" autocomplete="email">
-                       </div>
-                    </div>
-                    <div class="ml-form-fieldRow ml-last-item">
-                       <div class="ml-field-group ml-validate-required">
-                          <label class="col-form-label cursor-help  ml-form-embedContent" title="Kontrolní otázka - ochrana proti robotům">${fields.antispamQuestion.value!}</label><br/>
-                          <input type="text" class="form-control" name="${fields.antispamAnswer.name}" value="${fields.antispamAnswer.value!}" required data-inputmask=""/>
-                       </div>
-                    </div>
+                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                 <#-- Form content refreshed by AJAX: -->
+                 <div class="ml-form-formContent ${formClass}-ajax-content">
+                    <#include "/mailing/subscriptionFormContent.ftl">
                  </div>
                  <div class="ml-form-embedPermissions">
                     <div class="ml-form-embedPermissionsContent default">
@@ -662,4 +646,8 @@
         </div>
      </div>
   </div>
+  <script nonce="${_cspNonce}">
+      <!-- Function registered on document ready -->
+      ready(ajaxHandleFormWithClass("${formClass}"));
+  </script>
 </#macro>

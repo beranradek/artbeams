@@ -47,14 +47,14 @@ open class UserAdminController(
         val model = createModel(
             request, "users"
                     to users, "emptyId"
-                    to AssetAttributes.EmptyId
+                    to AssetAttributes.EMPTY_ID
         )
         return ModelAndView(TplBasePath + "/userList", model)
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
     fun editForm(request: HttpServletRequest, @PathVariable id: String?): Any {
-        return if (id == null || AssetAttributes.EmptyId == id) {
+        return if (id == null || AssetAttributes.EMPTY_ID == id) {
             renderEditForm(request, User.Empty.toEdited(), ValidationResult.empty)
         } else {
             val user = userRepository.findByIdAsOpt(id)

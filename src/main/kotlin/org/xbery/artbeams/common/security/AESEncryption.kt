@@ -23,6 +23,8 @@ object AESEncryption {
 
     private val SECURE_RANDOM = SecureRandom()
 
+    private val base62 = Base62.createInstance()
+
     private const val INIT_VECTOR_SIZE = 16
 
     private const val PASSWORD_ITERATION_COUNT = 65536
@@ -85,17 +87,21 @@ object AESEncryption {
     }
 
     fun encrypt(algorithm: String, input: String, key: SecretKey, iv: IvParameterSpec = DEFAULT_INIT_VECTOR_SPEC): String {
+        // Ciphering of bytes padded to multiplies of 16 is supported:
+        val paddedInput = padToMultipleOf16(input.toByteArray())
         val cipher = Cipher.getInstance(algorithm)
         cipher.init(Cipher.ENCRYPT_MODE, key, iv)
-        val cipherText = cipher.doFinal(input.toByteArray())
-        return Base64.getEncoder().encodeToString(cipherText)
+        val cipherText = cipher.doFinal(paddedInput)
+        return String(base62.encode(cipherText))
     }
 
     fun decrypt(algorithm: String, cipherText: String, key: SecretKey, iv: IvParameterSpec = DEFAULT_INIT_VECTOR_SPEC): String {
+        val decoded = base62.decode(cipherText.toByteArray())
         val cipher = Cipher.getInstance(algorithm)
         cipher.init(Cipher.DECRYPT_MODE, key, iv)
-        val plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText))
-        return String(plainText)
+        val plainText = cipher.doFinal(decoded)
+        val unpaddedPlainText = removePadding(plainText)
+        return String(unpaddedPlainText)
     }
 
     /**
@@ -108,5 +114,16 @@ object AESEncryption {
         keyGenerator.init(n)
         val key = keyGenerator.generateKey()
         return key
+    }
+
+    @Suppress("MagicNumber")
+    private fun padToMultipleOf16(input: ByteArray): ByteArray {
+        val paddingLength = 16 - (input.size % 16)
+        return input + ByteArray(paddingLength) { paddingLength.toByte() }
+    }
+
+    private fun removePadding(input: ByteArray): ByteArray {
+        val paddingLength = input.last().toInt()
+        return input.copyOfRange(0, input.size - paddingLength)
     }
 }

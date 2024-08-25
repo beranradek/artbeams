@@ -39,9 +39,9 @@ open class ArticleServiceImpl(
     @CacheEvict(value = [ Article.CacheName ], allEntries = true)
     override fun saveArticle(edited: EditedArticle, ctx: OperationCtx): Article? {
         return try {
-            val userId = ctx.loggedUser?.id ?: AssetAttributes.EmptyId
+            val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
             val htmlBody = markdownConverter.markdownToHtml(edited.bodyMarkdown)
-            val updatedArticle = if (edited.id == AssetAttributes.EmptyId) {
+            val updatedArticle = if (edited.id == AssetAttributes.EMPTY_ID) {
                 articleRepository.create(Article.Empty.updatedWith(edited, htmlBody, userId))
             } else {
                 val article = articleRepository.findByIdAsOpt(edited.id)

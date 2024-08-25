@@ -28,7 +28,7 @@ open class Mailer(private val mailerConfig: MailerConfig) {
         HttpClients.createDefault().use { httpClient ->
             val httpPost = HttpPost(mailerApiUrl)
             val params = mutableListOf<NameValuePair>()
-            params.add(BasicNameValuePair("from", mailerConfig.from))
+            params.add(BasicNameValuePair("from", mailerConfig.getFrom()))
             params.add(BasicNameValuePair("to", to))
             params.add(BasicNameValuePair("subject", subject))
             params.add(BasicNameValuePair("text", body))

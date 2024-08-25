@@ -10,6 +10,6 @@ import java.time.Instant
  */
 data class UserAccess(val id: String, val time: Instant, val ip: String, val userAgent: String, val entityKey: EntityKey) : Serializable {
     companion object {
-        val Empty: UserAccess = UserAccess(AssetAttributes.EmptyId, AssetAttributes.EmptyDate, "", "", EntityKey.Empty)
+        val Empty: UserAccess = UserAccess(AssetAttributes.EMPTY_ID, AssetAttributes.EmptyDate, "", "", EntityKey.Empty)
     }
 }

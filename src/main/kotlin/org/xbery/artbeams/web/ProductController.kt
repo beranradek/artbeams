@@ -37,6 +37,8 @@ import org.xbery.artbeams.users.service.UserSubscriptionService
 import java.io.ByteArrayOutputStream
 import java.time.Instant
 import jakarta.servlet.http.HttpServletRequest
+import net.formio.validation.ConstraintViolationMessage
+import net.formio.validation.Severity
 import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.common.error.requireAuthorized
@@ -74,16 +76,24 @@ open class ProductController(
             return if (!formData.isValid) {
                 val validationResult = formData.validationResult
                 logger.warn("Form with validation errors: $validationResult")
-                val referrer = getReferrerUrl(request)
-                val url = Urls.urlWithParam(referrer, "subscriptionInvalidForm", "invalid-form")
-                redirect(url)
+
+                // Render AJAX response with HTML from subscriptionFormContent template
+                val errorFormData = WebController.subscriptionFormDef.fill(formData)
+                val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to errorFormData)
+                ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
             } else {
                 val data = formData.data
                 val antispamQuizAnswered = antispamQuizRepository.questionHasAnswer(data.antispamQuestion, data.antispamAnswer)
                 if (!antispamQuizAnswered) {
                     logger.warn("Antispam quiz not answered" + " correctly for subscription for email=${data.email}, name=${data.name}, question=${data.antispamQuestion}")
-                    val errorMessage = "Nesprávná odpověď. Prosím vyplňte znovu správnou odpověď na kontrolní otázku (ochranu proti robotům) na předchozí záložce."
-                    renderProductArticle(request, product, product.slug, true, errorMessage)
+                    val errorMessage = ConstraintViolationMessage(Severity.WARNING, "Nesprávná odpověď. Prosím vyplňte znovu správnou odpověď na kontrolní otázku (ochranu proti robotům).", "captcha.ivalid", mapOf())
+                    val validationResult = ValidationResult(
+                        formData.validationResult.fieldMessages,
+                        listOf(errorMessage) + formData.validationResult.globalMessages
+                    )
+                    val errorFormData = WebController.subscriptionFormDef.fill(FormData(formData.data, validationResult))
+                    val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to errorFormData)
+                    ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
                 } else {
                     try {
                         userSubscriptionService.subscribe(data.name, data.email, product.id)
@@ -93,15 +103,20 @@ open class ProductController(
                             requireNotNull(product.confirmationMailingGroupId),
                             request.remoteAddr
                         )
-                        redirect("/produkt/$slug/potvrzeni")
+                        ajaxRedirect("/produkt/$slug/potvrzeni")
                     } catch (ex: Exception) {
                         logger.error(
                             "Error while subscribing user ${data.email}/${data.name} to product ${slug}: ${ex.message}",
                             ex
                         )
-                        val referrer = getReferrerUrl(request)
-                        val url = Urls.urlWithParam(referrer, "subscriptionError", "subscription-error")
-                        redirect(url)
+                        val errorMessage = ConstraintViolationMessage(Severity.ERROR, "Nastala interní chyba při subskripci.", "subscription.error", mapOf())
+                        val validationResult = ValidationResult(
+                            formData.validationResult.fieldMessages,
+                            listOf(errorMessage) + formData.validationResult.globalMessages
+                        )
+                        val errorFormData = WebController.subscriptionFormDef.fill(FormData(formData.data, validationResult))
+                        val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to errorFormData)
+                        ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
                     }
                 }
             }
@@ -241,7 +256,7 @@ open class ProductController(
         pdfDocument.use { pdfDoc ->
             val nowCalendar: java.util.Calendar = java.util.Calendar.getInstance()
             val pdfMetadata: PDDocumentInformation = pdfDoc.documentInformation
-            val productAuthorOpt = userService.findById(product.common.createdBy)
+            userService.findById(product.common.createdBy) // check product author
             pdfMetadata.author = ("")
             pdfMetadata.creationDate = nowCalendar
             pdfMetadata.modificationDate = nowCalendar
@@ -284,15 +299,13 @@ open class ProductController(
                 controllerComponents.userAccessService.getUserAccessReport(request)
             }
 
-            val antispamQuiz = antispamQuizRepository.findRandom()
-            val subscriptionData = SubscriptionFormData.Empty.copy(antispamQuestion = antispamQuiz.question)
-            val subscriptionForm = WebController.subscriptionFormDef.fill(FormData(subscriptionData, ValidationResult.empty))
+            val subscriptionForm = fillSubscriptionForm()
 
             val model = createModel(
                 request,
                 "product" to product,
                 "article" to article,
-                "subscriptionFormMapping" to subscriptionForm,
+                TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to subscriptionForm,
                 "userAccessReport" to userAccessReport,
                 "errorMessage" to errorMessage
             )
@@ -301,6 +314,12 @@ open class ProductController(
             logger.error("Article $articleSlug not found")
             notFound(request)
         }
+    }
+
+    private fun fillSubscriptionForm(): FormMapping<SubscriptionFormData> {
+        val antispamQuiz = antispamQuizRepository.findRandom()
+        val subscriptionData = SubscriptionFormData.Empty.copy(antispamQuestion = antispamQuiz.question)
+        return WebController.subscriptionFormDef.fill(FormData(subscriptionData, ValidationResult.empty))
     }
 
     private fun findEmailInRequest(request: HttpServletRequest): String? {
@@ -327,7 +346,7 @@ open class ProductController(
     private fun sendProductDownloadedNotification(product: Product, user: User) {
         val productAuthor = userService.findById(product.createdBy)
         if (productAuthor != null) {
-            if (productAuthor.email != null && productAuthor.email.isNotEmpty()) {
+            if (productAuthor.email.isNotEmpty()) {
                 val subject =
                     normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName} downloaded ${product.title}")
                 val body =
@@ -340,5 +359,6 @@ open class ProductController(
 
     companion object {
         val subscriptionFormDef: FormMapping<SubscriptionFormData> = SubscriptionForm.definition
+        private const val TPL_PARAM_SUBSCRIPTION_FORM_MAPPING = "subscriptionFormMapping"
     }
 }

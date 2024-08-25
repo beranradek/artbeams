@@ -11,3 +11,5 @@ INSERT INTO config (entry_key, entry_value) VALUES ('mailing.offer1.subscription
 
 INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSecret', 'FILL IN SECRET');
 INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSalt', 'FILL IN SALT');
+
+INSERT INTO config (entry_key, entry_value) VALUES ('recaptcha.secretKey', '???');

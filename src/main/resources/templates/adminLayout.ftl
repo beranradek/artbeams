@@ -1,4 +1,4 @@
-<#macro page pageTitle>
+<#macro page>
 <!DOCTYPE html>
 <html lang="en">
   <head>

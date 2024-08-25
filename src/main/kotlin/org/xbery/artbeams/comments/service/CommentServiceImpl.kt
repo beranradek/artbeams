@@ -45,8 +45,8 @@ open class CommentServiceImpl(
         ctx: OperationCtx
     ): Comment? {
         return try {
-            val userId = ctx.loggedUser?.id ?: AssetAttributes.EmptyId
-            val updatedComment = if (edited.id == AssetAttributes.EmptyId) {
+            val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
+            val updatedComment = if (edited.id == AssetAttributes.EMPTY_ID) {
                 var comment =
                     Comment.Empty.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent)
                 comment = commentRepository.create(comment)
@@ -76,7 +76,7 @@ open class CommentServiceImpl(
                 val userOpt: Optional<User> = userRepository.findById(article.createdBy)
                 if (userOpt.isPresent) {
                     val user: User = userOpt.get()
-                    if (user.email != null && user.email.isNotEmpty()) {
+                    if (user.email.isNotEmpty()) {
                         val subject: String =
                             normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
                         val body: String =

@@ -7,6 +7,6 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
  */
 data class ArticleCategory(val articleId: String, val categoryId: String) {
     companion object {
-        val Empty: ArticleCategory = ArticleCategory(AssetAttributes.EmptyId, AssetAttributes.EmptyId)
+        val Empty: ArticleCategory = ArticleCategory(AssetAttributes.EMPTY_ID, AssetAttributes.EMPTY_ID)
     }
 }

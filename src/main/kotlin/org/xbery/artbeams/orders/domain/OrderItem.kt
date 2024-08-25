@@ -19,8 +19,8 @@ data class OrderItem(
     companion object {
         val Empty: OrderItem = OrderItem(
             AssetAttributes.Empty,
-            AssetAttributes.EmptyId,
-            AssetAttributes.EmptyId,
+            AssetAttributes.EMPTY_ID,
+            AssetAttributes.EMPTY_ID,
             0,
             null
         )

@@ -1,14 +1,15 @@
 package org.xbery.artbeams.common.controller
 
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
+import org.springframework.http.*
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.Urls
+import org.xbery.artbeams.common.ajax.AjaxResponseBody
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.error.CommonErrorCode
 import org.xbery.artbeams.common.error.StatusCode
+import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.error.OperationException
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 import java.util.*
@@ -58,6 +59,26 @@ abstract class BaseController(private val common: ControllerComponents) {
         errorResponse(request, OperationException(CommonErrorCode.INTERNAL_ERROR, "Internal server error", StatusCode.INTERNAL_ERROR))
 
     fun redirect(path: String) = "redirect:$path"
+
+    fun ajaxResponse(modelAndView: ModelAndView): ResponseEntity<String> {
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+        val tplContent = processTemplateIntoString(
+            common.freemarkerConfig.getTemplate("${modelAndView.viewName}.ftl"),
+            modelAndView.model
+        )
+        val body = ObjectMappers.DEFAULT_MAPPER.writeValueAsString(AjaxResponseBody(htmlContent = tplContent))
+        return ResponseEntity(body, headers, HttpStatus.OK)
+    }
+
+    fun ajaxRedirect(targetUri: String): ResponseEntity<String> {
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.APPLICATION_JSON
+        val body = ObjectMappers.DEFAULT_MAPPER.writeValueAsString(
+            AjaxResponseBody(htmlContent = null, redirectUri = targetUri)
+        )
+        return ResponseEntity(body, headers, HttpStatus.OK) // OK to see regular AJAX response
+    }
 
     fun errorResponse(request: HttpServletRequest, operationEx: OperationException): Any {
         val status = statusCodeToHttpStatus(operationEx.statusCode)
@@ -133,4 +154,8 @@ abstract class BaseController(private val common: ControllerComponents) {
     }
 
     fun requestToOperationCtx(request: HttpServletRequest): OperationCtx = common.getOperationCtx(request)
+
+    private fun processTemplateIntoString(template: freemarker.template.Template, model: Any): String {
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model)
+    }
 }

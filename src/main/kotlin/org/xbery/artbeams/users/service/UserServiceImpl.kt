@@ -25,8 +25,8 @@ open class UserServiceImpl(
 
     override fun saveUser(edited: EditedUser, ctx: OperationCtx): User? {
         val rolesCodebook = roleRepository.findRoles()
-        val userId = ctx.loggedUser?.id ?: AssetAttributes.EmptyId
-        return if (edited.id == AssetAttributes.EmptyId) {
+        val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
+        return if (edited.id == AssetAttributes.EMPTY_ID) {
             val newUser = User.Empty.updatedWith(edited, rolesCodebook, userId)
             val createdUser = userRepository.create(newUser)
             val created: User? = createdUser

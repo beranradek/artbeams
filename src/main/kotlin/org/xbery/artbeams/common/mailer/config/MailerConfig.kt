@@ -10,11 +10,13 @@ import org.xbery.artbeams.config.repository.AppConfig
  */
 @Component
 open class MailerConfig (
-    appConfig: AppConfig,
+    private val appConfig: AppConfig,
     @Value("mailer.api-key")
     val apiKey: String,
     @Value("mailer.domain")
     val domain: String
 ) {
-    val from: String by lazy { appConfig.requireConfig("mailer.from") }
+    // apiKey and domain is directly populated from Heroku environment variables
+
+    fun getFrom(): String = appConfig.requireConfig("mailer.from")
 }

@@ -51,14 +51,14 @@ open class ArticleAdminController(
         val model = createModel(
             request, "articles"
                     to articles, "emptyId"
-                    to AssetAttributes.EmptyId
+                    to AssetAttributes.EMPTY_ID
         )
         return ModelAndView("$tplBasePath/articleList", model)
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
     fun editForm(request: HttpServletRequest, @PathVariable id: String?): Any {
-        return if (id == null || AssetAttributes.EmptyId == id) {
+        return if (id == null || AssetAttributes.EMPTY_ID == id) {
             renderEditForm(request, Article.EmptyEdited, ValidationResult.empty, null)
         } else {
             try {

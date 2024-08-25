@@ -50,7 +50,7 @@ data class Article(
             null,
             this.perex,
             this.bodyMarkdown,
-            if (this.validFrom == null || this.validFrom == AssetAttributes.EmptyDate) {
+            if (this.validFrom == AssetAttributes.EmptyDate) {
                 Date()
             } else {
                 Date(this.validFrom.toEpochMilli())

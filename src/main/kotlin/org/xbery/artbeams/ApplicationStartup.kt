@@ -52,7 +52,7 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
             user
         } else {
             val defaultPass = "adminadmin"
-            val adminUser = EditedUser(AssetAttributes.EmptyId, adminUserLogin, defaultPass, defaultPass, "Admin", "Admin", "", listOf(adminRole.id))
+            val adminUser = EditedUser(AssetAttributes.EMPTY_ID, adminUserLogin, defaultPass, defaultPass, "Admin", "Admin", "", listOf(adminRole.id))
             val operationCtx = OperationCtx(null, OriginStamp(Clock.System.now(), "ApplicationStartup", null))
             val savedUser = requireNotNull(userService.saveUser(adminUser, operationCtx))
             logger.info("Default admin user created")
@@ -66,7 +66,7 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         return if (role != null) {
             role
         } else {
-            role = Role(AssetAttributes.Empty.updatedWith(AssetAttributes.EmptyId), roleName)
+            role = Role(AssetAttributes.Empty.updatedWith(AssetAttributes.EMPTY_ID), roleName)
             role = roleRepository.create(role)
             logger.info("$roleName role created")
             role

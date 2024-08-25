@@ -39,7 +39,7 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
     /**
      * Name of application displayed to user to authorize access to his Google documents.
      */
-    open val applicationName: String by lazy { appConfig.requireConfig("google.application-name") }
+    open fun getApplicationName(): String = appConfig.requireConfig("google.application-name")
 
     /**
      * Thread safe Google network HTTP transport.
@@ -51,7 +51,8 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
      */
     open val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
 
-    private val applicationDomain: String by lazy { appConfig.findConfig("app.host-and-port") ?: "localhost:8080" }
+    private fun getApplicationDomain(): String =
+        appConfig.findConfig("app.host-and-port") ?: "localhost:8080"
 
     private val callbackPath: String = "/admin/google/auth/callback"
 
@@ -76,7 +77,8 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
     /**
      * JSON string with configuration of Google OAuth2 client_id, client_secret, redirect_uris, ...
      */
-    private val googleOAuthClientJson: String by lazy { appConfig.requireConfig("google.oauth.client.json") }
+    private fun getGoogleOAuthClientJson(): String =
+        appConfig.requireConfig("google.oauth.client.json")
 
     /**
      * <p>Runs the whole authorization flow in the following way:
@@ -183,7 +185,7 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
      * Receiver can accept authorization code or error during the authorization flow.
      */
     private fun createLocalServerReceiver(scopes: List<String>, returnUrl: String): AuthCodeServerReceiver {
-        val receiver = AuthCodeServerReceiver(scopes, applicationDomain, callbackPath, returnUrl)
+        val receiver = AuthCodeServerReceiver(scopes, getApplicationDomain(), callbackPath, returnUrl)
         authCodeServerReceiver = receiver
         return receiver
     }
@@ -191,7 +193,7 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
     private fun buildOAuth2AuthorizationCodeFlow(scopes: List<String>): AuthorizationCodeFlow {
         logger.info("Directory to store Google auth tokens for this application: $tokensDirectoryPath")
 
-        val clientSecrets = GoogleClientSecrets.load(jsonFactory, StringReader(googleOAuthClientJson))
+        val clientSecrets = GoogleClientSecrets.load(jsonFactory, StringReader(getGoogleOAuthClientJson()))
         return GoogleAuthorizationCodeFlow.Builder(httpTransport, jsonFactory, clientSecrets, scopes)
             .setDataStoreFactory(FileDataStoreFactory(File(tokensDirectoryPath)))
             .setAccessType(resourceAccessType)

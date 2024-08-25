@@ -147,7 +147,7 @@ open class GoogleDocsService(
         }
         if (docs == null) {
             docs = Docs.Builder(googleAuth.httpTransport, googleAuth.jsonFactory, googleAuth.getCredentials(scopes))
-                .setApplicationName(googleAuth.applicationName)
+                .setApplicationName(googleAuth.getApplicationName())
                 .build()
         }
         return requireNotNull(docs)
