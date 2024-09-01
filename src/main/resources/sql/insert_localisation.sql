@@ -83,4 +83,5 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('newPassword', 'Nové 
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('recaptcha.siteKey', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('captcha.invalid', 'Nevalidní captcha (ochrana proti robotům). Zkuste prosím hýbat myší více jako člověk :-), nebo mě kontaktujte emailem.');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('subscription.error', 'Chyba při subskripci. Zkuste to prosím později nebo mě kontaktujte emailem.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('form-processing.error', 'Chyba při zpracování formuláře. Zkuste to prosím později nebo mě kontaktujte emailem.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Email.message', 'Nevalidní email.');

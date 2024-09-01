@@ -8,7 +8,5 @@ data class EditedComment(
     val entityId: String,
     val comment: String,
     val userName: String,
-    val email: String,
-    val antispamQuestion: String,
-    val antispamAnswer: String
+    val email: String
 )

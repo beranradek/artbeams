@@ -1,5 +1,6 @@
 package org.xbery.artbeams.common.antispam.recaptcha.service
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
@@ -25,7 +26,18 @@ class RecaptchaService(
     restTemplate: RestTemplate
 ) : AbstractJsonApi(RecaptchaConfig.FEATURE_NAME, restTemplate) {
 
-    fun verify(token: String, ipAddress: String): RecaptchaResult {
+    fun verifyRecaptcha(request: HttpServletRequest): RecaptchaResult {
+        val recaptchaToken = request.getParameter(RecaptchaConfig.RECAPTCHA_TOKEN_PARAM)
+        val recaptchaResult = try {
+            verify(recaptchaToken, request.remoteAddr)
+        } catch (e: Exception) {
+            logger.error("Error while verifying reCAPTCHA token: ${e.message}", e)
+            RecaptchaResult(false, 0.0)
+        }
+        return recaptchaResult
+    }
+
+    private fun verify(token: String, ipAddress: String): RecaptchaResult {
         val uri = UriComponentsBuilder.fromHttpUrl("https://www.google.com/recaptcha/api/siteverify")
             // The shared key between your site and reCAPTCHA.
             .queryParam("secret", recaptchaConfig.getSecretKey())

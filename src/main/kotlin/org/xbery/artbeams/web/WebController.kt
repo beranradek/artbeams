@@ -16,12 +16,12 @@ import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.service.ArticleService
 import org.xbery.artbeams.categories.service.CategoryService
+import org.xbery.artbeams.comments.controller.CommentController
 import org.xbery.artbeams.comments.controller.CommentForm
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.comments.domain.EditedComment
 import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.access.domain.EntityKey
-import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
@@ -40,7 +40,6 @@ open class WebController(
     private val categoryService: CategoryService,
     val productService: ProductService,
     val commentService: CommentService,
-    private val antispamQuizRepository: AntispamQuizRepository,
     val controllerComponents: ControllerComponents,
     val resourceLoader: ResourceLoader
 ) : BaseController(controllerComponents), SitemapWriter {
@@ -138,8 +137,7 @@ open class WebController(
                     CompletableFuture.supplyAsync { controllerComponents.userAccessService.findCountOfVisits(entityKey) }
                 val fCommentsWithForm = CompletableFuture.supplyAsync {
                     if (article.showOnBlog) {
-                        val antispamQuiz = antispamQuizRepository.findRandom()
-                        val newComment = Comment.Empty.toEdited(antispamQuiz.question).copy(entityId = article.id)
+                        val newComment = Comment.Empty.toEdited().copy(entityId = article.id)
                         val comments = commentService.findByEntityId(article.id)
                         val commentForm = commentFormDef.fill(FormData(newComment, ValidationResult.empty))
                         Pair<List<Comment>, FormMapping<EditedComment>?>(comments, commentForm)
@@ -154,7 +152,7 @@ open class WebController(
                     FormData(SubscriptionFormData.Empty, ValidationResult.empty),
                     "article" to article,
                     "comments" to commentsWithForm.first,
-                    "commentForm" to commentsWithForm.second,
+                    CommentController.TPL_PARAM_COMMENT_FORM to commentsWithForm.second,
                     "userAccessReport" to fUserAccessReport.get(),
                     "countOfVisits" to fCountOfVisits.get()
                 )

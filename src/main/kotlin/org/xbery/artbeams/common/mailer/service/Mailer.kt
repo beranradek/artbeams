@@ -53,7 +53,8 @@ open class Mailer(private val mailerConfig: MailerConfig) {
                 } else {
                     val responseString: String =
                         if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
-                    logger.error("Error while sending email $subject to $to. Unexpected response status $status with response $responseString")
+                    logger.error("Error while sending email $subject to $to by calling $mailerApiUrl. " +
+                        "Unexpected response status $status with response $responseString")
                 }
             }
         }

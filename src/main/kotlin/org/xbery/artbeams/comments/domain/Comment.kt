@@ -29,8 +29,8 @@ data class Comment(
         )
     }
 
-    fun toEdited(antispamQuestion: String): EditedComment {
-        return EditedComment(this.id, this.entityKey.entityId, this.comment, this.userName, this.email, antispamQuestion, "")
+    fun toEdited(): EditedComment {
+        return EditedComment(this.id, this.entityKey.entityId, this.comment, this.userName, this.email)
     }
 
     companion object {

@@ -1,20 +1,23 @@
 package org.xbery.artbeams.comments.controller
 
+import jakarta.servlet.http.HttpServletRequest
+import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.comments.domain.EditedComment
 import org.xbery.artbeams.comments.service.CommentService
-import org.xbery.artbeams.common.Urls
-import org.xbery.artbeams.common.antispam.repository.AntispamQuizRepository
+import org.xbery.artbeams.common.antispam.recaptcha.service.RecaptchaService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import jakarta.servlet.http.HttpServletRequest
+import org.xbery.artbeams.common.form.FormErrors
 
 /**
  * Comment routes.
@@ -24,7 +27,7 @@ import jakarta.servlet.http.HttpServletRequest
 @RequestMapping("/comments")
 open class CommentController(
     private val commentService: CommentService,
-    private val antispamQuizRepository: AntispamQuizRepository,
+    private val recaptchaService: RecaptchaService,
     common: ControllerComponents
 ) : BaseController(common) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -36,43 +39,49 @@ open class CommentController(
         return if (!formData.isValid) {
             val validationResult = formData.validationResult
             logger.warn("Form with validation errors: $validationResult")
-            val referrer = getReferrerUrl(request)
-            val url = Urls.urlWithAnchor(
-              Urls.urlWithParam(referrer, "commentInvalidForm", "invalid-form"), "comment-add")
-            redirect(url)
+            commentFormResponse(formData, request)
         } else {
             val edited: EditedComment = formData.data
             val ipAddress: String = request.remoteAddr
             val userAgent: String = request.getHeader(HttpHeaders.USER_AGENT)
-            val antispamQuizAnswered = antispamQuizRepository.questionHasAnswer(edited.antispamQuestion, edited.antispamAnswer)
-            if (!antispamQuizAnswered) {
-                logger.warn("Antispam quiz not answered correctly for new comment from email=${edited.email}, IP=${ipAddress}, User-Agent=${userAgent}, question=${edited.antispamQuestion}")
-                val referrer = getReferrerUrl(request)
-                val url = Urls.urlWithAnchor(Urls.urlWithParam(referrer, "commentError", "invalid-answer"), "comment-add")
-                redirect(url)
+            val recaptchaResult = recaptchaService.verifyRecaptcha(request)
+            if (!recaptchaResult.success) {
+                logger.warn(
+                    "Captcha token was incorrect, score=${recaptchaResult.score}, " +
+                    "for comment=${edited.comment}, email=${edited.email}, userName=${edited.userName}, entityId=${edited.entityId}, " +
+                        "IP=${ipAddress}, User-Agent=$userAgent"
+                )
+                commentFormResponse(FormErrors.formDataWithCaptchaInvalidError(formData), request)
             } else {
                 try {
                     val comment =
                         commentService.saveComment(edited, ipAddress, userAgent, requestToOperationCtx(request))
                     if (comment != null) {
                         val referrer = getReferrerUrl(request)
-                        val url = Urls.urlWithAnchor(Urls.urlWithParam(referrer, "commentAdded", "1"), "comment-add")
-                        redirect(url)
+                        ajaxRedirect(referrer)
                     } else {
                         notFound(request)
                     }
                 } catch (ex: Exception) {
                     logger.error("Error while saving comment for entity ${edited.entityId} from ${edited.userName} with comment text ${edited.comment}: ${ex.message}", ex)
-                    val referrer = getReferrerUrl(request)
-                    val url = Urls.urlWithAnchor(Urls.urlWithParam(referrer, "commentError", "error-saving-comment"), "comment-add")
-                    redirect(url)
+                    commentFormResponse(FormErrors.formDataWithInternalError(formData), request)
                 }
             }
 
         }
     }
 
+    private fun commentFormResponse(
+        formData: FormData<EditedComment>,
+        request: HttpServletRequest
+    ): ResponseEntity<String> {
+        val filledFormData = commentFormDef.fill(formData)
+        val model = createModel(request, TPL_PARAM_COMMENT_FORM to filledFormData)
+        return ajaxResponse(ModelAndView("comments/commentFormContent", model))
+    }
+
     companion object {
+        const val TPL_PARAM_COMMENT_FORM = "commentForm"
         val commentFormDef: FormMapping<EditedComment> = CommentForm.definition
     }
 }

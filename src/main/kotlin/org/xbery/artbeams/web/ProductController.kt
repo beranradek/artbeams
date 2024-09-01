@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
-import net.formio.validation.ConstraintViolationMessage
-import net.formio.validation.Severity
 import net.formio.validation.ValidationResult
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
@@ -23,14 +21,13 @@ import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.service.ArticleService
 import org.xbery.artbeams.common.access.domain.EntityKey
-import org.xbery.artbeams.common.antispam.recaptcha.config.RecaptchaConfig
-import org.xbery.artbeams.common.antispam.recaptcha.domain.RecaptchaResult
 import org.xbery.artbeams.common.antispam.recaptcha.service.RecaptchaService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.common.error.requireFound
+import org.xbery.artbeams.common.form.FormErrors
 import org.xbery.artbeams.common.mailer.service.Mailer
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.mailing.api.MailingApi
@@ -81,33 +78,13 @@ open class ProductController(
                 logger.warn("Form with validation errors: $validationResult")
 
                 // Render AJAX response with HTML from subscriptionFormContent template
-                val errorFormData = WebController.subscriptionFormDef.fill(formData)
-                val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to errorFormData)
-                ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
+                subscriptionFormResponse(formData, request)
             } else {
                 val data = formData.data
-                val recaptchaToken = request.getParameter(RecaptchaConfig.RECAPTCHA_TOKEN_PARAM)
-                val recaptchaResult = try {
-                    recaptchaService.verify(recaptchaToken, request.remoteAddr)
-                } catch (e: Exception) {
-                    logger.error("Error while verifying reCAPTCHA token: ${e.message}", e)
-                    RecaptchaResult(false, 0.0)
-                }
+                val recaptchaResult = recaptchaService.verifyRecaptcha(request)
                 if (!recaptchaResult.success) {
                     logger.warn("Captcha token was incorrect, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
-                    val errorMessage = ConstraintViolationMessage(
-                        Severity.WARNING,
-                        "Captcha token was incorrect.",
-                        "captcha.invalid",
-                        mapOf()
-                    )
-                    val validationResult = ValidationResult(
-                        formData.validationResult.fieldMessages,
-                        listOf(errorMessage) + formData.validationResult.globalMessages
-                    )
-                    val errorFormData = WebController.subscriptionFormDef.fill(FormData(formData.data, validationResult))
-                    val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to errorFormData)
-                    ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
+                    subscriptionFormResponse(FormErrors.formDataWithCaptchaInvalidError(formData), request)
                 } else {
                     logger.info("Captcha token was correct, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
                     try {
@@ -120,29 +97,23 @@ open class ProductController(
                         )
                         ajaxRedirect("/produkt/$slug/potvrzeni")
                     } catch (ex: Exception) {
-                        logger.error(
-                            "Error while subscribing user ${data.email}/${data.name} to product ${slug}: ${ex.message}",
-                            ex
-                        )
-                        val errorMessage = ConstraintViolationMessage(
-                            Severity.ERROR,
-                            "Internal subscription error.",
-                            "subscription.error",
-                            mapOf()
-                        )
-                        val validationResult = ValidationResult(
-                            formData.validationResult.fieldMessages,
-                            listOf(errorMessage) + formData.validationResult.globalMessages
-                        )
-                        val errorFormData = WebController.subscriptionFormDef.fill(FormData(formData.data, validationResult))
-                        val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to errorFormData)
-                        ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
+                        logger.error("Error while subscribing user ${data.email}/${data.name} to product ${slug}: ${ex.message}", ex)
+                        subscriptionFormResponse(FormErrors.formDataWithInternalError(formData), request)
                     }
                 }
             }
         } else {
             notFound(request)
         }
+    }
+
+    private fun subscriptionFormResponse(
+        formData: FormData<SubscriptionFormData>,
+        request: HttpServletRequest
+    ): ResponseEntity<String> {
+        val filledFormData = WebController.subscriptionFormDef.fill(formData)
+        val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to filledFormData)
+        return ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
     }
 
     /**
