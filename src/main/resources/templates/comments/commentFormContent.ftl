@@ -3,4 +3,4 @@
 <@forms.globalMessages messages=commentForm.validationResult.globalMessages />
 <@forms.inputTextArea field=fields.comment label="Komentář" />
 <@forms.inputText field=fields.userName label="Jméno" />
-<@forms.inputText field=fields.email label="Email" />
+<@forms.inputText type="email" field=fields.email label="Email" />
