@@ -29,9 +29,7 @@ spring.datasource.removeAbandoned: true
 
 # Mailer configuration
 # --------------------
-# Using Config Vars in Heroku Settings
-mailer.api-key: ${MAILGUN_API_KEY}
-mailer.domain: ${MAILGUN_DOMAIN}
+# Using Config Vars from Heroku Settings: MAILGUN_API_KEY, MAILGUN_DOMAIN as env variables.
 # Configured in DB: mailer.from
 
 # Templates configuration

@@ -12,6 +12,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.mailer.config.MailerConfig
+import java.util.*
 
 /**
  * Mailer for sending e-mails.
@@ -24,9 +25,12 @@ open class Mailer(private val mailerConfig: MailerConfig) {
     open fun sendMail(subject: String, body: String, htmlBody: String, to: String) {
         logger.info("Sending email $subject to $to")
         val mailerApiUrl =
-            "https://api:${mailerConfig.apiKey}@api.mailgun.net/v2/${mailerConfig.domain}/messages"
+            "https://api:${mailerConfig.getApiKey()}@api.mailgun.net/v3/${mailerConfig.getDomain()}/messages"
         HttpClients.createDefault().use { httpClient ->
+            val credentials = "api:${mailerConfig.getApiKey()}"
+            val base64Credentials = Base64.getEncoder().encodeToString(credentials.toByteArray())
             val httpPost = HttpPost(mailerApiUrl)
+            httpPost.addHeader("Authorization", "Basic $base64Credentials")
             val params = mutableListOf<NameValuePair>()
             params.add(BasicNameValuePair("from", mailerConfig.getFrom()))
             params.add(BasicNameValuePair("to", to))

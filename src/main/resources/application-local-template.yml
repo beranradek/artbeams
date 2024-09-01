@@ -3,6 +3,3 @@
 spring.datasource.url: jdbc:postgresql://localhost:5432/cms
 spring.datasource.username: postgres
 spring.datasource.password:
-
-mailer.api-key: ${MAILGUN_API_KEY}
-mailer.domain: ${MAILGUN_DOMAIN}
