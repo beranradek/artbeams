@@ -11,6 +11,7 @@ object SecureTokens {
     // Defaults useful for e.g. for tokens in email links
     const val DEFAULT_TOKEN_LENGTH = 40
     const val DEFAULT_CHARACTER_SOURCE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    const val TOKEN_PARAM_NAME = "token"
 
     private val secureRandom = SecureRandom()
 

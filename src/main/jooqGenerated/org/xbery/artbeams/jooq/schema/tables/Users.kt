@@ -6,6 +6,8 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.LocalDateTime
 
+import kotlinx.datetime.Instant
+
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Name
@@ -19,6 +21,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A
 import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
@@ -65,7 +68,7 @@ open class Users(
     /**
      * The column <code>users.created</code>.
      */
-    val CREATED: TableField<UsersRecord, LocalDateTime?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val CREATED: TableField<UsersRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>users.created_by</code>.
@@ -75,7 +78,7 @@ open class Users(
     /**
      * The column <code>users.modified</code>.
      */
-    val MODIFIED: TableField<UsersRecord, LocalDateTime?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val MODIFIED: TableField<UsersRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>users.modified_by</code>.
@@ -90,7 +93,7 @@ open class Users(
     /**
      * The column <code>users.password</code>.
      */
-    val PASSWORD: TableField<UsersRecord, String?> = createField(DSL.name("password"), SQLDataType.VARCHAR(128).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+    val PASSWORD: TableField<UsersRecord, String?> = createField(DSL.name("password"), SQLDataType.VARCHAR(500).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
 
     /**
      * The column <code>users.first_name</code>.

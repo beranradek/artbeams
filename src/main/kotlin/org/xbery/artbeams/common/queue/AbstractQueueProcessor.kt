@@ -41,9 +41,6 @@ import kotlin.time.toJavaDuration
  * it is recommended to only have this service running on the processing
  * side.
  *
- * The component is ready to be annotated with a `@ConfigurationProperties`
- * (using a suitable unique prefix for concrete subclass).
- *
  * @param <E> type of the queue entry
  *
  * @author Radek Beran
@@ -73,13 +70,13 @@ protected constructor(
      * Note that if both appending/removal to/from the queue happen in the same JVM,
      * it could be better to awake the task each time a new entry was accepted.
      */
-    var taskDelay: Duration = DEFAULT_TASK_DELAY
+    open var taskDelay: Duration = DEFAULT_TASK_DELAY
 
     /**
      * Initial delay before the first task execution.
      * The default is to select a reasonable value randomly.
      */
-    var initialDelay: Duration = (
+    open var initialDelay: Duration = (
         MINIMUM_INITIAL_TASK_DELAY.inWholeMilliseconds + randGen.nextInt(
             min(
                 MAX_INITIAL_TASK_DELAY_ADDITION.inWholeMilliseconds.toDouble(),
@@ -98,45 +95,45 @@ protected constructor(
      * Under normal circumstances, the time will be re-adjusted very soon to better value,
      * regardless whether the task is successful or not.
      */
-    var freezeTime: Duration = DEFAULT_ENTRY_PROCESSING_FREEZE_TIME
+    open var freezeTime: Duration = DEFAULT_ENTRY_PROCESSING_FREEZE_TIME
 
     /**
      * Maximum entries to be processed in a single task run.
      * This limit serves to prevent blocking other tasks or consuming many resources.
      * For extensive processors, this can be re-adjusted to higher value.
      */
-    var maxPerRun: Int = DEFAULT_MAX_ENTRIES_PER_RUN
+    open var maxPerRun: Int = DEFAULT_MAX_ENTRIES_PER_RUN
 
     /**
      * Maximum time for one task to run. When reached, task will be allowed to finish its current entry
      * and then it will be interrupted with a warning.
      */
-    var maxRunTime: Duration = DEFAULT_MAX_TASK_RUN_TIME
+    open var maxRunTime: Duration = DEFAULT_MAX_TASK_RUN_TIME
 
     /**
      * Configuration of the retry delays according to entry ages.
      * @see RetryRulesConfig
      */
-    var retry: RetryRulesConfig = RetryRulesConfig()
+    open var retry: RetryRulesConfig = RetryRulesConfig()
 
     /**
      * Expiration period for entries that have been successfully processed.
      * It will be added to the time of the successful attempt.
      * After reaching this additional period, entry will be discarded from database.
      */
-    var preserveAfterFinished: Duration = DEFAULT_ENTRY_EXPIRATION_AFTER_FINISHED
+    open var preserveAfterFinished: Duration = DEFAULT_ENTRY_EXPIRATION_AFTER_FINISHED
 
     /**
      * Expiration period for entries that have failed permanently.
      * It will be applied after a maximum retry time is reached - added to the time of the last failure.
      * After reaching this additional period, entry will be discarded from database.
      */
-    var preserveAfterGivenUp: Duration = DEFAULT_ENTRY_EXPIRATION_AFTER_GIVEN_UP
+    open var preserveAfterGivenUp: Duration = DEFAULT_ENTRY_EXPIRATION_AFTER_GIVEN_UP
 
     /**
      * period for service to pause when exception for which method [isPausingException] return true has been thrown
      */
-    var pauseDuration: Duration = DEFAULT_PAUSE_DURATION
+    open var pauseDuration: Duration = DEFAULT_PAUSE_DURATION
 
     override fun configureTasks(taskRegistrar: ScheduledTaskRegistrar) {
         logTaskConfigure()

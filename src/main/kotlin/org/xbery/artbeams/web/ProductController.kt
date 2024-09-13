@@ -28,7 +28,7 @@ import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.form.FormErrors
-import org.xbery.artbeams.common.mailer.service.Mailer
+import org.xbery.artbeams.common.mailer.service.MailSender
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.mailing.api.MailingApi
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
@@ -57,7 +57,7 @@ open class ProductController(
     private val userService: UserService,
     private val orderService: OrderService,
     private val mediaRepository: MediaRepository,
-    private val mailer: Mailer,
+    private val mailSender: MailSender,
     private val mailingApi: MailingApi,
     private val recaptchaService: RecaptchaService
 ) : BaseController(controllerComponents) {
@@ -342,7 +342,7 @@ open class ProductController(
                 val body =
                     normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName}/${user.email} " +
                         "has downloaded product ${product.title}.")
-                mailer.sendMail(subject, body, body, productAuthor.email)
+                mailSender.sendMail(subject, body, body, productAuthor.email)
             }
         }
     }

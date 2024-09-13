@@ -2,7 +2,6 @@ package org.xbery.artbeams.common.queue.model
 
 import org.jooq.RecordMapper
 import org.xbery.artbeams.common.context.OriginStamp
-import org.xbery.artbeams.common.repository.fromDbDateTime
 import org.xbery.artbeams.jooq.schema.tables.references.QUEUE
 
 /**
@@ -20,14 +19,14 @@ abstract class AbstractQueueEntryMapper<R : org.jooq.Record, E : AbstractQueueEn
     protected open fun mapRecordToEntity(record: R, entity: E): E {
         entity.id = requireNotNull(record.get(QUEUE.ID))
         entity.entered = OriginStamp(
-            requireNotNull(record.get(QUEUE.ENTERED_TIME)?.fromDbDateTime()),
+            requireNotNull(record.get(QUEUE.ENTERED_TIME)),
             requireNotNull(record.get(QUEUE.ENTERED_ORIGIN)),
             null
         )
         entity.attempts = requireNotNull(record.get(QUEUE.ATTEMPTS))
-        entity.nextAction = record.get(QUEUE.NEXT_ACTION_TIME)?.fromDbDateTime()
+        entity.nextAction = record.get(QUEUE.NEXT_ACTION_TIME)
 
-        val processedTime = record.get(QUEUE.PROCESSED_TIME)?.fromDbDateTime()
+        val processedTime = record.get(QUEUE.PROCESSED_TIME)
         val processedOrigin = record.get(QUEUE.PROCESSED_ORIGIN)
         entity.processed = if (processedTime != null && processedOrigin != null) OriginStamp(
             processedTime,
@@ -35,7 +34,7 @@ abstract class AbstractQueueEntryMapper<R : org.jooq.Record, E : AbstractQueueEn
             null
         ) else null
 
-        val lastAttemptTime = record.get(QUEUE.LAST_ATTEMPT_TIME)?.fromDbDateTime()
+        val lastAttemptTime = record.get(QUEUE.LAST_ATTEMPT_TIME)
         val lastAttemptOrigin = record.get(QUEUE.LAST_ATTEMPT_ORIGIN)
         entity.lastAttempt = if (lastAttemptTime != null && lastAttemptOrigin != null) OriginStamp(
             lastAttemptTime,
@@ -44,7 +43,7 @@ abstract class AbstractQueueEntryMapper<R : org.jooq.Record, E : AbstractQueueEn
         ) else null
 
         entity.lastResult = record.get(QUEUE.LAST_RESULT)
-        entity.expiration = record.get(QUEUE.EXPIRATION_TIME)?.fromDbDateTime()
+        entity.expiration = record.get(QUEUE.EXPIRATION_TIME)
         return entity
     }
 }

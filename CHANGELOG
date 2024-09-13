@@ -1,5 +1,21 @@
 # Changelog
 
+1.4.1 (13.9.2024)
+* Common web base URL:
+```sql
+INSERT INTO config (entry_key, entry_value) VALUES ('web.baseUrl', 'http://localhost:8080');
+INSERT INTO config (entry_key, entry_value) VALUES ('web.name', 'FILL IN YOUR WEB NAME');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.sender.name', 'Radek Beran');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.recovery.subject', 'Obnova hesla');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.setup.subject', 'Nastavení hesla');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.header', 'Zapomenuté heslo');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.instructions', 'Zadejte prosím Váš email, na který Vám zašleme odkaz pro obnovení hesla.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.submit', 'Požádat o obnovu hesla');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.sent', 'Na zadaný email byl odeslán odkaz pro obnovení hesla. Zkontrolujte prosím svou emailovou schránku a pokračujte podle instrukcí v emailu.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('user', 'Uživatel');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('email', 'E-mail');
+```
+
 1.4.0 (23.8.2024)
 * Changed algorithm to store passwords in database (Pbkdf2PasswordHash)!
 Increased size of password column:

@@ -87,12 +87,14 @@ class AuthorizationCodeValidator(
             )
         }
         if (authorizationCode.used != null) {
-            val msg = "Authorization code was already used: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
+            // but it does not matter if still valid, necessity to validate token
+            // before and after displaying a form can be a valid case
+            val msg = "Authorization code was already validated: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
                     "purpose=${tokenPayload.purpose}"
             logger.info(
                 msg,
                 null
-            ) // but it does not matter if still valid
+            )
         }
         return authorizationCode
     }

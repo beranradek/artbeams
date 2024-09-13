@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -19,6 +19,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_B
 import org.xbery.artbeams.jooq.schema.tables.records.ArticlesRecord
@@ -70,17 +71,17 @@ open class Articles(
     /**
      * The column <code>articles.valid_from</code>.
      */
-    val VALID_FROM: TableField<ArticlesRecord, LocalDateTime?> = createField(DSL.name("valid_from"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val VALID_FROM: TableField<ArticlesRecord, Instant?> = createField(DSL.name("valid_from"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>articles.valid_to</code>.
      */
-    val VALID_TO: TableField<ArticlesRecord, LocalDateTime?> = createField(DSL.name("valid_to"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val VALID_TO: TableField<ArticlesRecord, Instant?> = createField(DSL.name("valid_to"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>articles.created</code>.
      */
-    val CREATED: TableField<ArticlesRecord, LocalDateTime?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val CREATED: TableField<ArticlesRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>articles.created_by</code>.
@@ -90,7 +91,7 @@ open class Articles(
     /**
      * The column <code>articles.modified</code>.
      */
-    val MODIFIED: TableField<ArticlesRecord, LocalDateTime?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val MODIFIED: TableField<ArticlesRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>articles.modified_by</code>.

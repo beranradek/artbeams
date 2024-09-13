@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Record3
 import org.jooq.impl.UpdatableRecordImpl
@@ -29,17 +29,17 @@ open class AuthCodeRecord() : UpdatableRecordImpl<AuthCodeRecord>(AuthCode.AUTH_
         set(value): Unit = set(2, value)
         get(): String? = get(2) as String?
 
-    open var created: LocalDateTime?
+    open var created: Instant?
         set(value): Unit = set(3, value)
-        get(): LocalDateTime? = get(3) as LocalDateTime?
+        get(): Instant? = get(3) as Instant?
 
-    open var validTo: LocalDateTime?
+    open var validTo: Instant?
         set(value): Unit = set(4, value)
-        get(): LocalDateTime? = get(4) as LocalDateTime?
+        get(): Instant? = get(4) as Instant?
 
-    open var used: LocalDateTime?
+    open var used: Instant?
         set(value): Unit = set(5, value)
-        get(): LocalDateTime? = get(5) as LocalDateTime?
+        get(): Instant? = get(5) as Instant?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -50,7 +50,7 @@ open class AuthCodeRecord() : UpdatableRecordImpl<AuthCodeRecord>(AuthCode.AUTH_
     /**
      * Create a detached, initialised AuthCodeRecord
      */
-    constructor(code: String? = null, purpose: String? = null, userId: String? = null, created: LocalDateTime? = null, validTo: LocalDateTime? = null, used: LocalDateTime? = null): this() {
+    constructor(code: String? = null, purpose: String? = null, userId: String? = null, created: Instant? = null, validTo: Instant? = null, used: Instant? = null): this() {
         this.code = code
         this.purpose = purpose
         this.userId = userId

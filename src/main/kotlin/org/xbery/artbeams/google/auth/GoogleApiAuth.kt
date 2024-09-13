@@ -51,8 +51,16 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
      */
     open val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
 
-    private fun getApplicationDomain(): String =
-        appConfig.findConfig("app.host-and-port") ?: "localhost:8080"
+    private fun getApplicationDomain(): String {
+        val webBaseUrl = appConfig.findConfig("web.baseUrl") ?: "http://localhost:8080"
+        return if (webBaseUrl.startsWith("http://")) {
+            webBaseUrl.substring("http://".length)
+        } else if (webBaseUrl.startsWith("https://")) {
+            webBaseUrl.substring("https://".length)
+        } else {
+            webBaseUrl
+        }
+    }
 
     private val callbackPath: String = "/admin/google/auth/callback"
 

@@ -4,9 +4,9 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
-
 import kotlin.collections.List
+
+import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -22,6 +22,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_AUTH_CODE_USER_ID
 import org.xbery.artbeams.jooq.schema.keys.AUTH_CODE_PKEY
@@ -79,17 +80,17 @@ open class AuthCode(
     /**
      * The column <code>auth_code.created</code>.
      */
-    val CREATED: TableField<AuthCodeRecord, LocalDateTime?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val CREATED: TableField<AuthCodeRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>auth_code.valid_to</code>.
      */
-    val VALID_TO: TableField<AuthCodeRecord, LocalDateTime?> = createField(DSL.name("valid_to"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val VALID_TO: TableField<AuthCodeRecord, Instant?> = createField(DSL.name("valid_to"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>auth_code.used</code>.
      */
-    val USED: TableField<AuthCodeRecord, LocalDateTime?> = createField(DSL.name("used"), SQLDataType.LOCALDATETIME(6), this, "")
+    val USED: TableField<AuthCodeRecord, Instant?> = createField(DSL.name("used"), SQLDataType.LOCALDATETIME(6), this, "", InstantConverter())
 
     private constructor(alias: Name, aliased: Table<AuthCodeRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<AuthCodeRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)

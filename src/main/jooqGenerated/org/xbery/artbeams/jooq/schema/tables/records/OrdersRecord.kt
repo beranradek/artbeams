@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -21,17 +21,17 @@ open class OrdersRecord() : UpdatableRecordImpl<OrdersRecord>(Orders.ORDERS) {
         set(value): Unit = set(0, value)
         get(): String? = get(0) as String?
 
-    open var created: LocalDateTime?
+    open var created: Instant?
         set(value): Unit = set(1, value)
-        get(): LocalDateTime? = get(1) as LocalDateTime?
+        get(): Instant? = get(1) as Instant?
 
     open var createdBy: String?
         set(value): Unit = set(2, value)
         get(): String? = get(2) as String?
 
-    open var modified: LocalDateTime?
+    open var modified: Instant?
         set(value): Unit = set(3, value)
-        get(): LocalDateTime? = get(3) as LocalDateTime?
+        get(): Instant? = get(3) as Instant?
 
     open var modifiedBy: String?
         set(value): Unit = set(4, value)
@@ -46,7 +46,7 @@ open class OrdersRecord() : UpdatableRecordImpl<OrdersRecord>(Orders.ORDERS) {
     /**
      * Create a detached, initialised OrdersRecord
      */
-    constructor(id: String? = null, created: LocalDateTime? = null, createdBy: String? = null, modified: LocalDateTime? = null, modifiedBy: String? = null): this() {
+    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null): this() {
         this.id = id
         this.created = created
         this.createdBy = createdBy

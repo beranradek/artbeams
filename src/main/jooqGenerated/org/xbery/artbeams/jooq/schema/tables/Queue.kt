@@ -4,9 +4,9 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
-
 import kotlin.collections.List
+
+import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -22,6 +22,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_QUEUE_EXPIRATION
 import org.xbery.artbeams.jooq.schema.indexes.IDX_QUEUE_NEXT_ACTION_TIME
@@ -70,7 +71,7 @@ open class Queue(
     /**
      * The column <code>queue.entered_time</code>.
      */
-    val ENTERED_TIME: TableField<QueueRecord, LocalDateTime?> = createField(DSL.name("entered_time"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val ENTERED_TIME: TableField<QueueRecord, Instant?> = createField(DSL.name("entered_time"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>queue.entered_origin</code>.
@@ -85,12 +86,12 @@ open class Queue(
     /**
      * The column <code>queue.next_action_time</code>.
      */
-    val NEXT_ACTION_TIME: TableField<QueueRecord, LocalDateTime?> = createField(DSL.name("next_action_time"), SQLDataType.LOCALDATETIME(6), this, "")
+    val NEXT_ACTION_TIME: TableField<QueueRecord, Instant?> = createField(DSL.name("next_action_time"), SQLDataType.LOCALDATETIME(6), this, "", InstantConverter())
 
     /**
      * The column <code>queue.processed_time</code>.
      */
-    val PROCESSED_TIME: TableField<QueueRecord, LocalDateTime?> = createField(DSL.name("processed_time"), SQLDataType.LOCALDATETIME(6), this, "")
+    val PROCESSED_TIME: TableField<QueueRecord, Instant?> = createField(DSL.name("processed_time"), SQLDataType.LOCALDATETIME(6), this, "", InstantConverter())
 
     /**
      * The column <code>queue.processed_origin</code>.
@@ -100,7 +101,7 @@ open class Queue(
     /**
      * The column <code>queue.last_attempt_time</code>.
      */
-    val LAST_ATTEMPT_TIME: TableField<QueueRecord, LocalDateTime?> = createField(DSL.name("last_attempt_time"), SQLDataType.LOCALDATETIME(6), this, "")
+    val LAST_ATTEMPT_TIME: TableField<QueueRecord, Instant?> = createField(DSL.name("last_attempt_time"), SQLDataType.LOCALDATETIME(6), this, "", InstantConverter())
 
     /**
      * The column <code>queue.last_attempt_origin</code>.
@@ -115,7 +116,7 @@ open class Queue(
     /**
      * The column <code>queue.expiration_time</code>.
      */
-    val EXPIRATION_TIME: TableField<QueueRecord, LocalDateTime?> = createField(DSL.name("expiration_time"), SQLDataType.LOCALDATETIME(6), this, "")
+    val EXPIRATION_TIME: TableField<QueueRecord, Instant?> = createField(DSL.name("expiration_time"), SQLDataType.LOCALDATETIME(6), this, "", InstantConverter())
 
     private constructor(alias: Name, aliased: Table<QueueRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<QueueRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)

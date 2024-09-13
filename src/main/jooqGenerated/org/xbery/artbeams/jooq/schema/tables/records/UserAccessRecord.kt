@@ -4,8 +4,8 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -22,9 +22,9 @@ open class UserAccessRecord() : UpdatableRecordImpl<UserAccessRecord>(UserAccess
         set(value): Unit = set(0, value)
         get(): String? = get(0) as String?
 
-    open var accessTime: LocalDateTime?
+    open var accessTime: Instant?
         set(value): Unit = set(1, value)
-        get(): LocalDateTime? = get(1) as LocalDateTime?
+        get(): Instant? = get(1) as Instant?
 
     open var accessDate: LocalDate?
         set(value): Unit = set(2, value)
@@ -55,7 +55,7 @@ open class UserAccessRecord() : UpdatableRecordImpl<UserAccessRecord>(UserAccess
     /**
      * Create a detached, initialised UserAccessRecord
      */
-    constructor(id: String? = null, accessTime: LocalDateTime? = null, accessDate: LocalDate? = null, ip: String? = null, userAgent: String? = null, entityType: String? = null, entityId: String? = null): this() {
+    constructor(id: String? = null, accessTime: Instant? = null, accessDate: LocalDate? = null, ip: String? = null, userAgent: String? = null, entityType: String? = null, entityId: String? = null): this() {
         this.id = id
         this.accessTime = accessTime
         this.accessDate = accessDate

@@ -26,8 +26,8 @@ abstract class BaseController(private val common: ControllerComponents) {
         model["_url"] = this.getFullUrl(request)
         model["_urlBase"] = this.getUrlBase(request)
         model["_cspNonce"] = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
-        model["_requestParameterError"] = request.getAttribute("error")
-        model["_requestParameterLogout"] = request.getAttribute("logout")
+        model["_requestParameterError"] = request.getParameter("error")
+        model["_requestParameterLogout"] = request.getParameter("logout")
 
         val loggedUser = common.getLoggedUser(request)
         if (loggedUser != null) {

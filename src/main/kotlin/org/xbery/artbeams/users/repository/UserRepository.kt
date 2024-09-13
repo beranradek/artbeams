@@ -14,7 +14,7 @@ import javax.sql.DataSource
 @Repository
 open class UserRepository(dataSource: DataSource, private val roleRepository: RoleRepository) :
     AssetRepository<User, UserFilter>(dataSource, UserMapper.Instance) {
-    protected val DefaultOrdering: List<Order> = listOf(Order((entityMapper as UserMapper).loginAttr, false))
+    protected val defaultOrdering: List<Order> = listOf(Order((entityMapper as UserMapper).loginAttr, false))
 
     /**
      * Returns user by id, including roles.
@@ -26,7 +26,7 @@ open class UserRepository(dataSource: DataSource, private val roleRepository: Ro
     }
 
     open fun findUsers(): List<User> {
-        return this.findByOverview(Overview(UserFilter.Empty, DefaultOrdering))
+        return this.findByOverview(Overview(UserFilter.Empty, defaultOrdering))
     }
 
     open fun findByLogin(login: String): User? {

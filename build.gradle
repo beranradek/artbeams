@@ -181,6 +181,28 @@ jooq {
                             //    value = "public"
                             //}
                         }
+                        forcedTypes {
+                            forcedType {
+                                userType = "kotlinx.datetime.Instant"
+                                converter = "org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter"
+                                // A Java regex that must match target fully-qualified columns, attributes, parameters
+                                // for which converter is applied in generated code.
+                                // Use the pipe to separate several expressions.
+                                // Must match some used columns!
+                                includeExpression = ".*._time.*|created|modified|completed|finished|valid_from|valid_to|used"
+                                includeTypes = ".*"
+                            }
+                            forcedType {
+                                userType = "kotlinx.datetime.LocalDate"
+                                converter = "org.xbery.artbeams.common.persistence.jooq.converter.LocalDateConverter"
+                                // A Java regex that must match target fully-qualified columns, attributes, parameters
+                                // for which converter is applied in generated code.
+                                // Use the pipe to separate several expressions.
+                                // Must match some used columns!
+                                includeExpression = ".*._date"
+                                includeTypes = ".*"
+                            }
+                        }
                     }
                     generate {
                         javaTimeTypes = true

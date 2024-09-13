@@ -4,9 +4,9 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
-
 import kotlin.collections.List
+
+import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -22,6 +22,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_COMMENTS_ENTITY_ID
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_DC
@@ -75,7 +76,7 @@ open class Comments(
     /**
      * The column <code>comments.created</code>.
      */
-    val CREATED: TableField<CommentsRecord, LocalDateTime?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val CREATED: TableField<CommentsRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>comments.created_by</code>.
@@ -85,7 +86,7 @@ open class Comments(
     /**
      * The column <code>comments.modified</code>.
      */
-    val MODIFIED: TableField<CommentsRecord, LocalDateTime?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val MODIFIED: TableField<CommentsRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>comments.modified_by</code>.

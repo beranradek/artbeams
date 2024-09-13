@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -19,6 +19,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3
 import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
@@ -65,7 +66,7 @@ open class Orders(
     /**
      * The column <code>orders.created</code>.
      */
-    val CREATED: TableField<OrdersRecord, LocalDateTime?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val CREATED: TableField<OrdersRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>orders.created_by</code>.
@@ -75,7 +76,7 @@ open class Orders(
     /**
      * The column <code>orders.modified</code>.
      */
-    val MODIFIED: TableField<OrdersRecord, LocalDateTime?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val MODIFIED: TableField<OrdersRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>orders.modified_by</code>.

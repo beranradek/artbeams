@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -19,6 +19,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
@@ -65,7 +66,7 @@ open class Products(
     /**
      * The column <code>products.created</code>.
      */
-    val CREATED: TableField<ProductsRecord, LocalDateTime?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val CREATED: TableField<ProductsRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>products.created_by</code>.
@@ -75,7 +76,7 @@ open class Products(
     /**
      * The column <code>products.modified</code>.
      */
-    val MODIFIED: TableField<ProductsRecord, LocalDateTime?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val MODIFIED: TableField<ProductsRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>products.modified_by</code>.

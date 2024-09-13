@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -25,25 +25,25 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
         set(value): Unit = set(1, value)
         get(): String? = get(1) as String?
 
-    open var validFrom: LocalDateTime?
+    open var validFrom: Instant?
         set(value): Unit = set(2, value)
-        get(): LocalDateTime? = get(2) as LocalDateTime?
+        get(): Instant? = get(2) as Instant?
 
-    open var validTo: LocalDateTime?
+    open var validTo: Instant?
         set(value): Unit = set(3, value)
-        get(): LocalDateTime? = get(3) as LocalDateTime?
+        get(): Instant? = get(3) as Instant?
 
-    open var created: LocalDateTime?
+    open var created: Instant?
         set(value): Unit = set(4, value)
-        get(): LocalDateTime? = get(4) as LocalDateTime?
+        get(): Instant? = get(4) as Instant?
 
     open var createdBy: String?
         set(value): Unit = set(5, value)
         get(): String? = get(5) as String?
 
-    open var modified: LocalDateTime?
+    open var modified: Instant?
         set(value): Unit = set(6, value)
-        get(): LocalDateTime? = get(6) as LocalDateTime?
+        get(): Instant? = get(6) as Instant?
 
     open var modifiedBy: String?
         set(value): Unit = set(7, value)
@@ -90,7 +90,7 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
     /**
      * Create a detached, initialised ArticlesRecord
      */
-    constructor(id: String? = null, externalId: String? = null, validFrom: LocalDateTime? = null, validTo: LocalDateTime? = null, created: LocalDateTime? = null, createdBy: String? = null, modified: LocalDateTime? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, image: String? = null, perex: String? = null, body: String? = null, bodyMarkdown: String? = null, keywords: String? = null, showOnBlog: Boolean? = null): this() {
+    constructor(id: String? = null, externalId: String? = null, validFrom: Instant? = null, validTo: Instant? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, image: String? = null, perex: String? = null, body: String? = null, bodyMarkdown: String? = null, keywords: String? = null, showOnBlog: Boolean? = null): this() {
         this.id = id
         this.externalId = externalId
         this.validFrom = validFrom

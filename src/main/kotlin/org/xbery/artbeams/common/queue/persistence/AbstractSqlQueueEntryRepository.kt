@@ -22,7 +22,7 @@ abstract class AbstractSqlQueueEntryRepository<R: UpdatableRecord<R>, E : Abstra
     protected val queueEntryMapper: AbstractQueueEntryMapper<R, E>,
     protected val queueEntryUnmapper: AbstractQueueEntryUnmapper<E, R>,
     override val dsl: DSLContext
-) : QueueEntryRepository<E>, AbstractRecordFetcher<R>, AbstractRecordStorage<R> {
+) : QueueEntryRepository<E>, AbstractRecordFetcher<R>, AbstractRecordStorage<E, R> {
 
     protected val logger: Logger = LoggerFactory.getLogger("${table.name}")
 

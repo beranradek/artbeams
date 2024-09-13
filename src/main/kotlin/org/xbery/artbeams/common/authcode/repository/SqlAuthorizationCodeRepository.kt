@@ -17,7 +17,7 @@ import org.xbery.artbeams.jooq.schema.tables.references.AUTH_CODE
 @Repository
 class SqlAuthorizationCodeRepository(override val dsl: DSLContext) :
     AbstractRecordFetcher<AuthCodeRecord>,
-    AbstractRecordStorage<AuthCodeRecord>,
+    AbstractRecordStorage<AuthorizationCode, AuthCodeRecord>,
     AuthorizationCodeRepository {
 
     override val table: Table<AuthCodeRecord> = AUTH_CODE

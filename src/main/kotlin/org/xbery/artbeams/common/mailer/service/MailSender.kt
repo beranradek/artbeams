@@ -19,11 +19,11 @@ import java.util.*
  * @author Radek Beran
  */
 @Service
-open class Mailer(private val mailerConfig: MailerConfig) {
+open class MailSender(private val mailerConfig: MailerConfig) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    open fun sendMail(subject: String, body: String, htmlBody: String, to: String) {
-        logger.info("Sending email $subject to $to")
+    open fun sendMail(subject: String, textBody: String, htmlBody: String, recipientEmail: String) {
+        logger.info("Sending email $subject to $recipientEmail")
         val mailerApiUrl =
             "https://api:${mailerConfig.getApiKey()}@api.mailgun.net/v3/${mailerConfig.getDomain()}/messages"
         HttpClients.createDefault().use { httpClient ->
@@ -33,9 +33,9 @@ open class Mailer(private val mailerConfig: MailerConfig) {
             httpPost.addHeader("Authorization", "Basic $base64Credentials")
             val params = mutableListOf<NameValuePair>()
             params.add(BasicNameValuePair("from", mailerConfig.getFrom()))
-            params.add(BasicNameValuePair("to", to))
+            params.add(BasicNameValuePair("to", recipientEmail))
             params.add(BasicNameValuePair("subject", subject))
-            params.add(BasicNameValuePair("text", body))
+            params.add(BasicNameValuePair("text", textBody))
             params.add(BasicNameValuePair("html", htmlBody))
             httpPost.entity = UrlEncodedFormEntity(params)
 
@@ -53,11 +53,10 @@ open class Mailer(private val mailerConfig: MailerConfig) {
                 logger.info("Response status: $statusLine")
                 if (status in 200..299) {
                     EntityUtils.consume(responseEntity)
-                    logger.info("Email $subject to $to was successfully sent.")
+                    logger.info("Email $subject to $recipientEmail was successfully sent.")
                 } else {
-                    val responseString: String =
-                        if (responseEntity != null) EntityUtils.toString(responseEntity) else ""
-                    logger.error("Error while sending email $subject to $to by calling $mailerApiUrl. " +
+                    val responseString = EntityUtils.toString(responseEntity)
+                    logger.error("Error while sending email $subject to $recipientEmail by calling $mailerApiUrl. " +
                         "Unexpected response status $status with response $responseString")
                 }
             }

@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -25,17 +25,17 @@ open class CommentsRecord() : UpdatableRecordImpl<CommentsRecord>(Comments.COMME
         set(value): Unit = set(1, value)
         get(): String? = get(1) as String?
 
-    open var created: LocalDateTime?
+    open var created: Instant?
         set(value): Unit = set(2, value)
-        get(): LocalDateTime? = get(2) as LocalDateTime?
+        get(): Instant? = get(2) as Instant?
 
     open var createdBy: String?
         set(value): Unit = set(3, value)
         get(): String? = get(3) as String?
 
-    open var modified: LocalDateTime?
+    open var modified: Instant?
         set(value): Unit = set(4, value)
-        get(): LocalDateTime? = get(4) as LocalDateTime?
+        get(): Instant? = get(4) as Instant?
 
     open var modifiedBy: String?
         set(value): Unit = set(5, value)
@@ -78,7 +78,7 @@ open class CommentsRecord() : UpdatableRecordImpl<CommentsRecord>(Comments.COMME
     /**
      * Create a detached, initialised CommentsRecord
      */
-    constructor(id: String? = null, parentId: String? = null, created: LocalDateTime? = null, createdBy: String? = null, modified: LocalDateTime? = null, modifiedBy: String? = null, comment: String? = null, username: String? = null, email: String? = null, entityType: String? = null, entityId: String? = null, ip: String? = null, userAgent: String? = null): this() {
+    constructor(id: String? = null, parentId: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, comment: String? = null, username: String? = null, email: String? = null, entityType: String? = null, entityId: String? = null, ip: String? = null, userAgent: String? = null): this() {
         this.id = id
         this.parentId = parentId
         this.created = created

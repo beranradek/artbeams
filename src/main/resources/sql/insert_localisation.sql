@@ -76,9 +76,16 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.big.width
 INSERT INTO localisation (entry_key, entry_value) VALUES ('member-section.title', 'Členská sekce');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('member.passwordSetup.header', 'Nastavení hesla');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('createAccount', 'Vytvořit účet');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.header', 'Zapomenuté heslo');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.instructions', 'Zadejte prosím Váš email, na který Vám zašleme odkaz pro obnovení hesla.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.submit', 'Požádat o obnovu hesla');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('passwordRecovery.sent', 'Na zadaný email byl odeslán odkaz pro obnovení hesla. Zkontrolujte prosím svou emailovou schránku a pokračujte podle instrukcí v emailu.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('email', 'E-mail');
+
 INSERT INTO localisation (entry_key, entry_value) VALUES ('password', 'Heslo');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('password.again-for-control', 'Heslo (znovu pro kontrolu)');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('username.cannot-be-changed', 'Uživatelské jméno (nelze změnit)');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('password.again-for-control', 'Zopakujte heslo');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('user', 'Uživatel');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('username', 'Uživatelské jméno');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('newPassword', 'Nové heslo');
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('recaptcha.siteKey', '???');

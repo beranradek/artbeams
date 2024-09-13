@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -19,6 +19,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_4
 import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
@@ -65,17 +66,17 @@ open class Categories(
     /**
      * The column <code>categories.valid_from</code>.
      */
-    val VALID_FROM: TableField<CategoriesRecord, LocalDateTime?> = createField(DSL.name("valid_from"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val VALID_FROM: TableField<CategoriesRecord, Instant?> = createField(DSL.name("valid_from"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>categories.valid_to</code>.
      */
-    val VALID_TO: TableField<CategoriesRecord, LocalDateTime?> = createField(DSL.name("valid_to"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val VALID_TO: TableField<CategoriesRecord, Instant?> = createField(DSL.name("valid_to"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>categories.created</code>.
      */
-    val CREATED: TableField<CategoriesRecord, LocalDateTime?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val CREATED: TableField<CategoriesRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>categories.created_by</code>.
@@ -85,7 +86,7 @@ open class Categories(
     /**
      * The column <code>categories.modified</code>.
      */
-    val MODIFIED: TableField<CategoriesRecord, LocalDateTime?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val MODIFIED: TableField<CategoriesRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     /**
      * The column <code>categories.modified_by</code>.

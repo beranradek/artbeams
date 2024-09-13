@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
-import java.time.LocalDateTime
+import kotlinx.datetime.Instant
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -21,9 +21,9 @@ open class QueueRecord() : UpdatableRecordImpl<QueueRecord>(Queue.QUEUE) {
         set(value): Unit = set(0, value)
         get(): String? = get(0) as String?
 
-    open var enteredTime: LocalDateTime?
+    open var enteredTime: Instant?
         set(value): Unit = set(1, value)
-        get(): LocalDateTime? = get(1) as LocalDateTime?
+        get(): Instant? = get(1) as Instant?
 
     open var enteredOrigin: String?
         set(value): Unit = set(2, value)
@@ -33,21 +33,21 @@ open class QueueRecord() : UpdatableRecordImpl<QueueRecord>(Queue.QUEUE) {
         set(value): Unit = set(3, value)
         get(): Int? = get(3) as Int?
 
-    open var nextActionTime: LocalDateTime?
+    open var nextActionTime: Instant?
         set(value): Unit = set(4, value)
-        get(): LocalDateTime? = get(4) as LocalDateTime?
+        get(): Instant? = get(4) as Instant?
 
-    open var processedTime: LocalDateTime?
+    open var processedTime: Instant?
         set(value): Unit = set(5, value)
-        get(): LocalDateTime? = get(5) as LocalDateTime?
+        get(): Instant? = get(5) as Instant?
 
     open var processedOrigin: String?
         set(value): Unit = set(6, value)
         get(): String? = get(6) as String?
 
-    open var lastAttemptTime: LocalDateTime?
+    open var lastAttemptTime: Instant?
         set(value): Unit = set(7, value)
-        get(): LocalDateTime? = get(7) as LocalDateTime?
+        get(): Instant? = get(7) as Instant?
 
     open var lastAttemptOrigin: String?
         set(value): Unit = set(8, value)
@@ -57,9 +57,9 @@ open class QueueRecord() : UpdatableRecordImpl<QueueRecord>(Queue.QUEUE) {
         set(value): Unit = set(9, value)
         get(): String? = get(9) as String?
 
-    open var expirationTime: LocalDateTime?
+    open var expirationTime: Instant?
         set(value): Unit = set(10, value)
-        get(): LocalDateTime? = get(10) as LocalDateTime?
+        get(): Instant? = get(10) as Instant?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -70,7 +70,7 @@ open class QueueRecord() : UpdatableRecordImpl<QueueRecord>(Queue.QUEUE) {
     /**
      * Create a detached, initialised QueueRecord
      */
-    constructor(id: String? = null, enteredTime: LocalDateTime? = null, enteredOrigin: String? = null, attempts: Int? = null, nextActionTime: LocalDateTime? = null, processedTime: LocalDateTime? = null, processedOrigin: String? = null, lastAttemptTime: LocalDateTime? = null, lastAttemptOrigin: String? = null, lastResult: String? = null, expirationTime: LocalDateTime? = null): this() {
+    constructor(id: String? = null, enteredTime: Instant? = null, enteredOrigin: String? = null, attempts: Int? = null, nextActionTime: Instant? = null, processedTime: Instant? = null, processedOrigin: String? = null, lastAttemptTime: Instant? = null, lastAttemptOrigin: String? = null, lastResult: String? = null, expirationTime: Instant? = null): this() {
         this.id = id
         this.enteredTime = enteredTime
         this.enteredOrigin = enteredOrigin

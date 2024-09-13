@@ -1,6 +1,7 @@
 package org.xbery.artbeams.config
 
 import org.jooq.DSLContext
+import org.jooq.SQLDialect
 import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.DefaultDSLContext
@@ -32,10 +33,13 @@ class DatabaseConfiguration(private val dataSource: DataSource) {
 
     fun configuration(): DefaultConfiguration {
         val jooqConfiguration = DefaultConfiguration()
+        jooqConfiguration.setSQLDialect(getSQLDialect())
         jooqConfiguration.set(connectionProvider())
         jooqConfiguration
             .set(DefaultExecuteListenerProvider(JooqExceptionTranslator()))
 
         return jooqConfiguration
     }
+
+    protected open fun getSQLDialect(): SQLDialect = SQLDialect.POSTGRES
 }

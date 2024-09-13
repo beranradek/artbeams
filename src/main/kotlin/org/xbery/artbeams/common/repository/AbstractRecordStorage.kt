@@ -1,14 +1,18 @@
 package org.xbery.artbeams.common.repository
 
-import org.jooq.*
+import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.RecordUnmapper
+import org.jooq.Table
+import org.jooq.UpdatableRecord
 
 /**
- * Minimalistic interface with basic implementations for storing data using JOOQ.
- * It can serve as a base for all abstract or concrete implementations.
+ * Minimalistic abstract class for storing data to database. It can serve as a base
+ * for all abstract or concrete implementations.
  *
  * @author Radek Beran
  */
-interface AbstractRecordStorage<R : UpdatableRecord<R>> {
+internal interface AbstractRecordStorage<E, R : UpdatableRecord<R>> {
 
     val dsl: DSLContext
 
@@ -17,7 +21,7 @@ interface AbstractRecordStorage<R : UpdatableRecord<R>> {
     /**
      * Inserts new entity using given entity-to-record mapping.
      */
-    fun <E> create(entity: E, entityToRecord: RecordUnmapper<E, R>) {
+    fun create(entity: E, entityToRecord: RecordUnmapper<E, R>) {
         val insertedCount = dsl.insertInto(table)
             .set(entityToRecord.unmap(entity))
             .execute()
@@ -27,7 +31,7 @@ interface AbstractRecordStorage<R : UpdatableRecord<R>> {
     /**
      * Inserts new entity using default POJO mapping.
      */
-    fun <E> create(entity: E) {
+    fun create(entity: E) {
         val insertedCount = dsl.insertInto(table)
             .set(dsl.newRecord(table, entity))
             .execute()
@@ -38,7 +42,7 @@ interface AbstractRecordStorage<R : UpdatableRecord<R>> {
      * Updates entity found by given field value, using given entity-to-record mapping.
      * @return number of affected records
      */
-    fun <E, T> updateBy(entity: E, whereField: Field<T>, fieldValue: T, entityToRecord: RecordUnmapper<E, R>): Int {
+    fun <T> updateBy(entity: E, whereField: Field<T>, fieldValue: T, entityToRecord: RecordUnmapper<E, R>): Int {
         return dsl.update(table)
             .set(entityToRecord.unmap(entity))
             .where(whereField.eq(fieldValue))
@@ -49,7 +53,7 @@ interface AbstractRecordStorage<R : UpdatableRecord<R>> {
      * Updates entity found by given field value, using default POJO mapping.
      * @return number of affected records
      */
-    fun <E, T> updateBy(entity: E, whereField: Field<T>, fieldValue: T): Int {
+    fun <T> updateBy(entity: E, whereField: Field<T>, fieldValue: T): Int {
         return dsl.update(table)
             .set(dsl.newRecord(table, entity))
             .where(whereField.eq(fieldValue))

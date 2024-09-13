@@ -1,14 +1,18 @@
 package org.xbery.artbeams.common.repository
 
-import org.jooq.*
+import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.RecordMapper
+import org.jooq.Table
+import org.jooq.UpdatableRecord
 
 /**
- * Minimalistic interface with basic implementations for fetching data using JOOQ.
- * It can serve as a base for all abstract or concrete implementations.
+ * Minimalistic abstract class for fetching data from database. It can serve as a base
+ * for all abstract or concrete implementations.
  *
  * @author Radek Beran
  */
-interface AbstractRecordFetcher<R : UpdatableRecord<R>> {
+internal interface AbstractRecordFetcher<R : UpdatableRecord<R>> {
 
     val dsl: DSLContext
 

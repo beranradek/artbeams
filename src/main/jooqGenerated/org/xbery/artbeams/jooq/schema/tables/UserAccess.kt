@@ -4,10 +4,10 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-
 import kotlin.collections.List
+
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -23,6 +23,8 @@ import org.jooq.impl.DSL
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
+import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
+import org.xbery.artbeams.common.persistence.jooq.converter.LocalDateConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ACCESS_UNIQUE
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_D
@@ -70,12 +72,12 @@ open class UserAccess(
     /**
      * The column <code>user_access.access_time</code>.
      */
-    val ACCESS_TIME: TableField<UserAccessRecord, LocalDateTime?> = createField(DSL.name("access_time"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
+    val ACCESS_TIME: TableField<UserAccessRecord, Instant?> = createField(DSL.name("access_time"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>user_access.access_date</code>.
      */
-    val ACCESS_DATE: TableField<UserAccessRecord, LocalDate?> = createField(DSL.name("access_date"), SQLDataType.LOCALDATE.nullable(false), this, "")
+    val ACCESS_DATE: TableField<UserAccessRecord, LocalDate?> = createField(DSL.name("access_date"), SQLDataType.LOCALDATE.nullable(false), this, "", LocalDateConverter())
 
     /**
      * The column <code>user_access.ip</code>.

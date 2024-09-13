@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.users.domain.*
+import org.xbery.artbeams.users.password.domain.PasswordSetupData
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 import java.time.Instant

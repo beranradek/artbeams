@@ -24,6 +24,15 @@
                 <input type="password" id="password" name="password" class="form-control" />
             </div>
         </div>
+
+        <#if _requestParameterError??>
+            <div class="form-group">
+                <div class="col-sm-12 text-danger text-align-right">
+                    <a href="/password-recovery">${(xlat[login.forgotten-password!]!)?has_content?then(xlat[login.forgotten-password!], 'Zapomněli jste heslo?')}</a>
+                </div>
+            </div>
+        </#if>
+
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-primary">Přihlásit se</button>

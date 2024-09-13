@@ -10,7 +10,7 @@ import org.xbery.artbeams.config.repository.TestAppConfig
 /**
  * @author Radek Beran
  */
-internal class MailerLiteMailingApiTest {
+internal class MailSenderLiteMailingApiTest {
 
     @Test
     @Disabled("Only for manual testing of real API call")

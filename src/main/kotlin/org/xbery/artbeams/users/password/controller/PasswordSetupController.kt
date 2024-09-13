@@ -1,4 +1,4 @@
-package org.xbery.artbeams.members.controller
+package org.xbery.artbeams.users.password.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
@@ -16,7 +16,9 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.UnauthorizedException
-import org.xbery.artbeams.users.domain.PasswordSetupData
+import org.xbery.artbeams.common.security.SecureTokens
+import org.xbery.artbeams.users.password.domain.PasswordSetupData
+import org.xbery.artbeams.users.password.controller.PasswordSetupController.Companion.PASSWORD_SETUP_PATH
 import org.xbery.artbeams.users.repository.UserRepository
 import org.xbery.artbeams.users.service.UserService
 
@@ -26,10 +28,9 @@ import org.xbery.artbeams.users.service.UserService
  * @author Radek Beran
  */
 @Controller
-@RequestMapping("/nastaveni-hesla")
+@RequestMapping(PASSWORD_SETUP_PATH)
 open class PasswordSetupController(
     private val authorizationCodeValidator: AuthorizationCodeValidator,
-    private val userRepository: UserRepository,
     private val userService: UserService,
     common: ControllerComponents
 ) : BaseController(common) {
@@ -37,15 +38,16 @@ open class PasswordSetupController(
     private val passwordSetupFormDef: FormMapping<PasswordSetupData> = PasswordSetupForm.definition
 
     @GetMapping
-    fun passwordSetupForm(@RequestParam(PasswordSetupData.TOKEN_PARAM_NAME, required = false) token: String?, request: HttpServletRequest): Any {
+    fun passwordSetupForm(@RequestParam(SecureTokens.TOKEN_PARAM_NAME, required = false) token: String?, request: HttpServletRequest): Any {
         return tryOrErrorResponse(request) {
             if (token.isNullOrEmpty()) {
                 throw UnauthorizedException("Authorization code is missing")
             }
             val authCode =
                 authorizationCodeValidator.validateEncryptedAuthorizationCode(token, PasswordSetupData.TOKEN_PURPOSE)
+            // We stored user login into the token
             val user = userService.findByLogin(authCode.userId) ?: throw NotFoundException("User ${authCode.userId} from authorization code was not found")
-            renderForm(request, PasswordSetupData(user.login, "", ""), ValidationResult.empty)
+            renderForm(request, PasswordSetupData(user.login, token, "", ""), ValidationResult.empty)
         }
     }
 
@@ -58,6 +60,10 @@ open class PasswordSetupController(
                 renderForm(request, formData.data, formData.validationResult)
             } else {
                 val passwordSetupData = formData.data
+                val authCode = authorizationCodeValidator.validateEncryptedAuthorizationCode(passwordSetupData.token, PasswordSetupData.TOKEN_PURPOSE)
+                if (authCode.userId != passwordSetupData.login) {
+                    throw UnauthorizedException("Authorization code is not valid for user ${passwordSetupData.login}")
+                }
                 userService.setPassword(passwordSetupData, requestToOperationCtx(request)) ?: throw NotFoundException("User ${passwordSetupData.login} was not found")
                 redirect("/clenska-sekce")
             }
@@ -79,6 +85,7 @@ open class PasswordSetupController(
     }
 
     companion object {
-        private const val TPL_BASE_PATH: String = "member"
+        private const val TPL_BASE_PATH: String = "user"
+        const val PASSWORD_SETUP_PATH = "/nastaveni-hesla"
     }
 }
