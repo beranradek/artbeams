@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
 import org.xbery.artbeams.common.authcode.domain.TokenPayload
 import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
+import org.xbery.artbeams.common.error.logger
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.common.security.AESEncryption
 import org.xbery.artbeams.common.security.SecureTokens
@@ -40,11 +41,20 @@ class AuthorizationCodeGenerator(
         length: Int = DEFAULT_TOKEN_LENGTH,
         characterSource: String = DEFAULT_CHARACTER_SOURCE
     ): String {
-        val code = generateAuthorizationCode(purpose, userId, length, characterSource)
-        val secretKey = AESEncryption.getKeyFromPassword(getEncryptionSecret(), getEncryptionSalt())
-        val payload = TokenPayload(code.code, code.purpose, code.userId)
-        val payloadString = objectMapper.writeValueAsString(payload)
-        return AESEncryption.encryptPasswordBased(payloadString, secretKey)
+        try {
+            val code = generateAuthorizationCode(purpose, userId, length, characterSource)
+            logger.info("Encrypting authorization code for purpose $purpose and user $userId")
+            val secretKey = AESEncryption.getKeyFromPassword(getEncryptionSecret(), getEncryptionSalt())
+            val payload = TokenPayload(code.code, code.purpose, code.userId)
+            val payloadString = objectMapper.writeValueAsString(payload)
+            val encryptedCode = AESEncryption.encryptPasswordBased(payloadString, secretKey)
+            logger.info("Authorization code for purpose $purpose and user $userId was encrypted")
+            return encryptedCode
+        } catch (ex: Exception) {
+            logger.error("Error during generating and encrypting authorization code " +
+                "for purpose $purpose and user $userId: ${ex.message}", ex)
+            throw ex
+        }
     }
 
     /**
@@ -57,6 +67,7 @@ class AuthorizationCodeGenerator(
         length: Int = DEFAULT_TOKEN_LENGTH,
         characterSource: String = DEFAULT_CHARACTER_SOURCE
     ): AuthorizationCode {
+        logger.info("Generating authorization code for purpose $purpose and user $userId")
         val currentTime = Clock.System.now()
         val code = AuthorizationCode(
             SecureTokens.generate(length, characterSource),
@@ -66,7 +77,9 @@ class AuthorizationCodeGenerator(
             currentTime.plus(getCodeValidityDuration(purpose)),
             null
         )
+        logger.info("Storing authorization code for purpose $purpose and user $userId")
         authorizationCodeRepository.createCode(code)
+        logger.info("Authorization code for purpose $purpose and user $userId was generated and stored")
         return code
     }
 
