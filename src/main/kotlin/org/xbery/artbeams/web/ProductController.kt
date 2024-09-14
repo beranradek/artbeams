@@ -334,16 +334,22 @@ open class ProductController(
      * @param user
      */
     private fun sendProductDownloadedNotification(product: Product, user: User) {
-        val productAuthor = userService.findById(product.createdBy)
-        if (productAuthor != null) {
-            if (productAuthor.email.isNotEmpty()) {
-                val subject =
-                    normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName} downloaded ${product.title}")
-                val body =
-                    normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName}/${user.email} " +
-                        "has downloaded product ${product.title}.")
-                mailSender.sendMailWithText(productAuthor.email, subject, body)
+        try {
+            val productAuthor = userService.findById(product.createdBy)
+            if (productAuthor != null) {
+                if (productAuthor.email.isNotEmpty()) {
+                    val subject =
+                        normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName} downloaded ${product.title}")
+                    val body =
+                        normalizationHelper.removeDiacriticalMarks(
+                            "User ${user.firstName} ${user.lastName}/${user.email} " +
+                                    "has downloaded product ${product.title}."
+                        )
+                    mailSender.sendMailWithText(productAuthor.email, subject, body)
+                }
             }
+        } catch (ex: Exception) {
+            logger.error("Error while sending product downloaded notification: ${ex.message}", ex)
         }
     }
 

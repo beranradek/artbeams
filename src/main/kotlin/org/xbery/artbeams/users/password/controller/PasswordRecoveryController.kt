@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.error.logger
 import org.xbery.artbeams.users.password.domain.PasswordRecoveryData
 import org.xbery.artbeams.users.password.recovery.service.PasswordRecoveryService
 
@@ -42,8 +43,10 @@ open class PasswordRecoveryController(
             val params = ServletRequestParams(request)
             val formData = passwordRecoveryFormDef.bind(params)
             if (!formData.isValid) {
+                logger.warn("Invalid password recovery form data: ${formData.validationResult}")
                 renderForm(request, formData.data, formData.validationResult)
             } else {
+                logger.info("Valid password recovery form data, email=${formData.data.email}")
                 val passwordRecoveryData = formData.data
                 passwordRecoveryService.requestPasswordRecovery(passwordRecoveryData.email, request.remoteAddr)
                 redirect("/password-recovery/sent")

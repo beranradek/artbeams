@@ -23,13 +23,14 @@ class PasswordRecoveryService(
     fun requestPasswordRecovery(email: String, ipAddress: String) {
         val user = userRepository.findByLogin(email)
         if (user == null) {
-            val msg = "User with login (= email) does not exist. [login=$email, ipAddress=$ipAddress]"
+            val msg = "User with login does not exist. [login=$email, ipAddress=$ipAddress]"
             logger.atInfo()
                 .setMessage(msg)
                 .addKeyValue("login", email)
                 .addKeyValue("ipAddress", ipAddress)
                 .log()
         } else {
+            logger.info("Sending password recovery email to user. [login=${user.login}, ipAddress=$ipAddress]")
             passwordRecoveryMailer.sendPasswordRecoveryMail(createPasswordRecoveryData(user.login))
         }
     }

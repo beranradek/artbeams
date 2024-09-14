@@ -68,27 +68,31 @@ open class CommentServiceImpl(
     }
 
     private fun sendNewCommentNotification(comment: Comment) {
-        if (comment.entityKey.entityType == Article::class.java.getSimpleName()) {
-            val articleId: String = comment.entityKey.entityId
-            val articleOpt: Optional<Article> = articleRepository.findById(articleId)
-            if (articleOpt.isPresent) {
-                val article: Article = articleOpt.get()
-                val userOpt: Optional<User> = userRepository.findById(article.createdBy)
-                if (userOpt.isPresent) {
-                    val user: User = userOpt.get()
-                    if (user.email.isNotEmpty()) {
-                        val subject: String =
-                            normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
-                        val body: String =
-                            normalizationHelper.removeDiacriticalMarks("${comment.userName}/${comment.email}:\n\n${comment.comment}")
-                        mailSender.sendMailWithText(user.email, subject, body)
+        try {
+            if (comment.entityKey.entityType == Article::class.java.getSimpleName()) {
+                val articleId: String = comment.entityKey.entityId
+                val articleOpt: Optional<Article> = articleRepository.findById(articleId)
+                if (articleOpt.isPresent) {
+                    val article: Article = articleOpt.get()
+                    val userOpt: Optional<User> = userRepository.findById(article.createdBy)
+                    if (userOpt.isPresent) {
+                        val user: User = userOpt.get()
+                        if (user.email.isNotEmpty()) {
+                            val subject: String =
+                                normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
+                            val body: String =
+                                normalizationHelper.removeDiacriticalMarks("${comment.userName}/${comment.email}:\n\n${comment.comment}")
+                            mailSender.sendMailWithText(user.email, subject, body)
+                        } else {
+                            logger.warn("Author ${user.login}/${user.firstName} ${user.lastName} has no email set.")
+                        }
                     } else {
-                        logger.warn("Author ${user.login}/${user.firstName} ${user.lastName} has no email set.")
+                        logger.warn("Article ${article.title} has no author (createdBy) set.")
                     }
-                } else {
-                    logger.warn("Article ${article.title} has no author (createdBy) set.")
                 }
             }
+        } catch (ex: Exception) {
+            logger.error("Sending new comment notification for comment ${comment.id} finished with error ${ex.message}", ex)
         }
     }
 }

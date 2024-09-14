@@ -38,8 +38,10 @@ open class MailgunMailSender(
             logger.info("Email $subject to $recipientEmail was sent successfully.")
         } catch (ex: FeignException) {
             logMailerException(subject, recipientEmail, ex)
+            throw ex
         } catch (ex: Exception) {
             logMailerException(subject, recipientEmail, ex)
+            throw ex
         }
     }
 
@@ -60,8 +62,10 @@ open class MailgunMailSender(
             logger.info("Email $subject to $recipientEmail was sent successfully.")
         } catch (ex: FeignException) {
             logMailerException(subject, recipientEmail, ex)
+            throw ex
         } catch (ex: Exception) {
             logMailerException(subject, recipientEmail, ex)
+            throw ex
         }
     }
 
