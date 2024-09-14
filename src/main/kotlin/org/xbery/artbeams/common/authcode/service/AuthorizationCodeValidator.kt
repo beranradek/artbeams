@@ -91,7 +91,7 @@ class AuthorizationCodeValidator(
             // before and after displaying a form can be a valid case
             val msg = "Authorization code was already validated: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
                     "purpose=${tokenPayload.purpose}"
-            logger.info(
+            logger.debug(
                 msg,
                 null
             )
