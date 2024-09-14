@@ -21,12 +21,14 @@ class PasswordRecoveryMailerImpl(
     override fun sendPasswordRecoveryMail(data: PasswordRecoveryMailData) {
         val authToken = data.authToken
         val tokenUrl = templateMailer.buildWebLink(PasswordSetupController.PASSWORD_SETUP_PATH, mapOf(SecureTokens.TOKEN_PARAM_NAME to authToken))
-        val tplModel = mapOf(
+        val subject = appConfig.requireConfig("mailer.password.recovery.subject")
+        val templateId = appConfig.requireConfig("mailer.password.recovery.template")
+        val tplVars = mapOf(
             "tokenUrl" to tokenUrl,
             "webName" to (appConfig.findConfig("web.name") ?: ""),
             "senderName" to (appConfig.findConfig("mailer.sender.name") ?: ""),
         )
-        val subject = appConfig.requireConfig("mailer.password.recovery.subject")
-        templateMailer.sendMail("user/mail/passwordRecovery", tplModel, subject, data.email)
+
+        templateMailer.sendMailWithTemplate(data.email, subject, templateId, tplVars)
     }
 }

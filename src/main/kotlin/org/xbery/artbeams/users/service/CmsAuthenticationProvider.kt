@@ -16,9 +16,9 @@ open class CmsAuthenticationProvider(private val loginService: LoginService) : A
     override fun authenticate(authentication: Authentication): Authentication? {
         val username = authentication.name
         val password = authentication.credentials.toString()
-        val user = loginService.login(username, password)
+        val user = loginService.verifyUser(username, password)
         return if (user != null) {
-            UsernamePasswordAuthenticationToken(user.id + PRINCIPAL_SEPARATOR + user.login, user.password, user.roles.map { role -> SimpleGrantedAuthority(role.name) })
+            loginService.createAuthenticationToken(user)
         } else {
             null
         }
@@ -26,9 +26,5 @@ open class CmsAuthenticationProvider(private val loginService: LoginService) : A
 
     override fun supports(authentication: Class<*>): Boolean {
         return authentication == UsernamePasswordAuthenticationToken::class.java
-    }
-
-    companion object {
-        const val PRINCIPAL_SEPARATOR = ":"
     }
 }

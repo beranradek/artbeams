@@ -14,7 +14,7 @@
       <@forms.inputHidden field=fields.token />
       <@forms.inputText type="password" field=fields.password label="${xlat['password']}" size=60 vertical=true />
       <@forms.inputText type="password" field=fields.password2 label="${xlat['password.again-for-control']}" size=60 vertical=true />
-      <@forms.buttonSubmit text="${xlat['createAccount']}" class="btn btn-primary" />
+      <@forms.buttonSubmit text="${xlat['passwordSetup.setPassword']}" class="btn btn-primary" />
     </form>
 </div>
 </@layout.page>

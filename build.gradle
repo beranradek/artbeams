@@ -118,6 +118,9 @@ dependencies {
     // Password strength estimation library https://github.com/nulab/zxcvbn4j
     implementation("com.nulab-inc:zxcvbn:$zxcvbnVersion")
 
+    // Mailing
+    implementation "com.mailgun:mailgun-java:$mailgunVersion"
+
     // Working with PDF documents
     implementation("org.apache.pdfbox:pdfbox:2.0.17")
 

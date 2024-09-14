@@ -1,30 +1,22 @@
 package org.xbery.artbeams.common.mailer.service
 
-import freemarker.template.Configuration
 import org.springframework.stereotype.Component
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils
 import org.xbery.artbeams.common.web.WebLinkBuilder
 
 /**
- * Mailer for sending e-mails composed of Freemarker templates.
+ * Mailer for sending e-mails composed of Mailgun templates.
  *
  * @author Radek Beran
  */
 @Component
 class TemplateMailer(
-    private val freemarkerConfig: Configuration,
     private val webLinkBuilder: WebLinkBuilder,
-    private val mailSender: MailSender
+    private val mailSender: MailgunMailSender
 ) {
-    fun sendMail(tplPrefix: String, tplModel: Map<String, Any>, subject: String, recipientEmail: String) {
-        val textBody = processTemplateIntoString(freemarkerConfig.getTemplate("$tplPrefix.body.ftl"), tplModel)
-        val htmlBody = processTemplateIntoString(freemarkerConfig.getTemplate("$tplPrefix.body.html.ftl"), tplModel)
-        mailSender.sendMail(subject, textBody, htmlBody, recipientEmail)
+    fun sendMailWithTemplate(recipientEmail: String, subject: String, templateId: String, templateVariables: Map<String, Any>) {
+        mailSender.sendMailWithTemplate(recipientEmail, subject, templateId, templateVariables)
     }
 
     fun buildWebLink(relativePath: String, urlParams: Map<String, String>): String =
         webLinkBuilder.buildWebLink(relativePath, urlParams)
-
-    protected open fun processTemplateIntoString(template: freemarker.template.Template, model: Any): String =
-        FreeMarkerTemplateUtils.processTemplateIntoString(template, model)
 }

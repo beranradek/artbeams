@@ -17,9 +17,9 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.common.security.SecureTokens
-import org.xbery.artbeams.users.password.domain.PasswordSetupData
 import org.xbery.artbeams.users.password.controller.PasswordSetupController.Companion.PASSWORD_SETUP_PATH
-import org.xbery.artbeams.users.repository.UserRepository
+import org.xbery.artbeams.users.password.domain.PasswordSetupData
+import org.xbery.artbeams.users.service.LoginService
 import org.xbery.artbeams.users.service.UserService
 
 /**
@@ -32,6 +32,7 @@ import org.xbery.artbeams.users.service.UserService
 open class PasswordSetupController(
     private val authorizationCodeValidator: AuthorizationCodeValidator,
     private val userService: UserService,
+    private val loginService: LoginService,
     common: ControllerComponents
 ) : BaseController(common) {
 
@@ -61,10 +62,17 @@ open class PasswordSetupController(
             } else {
                 val passwordSetupData = formData.data
                 val authCode = authorizationCodeValidator.validateEncryptedAuthorizationCode(passwordSetupData.token, PasswordSetupData.TOKEN_PURPOSE)
-                if (authCode.userId != passwordSetupData.login) {
-                    throw UnauthorizedException("Authorization code is not valid for user ${passwordSetupData.login}")
+                val login = passwordSetupData.login
+                if (authCode.userId != login) {
+                    throw UnauthorizedException("Authorization code is not valid for user $login")
                 }
-                userService.setPassword(passwordSetupData, requestToOperationCtx(request)) ?: throw NotFoundException("User ${passwordSetupData.login} was not found")
+                userService.setPassword(
+                    passwordSetupData,
+                    requestToOperationCtx(request)
+                ) ?: throw NotFoundException("User $login was not found")
+
+                // Automatically log the user in
+                userService.findByLogin(login)?.let { loginService.loginUser(it) }
                 redirect("/clenska-sekce")
             }
         }

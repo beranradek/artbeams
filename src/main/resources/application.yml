@@ -27,11 +27,6 @@ spring.datasource.minIdle: 2
 spring.datasource.initialSize: 5
 spring.datasource.removeAbandoned: true
 
-# Mailer configuration
-# --------------------
-# Using Config Vars from Heroku Settings: MAILGUN_API_KEY, MAILGUN_DOMAIN as env variables.
-# Configured in DB: mailer.from
-
 # Templates configuration
 # -----------------------
 spring.freemarker.cache: false

@@ -40,7 +40,7 @@ does not invoke application restart because it is not necessary - templates are 
 * Create DB tables using sql/create*.sql scripts.
 * Fill in DB tables using sql/insert*.sql scripts, fill in your own configuration and translations.
 * Run application with local config: `./gradlew :bootRun --args='--spring.profiles.active=local'`, or:
-* Run Application main class with VM options: -DJDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/<db-name> -DJDBC_DATABASE_USERNAME=... -DJDBC_DATABASE_PASSWORD=... -DMAILGUN_API_KEY=... -DMAILGUN_DOMAIN=...
+* Run Application main class with VM options: -DJDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/<db-name> -DJDBC_DATABASE_USERNAME=... -DJDBC_DATABASE_PASSWORD=...
 
 ### Running on Heroku
 

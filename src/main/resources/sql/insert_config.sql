@@ -4,10 +4,16 @@ INSERT INTO config (entry_key, entry_value) VALUES ('google.application-name', '
 INSERT INTO config (entry_key, entry_value) VALUES ('web.baseUrl', 'http://localhost:8080');
 INSERT INTO config (entry_key, entry_value) VALUES ('web.name', 'FILL IN YOUR WEB NAME');
 
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.api.baseUrl', 'https://api.eu.mailgun.net/');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.api.key', '???');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.api.domain', '???');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.from', 'info@???');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.replyTo', 'info@???');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.sender.name', 'FILL IN YOUR NAME');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.recovery.subject', 'Obnova hesla');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.recovery.template', 'password.recovery');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.setup.subject', 'Nastavení hesla');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.setup.template', 'password.setup');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.baseUrl', 'https://connect.mailerlite.com');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.token', 'FILL IN API TOKEN');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.offer1.subscription.groupId', 'FILL IN SUBSCRIBER GROUP ID for offer1');
