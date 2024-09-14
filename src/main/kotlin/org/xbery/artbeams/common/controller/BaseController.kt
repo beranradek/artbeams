@@ -9,6 +9,7 @@ import org.xbery.artbeams.common.ajax.AjaxResponseBody
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.error.CommonErrorCode
 import org.xbery.artbeams.common.error.StatusCode
+import org.xbery.artbeams.common.error.logger
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.error.OperationException
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
@@ -81,6 +82,7 @@ abstract class BaseController(private val common: ControllerComponents) {
     }
 
     fun errorResponse(request: HttpServletRequest, operationEx: OperationException): Any {
+        logger.error("Error during processing the request: ${operationEx.message}", operationEx)
         val status = statusCodeToHttpStatus(operationEx.statusCode)
         val model = createModel(request, "status" to status.value())
         return ModelAndView("error", model, status)
