@@ -1,6 +1,7 @@
 package org.xbery.artbeams.users.domain
 
 import net.formio.binding.ArgumentName
+import org.xbery.artbeams.common.form.validation.ValidatedPasswordData
 
 /**
  * Edited attributes of my profile.
@@ -9,15 +10,13 @@ import net.formio.binding.ArgumentName
  */
 data class MyProfile(
     @ArgumentName("login")
-    val login: String,
+    override val login: String,
     @ArgumentName("firstName")
     val firstName: String,
     @ArgumentName("lastName")
     val lastName: String,
-    @ArgumentName("email")
-    val email: String,
     @ArgumentName("password")
-    val password: String,
+    override val password: String,
     @ArgumentName("password2")
-    val password2: String
-)
+    override val password2: String
+) : ValidatedPasswordData

@@ -1,20 +1,21 @@
 package org.xbery.artbeams.users.password.domain
 
 import net.formio.binding.ArgumentName
+import org.xbery.artbeams.common.form.validation.ValidatedPasswordData
 
 /**
  * @author Radek Beran
  */
 data class PasswordSetupData(
     @ArgumentName("login")
-    val login: String,
+    override val login: String,
     @ArgumentName("token")
     val token: String,
     @ArgumentName("password")
-    val password: String,
+    override val password: String,
     @ArgumentName("password2")
-    val password2: String
-) {
+    override val password2: String
+) : ValidatedPasswordData {
     companion object {
         const val TOKEN_PURPOSE = "PASSWORD_SETUP"
     }

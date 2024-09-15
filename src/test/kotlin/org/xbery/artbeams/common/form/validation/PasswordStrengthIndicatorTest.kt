@@ -1,4 +1,4 @@
-package org.xbery.artbeams.common.security.credential
+package org.xbery.artbeams.common.form.validation
 
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe

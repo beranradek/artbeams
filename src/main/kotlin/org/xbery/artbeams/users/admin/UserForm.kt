@@ -4,6 +4,7 @@ import net.formio.Field
 import net.formio.FormMapping
 import net.formio.Forms
 import org.xbery.artbeams.common.form.FormUtils
+import org.xbery.artbeams.common.form.validation.PasswordValidator
 import org.xbery.artbeams.users.domain.EditedUser
 
 /**
@@ -22,6 +23,7 @@ open class UserForm {
                 .field<String>("lastName", Field.TEXT)
                 .field<String>("email", Field.TEXT)
                 .field<List<String>>("roleIds")
+                .validator(PasswordValidator<EditedUser>())
                 .build(FormUtils.CZ_CONFIG)
     }
 }

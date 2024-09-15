@@ -114,6 +114,6 @@ open class UserServiceImpl(
     }
 
     private fun toEditedProfile(user: User, validatedPassword: String): MyProfile {
-        return MyProfile(user.login, user.firstName, user.lastName, user.email, validatedPassword, validatedPassword)
+        return MyProfile(user.login, user.firstName, user.lastName, validatedPassword, validatedPassword)
     }
 }

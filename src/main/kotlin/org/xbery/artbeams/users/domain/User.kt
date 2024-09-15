@@ -57,8 +57,7 @@ data class User(
             common = this.common.updatedWith(userId),
             password = updatedPassword,
             firstName = profile.firstName,
-            lastName = profile.lastName,
-            email = profile.email.lowercase()
+            lastName = profile.lastName
         )
     }
 

@@ -1,6 +1,7 @@
 package org.xbery.artbeams.users.domain
 
 import net.formio.binding.ArgumentName
+import org.xbery.artbeams.common.form.validation.ValidatedPasswordData
 
 /**
  * Editable user attributes.
@@ -10,11 +11,11 @@ data class EditedUser(
     @ArgumentName("id")
     val id: String,
     @ArgumentName("login")
-    val login: String,
+    override val login: String,
     @ArgumentName("password")
-    val password: String,
+    override val password: String,
     @ArgumentName("password2")
-    val password2: String,
+    override val password2: String,
     @ArgumentName("firstName")
     val firstName: String,
     @ArgumentName("lastName")
@@ -23,4 +24,4 @@ data class EditedUser(
     val email: String,
     @ArgumentName("roleIds")
     val roleIds: List<String>
-)
+) : ValidatedPasswordData

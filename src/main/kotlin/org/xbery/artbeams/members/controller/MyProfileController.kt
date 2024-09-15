@@ -58,7 +58,7 @@ open class MyProfileController(
     }
 
     private fun toEditedProfile(user: User): MyProfile {
-        return MyProfile(user.login, user.firstName, user.lastName, user.email, "", "")
+        return MyProfile(user.login, user.firstName, user.lastName, "", "")
     }
 
     private fun renderEditForm(

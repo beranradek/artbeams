@@ -4,6 +4,7 @@ import net.formio.Field
 import net.formio.FormMapping
 import net.formio.Forms
 import org.xbery.artbeams.common.form.FormUtils
+import org.xbery.artbeams.common.form.validation.PasswordValidator
 import org.xbery.artbeams.users.domain.MyProfile
 
 /**
@@ -18,10 +19,9 @@ open class MyProfileForm {
                 .field<String>("login", Field.TEXT)
                 .field<String>("firstName", Field.TEXT)
                 .field<String>("lastName", Field.TEXT)
-                .field<String>("email", Field.TEXT)
-                // TODO RBe: Validation of password strength and match
                 .field<String>("password", Field.PASSWORD)
                 .field<String>("password2", Field.PASSWORD)
+                .validator(PasswordValidator<MyProfile>())
                 .build(FormUtils.CZ_CONFIG)
     }
 }

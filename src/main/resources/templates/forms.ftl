@@ -10,9 +10,9 @@
     </div>
 </#macro>
 
-<#macro inputTextArea field label required=true rows="8" cols="45" maxlength="20000" vertical=false>
+<#macro inputTextArea field label required=true rows="8" cols="45" maxlength="20000" vertical=false labelFix=true>
     <div class="form-group row">
-        <label for="${field.elementId}" class="label-fix<#if field.validationMessages?has_content> text-danger</#if>">${label}<#if required> *</#if></label>
+        <label for="${field.elementId}" class="<#if labelFix>label-fix</#if><#if field.validationMessages?has_content> text-danger</#if>">${label}<#if required> *</#if></label>
         <textarea class="form-control<#if field.validationMessages?has_content> is-invalid</#if>" name="${field.name}" id="${field.elementId}" rows="${rows}" cols="${cols}" maxlength="${maxlength}"<#if required> required="required"</#if>>${field.value!}</textarea>
         <#if field.validationMessages?has_content>
             <div class="<#if vertical> col-sm-12<#else>col-sm-10</#if>">
@@ -28,13 +28,13 @@
     </div>
 </#macro>
 
-<#macro inputText field label type="text" required=true size="64" rowClass="form-group row" labelAsPlaceholder=false vertical=false readonly=false>
+<#macro inputText field label type="text" required=true size="64" rowClass="form-group row" labelAsPlaceholder=false vertical=false readonly=false labelFix=true inputDivClass="">
     <div class="${rowClass}">
         <#if labelAsPlaceholder>
             <input type="${type}" class="form-control<#if field.validationMessages?has_content> is-invalid</#if>" id="${field.elementId}" name="${field.name}" value="${field.value!}" size="${size}"<#if readonly> readonly</#if><#if required> required</#if> placeholder="${label}"/>
         <#else>
-            <label for="${field.elementId}" class="col-form-label<#if vertical> col-sm-12<#else> col-sm-2 label-fix</#if><#if field.validationMessages?has_content> text-danger</#if>">${label}<#if required> *</#if></label>
-            <div class="<#if vertical> col-sm-12<#else>col-sm-10</#if>">
+            <label for="${field.elementId}" class="col-form-label<#if vertical> col-sm-12<#else> col-sm-2<#if labelFix> label-fix</#if></#if><#if field.validationMessages?has_content> text-danger</#if>">${label}<#if required> *</#if></label>
+            <div class="<#if inputDivClass?has_content>${inputDivClass}<#else><#if vertical>col-sm-12<#else>col-sm-10</#if></#if>">
                 <input type="${type}" class="form-control<#if field.validationMessages?has_content> is-invalid</#if>" id="${field.elementId}" name="${field.name}" value="${field.value!}" size="${size}"<#if readonly> readonly</#if><#if required> required</#if>/>
             </div>
         </#if>

@@ -1,4 +1,4 @@
-package org.xbery.artbeams.common.security.credential
+package org.xbery.artbeams.common.form.validation
 
 import com.nulabinc.zxcvbn.Zxcvbn
 

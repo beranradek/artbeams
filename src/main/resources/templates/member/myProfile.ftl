@@ -1,56 +1,21 @@
 <#import "/member/memberLayout.ftl" as layout>
+<#import "/forms.ftl" as forms>
 <@layout.page>
 <#assign fields = editForm.fields>
 
 <form action="/clenska-sekce/muj-profil" method="post" class="form-horizontal">
-  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-  <h3>Můj profil</h3>
+    <h3>Můj profil</h3>
+    <@forms.inputHidden field=fields.login />
+    <@forms.globalMessages messages=editForm.validationResult.globalMessages />
+    <@forms.inputText field=fields.firstName label="Křestní jméno" size=100 inputDivClass="col-sm-3" labelFix=false />
+    <@forms.inputText field=fields.lastName label="Příjmení" size=100 inputDivClass="col-sm-3" labelFix=false />
 
-  <div class="form-group row">
-    <label for="${fields.login.elementId}" class="col-sm-2 col-form-label">${xlat['username.cannot-be-changed']}</label>
-    <div class="col-sm-3">
-      <input type="text" name="${fields.login.name}" value="${fields.login.value!}" id="${fields.login.elementId}" readonly size="30" class="form-control"/>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="${fields.firstName.elementId}" class="col-sm-2 col-form-label">Křestní jméno</label>
-    <div class="col-sm-3">
-      <input type="text" name="${fields.firstName.name}" value="${fields.firstName.value!}" id="${fields.firstName.elementId}" size="100" class="form-control"/>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="${fields.lastName.elementId}" class="col-sm-2 col-form-label">Příjmení</label>
-    <div class="col-sm-3">
-      <input type="text" name="${fields.lastName.name}" value="${fields.lastName.value!}" id="${fields.lastName.elementId}" size="100" class="form-control"/>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="${fields.email.elementId}" class="col-sm-2 col-form-label">E-mail (povinný)</label>
-    <div class="col-sm-3">
-      <input type="text" name="${fields.email.name}" value="${fields.email.value!}" id="${fields.email.elementId}" size="100" class="form-control"/>
-    </div>
-  </div>
+    <h3>${xlat['newPassword']}</h3>
 
-  <h3>${xlat['newPassword']}</h3>
-
-  <div class="form-group row">
-    <label for="${fields.password.elementId}" class="col-sm-2 col-form-label">${xlat['password']}</label>
-    <div class="col-sm-3">
-      <input type="password" name="${fields.password.name}" value="${fields.password.value!}" id="${fields.password.elementId}" size="30" class="form-control"/>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="${fields.password2.elementId}" class="col-sm-2 col-form-label">${xlat['password.again-for-control']}</label>
-    <div class="col-sm-3">
-      <input type="password" name="${fields.password2.name}" value="${fields.password2.value!}" id="${fields.password2.elementId}" size="30" class="form-control"/>
-    </div>
-  </div>
-  <div class="form-group row">
-    <div class="col-sm-2 col-form-label"></div>
-    <div class="col-sm-10">
-        <button type="submit" class="btn btn-primary">Uložit profil</button>
-    </div>
-  </div>
+    <@forms.inputText type="password" field=fields.password label="${xlat['password']}" size=60 inputDivClass="col-sm-3" labelFix=false />
+    <@forms.inputText type="password" field=fields.password2 label="${xlat['password.again-for-control']}" size=60 inputDivClass="col-sm-3" labelFix=false />
+    <@forms.buttonSubmit text="Uložit profil" class="btn btn-primary" />
 </form>
 </@layout.page>
