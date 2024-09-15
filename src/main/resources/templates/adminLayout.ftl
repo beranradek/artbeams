@@ -89,10 +89,10 @@
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="/static/css/common-styles.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/admin-styles.css" />
-    
+
+    <#include "/commonScripts.ftl">
   </head>
   <body class="d-flex flex-column h-100">
-     <#if !noHeader??>
      <!-- Navbar, not fixed to the top (fixed-top), but static with additional mb-4 (bottom padding) -->
     <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
       <div class="container-fluid">
@@ -148,18 +148,15 @@
         </div>
       </div>
     </nav>
-    </#if>
 
     <main role="main" class="container page-content">
         <#nested/>
     </main><!-- /.container -->
-    <#if !noHeader??>
       <footer class="footer mt-auto py-3 bg-body-tertiary">
         <div class="container align-right">
           <a href="#">${xlat['goto.up']}</a>
         </div>
       </footer>
-    </#if>
     
     <!-- Bootstrap core JavaScript -->
     <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>

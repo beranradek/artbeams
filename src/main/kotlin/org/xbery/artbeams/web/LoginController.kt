@@ -21,8 +21,7 @@ open class LoginController(common: ControllerComponents) : BaseController(common
 
     @GetMapping(value = ["/login"], produces = [MediaType.TEXT_HTML_VALUE])
     fun loginForm(request: HttpServletRequest): Any {
-        val model =
-            createModel(request, "noHeader" to true)
+        val model = createModel(request)
         return ModelAndView(ADMIN_LOGIN_VIEW, model)
     }
 

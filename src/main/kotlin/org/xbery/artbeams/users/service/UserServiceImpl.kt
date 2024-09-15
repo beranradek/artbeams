@@ -61,8 +61,11 @@ open class UserServiceImpl(
         val user = findByLogin(passwordSetupData.login)
         return if (user != null) {
             val userToUpdate = user.updatedWith(toEditedProfile(user, passwordSetupData.password), user.id)
-            userRepository.updateEntity(userToUpdate)
+            val updatedUser = userRepository.updateEntity(userToUpdate)
+            logger.info("Password for user ${userToUpdate.login} was set")
+            updatedUser
         } else {
+            logger.info("User ${passwordSetupData.login} was not found")
             null
         }
     }

@@ -72,7 +72,7 @@ open class PasswordSetupController(
                 ) ?: throw NotFoundException("User $login was not found")
 
                 // Automatically log the user in
-                userService.findByLogin(login)?.let { loginService.loginUser(it) }
+                userService.findByLogin(login)?.let { loginService.loginUser(it, request) }
                 redirect("/clenska-sekce")
             }
         }
@@ -86,14 +86,13 @@ open class PasswordSetupController(
         val passwordSetupForm = passwordSetupFormDef.fill(FormData(passwordSetupData, validationResult))
         val model = createModel(
             request,
-            "passwordSetupForm" to passwordSetupForm,
-            "noHeader" to true
+            "passwordSetupForm" to passwordSetupForm
         )
         return ModelAndView("$TPL_BASE_PATH/passwordSetup", model)
     }
 
     companion object {
         private const val TPL_BASE_PATH: String = "user"
-        const val PASSWORD_SETUP_PATH = "/nastaveni-hesla"
+        const val PASSWORD_SETUP_PATH = "/password-setup"
     }
 }

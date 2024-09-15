@@ -19,7 +19,7 @@ INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.token', 'FILL I
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.offer1.subscription.groupId', 'FILL IN SUBSCRIBER GROUP ID for offer1');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.offer1.subscription.redirectUri', 'FILL IN REDIRECT UR for offer1');
 
-INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSecret', 'FILL IN SECRET');
-INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSalt', 'FILL IN SALT');
+INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSecret', 'bWEfiGxkgcYEM0]');
+INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSalt', '892ibXGe32lzoVs');
 
 INSERT INTO config (entry_key, entry_value) VALUES ('recaptcha.secretKey', '???');

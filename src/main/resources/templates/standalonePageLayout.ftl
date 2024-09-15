@@ -5,14 +5,16 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="CMS" />
+    <meta name="description" content="" />
     <meta name="keywords" content=""/>
-    <title>${xlat['member-section.title']}</title>
+    <title><#if pageTitle??>${pageTitle} | <#else><#if title??>${title} | </#if></#if>${xlat['website.title']}</title>
     <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
     
     <!-- Bootstrap -->
     <!-- Based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
     <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <!-- reCaptcha -->
+    <script  nonce="${_cspNonce}" src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 
     <style nonce="${_cspNonce}">
       .bd-placeholder-img {
@@ -88,42 +90,15 @@
     <#-- NOTE: Improvement: Embedding critical CSSs as recommended by Google PageSpeed Insights -->
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="/static/css/common-styles.css" />
-    <link rel="stylesheet" type="text/css" href="/static/css/admin-styles.css" />
-    
+    <link rel="stylesheet" type="text/css" href="/static/css/standalone-page-styles.css" />
+
+    <#include "/commonScripts.ftl">
   </head>
   <body class="d-flex flex-column h-100">
-     <!-- Navbar, not fixed to the top (fixed-top), but static with additional mb-4 (bottom padding) -->
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="/clenska-sekce">${xlat['member-section.title']}</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav mr-4">
-            <#if _loggedUser??>
-            <li class="nav-item logged-user">
-              <a class="nav-link href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" height="19px" viewBox="0 0 448 512"><!--! user-solid Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><style nonce="${_cspNonce}">svg{fill:#ffffff}</style><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
-                ${_loggedUser.login}
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/clenska-sekce/muj-profil">Můj profil</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">${xlat['logout']}</a>
-            </li>
-            </#if>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
     <main role="main" class="container page-content">
         <#nested/>
     </main><!-- /.container -->
-    
+
     <!-- Bootstrap core JavaScript -->
     <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
   </body>

@@ -61,6 +61,6 @@
 
 <#macro buttonSubmit text class="btn">
     <div class="form-group">
-      <button name="submit" type="submit" class="${class}">${text}</button>
+      <button name="submitButton" type="submit" class="${class}">${text}</button>
     </div>
 </#macro>

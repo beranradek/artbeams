@@ -22,50 +22,19 @@ img {
   max-width: 1640px;
 }
 
-.form-config-reload {
-    margin-right: 4px;
-}
-
-.form-article-edit {
-    margin: 0.5rem;
-}
-
-.form-article-edit .article-basic-attributes {
-    padding-bottom: 0.5rem;
-}
-
-.form-localisations-reload {
-    margin-right: 4px;
+.centered-box {
+  margin: auto;
+  margin-top: 4rem;
 }
 
 .login-form {
-  margin: auto;
-  margin-top: 4rem;
   width: 380px;
-  margin-left: 1rem;
-  margin-right: 1rem;
 }
 
 .password-setup-form {
-  margin: auto;
-  margin-top: 4rem;
   width: 580px;
-  margin-left: 1rem;
-  margin-right: 1rem;
 }
 
 .password-recovery-form {
-  margin: auto;
-  margin-top: 4rem;
   width: 380px;
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-.footer {
-  background-color: #f5f5f5;
-}
-
-#markdown-content {
-  width: 100%;
 }

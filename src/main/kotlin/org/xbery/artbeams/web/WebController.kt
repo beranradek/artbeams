@@ -27,6 +27,7 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
+import org.xbery.artbeams.users.password.setup.service.PasswordSetupMailer
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -41,7 +42,8 @@ open class WebController(
     val productService: ProductService,
     val commentService: CommentService,
     val controllerComponents: ControllerComponents,
-    val resourceLoader: ResourceLoader
+    val resourceLoader: ResourceLoader,
+    val passwordSetupMailer: PasswordSetupMailer
 ) : BaseController(controllerComponents), SitemapWriter {
 
     override fun articleService(): ArticleService = articleService
@@ -55,6 +57,7 @@ open class WebController(
 
     @GetMapping("/")
     fun homepage(request: HttpServletRequest): Any {
+        //passwordSetupMailer.sendPasswordSetupMail("beran.radek@seznam.cz")
         //val fArticles = CompletableFuture.supplyAsync { articleService.findLatest(ArticlesPerPageLimit) }
         //val fUserAccessReport =
         //    CompletableFuture.supplyAsync { controllerComponents.userAccessService.getUserAccessReport(request) }

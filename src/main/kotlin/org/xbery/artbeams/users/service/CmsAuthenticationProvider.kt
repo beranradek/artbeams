@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service
  * @author Radek Beran
  */
 @Service
-open class CmsAuthenticationProvider(private val loginService: LoginService) : AuthenticationProvider {
+open class CmsAuthenticationProvider(private val loginVerificationService: LoginVerificationService) : AuthenticationProvider {
     override fun authenticate(authentication: Authentication): Authentication? {
         val username = authentication.name
         val password = authentication.credentials.toString()
-        val user = loginService.verifyUser(username, password)
+        val user = loginVerificationService.verifyUser(username, password)
         return if (user != null) {
-            loginService.createAuthenticationToken(user)
+            loginVerificationService.createAuthenticationToken(user)
         } else {
             null
         }
