@@ -17,7 +17,7 @@ class FileData(
     val height: Int?
 ) {
     fun getMediaType(): MediaType {
-        return if (this.contentType != null) {
+        return if (this.contentType.isNotEmpty()) {
             if (this.contentType.contains("/")) {
                 val parts = this.contentType.split("/")
                 MediaType(parts[0], parts[1])

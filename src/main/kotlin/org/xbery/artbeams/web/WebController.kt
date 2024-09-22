@@ -175,7 +175,7 @@ open class WebController(
             if (searchCount > 1) {
                 ModelAndView("searchOverloaded", createBlogModel(request, FormData(SubscriptionFormData.Empty, ValidationResult.empty)))
             } else {
-                val query: String = request.getParameter("query")
+                val query: String? = request.getParameter("query")
                 val articles = if (query == null || query.trim().length < 2) {
                     listOf()
                 } else {

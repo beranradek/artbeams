@@ -17,15 +17,17 @@ import org.xbery.overview.sql.filter.SqlCondition
 open class ArticleMapper() : ValidityAssetMapper<Article, ArticleFilter>() {
     override fun cls(): Class<Article> = Article::class.java
     override fun getTableName(): String = "articles"
-    val externalIdAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "external_id").get { e -> e.externalId})
-    val slugAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "slug").get { e -> e.slug})
-    val titleAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "title").get { e -> e.title})
-    val imageAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "image").get { e -> e.image})
-    val perexAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "perex").get { e -> e.perex})
-    val bodyMarkdownAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "body_markdown").get { e -> e.bodyMarkdown})
-    val bodyAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "body").get { e -> e.body})
-    val keywordsAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "keywords").get { e -> e.keywords})
-    val showOnBlogAttr: Attribute<Article, Boolean> = add(Attr.ofBoolean(cls(), "show_on_blog").get { e -> e.showOnBlog})
+    val externalIdAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "external_id").get { e -> e.externalId })
+    val slugAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "slug").get { e -> e.slug })
+    val titleAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "title").get { e -> e.title })
+    val imageAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "image").get { e -> e.image })
+    val perexAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "perex").get { e -> e.perex })
+    val bodyMarkdownAttr: Attribute<Article, String> =
+        add(Attr.ofString(cls(), "body_markdown").get { e -> e.bodyMarkdown })
+    val bodyAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "body").get { e -> e.body })
+    val keywordsAttr: Attribute<Article, String> = add(Attr.ofString(cls(), "keywords").get { e -> e.keywords })
+    val showOnBlogAttr: Attribute<Article, Boolean> =
+        add(Attr.ofBoolean(cls(), "show_on_blog").get { e -> e.showOnBlog })
     val infoAttributes: List<Attribute<Article, *>> = listOf(
         idAttr,
         validFromAttr,
@@ -50,7 +52,37 @@ open class ArticleMapper() : ValidityAssetMapper<Article, ArticleFilter>() {
             createAssetAttributes(attributeSource, attributes as List<Attribute<*, *>>, aliasPrefix)
         val validity: Validity = createValidity(attributeSource, attributes as List<Attribute<*, *>>, aliasPrefix)
         // TODO RBe: Implement getValueFromSourceOrElse
-        return Article(assetAttributes, validity, if (projectedAttributeNames.contains(externalIdAttr.getName())) externalIdAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else null, if (projectedAttributeNames.contains(slugAttr.getName())) slugAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else "", if (projectedAttributeNames.contains(titleAttr.getName())) titleAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else "", if (projectedAttributeNames.contains(imageAttr.getName())) imageAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else null, if (projectedAttributeNames.contains(perexAttr.getName())) perexAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else "", if (projectedAttributeNames.contains(bodyMarkdownAttr.getName())) bodyMarkdownAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else "", if (projectedAttributeNames.contains(bodyAttr.getName())) bodyAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else "", if (projectedAttributeNames.contains(keywordsAttr.getName())) keywordsAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else "", if (projectedAttributeNames.contains(showOnBlogAttr.getName())) showOnBlogAttr.getValueFromSource(attributeSource, aliasPrefix ?: "") else false)
+        return Article(
+            assetAttributes,
+            validity,
+            if (projectedAttributeNames.contains(externalIdAttr.name))
+                externalIdAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else null,
+            if (projectedAttributeNames.contains(slugAttr.name))
+                slugAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else "",
+            if (projectedAttributeNames.contains(titleAttr.name))
+                titleAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else "",
+            if (projectedAttributeNames.contains(imageAttr.name))
+                imageAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else null,
+            if (projectedAttributeNames.contains(perexAttr.name))
+                perexAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else "",
+            if (projectedAttributeNames.contains(bodyMarkdownAttr.name))
+                bodyMarkdownAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else "",
+            if (projectedAttributeNames.contains(bodyAttr.name))
+                bodyAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else "",
+            if (projectedAttributeNames.contains(keywordsAttr.name))
+                keywordsAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else "",
+            if (projectedAttributeNames.contains(showOnBlogAttr.name))
+                showOnBlogAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
+            else false
+        )
     }
 
     override fun composeFilterConditions(filter: ArticleFilter): MutableList<Condition> {
@@ -64,12 +96,13 @@ open class ArticleMapper() : ValidityAssetMapper<Article, ArticleFilter>() {
                 )
             )
         }
-        filter.withExternalId?.let { withExternalId -> conditions.add(SqlCondition(externalIdAttr.name + " IS" +(if (withExternalId) " NOT" else "") + " NULL")) }
+        filter.withExternalId?.let { withExternalId -> conditions.add(SqlCondition(externalIdAttr.name + " IS" + (if (withExternalId) " NOT" else "") + " NULL")) }
         filter.categoryId?.let { categoryId ->
             val params = mutableListOf<Any>()
             params.add(categoryId)
             conditions.add(
-                SqlCondition("id IN (SELECT article_id FROM article_category WHERE category_id = ?)",
+                SqlCondition(
+                    "id IN (SELECT article_id FROM article_category WHERE category_id = ?)",
                     params
                 )
             )

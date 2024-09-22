@@ -51,6 +51,7 @@ abstract class AssetMapper<T : Asset, F : AssetFilter> : DynamicEntityMapper<T, 
 
     protected fun createAssetAttributes(
         attributeSource: AttributeSource,
+        @Suppress("Unused", "UNUSED_PARAMETER")
         attributes: List<Attribute<*, *>>,
         aliasPrefix: String?
     ): AssetAttributes {

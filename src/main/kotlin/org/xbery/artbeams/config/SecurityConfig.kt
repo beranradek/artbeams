@@ -55,25 +55,26 @@ open class SecurityConfig {
                     .permitAll()
             }
             .exceptionHandling { it.accessDeniedPage("/accessDenied") }
-            .headers().xssProtection()
-            .and()
-            .addHeaderWriter { request, response ->
-                // For Content Security Policy header configuration,
-                // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-                // and https://www.baeldung.com/spring-security-csp
-                // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
-                if (!response.containsHeader(CSP_HEADER_NAME)) {
-                    val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
-                    // sha256 is included for style element added additionally by Facebook's sdk.js
-                    response.setHeader(
-                        CSP_HEADER_NAME,
-                        "style-src 'self' connect.facebook.net www.facebook.com www.google.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
-                        "script-src 'self' connect.facebook.net www.facebook.com www.google.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
-                        "object-src 'none'; " +
-                        "form-action 'self'; " +
-                        "base-uri 'self'; " +
-                        "frame-src www.facebook.com web.facebook.com www.google.com"
-                    )
+            .headers { headersCustomizer ->
+                headersCustomizer.xssProtection {}
+                    .addHeaderWriter { request, response ->
+                    // For Content Security Policy header configuration,
+                    // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+                    // and https://www.baeldung.com/spring-security-csp
+                    // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
+                    if (!response.containsHeader(CSP_HEADER_NAME)) {
+                        val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+                        // sha256 is included for style element added additionally by Facebook's sdk.js
+                        response.setHeader(
+                            CSP_HEADER_NAME,
+                            "style-src 'self' connect.facebook.net www.facebook.com www.google.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
+                                    "script-src 'self' connect.facebook.net www.facebook.com www.google.com staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
+                                    "object-src 'none'; " +
+                                    "form-action 'self'; " +
+                                    "base-uri 'self'; " +
+                                    "frame-src www.facebook.com web.facebook.com www.google.com"
+                        )
+                    }
                 }
             }
 
@@ -94,12 +95,20 @@ open class SecurityConfig {
         val notResourcesMatcher = NegatedRequestMatcher(AndRequestMatcher(resourceMatchers))
         val notResourcesHeaderWriter =
             DelegatingRequestMatcherHeaderWriter(notResourcesMatcher, CacheControlHeadersWriter())
-        http.headers().cacheControl().disable().addHeaderWriter(notResourcesHeaderWriter)
+        http.headers { headersCustomizer ->
+            headersCustomizer.cacheControl { cacheControlCustomizer ->
+                cacheControlCustomizer.disable().addHeaderWriter(notResourcesHeaderWriter)
+            }
+        }
         // This is needed for generating _csrf.token that is stored in HTTP session also for public POST forms like commentAdd:
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-        // Allowing CSRF requests for future public API
-        // CORS headers should be configured for future public API
-        http.csrf().ignoringRequestMatchers("/api/**").configure(http)
+        http.sessionManagement { sessionManagementCustomizer ->
+            sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+        }
+        .csrf { csrfCustomizer ->
+            // Allowing CSRF requests for future public API
+            // CORS headers should be configured for future public API
+            csrfCustomizer.ignoringRequestMatchers("/api/**").configure(http)
+        }
 
         return http.build()
     }

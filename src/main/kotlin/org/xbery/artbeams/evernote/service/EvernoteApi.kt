@@ -115,8 +115,8 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
                 noteDetail.guid,
                 noteDetail.title,
                 body,
-                noteDetail.created?.let { Instant.ofEpochMilli(it) } ?: Instant.now(),
-                noteDetail.updated?.let { Instant.ofEpochMilli(it) } ?: Instant.now()
+                Instant.ofEpochMilli(noteDetail.created),
+                Instant.ofEpochMilli(noteDetail.updated)
             )
         }
     }
@@ -126,8 +126,8 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         val notebooks = noteStoreClient.listNotebooks(evernoteConfig.getDeveloperToken())
         Logger.info("${notebooks.size} notebooks found")
         return notebooks.find { nb ->
-            val nbNameNorm: String = normalizationHelper.normalize(nb.name)
-            nbNameNorm != null && nbNameNorm == notebookNameNormalized
+            val nbNameNorm = normalizationHelper.normalize(nb.name)
+            nbNameNorm == notebookNameNormalized
         }
     }
 
@@ -173,7 +173,7 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         // will be returned along with the auth token in the final OAuth request.
         // In that case, you don't need to make this call.
         val developerToken = evernoteConfig.getDeveloperToken()
-            if (developerToken == null || developerToken.trim().isEmpty()) {
+            if (developerToken.trim().isEmpty()) {
                 throw  IllegalStateException("Invalid Evernote developer token: $developerToken")
             }
         val noteStoreUrl = userStore.getNoteStoreUrl(developerToken)

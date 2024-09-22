@@ -101,7 +101,7 @@ open class EvernoteImporter(
     }
 
     private fun updateArticleWithNoteData(article: Article, note: Note): Article? {
-        if (note.body == null || note.body.trim().isEmpty()) {
+        if (note.body.trim().isEmpty()) {
             logger.info("Nothing to update from Evernote. Note is empty. Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
             return article
         }

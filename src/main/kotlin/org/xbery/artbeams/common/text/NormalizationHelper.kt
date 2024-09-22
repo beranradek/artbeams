@@ -8,7 +8,7 @@ import java.text.Normalizer
  */
 open class NormalizationHelper {
     fun normalize(str: String): String {
-        if (str == null || str.isEmpty()) return str
+        if (str.isEmpty()) return str
         val sb = StringBuilder()
         for (c: Char in str.toCharArray()) {
             if (Character.isLetterOrDigit(c)) sb.append(c)
@@ -17,7 +17,7 @@ open class NormalizationHelper {
     }
 
     fun toSlug(str: String): String {
-        if (str == null || str.isEmpty()) return str
+        if (str.isEmpty()) return str
         val sb = StringBuilder()
         for (c: Char in str.toCharArray()) {
             if (' ' == c) sb.append('-') else if (Character.isLetterOrDigit(c)) sb.append(c)
@@ -26,7 +26,7 @@ open class NormalizationHelper {
     }
 
     fun normalizeForFilesystem(str: String): String {
-        if (str == null || str.isEmpty()) return str
+        if (str.isEmpty()) return str
         val str2: String = str.replace(SpecialFilesystemCharsRegex,"")
         return removeDiacriticalMarks(str2)
     }

@@ -37,7 +37,7 @@ abstract class BaseController(private val common: ControllerComponents) {
         model["xlat"] = common.localisationRepository.getEntries()
         for (arg in args) {
             val second = arg.second
-            if (arg.first != null && second != null) {
+            if (second != null) {
                 model[arg.first] = second
             }
         }

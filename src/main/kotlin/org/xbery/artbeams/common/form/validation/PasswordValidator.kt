@@ -24,7 +24,7 @@ class PasswordValidator<T : ValidatedPasswordData>(
         val messages = mutableListOf<InterpolatedMessage>()
         if (ctx.validatedValue != null) {
             val data = ctx.validatedValue
-            if (data.password != null) {
+            if (data.password.isNotEmpty()) {
                 if (data.password.length < minLength) {
                     messages.add(
                         error(

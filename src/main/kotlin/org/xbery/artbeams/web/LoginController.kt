@@ -27,7 +27,7 @@ open class LoginController(common: ControllerComponents) : BaseController(common
 
     @GetMapping(value = ["/logout"], produces = [MediaType.TEXT_HTML_VALUE])
     fun logout(request: HttpServletRequest, response: HttpServletResponse): Any {
-        val auth: Authentication = SecurityContextHolder.getContext().authentication
+        val auth: Authentication? = SecurityContextHolder.getContext().authentication
         if (auth != null) {
             SecurityContextLogoutHandler().logout(request, response, auth)
         }

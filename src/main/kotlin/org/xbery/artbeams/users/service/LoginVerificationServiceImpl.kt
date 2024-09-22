@@ -22,7 +22,6 @@ open class LoginVerificationServiceImpl(
     private val passwordHash = Pbkdf2PasswordHash()
 
     override fun verifyUser(username: String, password: String): User? {
-        assert( username != null) { "Username should be specified" }
         val user = userRepository.findByLogin(username)
         return if (user != null) {
             if (passwordHash.verify(password, PasswordCredential.fromSerialized(user.password))) {

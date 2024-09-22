@@ -20,7 +20,7 @@ import kotlin.reflect.javaType
 open class DataClassInstantiator : Instantiator {
     override fun <T> instantiate(objClass: Class<T>, cd: ConstructionDescription, vararg args: Any?): T {
         val constructor = getPrimaryConstructor(objClass)
-        return constructor.call(*args) as T
+        return objClass.cast(constructor.call(*args))
     }
 
     @OptIn(ExperimentalStdlibApi::class)

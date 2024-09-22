@@ -3,6 +3,7 @@ package org.xbery.artbeams.config.repository
 import kotlinx.datetime.Instant
 import java.math.BigDecimal
 import kotlin.reflect.KClass
+import kotlin.reflect.cast
 
 /**
  * Fetches key-value pairs for application configuration.
@@ -44,7 +45,8 @@ interface AppConfig {
             String::class -> value
             else -> null
         }
-        return parsed as? T ?: throw IllegalArgumentException("Cannot parse '$value' to ${valueClass.simpleName}")
+        if (parsed == null) throw IllegalArgumentException("Cannot parse '$value' to ${valueClass.simpleName}")
+        return valueClass.cast(parsed)
     }
 
     /**

@@ -8,7 +8,10 @@ import org.xbery.overview.sql.mapper.MySqlSchemaBuilder
  * @author Radek Beran
  */
 object DbTableSchemaBuilder {
-    fun main(args: Array<String>) {
+    fun main(
+        @Suppress("Unused", "UNUSED_PARAMETER")
+        args: Array<String>
+    ) {
         println(generateSchema(EntityAccessCountMapper.Instance))
     }
 

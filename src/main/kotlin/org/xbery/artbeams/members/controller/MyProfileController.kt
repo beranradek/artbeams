@@ -8,6 +8,7 @@ import net.formio.validation.ValidationResult
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
@@ -22,6 +23,7 @@ import org.xbery.artbeams.users.service.UserService
  *
  * @author Radek Beran
  */
+@RequestMapping("/clenska-sekce/muj-profil")
 @Controller
 open class MyProfileController(
     private val userRepository: UserRepository,
@@ -31,7 +33,7 @@ open class MyProfileController(
 
     private val editFormDef: FormMapping<MyProfile> = MyProfileForm.definition
 
-    @GetMapping("/clenska-sekce/muj-profil")
+    @GetMapping
     fun editForm(request: HttpServletRequest): Any {
         return tryOrErrorResponse(request) {
             val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
@@ -40,7 +42,7 @@ open class MyProfileController(
         }
     }
 
-    @PostMapping("/clenska-sekce/muj-profil")
+    @PostMapping
     fun save(request: HttpServletRequest): Any {
         return tryOrErrorResponse(request) {
             val params = ServletRequestParams(request)
