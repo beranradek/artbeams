@@ -1,7 +1,7 @@
-<#import "/standalonePageLayout.ftl" as layout>
+<#import "/loginLikePageLayout.ftl" as layout>
 <@layout.page>
 <div class="centered-box password-recovery-form">
-  <h3>${xlat['passwordRecovery.header']}</h3>
+  <h2 class="logo">${xlat['passwordRecovery.header']}</h2>
 
   <p>${xlat['passwordRecovery.sent']}</p>
 </div>

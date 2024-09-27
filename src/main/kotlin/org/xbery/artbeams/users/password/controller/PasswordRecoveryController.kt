@@ -29,7 +29,7 @@ import org.xbery.artbeams.users.password.recovery.service.PasswordRecoveryServic
 open class PasswordRecoveryController(
     private val passwordRecoveryService: PasswordRecoveryService,
     private val recaptchaService: RecaptchaService,
-    common: ControllerComponents
+    private val common: ControllerComponents
 ) : BaseController(common) {
 
     private val passwordRecoveryFormDef: FormMapping<PasswordRecoveryData> = PasswordRecoveryForm.definition
@@ -83,7 +83,8 @@ open class PasswordRecoveryController(
         val passwordRecoveryForm = passwordRecoveryFormDef.fill(formData)
         val model = createModel(
             request,
-            "passwordRecoveryForm" to passwordRecoveryForm
+            "passwordRecoveryForm" to passwordRecoveryForm,
+            "userAccessReport" to common.userAccessService.getUserAccessReport(request)
         )
         return ModelAndView("$TPL_BASE_PATH/passwordRecovery", model)
     }

@@ -1,0 +1,102 @@
+/* Globals */
+img {
+  max-width: 100%;
+}
+
+.navbar-dark {
+  /* Navbar links color, see https://getbootstrap.com/docs/5.3/components/navbar/ */
+  --bs-navbar-color: white;
+  --bs-navbar-hover-color: white;
+  --bs-navbar-disabled-color: white;
+  --bs-navbar-active-color: white;
+  --bs-navbar-brand-color: white;
+  --bs-navbar-brand-hover-color: white;
+}
+
+/* My layout customizations... */
+.bg-dark {
+  background-color: #99ceff!important;
+}
+
+.container {
+  max-width: 1640px;
+}
+
+.centered-box {
+  margin: auto;
+  margin-top: 4rem;
+}
+
+body section.background-image {
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    left: 0;
+    padding-right: 40px;
+    position: fixed;
+    text-align: right;
+    width: 100%;
+}
+
+.fade-out {
+    height: 100%;
+    opacity: 1;
+    position: absolute;
+    transition: opacity 1s linear;
+    width: 100%;
+}
+
+.login-background-image-desktop {
+    background-image: url('/media/login-background-desktop.webp');
+    background-color: white;
+}
+
+.login-background-image-mobile {
+    background-image: url('/media/login-background-mobile.webp');
+    background-color: white;
+}
+
+.page-content {
+    position: relative;
+}
+
+.login-form, .password-recovery-form {
+  width: 380px;
+  background: white;
+  background-clip: padding-box;
+  border: 10px solid rgba(12, 13, 13, .25);
+  border-radius: 10px;
+  margin: 20vh auto 10px;
+  max-width: 425px;
+  padding: 30px;
+  width: auto;
+}
+
+.password-setup-form {
+    width: 580px;
+    background: white;
+    background-clip: padding-box;
+    border: 10px solid rgba(12, 13, 13, .25);
+    border-radius: 10px;
+    margin: 20vh auto 10px;
+    max-width: 580px;
+    padding: 30px;
+    width: auto;
+}
+
+.logo {
+    background-color: #2f4b62; /* In sync with the login button */
+    color: #fff;
+    height: 80px;
+    left: -30px;
+    position: relative;
+    padding-top: 20px;
+    text-align: center;
+    top: -30px;
+    width: calc(100% + 60px);
+}
+
+.btn-primary {
+    background-color: #2f4b62;
+}

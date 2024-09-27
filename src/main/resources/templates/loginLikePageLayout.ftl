@@ -90,11 +90,12 @@
     <#-- NOTE: Improvement: Embedding critical CSSs as recommended by Google PageSpeed Insights -->
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="/static/css/common-styles.css" />
-    <link rel="stylesheet" type="text/css" href="/static/css/standalone-page-styles.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/login-like-page-styles.css" />
 
     <#include "/commonScripts.ftl">
   </head>
   <body class="d-flex flex-column h-100">
+    <section class="background-image<#if userAccessReport?? && userAccessReport.mobileDevice> login-background-image-mobile<#else> login-background-image-desktop</#if>"><div class="fade-out"></div></section>
     <main role="main" class="container page-content">
         <#nested/>
     </main><!-- /.container -->

@@ -33,7 +33,7 @@ open class PasswordSetupController(
     private val authorizationCodeValidator: AuthorizationCodeValidator,
     private val userService: UserService,
     private val loginService: LoginService,
-    common: ControllerComponents
+    private val common: ControllerComponents
 ) : BaseController(common) {
 
     private val passwordSetupFormDef: FormMapping<PasswordSetupData> = PasswordSetupForm.definition
@@ -86,7 +86,8 @@ open class PasswordSetupController(
         val passwordSetupForm = passwordSetupFormDef.fill(FormData(passwordSetupData, validationResult))
         val model = createModel(
             request,
-            "passwordSetupForm" to passwordSetupForm
+            "passwordSetupForm" to passwordSetupForm,
+            "userAccessReport" to common.userAccessService.getUserAccessReport(request)
         )
         return ModelAndView("$TPL_BASE_PATH/passwordSetup", model)
     }

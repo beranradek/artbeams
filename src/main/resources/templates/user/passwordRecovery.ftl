@@ -1,4 +1,4 @@
-<#import "/standalonePageLayout.ftl" as layout>
+<#import "/loginLikePageLayout.ftl" as layout>
 <#import "/forms.ftl" as forms>
 <@layout.page>
 <#assign fields = passwordRecoveryForm.fields>
@@ -7,7 +7,7 @@
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
       <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
 
-      <h3>${xlat['passwordRecovery.header']}</h3>
+      <h2 class="logo">${xlat['passwordRecovery.header']}</h2>
 
       <p>${xlat['passwordRecovery.instructions']}</p>
 

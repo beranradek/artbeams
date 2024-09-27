@@ -1,8 +1,9 @@
-<#import "/standalonePageLayout.ftl" as layout>
+<#import "/loginLikePageLayout.ftl" as layout>
 <@layout.page>
 
 <div class="centered-box login-form">
-    <h2>${xlat['website.title']}</h2>
+    <h2 class="logo">${xlat['website.title']}</h2>
+    <h3>Přihlásit se</h3>
     <#if _requestParameterError??>
         <div class="alert alert-danger" role="alert">Neplatný login nebo heslo.</div>
     </#if>

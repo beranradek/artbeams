@@ -17,11 +17,14 @@ import org.xbery.artbeams.common.controller.ControllerComponents
  * @author Radek Beran
  */
 @Controller
-open class LoginController(common: ControllerComponents) : BaseController(common) {
+open class LoginController(private val common: ControllerComponents) : BaseController(common) {
 
     @GetMapping(value = ["/login"], produces = [MediaType.TEXT_HTML_VALUE])
     fun loginForm(request: HttpServletRequest): Any {
-        val model = createModel(request)
+        val model = createModel(
+            request,
+            "userAccessReport" to common.userAccessService.getUserAccessReport(request)
+        )
         return ModelAndView(ADMIN_LOGIN_VIEW, model)
     }
 

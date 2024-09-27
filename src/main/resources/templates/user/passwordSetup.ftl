@@ -1,4 +1,4 @@
-<#import "/standalonePageLayout.ftl" as layout>
+<#import "/loginLikePageLayout.ftl" as layout>
 <#import "/forms.ftl" as forms>
 <@layout.page>
 <#assign fields = passwordSetupForm.fields>
@@ -6,7 +6,7 @@
     <form action="/password-setup" method="post">
       <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
-      <h3>${xlat['member.passwordSetup.header']}</h3>
+      <h2 class="logo">${xlat['member.passwordSetup.header']}</h2>
 
       <p>${xlat['user']}: ${fields.login.value!}</p>
 

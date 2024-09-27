@@ -38,29 +38,6 @@ img {
     margin-right: 4px;
 }
 
-.login-form {
-  margin: auto;
-  margin-top: 4rem;
-  width: 380px;
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-.password-setup-form {
-  margin: auto;
-  margin-top: 4rem;
-  width: 580px;
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-.password-recovery-form {
-  margin: auto;
-  margin-top: 4rem;
-  width: 380px;
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
 
 .footer {
   background-color: #f5f5f5;
