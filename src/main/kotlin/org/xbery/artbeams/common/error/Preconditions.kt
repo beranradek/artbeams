@@ -29,3 +29,13 @@ inline fun <T : Any> requireAuthorized(value: T?, lazyMessage: () -> Any): T {
         return value
     }
 }
+
+inline fun <T : Any> requireAccess(value: T?, lazyMessage: () -> Any): T {
+    if (value == null) {
+        val message = lazyMessage()
+        logger.info(message.toString())
+        throw ForbiddenException(message.toString())
+    } else {
+        return value
+    }
+}

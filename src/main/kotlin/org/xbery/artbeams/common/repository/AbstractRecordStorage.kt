@@ -1,10 +1,6 @@
 package org.xbery.artbeams.common.repository
 
-import org.jooq.DSLContext
-import org.jooq.Field
-import org.jooq.RecordUnmapper
-import org.jooq.Table
-import org.jooq.UpdatableRecord
+import org.jooq.*
 
 /**
  * Minimalistic abstract class for storing data to database. It can serve as a base

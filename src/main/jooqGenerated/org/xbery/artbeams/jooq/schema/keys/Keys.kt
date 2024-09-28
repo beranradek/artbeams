@@ -23,6 +23,7 @@ import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
+import org.xbery.artbeams.jooq.schema.tables.UserProduct
 import org.xbery.artbeams.jooq.schema.tables.UserRole
 import org.xbery.artbeams.jooq.schema.tables.Users
 import org.xbery.artbeams.jooq.schema.tables.records.AntispamQuizRecord
@@ -40,6 +41,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.QueueRecord
 import org.xbery.artbeams.jooq.schema.tables.records.RolesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserAccessRecord
+import org.xbery.artbeams.jooq.schema.tables.records.UserProductRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserRoleRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
 
@@ -64,6 +66,7 @@ val CONSTRAINT_C: UniqueKey<ProductsRecord> = Internal.createUniqueKey(Products.
 val CONSTRAINT_66: UniqueKey<QueueRecord> = Internal.createUniqueKey(Queue.QUEUE, DSL.name("CONSTRAINT_66"), arrayOf(Queue.QUEUE.ID), true)
 val CONSTRAINT_6: UniqueKey<RolesRecord> = Internal.createUniqueKey(Roles.ROLES, DSL.name("CONSTRAINT_6"), arrayOf(Roles.ROLES.ID), true)
 val CONSTRAINT_D: UniqueKey<UserAccessRecord> = Internal.createUniqueKey(UserAccess.USER_ACCESS, DSL.name("CONSTRAINT_D"), arrayOf(UserAccess.USER_ACCESS.ID), true)
+val CONSTRAINT_48: UniqueKey<UserProductRecord> = Internal.createUniqueKey(UserProduct.USER_PRODUCT, DSL.name("CONSTRAINT_48"), arrayOf(UserProduct.USER_PRODUCT.ID), true)
 val CONSTRAINT_6A: UniqueKey<UsersRecord> = Internal.createUniqueKey(Users.USERS, DSL.name("CONSTRAINT_6A"), arrayOf(Users.USERS.ID), true)
 
 // -------------------------------------------------------------------------
@@ -73,5 +76,7 @@ val CONSTRAINT_6A: UniqueKey<UsersRecord> = Internal.createUniqueKey(Users.USERS
 val PARENT_ID_FK: ForeignKey<CommentsRecord, CommentsRecord> = Internal.createForeignKey(Comments.COMMENTS, DSL.name("parent_id_fk"), arrayOf(Comments.COMMENTS.PARENT_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_DC, arrayOf(Comments.COMMENTS.ID), true)
 val ORDER_FK: ForeignKey<OrderItemsRecord, OrdersRecord> = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("order_fk"), arrayOf(OrderItems.ORDER_ITEMS.ORDER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3, arrayOf(Orders.ORDERS.ID), true)
 val ORDERED_PRODUCT_FK: ForeignKey<OrderItemsRecord, ProductsRecord> = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("ordered_product_fk"), arrayOf(OrderItems.ORDER_ITEMS.PRODUCT_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C, arrayOf(Products.PRODUCTS.ID), true)
+val PRODUCT_FK: ForeignKey<UserProductRecord, ProductsRecord> = Internal.createForeignKey(UserProduct.USER_PRODUCT, DSL.name("product_fk"), arrayOf(UserProduct.USER_PRODUCT.PRODUCT_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C, arrayOf(Products.PRODUCTS.ID), true)
+val USER_FK: ForeignKey<UserProductRecord, UsersRecord> = Internal.createForeignKey(UserProduct.USER_PRODUCT, DSL.name("user_fk"), arrayOf(UserProduct.USER_PRODUCT.USER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A, arrayOf(Users.USERS.ID), true)
 val FK_ROLE_ID: ForeignKey<UserRoleRecord, RolesRecord> = Internal.createForeignKey(UserRole.USER_ROLE, DSL.name("fk_role_id"), arrayOf(UserRole.USER_ROLE.ROLE_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6, arrayOf(Roles.ROLES.ID), true)
 val FK_USER_ID: ForeignKey<UserRoleRecord, UsersRecord> = Internal.createForeignKey(UserRole.USER_ROLE, DSL.name("fk_user_id"), arrayOf(UserRole.USER_ROLE.USER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A, arrayOf(Users.USERS.ID), true)

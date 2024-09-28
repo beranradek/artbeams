@@ -12,6 +12,7 @@ import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.context.OriginStamp
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
+import org.xbery.artbeams.users.domain.CommonRoles
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.Role
 import org.xbery.artbeams.users.domain.User
@@ -25,8 +26,6 @@ import org.xbery.artbeams.users.service.UserService
  */
 @Component
 open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
-    private val adminRoleName: String = "admin"
-    private val memberRoleName: String = "member"
     private val adminUserLogin: String = "admin"
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -38,8 +37,8 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         val userService: UserService = context.getBean(UserService::class.java)
         val appConfig: AppConfig = context.getBean(AppConfig::class.java)
         val localisationRepository: LocalisationRepository = context.getBean(LocalisationRepository::class.java)
-        val adminRole = findOrCreateRole(roleRepository, adminRoleName)
-        findOrCreateRole(roleRepository, memberRoleName)
+        val adminRole = findOrCreateRole(roleRepository, CommonRoles.ADMIN.roleName)
+        findOrCreateRole(roleRepository, CommonRoles.MEMBER.roleName)
         findOrCreateAdminUser(userRepository, userService, adminRole)
         loadConfig(appConfig)
         loadLocalisation(localisationRepository)

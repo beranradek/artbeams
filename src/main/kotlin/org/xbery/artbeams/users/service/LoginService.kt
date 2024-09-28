@@ -13,5 +13,5 @@ interface LoginService {
     /**
      * Logs the user in.
      */
-    fun loginUser(user: User, request: HttpServletRequest)
+    fun loginUser(user: User, plainPassword: String, request: HttpServletRequest)
 }

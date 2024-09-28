@@ -4,8 +4,6 @@ import org.jooq.Converter
 
 /**
  * Custom converter of DB [java.time.LocalDate] to [kotlinx.datetime.LocalDate] and vice versa.
- *
- * @author Jiri Krch
  */
 internal class LocalDateConverter : Converter<java.time.LocalDate, kotlinx.datetime.LocalDate> {
 

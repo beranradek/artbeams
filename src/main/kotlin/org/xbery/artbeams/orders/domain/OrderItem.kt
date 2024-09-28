@@ -2,6 +2,7 @@ package org.xbery.artbeams.orders.domain
 
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.common.repository.IdentifiedEntity
 import java.time.Instant
 
 /**

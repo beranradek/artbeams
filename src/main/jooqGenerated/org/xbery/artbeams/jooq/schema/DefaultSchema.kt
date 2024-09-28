@@ -25,6 +25,7 @@ import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
+import org.xbery.artbeams.jooq.schema.tables.UserProduct
 import org.xbery.artbeams.jooq.schema.tables.UserRole
 import org.xbery.artbeams.jooq.schema.tables.Users
 
@@ -123,6 +124,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val USER_ACCESS: UserAccess get() = UserAccess.USER_ACCESS
 
     /**
+     * The table <code>user_product</code>.
+     */
+    val USER_PRODUCT: UserProduct get() = UserProduct.USER_PRODUCT
+
+    /**
      * The table <code>user_role</code>.
      */
     val USER_ROLE: UserRole get() = UserRole.USER_ROLE
@@ -151,6 +157,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         Queue.QUEUE,
         Roles.ROLES,
         UserAccess.USER_ACCESS,
+        UserProduct.USER_PRODUCT,
         UserRole.USER_ROLE,
         Users.USERS
     )

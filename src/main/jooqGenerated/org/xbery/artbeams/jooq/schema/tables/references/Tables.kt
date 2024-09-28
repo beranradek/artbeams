@@ -20,6 +20,7 @@ import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
+import org.xbery.artbeams.jooq.schema.tables.UserProduct
 import org.xbery.artbeams.jooq.schema.tables.UserRole
 import org.xbery.artbeams.jooq.schema.tables.Users
 
@@ -104,6 +105,11 @@ val ROLES: Roles = Roles.ROLES
  * The table <code>user_access</code>.
  */
 val USER_ACCESS: UserAccess = UserAccess.USER_ACCESS
+
+/**
+ * The table <code>user_product</code>.
+ */
+val USER_PRODUCT: UserProduct = UserProduct.USER_PRODUCT
 
 /**
  * The table <code>user_role</code>.

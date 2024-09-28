@@ -10,7 +10,8 @@
       <th scope="col">First name</th>
       <th scope="col">Last name</th>
       <th scope="col">Last modified</th>
-      <th scope="col">Actions</th>
+      <th scope="col">Edit</th>
+      <th scope="col">Login as</th>
     </tr>
   </thead>
   <tbody>
@@ -20,7 +21,15 @@
         <td>${user.firstName!}</td>
         <td>${user.lastName!}</td>
         <td><#if user.common.modified??>${user.common.modified?string["d.M.yyyy, HH:mm"]}</#if></td>
-        <td><a href="/admin/users/${user.id}/edit">Edit</a></td>
+        <td>
+            <a href="/admin/users/${user.id}/edit">Edit</a>
+        </td>
+        <td>
+            <form action="/admin/users/${user.id}/login-as" method="POST">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button type="submit" class="btn">Login as</button>
+            </form>
+        </td>
     </tr>
 </#list>
   </tbody>

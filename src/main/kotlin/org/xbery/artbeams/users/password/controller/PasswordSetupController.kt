@@ -72,7 +72,7 @@ open class PasswordSetupController(
                 ) ?: throw NotFoundException("User $login was not found")
 
                 // Automatically log the user in
-                userService.findByLogin(login)?.let { loginService.loginUser(it, request) }
+                userService.findByLogin(login)?.let { loginService.loginUser(it, passwordSetupData.password, request) }
                 redirect("/clenska-sekce")
             }
         }

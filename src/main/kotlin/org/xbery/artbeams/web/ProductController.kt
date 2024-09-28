@@ -25,7 +25,7 @@ import org.xbery.artbeams.common.antispam.recaptcha.service.RecaptchaService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.UnauthorizedException
-import org.xbery.artbeams.common.error.requireAuthorized
+import org.xbery.artbeams.common.error.requireAccess
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.form.FormErrors
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
@@ -180,17 +180,17 @@ open class ProductController(
         return tryOrErrorResponse(request) {
             val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
             val productFileName = requireFound(product.fileName) { "Product $slug has no file name" }
-            val email = requireAuthorized(findEmailInRequest(request)) { "Email is missing" }
+            val email = requireAccess(findEmailInRequest(request)) { "Email is missing" }
 
             // User must exist and must confirm the consent before he/she can download the product
-            var user = requireAuthorized(userService.findByEmail(email)) { "User with email $email was not found" }
+            var user = requireAccess(userService.findByEmail(email)) { "User with email $email was not found" }
             if (user.consent == null) throw UnauthorizedException("User with email $email has not confirmed the consent")
 
             // Update user with full name from request if it is present (and not set in user entity yet)
             updateUserWithFullName(request, user)
 
             // Check an order of the product for given user exists
-            val orderItem = requireAuthorized(orderService.findOrderItemOfUser(user.id, product.id)) {
+            val orderItem = requireAccess(orderService.findOrderItemOfUser(user.id, product.id)) {
                 "User with email $email has not ordered product $slug"
             }
             if (orderItem.quantity <= 0) throw UnauthorizedException(

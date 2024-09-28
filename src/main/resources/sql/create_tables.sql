@@ -197,5 +197,15 @@ CREATE TABLE auth_code (
     used timestamp
 );
 
-ALTER TABLE auth_code ADD CONSTRAINT AUTH_CODE_PKEY PRIMARY KEY (code, purpose, user_id);
-CREATE INDEX IDX_AUTH_CODE_USER_ID ON auth_code (user_id);
+ALTER TABLE auth_code ADD CONSTRAINT auth_code_pkey PRIMARY KEY (code, purpose, user_id);
+CREATE INDEX idx_auth_code_user_id ON auth_code (user_id);
+
+CREATE TABLE user_product (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+	user_id VARCHAR(40) NOT NULL,
+	product_id VARCHAR(40) NOT NULL,
+	created timestamp NOT NULL
+);
+
+ALTER TABLE user_product ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES users (id);
+ALTER TABLE user_product ADD CONSTRAINT product_fk FOREIGN KEY (product_id) REFERENCES products (id);

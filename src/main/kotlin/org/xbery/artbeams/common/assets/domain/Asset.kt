@@ -1,5 +1,6 @@
 package org.xbery.artbeams.common.assets.domain
 
+import org.xbery.artbeams.common.repository.IdentifiedEntity
 import java.io.Serializable
 import java.time.Instant
 
@@ -8,9 +9,9 @@ import java.time.Instant
  *
  * @author Radek Beran
  */
-abstract class Asset() : Serializable {
+abstract class Asset : Serializable, IdentifiedEntity {
     abstract val common: AssetAttributes
-    val id: String get() = common.id
+    override val id: String get() = common.id
     val created: Instant get() = common.created
     val createdBy: String get() = common.createdBy
     val modified: Instant get() = common.modified
