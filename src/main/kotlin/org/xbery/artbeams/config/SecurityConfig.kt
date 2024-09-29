@@ -13,6 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.xbery.artbeams.members.controller.MemberSectionController
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 
 
@@ -39,7 +40,7 @@ open class SecurityConfig {
                     .hasAuthority("admin")
             }
             .authorizeHttpRequests { request ->
-                request.requestMatchers(AntPathRequestMatcher("/clenska-sekce/**"))
+                request.requestMatchers(AntPathRequestMatcher(MemberSectionController.MEMBER_SECTION_PATH + "/**"))
                     .hasAuthority("member")
             }
             .authorizeHttpRequests { request ->

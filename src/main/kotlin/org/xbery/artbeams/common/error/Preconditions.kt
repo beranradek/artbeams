@@ -20,7 +20,7 @@ inline fun <T : Any> requireFound(value: T?, lazyMessage: () -> Any): T {
     }
 }
 
-inline fun <T : Any> requireAuthorized(value: T?, lazyMessage: () -> Any): T {
+inline fun <T : Any> requireAuthenticated(value: T?, lazyMessage: () -> Any): T {
     if (value == null) {
         val message = lazyMessage()
         logger.info(message.toString())
@@ -30,7 +30,7 @@ inline fun <T : Any> requireAuthorized(value: T?, lazyMessage: () -> Any): T {
     }
 }
 
-inline fun <T : Any> requireAccess(value: T?, lazyMessage: () -> Any): T {
+inline fun <T : Any> requireAuthorized(value: T?, lazyMessage: () -> Any): T {
     if (value == null) {
         val message = lazyMessage()
         logger.info(message.toString())

@@ -5,7 +5,9 @@ package org.xbery.artbeams.userproducts.domain
  *
  * @author Radek Beran
  */
-data class UserProduct(
+data class UserProductDetail(
     val id: String,
-    val productName: String
+    val title: String,
+    val slug: String,
+    val subtitle: String?
 )

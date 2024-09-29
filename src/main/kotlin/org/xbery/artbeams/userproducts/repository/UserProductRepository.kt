@@ -1,23 +1,40 @@
 package org.xbery.artbeams.userproducts.repository
 
+import kotlinx.datetime.Clock
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
 import org.xbery.artbeams.jooq.schema.tables.references.USER_PRODUCT
-import org.xbery.artbeams.userproducts.domain.UserProduct
+import org.xbery.artbeams.userproducts.domain.UserProductDetail
+import org.xbery.artbeams.userproducts.domain.UserProductInfo
+import java.util.*
 
 /**
  * @author Radek Beran
  */
 @Repository
-internal class UserProductRepository(
+class UserProductRepository(
     private val dsl: DSLContext
 ) {
 
-    fun findUserProducts(userId: String): List<UserProduct> {
+    /**
+     * Adds a product to user's library.
+     * @return true if the product was added, false if it was already present in the library
+     */
+    fun addProductToUserLibrary(userId: String, productId: String): Boolean {
+        return dsl.insertInto(USER_PRODUCT)
+            .set(USER_PRODUCT.ID, UUID.randomUUID().toString())
+            .set(USER_PRODUCT.USER_ID, userId)
+            .set(USER_PRODUCT.PRODUCT_ID, productId)
+            .set(USER_PRODUCT.CREATED, Clock.System.now())
+            .execute() == 1
+    }
+
+    fun findUserProducts(userId: String): List<UserProductInfo> {
         return dsl.select(
             USER_PRODUCT.ID,
-            PRODUCTS.TITLE
+            PRODUCTS.TITLE,
+            PRODUCTS.SLUG
         )
             .from(USER_PRODUCT)
             .innerJoin(PRODUCTS).on(USER_PRODUCT.PRODUCT_ID.eq(PRODUCTS.ID))
@@ -26,9 +43,33 @@ internal class UserProductRepository(
             )
             .orderBy(USER_PRODUCT.CREATED.desc()) // from newest to oldest
             .fetch { record ->
-                UserProduct(
+                UserProductInfo(
                     id = requireNotNull(record[USER_PRODUCT.ID]),
-                    productName = requireNotNull(record[PRODUCTS.TITLE])
+                    title = requireNotNull(record[PRODUCTS.TITLE]),
+                    slug = requireNotNull(record[PRODUCTS.SLUG]),
+                    subtitle = ""
+                )
+            }
+    }
+
+    fun findUserProduct(userId: String, productSlug: String): UserProductDetail? {
+        return dsl.select(
+            USER_PRODUCT.ID,
+            PRODUCTS.TITLE,
+            PRODUCTS.SLUG
+        )
+            .from(USER_PRODUCT)
+            .innerJoin(PRODUCTS).on(USER_PRODUCT.PRODUCT_ID.eq(PRODUCTS.ID))
+            .where(
+                USER_PRODUCT.USER_ID.eq(userId),
+                PRODUCTS.SLUG.eq(productSlug)
+            )
+            .fetchOne { record ->
+                UserProductDetail(
+                    id = requireNotNull(record[USER_PRODUCT.ID]),
+                    title = requireNotNull(record[PRODUCTS.TITLE]),
+                    slug = requireNotNull(record[PRODUCTS.SLUG]),
+                    subtitle = ""
                 )
             }
     }

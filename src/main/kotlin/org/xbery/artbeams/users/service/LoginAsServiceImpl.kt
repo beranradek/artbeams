@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.xbery.artbeams.common.error.requireAccess
+import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.users.domain.CommonRoles
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
@@ -21,7 +21,7 @@ class LoginAsServiceImpl(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun loginAsUser(currentUser: User, asUser: User, request: HttpServletRequest) {
-        requireAccess(currentUser.roles.find { it.name == CommonRoles.ADMIN.roleName }) {
+        requireAuthorized(currentUser.roles.find { it.name == CommonRoles.ADMIN.roleName }) {
             "User ${currentUser.login} is not authorized to login as another user"
         }
 

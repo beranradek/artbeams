@@ -11,7 +11,7 @@ import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 
 /**
- * Implementation of {@link LoginService}.
+ * Implementation of [LoginService].
  * @author Radek Beran
  */
 @Service

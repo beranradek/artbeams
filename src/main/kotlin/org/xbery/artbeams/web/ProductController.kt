@@ -25,7 +25,7 @@ import org.xbery.artbeams.common.antispam.recaptcha.service.RecaptchaService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.UnauthorizedException
-import org.xbery.artbeams.common.error.requireAccess
+import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.form.FormErrors
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
@@ -38,6 +38,7 @@ import org.xbery.artbeams.media.repository.MediaRepository
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.service.ProductService
+import org.xbery.artbeams.userproducts.service.UserProductService
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.users.service.UserSubscriptionService
@@ -56,6 +57,7 @@ open class ProductController(
     private val userSubscriptionService: UserSubscriptionService,
     private val userService: UserService,
     private val orderService: OrderService,
+    private val userProductService: UserProductService,
     private val mediaRepository: MediaRepository,
     private val mailSender: MailgunMailSender,
     private val mailingApi: MailingApi,
@@ -155,15 +157,15 @@ open class ProductController(
             val fullNameOpt = findNameInRequest(request)
             val emailOpt = findEmailInRequest(request)
             if (emailOpt != null) {
-                var user = userService.findByEmail(emailOpt)
-                if (user != null) {
-                    userSubscriptionService.confirmConsent(fullNameOpt, user.email, product.id)
-                    mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
-                    // Redirect to this page without email and name parameters shown in URL
-                    redirect("/produkt/$slug/odeslano")
-                } else {
-                    unauthorized(request)
-                }
+                var user = requireAuthorized(userService.findByEmail(emailOpt)) { "User with email $emailOpt was not found" }
+                userSubscriptionService.confirmConsent(fullNameOpt, user.email, product.id)
+
+                // TODO: Check product is already paid if this is paid product
+                userProductService.addProductToUserLibrary(user.id, product.id)
+
+                mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
+                // Redirect to this page without email and name parameters shown in URL
+                redirect("/produkt/$slug/odeslano")
             } else {
                 renderProductArticle(request, product, product.slug + "-odeslano", false)
             }
@@ -180,17 +182,17 @@ open class ProductController(
         return tryOrErrorResponse(request) {
             val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
             val productFileName = requireFound(product.fileName) { "Product $slug has no file name" }
-            val email = requireAccess(findEmailInRequest(request)) { "Email is missing" }
+            val email = requireAuthorized(findEmailInRequest(request)) { "Email is missing" }
 
             // User must exist and must confirm the consent before he/she can download the product
-            var user = requireAccess(userService.findByEmail(email)) { "User with email $email was not found" }
+            var user = requireAuthorized(userService.findByEmail(email)) { "User with email $email was not found" }
             if (user.consent == null) throw UnauthorizedException("User with email $email has not confirmed the consent")
 
             // Update user with full name from request if it is present (and not set in user entity yet)
             updateUserWithFullName(request, user)
 
             // Check an order of the product for given user exists
-            val orderItem = requireAccess(orderService.findOrderItemOfUser(user.id, product.id)) {
+            val orderItem = requireAuthorized(orderService.findOrderItemOfUser(user.id, product.id)) {
                 "User with email $email has not ordered product $slug"
             }
             if (orderItem.quantity <= 0) throw UnauthorizedException(
@@ -198,6 +200,7 @@ open class ProductController(
             )
 
             // TODO: In case of paid product, check the order was already paid
+
             val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
                 "File $productFileName was not found"
             }

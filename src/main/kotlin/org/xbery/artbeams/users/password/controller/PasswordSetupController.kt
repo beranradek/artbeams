@@ -17,6 +17,7 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.common.security.SecureTokens
+import org.xbery.artbeams.members.controller.MemberSectionController
 import org.xbery.artbeams.users.password.controller.PasswordSetupController.Companion.PASSWORD_SETUP_PATH
 import org.xbery.artbeams.users.password.domain.PasswordSetupData
 import org.xbery.artbeams.users.service.LoginService
@@ -73,7 +74,7 @@ open class PasswordSetupController(
 
                 // Automatically log the user in
                 userService.findByLogin(login)?.let { loginService.loginUser(it, passwordSetupData.password, request) }
-                redirect("/clenska-sekce")
+                redirect(MemberSectionController.MEMBER_SECTION_PATH)
             }
         }
     }

@@ -23,9 +23,9 @@ import org.xbery.artbeams.users.service.UserService
  *
  * @author Radek Beran
  */
-@RequestMapping("/clenska-sekce/muj-profil")
+@RequestMapping(MemberSectionController.MEMBER_SECTION_PATH + "/muj-profil")
 @Controller
-open class MyProfileController(
+class MyProfileController(
     private val userRepository: UserRepository,
     private val userService: UserService,
     common: ControllerComponents
@@ -54,7 +54,7 @@ open class MyProfileController(
                 userService.saveMyProfile(myProfile, requestToOperationCtx(request)) ?: throw NotFoundException(
                     "User ${myProfile.login} was not found as currently logged user"
                 )
-                redirect("/clenska-sekce")
+                redirect(MemberSectionController.MEMBER_SECTION_PATH)
             }
         }
     }
