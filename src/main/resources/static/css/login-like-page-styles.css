@@ -97,6 +97,11 @@ body section.background-image {
     width: calc(100% + 60px);
 }
 
+.logo a {
+    text-decoration: none;
+    color: #fff;
+}
+
 .btn-primary {
     background-color: #2f4b62;
 }

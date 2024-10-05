@@ -161,6 +161,7 @@ open class ProductController(
                 userSubscriptionService.confirmConsent(fullNameOpt, user.email, product.id)
 
                 // TODO: Check product is already paid if this is paid product
+                // TODO: make user an member directly after subscription confirmation and store consent explicitly (?)
                 userProductService.addProductToUserLibrary(user.id, product.id)
 
                 mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)

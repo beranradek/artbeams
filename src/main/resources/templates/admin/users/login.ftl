@@ -2,7 +2,7 @@
 <@layout.page>
 
 <div class="centered-box login-form">
-    <h2 class="logo">${xlat['website.title']}</h2>
+    <h2 class="logo"><a href="/">${xlat['website.title']}</a></h2>
     <h3>Přihlásit se</h3>
     <#if _requestParameterError??>
         <div class="alert alert-danger" role="alert">Neplatný login nebo heslo.</div>
