@@ -111,6 +111,7 @@
       .card-image {
           min-height: 180px; /* Keep in sync with .card-title-desc top and .card-content min-height */
           border-radius: 20px 20px 0 0;
+          background-position: center center;
        }
       .card-title-desc {
         top: 200px;

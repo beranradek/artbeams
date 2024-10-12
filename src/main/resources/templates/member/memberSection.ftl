@@ -11,6 +11,7 @@
 .illustration-image {
   opacity: 0.9;
   border-radius: 20px;
+  margin-bottom: 20px;
 }
 </style>
 
