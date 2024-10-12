@@ -1,5 +1,13 @@
 # Changelog
 
+1.5.0 (12.10.2024)
+
+```sql
+ALTER TABLE products ADD COLUMN subtitle VARCHAR(256) DEFAULT NULL;
+ALTER TABLE products ADD listing_image VARCHAR(128) DEFAULT NULL;
+ALTER TABLE products ADD image VARCHAR(128) DEFAULT NULL;
+```
+
 1.4.1 (13.9.2024)
 * Common web base URL:
 ```sql

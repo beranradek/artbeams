@@ -14,6 +14,7 @@ import org.springframework.security.web.util.matcher.NegatedRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.xbery.artbeams.members.controller.MemberSectionController
+import org.xbery.artbeams.members.controller.MemberSectionController.Companion.MEMBER_SECTION_PATH
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 
 
@@ -63,7 +64,8 @@ open class SecurityConfig {
                     // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
                     // and https://www.baeldung.com/spring-security-csp
                     // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
-                    if (!response.containsHeader(CSP_HEADER_NAME)) {
+                    val requestPath = request.requestURI
+                    if (!requestPath.startsWith(MEMBER_SECTION_PATH) && !response.containsHeader(CSP_HEADER_NAME)) {
                         val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
                         // sha256 is included for style element added additionally by Facebook's sdk.js
                         response.setHeader(
@@ -97,9 +99,7 @@ open class SecurityConfig {
         val notResourcesHeaderWriter =
             DelegatingRequestMatcherHeaderWriter(notResourcesMatcher, CacheControlHeadersWriter())
         http.headers { headersCustomizer ->
-            headersCustomizer.cacheControl { cacheControlCustomizer ->
-                cacheControlCustomizer.disable().addHeaderWriter(notResourcesHeaderWriter)
-            }
+            headersCustomizer.addHeaderWriter(notResourcesHeaderWriter)
         }
         // This is needed for generating _csrf.token that is stored in HTTP session also for public POST forms like commentAdd:
         http.sessionManagement { sessionManagementCustomizer ->
@@ -108,7 +108,7 @@ open class SecurityConfig {
         .csrf { csrfCustomizer ->
             // Allowing CSRF requests for future public API
             // CORS headers should be configured for future public API
-            csrfCustomizer.ignoringRequestMatchers("/api/**").configure(http)
+            csrfCustomizer.ignoringRequestMatchers("/api/**")
         }
 
         return http.build()

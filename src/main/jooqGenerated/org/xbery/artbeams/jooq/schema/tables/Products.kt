@@ -94,9 +94,24 @@ open class Products(
     val TITLE: TableField<ProductsRecord, String?> = createField(DSL.name("title"), SQLDataType.VARCHAR(128).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
 
     /**
+     * The column <code>products.subtitle</code>.
+     */
+    val SUBTITLE: TableField<ProductsRecord, String?> = createField(DSL.name("subtitle"), SQLDataType.VARCHAR(256).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
+    /**
      * The column <code>products.filename</code>.
      */
     val FILENAME: TableField<ProductsRecord, String?> = createField(DSL.name("filename"), SQLDataType.VARCHAR(128).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
+    /**
+     * The column <code>products.listing_image</code>.
+     */
+    val LISTING_IMAGE: TableField<ProductsRecord, String?> = createField(DSL.name("listing_image"), SQLDataType.VARCHAR(128).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
+    /**
+     * The column <code>products.image</code>.
+     */
+    val IMAGE: TableField<ProductsRecord, String?> = createField(DSL.name("image"), SQLDataType.VARCHAR(128).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
 
     /**
      * The column <code>products.confirmation_mailing_group_id</code>.

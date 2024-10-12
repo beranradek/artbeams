@@ -45,17 +45,29 @@ open class ProductsRecord() : UpdatableRecordImpl<ProductsRecord>(Products.PRODU
         set(value): Unit = set(6, value)
         get(): String? = get(6) as String?
 
-    open var filename: String?
+    open var subtitle: String?
         set(value): Unit = set(7, value)
         get(): String? = get(7) as String?
 
-    open var confirmationMailingGroupId: String?
+    open var filename: String?
         set(value): Unit = set(8, value)
         get(): String? = get(8) as String?
 
-    open var mailingGroupId: String?
+    open var listingImage: String?
         set(value): Unit = set(9, value)
         get(): String? = get(9) as String?
+
+    open var image: String?
+        set(value): Unit = set(10, value)
+        get(): String? = get(10) as String?
+
+    open var confirmationMailingGroupId: String?
+        set(value): Unit = set(11, value)
+        get(): String? = get(11) as String?
+
+    open var mailingGroupId: String?
+        set(value): Unit = set(12, value)
+        get(): String? = get(12) as String?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -66,7 +78,7 @@ open class ProductsRecord() : UpdatableRecordImpl<ProductsRecord>(Products.PRODU
     /**
      * Create a detached, initialised ProductsRecord
      */
-    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, filename: String? = null, confirmationMailingGroupId: String? = null, mailingGroupId: String? = null): this() {
+    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, subtitle: String? = null, filename: String? = null, listingImage: String? = null, image: String? = null, confirmationMailingGroupId: String? = null, mailingGroupId: String? = null): this() {
         this.id = id
         this.created = created
         this.createdBy = createdBy
@@ -74,7 +86,10 @@ open class ProductsRecord() : UpdatableRecordImpl<ProductsRecord>(Products.PRODU
         this.modifiedBy = modifiedBy
         this.slug = slug
         this.title = title
+        this.subtitle = subtitle
         this.filename = filename
+        this.listingImage = listingImage
+        this.image = image
         this.confirmationMailingGroupId = confirmationMailingGroupId
         this.mailingGroupId = mailingGroupId
         resetChangedOnNotNull()

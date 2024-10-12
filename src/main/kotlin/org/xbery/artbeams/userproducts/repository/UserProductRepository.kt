@@ -34,7 +34,9 @@ class UserProductRepository(
         return dsl.select(
             USER_PRODUCT.ID,
             PRODUCTS.TITLE,
-            PRODUCTS.SLUG
+            PRODUCTS.SUBTITLE,
+            PRODUCTS.SLUG,
+            PRODUCTS.LISTING_IMAGE
         )
             .from(USER_PRODUCT)
             .innerJoin(PRODUCTS).on(USER_PRODUCT.PRODUCT_ID.eq(PRODUCTS.ID))
@@ -46,8 +48,9 @@ class UserProductRepository(
                 UserProductInfo(
                     id = requireNotNull(record[USER_PRODUCT.ID]),
                     title = requireNotNull(record[PRODUCTS.TITLE]),
+                    subtitle = record[PRODUCTS.SUBTITLE],
                     slug = requireNotNull(record[PRODUCTS.SLUG]),
-                    subtitle = ""
+                    listingImage = record[PRODUCTS.LISTING_IMAGE]
                 )
             }
     }
@@ -56,7 +59,9 @@ class UserProductRepository(
         return dsl.select(
             USER_PRODUCT.ID,
             PRODUCTS.TITLE,
-            PRODUCTS.SLUG
+            PRODUCTS.SUBTITLE,
+            PRODUCTS.SLUG,
+            PRODUCTS.IMAGE
         )
             .from(USER_PRODUCT)
             .innerJoin(PRODUCTS).on(USER_PRODUCT.PRODUCT_ID.eq(PRODUCTS.ID))
@@ -68,8 +73,9 @@ class UserProductRepository(
                 UserProductDetail(
                     id = requireNotNull(record[USER_PRODUCT.ID]),
                     title = requireNotNull(record[PRODUCTS.TITLE]),
+                    subtitle = record[PRODUCTS.SUBTITLE],
                     slug = requireNotNull(record[PRODUCTS.SLUG]),
-                    subtitle = ""
+                    image = record[PRODUCTS.IMAGE]
                 )
             }
     }

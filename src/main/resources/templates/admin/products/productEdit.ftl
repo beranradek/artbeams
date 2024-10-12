@@ -19,8 +19,20 @@
     <div class="col-sm-3"><input type="text" name="${fields.title.name}" value="${fields.title.value!}" id="${fields.title.elementId}" size="80" class="form-control"/></div>
   </div>
   <div class="form-group row">
+    <label for="${fields.subtitle.elementId}" class="col-sm-2 col-form-label">Subtitle</label>
+    <div class="col-sm-3"><input type="text" name="${fields.subtitle.name}" value="${fields.subtitle.value!}" id="${fields.subtitle.elementId}" size="80" class="form-control"/></div>
+  </div>
+  <div class="form-group row">
     <label for="${fields.fileName.elementId}" class="col-sm-2 col-form-label">File name (of media)</label>
     <div class="col-sm-3"><input type="text" name="${fields.fileName.name}" value="${fields.fileName.value!}" id="${fields.fileName.elementId}" size="80" class="form-control"/></div>
+  </div>
+  <div class="form-group row">
+    <label for="${fields.listingImage.elementId}" class="col-sm-2 col-form-label">Listing image</label>
+    <div class="col-sm-3"><input type="text" name="${fields.listingImage.name}" value="${fields.listingImage.value!}" id="${fields.listingImage.elementId}" size="80" class="form-control"/></div>
+  </div>
+  <div class="form-group row">
+    <label for="${fields.image.elementId}" class="col-sm-2 col-form-label">Image</label>
+    <div class="col-sm-3"><input type="text" name="${fields.image.name}" value="${fields.image.value!}" id="${fields.image.elementId}" size="80" class="form-control"/></div>
   </div>
   <div class="form-group row">
     <label for="${fields.confirmationMailingGroupId.elementId}" class="col-sm-2 col-form-label">Confirmation mailing group id</label>

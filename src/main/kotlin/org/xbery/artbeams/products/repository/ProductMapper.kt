@@ -19,8 +19,12 @@ open class ProductMapper : AssetMapper<Product, ProductFilter>() {
 
     val slugAttr: Attribute<Product, String> = add(Attr.ofString(cls(), "slug").get { e -> e.slug })
     val titleAttr: Attribute<Product, String> = add(Attr.ofString(cls(), "title").get { e -> e.title })
+    val subtitleAttr: Attribute<Product, String> = add(Attr.ofString(cls(), "subtitle").get { e -> e.subtitle })
     val fileNameAttr: Attribute<Product, String> =
         add(Attr.ofString(cls(), "filename").get { e -> e.fileName })
+    val listingImageAttr: Attribute<Product, String> =
+        add(Attr.ofString(cls(), "listing_image").get { e -> e.listingImage })
+    val imageAttr: Attribute<Product, String> = add(Attr.ofString(cls(), "image").get { e -> e.image })
     val confirmationMailingGroupIdAttr: Attribute<Product, String> =
         add(Attr.ofString(cls(), "confirmation_mailing_group_id").get { e -> e.confirmationMailingGroupId })
     val mailingGroupIdAttr: Attribute<Product, String> =
@@ -36,7 +40,10 @@ open class ProductMapper : AssetMapper<Product, ProductFilter>() {
             assetAttributes,
             slugAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
             titleAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
+            subtitleAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
             fileNameAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
+            listingImageAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
+            imageAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
             confirmationMailingGroupIdAttr.getValueFromSource(attributeSource, aliasPrefix ?: ""),
             mailingGroupIdAttr.getValueFromSource(attributeSource, aliasPrefix ?: "")
         )

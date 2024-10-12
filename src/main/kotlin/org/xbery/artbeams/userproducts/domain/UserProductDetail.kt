@@ -8,6 +8,7 @@ package org.xbery.artbeams.userproducts.domain
 data class UserProductDetail(
     val id: String,
     val title: String,
+    val subtitle: String?,
     val slug: String,
-    val subtitle: String?
+    val image: String?
 )
