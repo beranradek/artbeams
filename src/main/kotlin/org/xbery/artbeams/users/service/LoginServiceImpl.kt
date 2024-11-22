@@ -45,7 +45,7 @@ open class LoginServiceImpl(
             val principalParts = token.getName().split(LoginVerificationServiceImpl.PRINCIPAL_SEPARATOR)
             if (principalParts.size >= 2) {
                 val userId = principalParts[0]
-                val user = userRepository.findByIdAsOpt(userId)
+                val user = userRepository.findById(userId)
                 if (user != null) {
                     val roles = roleRepository.findRolesOfUser(user.id)
                     user.copy(roles = roles)

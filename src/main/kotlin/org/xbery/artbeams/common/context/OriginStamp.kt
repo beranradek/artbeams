@@ -1,6 +1,7 @@
 package org.xbery.artbeams.common.context
 
-import kotlinx.datetime.Instant
+import java.time.Instant
+
 
 /**
  * Stamp of origin of some information.

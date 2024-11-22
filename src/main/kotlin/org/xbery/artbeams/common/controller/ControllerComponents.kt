@@ -10,6 +10,7 @@ import org.xbery.artbeams.common.context.OriginStamp
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.LoginService
+import java.time.Instant
 
 /**
  * Common controller components.
@@ -28,6 +29,6 @@ open class ControllerComponents(
 
   open fun getOperationCtx(request: HttpServletRequest): OperationCtx {
     val user = loginService.getLoggedUser(request)
-    return OperationCtx(user, OriginStamp(Clock.System.now(), request.requestURI, user?.login))
+    return OperationCtx(user, OriginStamp(Instant.now(), request.requestURI, user?.login))
   }
 }

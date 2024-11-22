@@ -1,20 +1,31 @@
 package org.xbery.artbeams.common.antispam.repository
 
+import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.Table
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.common.antispam.domain.AntispamQuiz
-import org.xbery.artbeams.common.antispam.domain.AntispamQuizFilter
-import org.xbery.artbeams.common.repository.ExtendedSqlRepository
+import org.xbery.artbeams.common.antispam.repository.mapper.AntispamQuizMapper
+import org.xbery.artbeams.common.antispam.repository.mapper.AntispamQuizUnmapper
+import org.xbery.artbeams.common.repository.AbstractMappingRepository
 import org.xbery.artbeams.common.text.NormalizationHelper
-import javax.sql.DataSource
+import org.xbery.artbeams.jooq.schema.tables.records.AntispamQuizRecord
+import org.xbery.artbeams.jooq.schema.tables.references.ANTISPAM_QUIZ
 
 /**
  * Repository for antispam questions and answers.
  * @author Radek Beran
  */
 @Repository
-open class AntispamQuizRepository(dataSource: DataSource) :
-    ExtendedSqlRepository<AntispamQuiz, String, AntispamQuizFilter>(dataSource, AntispamQuizMapper.Instance) {
+class AntispamQuizRepository(
+    override val dsl: DSLContext,
+    override val mapper: AntispamQuizMapper,
+    override val unmapper: AntispamQuizUnmapper
+) : AbstractMappingRepository<AntispamQuiz, AntispamQuizRecord>(dsl, mapper, unmapper) {
+    override val table: Table<AntispamQuizRecord> = ANTISPAM_QUIZ
+    override val idField: Field<String?> = ANTISPAM_QUIZ.QUESTION
+
     private val rnd = java.util.Random()
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
@@ -27,7 +38,7 @@ open class AntispamQuizRepository(dataSource: DataSource) :
      * Returns randomly selected antispam quiz.
      * @return
      */
-    open fun findRandom(): AntispamQuiz {
+    fun findRandom(): AntispamQuiz {
         val quizes = findAll()
         if (quizes.isEmpty()) {
             throw IllegalStateException("No antispam quizes available, please fill in some in antispam_quiz table!")
@@ -37,10 +48,10 @@ open class AntispamQuizRepository(dataSource: DataSource) :
         return quizes[randIndex]
     }
 
-    open fun findByQuestion(question: String): AntispamQuiz? {
-        val quizes = findAll()
-        return quizes.find { q -> q.question == question }
-    }
+    fun findByQuestion(question: String): AntispamQuiz? =
+        dsl.selectFrom(table)
+            .where(ANTISPAM_QUIZ.QUESTION.eq(question))
+            .fetchOne(mapper)
 
     /**
      * Returns true if specified question has given answer.
@@ -48,7 +59,7 @@ open class AntispamQuizRepository(dataSource: DataSource) :
      * @param answer
      * @return
      */
-    open fun questionHasAnswer(question: String, answer: String): Boolean {
+    fun questionHasAnswer(question: String, answer: String): Boolean {
         var answerNormalized: String = answer.trim()
         return if (answerNormalized.isEmpty()) {
             false
@@ -57,9 +68,9 @@ open class AntispamQuizRepository(dataSource: DataSource) :
                 answerNormalized =
                     answerNormalized.substring(0, answerNormalized.length - 1)
             }
-            val qOpt: AntispamQuiz? = findByQuestion(question)
-            if (qOpt != null) {
-                normalizationHelper.normalize(qOpt.answer) == normalizationHelper.normalize(answerNormalized)
+            val quiz = findByQuestion(question)
+            if (quiz != null) {
+                normalizationHelper.normalize(quiz.answer) == normalizationHelper.normalize(answerNormalized)
             } else {
                 false
             }

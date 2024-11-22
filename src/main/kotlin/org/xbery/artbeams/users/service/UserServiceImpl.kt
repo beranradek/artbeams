@@ -13,36 +13,30 @@ import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 import java.time.Instant
 
-
 /**
  * @author Radek Beran
  */
 @Service
-open class UserServiceImpl(
+class UserServiceImpl(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
 ) : UserService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun saveUser(edited: EditedUser, ctx: OperationCtx): User? {
+    override fun saveUser(edited: EditedUser, ctx: OperationCtx): User {
         val rolesCodebook = roleRepository.findRoles()
         val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
         return if (edited.id == AssetAttributes.EMPTY_ID) {
             val newUser = User.Empty.updatedWith(edited, rolesCodebook, userId)
             val createdUser = userRepository.create(newUser)
-            val created: User? = createdUser
             updateRoles(createdUser.id, newUser.roles)
-            created
+            createdUser.copy(roles = newUser.roles)
         } else {
-            val user = userRepository.findByIdAsOpt(edited.id)
-            if (user != null) {
-                val userToUpdate = user.updatedWith(edited, rolesCodebook, userId)
-                val updated: User? = userRepository.updateEntity(userToUpdate)
-                updateRoles(userToUpdate.id, userToUpdate.roles)
-                updated
-            } else {
-                null
-            }
+            val user = userRepository.requireByIdWithRoles(edited.id)
+            val userToUpdate = user.updatedWith(edited, rolesCodebook, userId)
+            val updated = userRepository.update(userToUpdate)
+            updateRoles(userToUpdate.id, userToUpdate.roles)
+            updated.copy(roles = userToUpdate.roles)
         }
     }
 
@@ -51,7 +45,7 @@ open class UserServiceImpl(
         val user = if (login != null) userRepository.findByLogin(login) else null
         return if (user != null) {
             val userToUpdate = user.updatedWith(profile, user.id)
-            userRepository.updateEntity(userToUpdate)
+            userRepository.update(userToUpdate)
         } else {
             null
         }
@@ -61,7 +55,7 @@ open class UserServiceImpl(
         val user = findByLogin(passwordSetupData.login)
         return if (user != null) {
             val userToUpdate = user.updatedWith(toEditedProfile(user, passwordSetupData.password), user.id)
-            val updatedUser = userRepository.updateEntity(userToUpdate)
+            val updatedUser = userRepository.update(userToUpdate)
             logger.info("Password for user ${userToUpdate.login} was set")
             updatedUser
         } else {
@@ -91,18 +85,16 @@ open class UserServiceImpl(
     }
 
     override fun findById(userId: String): User? {
-        return userRepository.findByIdAsOpt(userId)
+        return userRepository.findByIdWithRoles(userId)
     }
 
-    override fun updateUser(user: User): User {
-        return userRepository.updateEntity(user) ?: throw IllegalStateException("User ${user.id} was not updated")
-    }
+    override fun updateUser(user: User): User = userRepository.update(user)
 
     override fun confirmConsent(email: String): Instant? {
         val user = findByEmail(email)
         return if (user != null) {
-            val updatedUser = userRepository.updateEntity(user.copy(consent = Instant.now()))
-            updatedUser?.consent
+            val updatedUser = userRepository.update(user.copy(consent = Instant.now()))
+            updatedUser.consent
         } else {
             logger.warn("Cannot find user with email $email to confirm his/her consent")
             null

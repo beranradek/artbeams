@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
-import kotlinx.datetime.Instant
+import java.time.Instant
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl

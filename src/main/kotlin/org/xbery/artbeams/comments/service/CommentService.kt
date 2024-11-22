@@ -12,5 +12,5 @@ interface CommentService {
         ipAddress: String,
         userAgent: String,
         ctx: OperationCtx
-    ): Comment?
+    ): Comment
 }

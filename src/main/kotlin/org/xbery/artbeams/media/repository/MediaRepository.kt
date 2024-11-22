@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
 import org.xbery.artbeams.common.file.FileNames
 import org.xbery.artbeams.common.file.TempFiles
-import org.xbery.artbeams.common.file.TempPath
 import org.xbery.artbeams.common.parser.Parsers
-import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.media.domain.FileData
 import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.service.ImageTransformer
@@ -31,16 +29,15 @@ import javax.sql.DataSource
  * @author Radek Beran
  */
 @Repository
-open class MediaRepository(
+class MediaRepository(
     private val dataSource: DataSource,
-    private val imageTransformer: ImageTransformer,
-    private val localisationRepository: LocalisationRepository
+    private val imageTransformer: ImageTransformer
 ) {
 
-    open fun storeFile(file: MultipartFile, privateAccess: Boolean): Boolean =
+    fun storeFile(file: MultipartFile, privateAccess: Boolean): Boolean =
         storeFile(file.inputStream, file.originalFilename, file.size, file.contentType, privateAccess)
 
-    open fun storeFile(
+    fun storeFile(
         inputStream: InputStream,
         filename: String,
         size: Long,
@@ -91,7 +88,7 @@ open class MediaRepository(
      *
      * @param inputStream input stream, closed after writing
      */
-    open fun storeFile(
+    fun storeFile(
         inputStream: InputStream,
         filename: String?,
         size: Long,
@@ -136,27 +133,11 @@ open class MediaRepository(
     }
 
     /**
-     * Stores article image with various size variants for article list and detail and
-     * returns name of resulting image if images were stored successfully
-     * (all size variants have the same name, only stored image width/size differs).
-     */
-    open fun storeArticleImage(inputStream: InputStream, originalFileName: String): String? {
-        return TempFiles.createTempFilePath("article-image-", "-$originalFileName").use { inputFileTempPath ->
-            Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
-            val localisations = localisationRepository.getEntries()
-            val bigImgWidth = localisations.getOrElse("article.img.big.width") { "730" }.toInt()
-            val smallImgWidth = localisations.getOrElse("article.img.small.width") { "260" }.toInt()
-            storeArticleImageWithWidth(originalFileName, bigImgWidth, inputFileTempPath)
-            storeArticleImageWithWidth(originalFileName, smallImgWidth, inputFileTempPath)
-        }
-    }
-
-    /**
      * Deletes file from database.
      * @param filename
      * @return
      */
-    open fun deleteFile(filename: String, size: String?): Boolean {
+    fun deleteFile(filename: String, size: String?): Boolean {
         val widthOpt = size?.let { s -> Parsers.parseIntOpt(s) }
         var result: Boolean
         dataSource.connection.use { conn ->
@@ -217,7 +198,7 @@ open class MediaRepository(
      * Retrieves metadata of files from database, does not load their binary data.
      */
     open fun listFiles(): List<FileData> {
-        var files = mutableListOf<FileData>()
+        val files = mutableListOf<FileData>()
         dataSource.connection.use { conn ->
             conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media")
                 .use { ps ->
@@ -321,37 +302,5 @@ open class MediaRepository(
         val byteArrayOutputStream = ByteArrayOutputStream()
         IOUtils.copy(inputStream, byteArrayOutputStream)
         return byteArrayOutputStream.toByteArray()
-    }
-
-    /**
-     * Transforms image to webp and returns name of resulting image if it was stored successfully.
-     */
-    private fun storeArticleImageWithWidth(
-        fileName: String,
-        targetWidth: Int,
-        inputFileTempPath: TempPath
-    ): String? {
-        return TempFiles.createTempFilePath("article-image-", "-$targetWidth-$fileName")
-            .use { transformedImageTempPath ->
-                val targetImageFormat = ImageFormat.WEBP
-                val targetContentType = targetImageFormat.contentType
-                val targetExt = targetImageFormat.name.lowercase()
-                val targetFileName = FileNames.replaceOrAddExtension(fileName, targetExt)
-                imageTransformer.transform(
-                    FileInputStream(inputFileTempPath.path.toFile()),
-                    transformedImageTempPath.path,
-                    targetImageFormat,
-                    targetWidth = targetWidth
-                )
-                val transformedImageTempFile = transformedImageTempPath.path.toFile()
-                val success = storeFile(
-                    FileInputStream(transformedImageTempFile),
-                    targetFileName,
-                    transformedImageTempFile.length(),
-                    targetContentType,
-                    false
-                )
-                if (success) targetFileName else null
-            }
     }
 }

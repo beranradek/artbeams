@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpServletResponse
  */
 @Component
 @Order(1) // the lower number, the sooner execution
-open class UrlRedirectServletFilter : BaseServletFilter() {
+class UrlRedirectServletFilter : BaseServletFilter() {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val serverName: String = request.serverName
         if (serverName == "localhost") {

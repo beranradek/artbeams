@@ -23,7 +23,7 @@ class SqlAuthorizationCodeRepository(override val dsl: DSLContext) :
     override val table: Table<AuthCodeRecord> = AUTH_CODE
 
     override fun createCode(code: AuthorizationCode) {
-        create(code)
+        createWithoutReturn(code)
     }
 
     override fun updateCode(code: AuthorizationCode) {

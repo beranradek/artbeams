@@ -14,7 +14,6 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
 import org.xbery.artbeams.common.text.NormalizationHelper
-import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.UserRepository
 import java.util.*
 
@@ -43,7 +42,7 @@ open class CommentServiceImpl(
         ipAddress: String,
         userAgent: String,
         ctx: OperationCtx
-    ): Comment? {
+    ): Comment {
         return try {
             val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
             val updatedComment = if (edited.id == AssetAttributes.EMPTY_ID) {
@@ -53,12 +52,8 @@ open class CommentServiceImpl(
                 sendNewCommentNotification(comment)
                 comment
             } else {
-                val comment = commentRepository.findByIdAsOpt(edited.id)
-                if (comment != null) {
-                    commentRepository.updateEntity(comment.updatedWith(edited, userId))
-                } else {
-                    null
-                }
+                val comment = commentRepository.requireById(edited.id)
+                commentRepository.update(comment.updatedWith(edited, userId))
             }
             updatedComment
         } catch (ex: Exception) {
@@ -69,14 +64,13 @@ open class CommentServiceImpl(
 
     private fun sendNewCommentNotification(comment: Comment) {
         try {
-            if (comment.entityKey.entityType == Article::class.java.getSimpleName()) {
+            val articleClassName = Article::class.java.getSimpleName()
+            if (comment.entityKey.entityType == articleClassName) {
                 val articleId: String = comment.entityKey.entityId
-                val articleOpt: Optional<Article> = articleRepository.findById(articleId)
-                if (articleOpt.isPresent) {
-                    val article: Article = articleOpt.get()
-                    val userOpt: Optional<User> = userRepository.findById(article.createdBy)
-                    if (userOpt.isPresent) {
-                        val user: User = userOpt.get()
+                val article = articleRepository.findById(articleId)
+                if (article != null) {
+                    val user = userRepository.findById(article.createdBy)
+                    if (user != null) {
                         if (user.email.isNotEmpty()) {
                             val subject: String =
                                 normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")

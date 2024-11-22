@@ -4,6 +4,7 @@ import com.blueconic.browscap.BrowsCapField
 import com.blueconic.browscap.Capabilities
 import com.blueconic.browscap.UserAgentParser
 import com.blueconic.browscap.UserAgentService
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
@@ -12,20 +13,22 @@ import org.springframework.http.HttpHeaders
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.Dates.APP_ZONE_ID
-import org.xbery.artbeams.common.access.domain.*
+import org.xbery.artbeams.common.access.domain.EntityAccessCount
+import org.xbery.artbeams.common.access.domain.EntityKey
+import org.xbery.artbeams.common.access.domain.UserAccess
+import org.xbery.artbeams.common.access.domain.UserAccessReport
 import org.xbery.artbeams.common.access.repository.EntityAccessCountRepository
 import org.xbery.artbeams.common.access.repository.UserAccessRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.parser.Parsers
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * @author Radek Beran
  */
 @Service
-open class UserAccessServiceImpl(
+class UserAccessServiceImpl(
     private val userAccessRepository: UserAccessRepository,
     private val entityAccessCountRepository: EntityAccessCountRepository
 ) : UserAccessService {
@@ -66,7 +69,7 @@ open class UserAccessServiceImpl(
         return CompletableFuture.supplyAsync {
             try {
                 val userAccess = UserAccess(AssetAttributes.newId(), Instant.now(), ipAddress, userAgent, entityKey)
-                userAccessRepository.create(userAccess, false)
+                userAccessRepository.create(userAccess)
             } catch (_: Exception) {
                 // This could be for e.g. also org.postgresql.util.PSQLException...
                 // There is no easy cross-platform way how to identify duplicate key exception
@@ -77,9 +80,8 @@ open class UserAccessServiceImpl(
     }
 
     @Cacheable(EntityAccessCount.CacheName)
-    override fun findCountOfVisits(entityKey: EntityKey): Long {
-        val entityFilter: EntityAccessCountFilter = EntityAccessCountFilter.Empty.copy(entityKey = entityKey)
-        return entityAccessCountRepository.findByFilter(entityFilter, listOf()).firstOrNull()?.let { it.count } ?: 0L
+    override fun findCountOfVisits(entityKey: EntityKey): Int {
+        return entityAccessCountRepository.findByEntityKey(entityKey)?.count ?: 0
     }
 
     // Cron pattern: second, minute, hour, day, month, weekday
@@ -88,18 +90,12 @@ open class UserAccessServiceImpl(
     override fun aggregateUserAccesses() {
         val operationMsg = "User access aggregation task"
         logger.info("$operationMsg - started")
-        val currentTime: Instant = Instant.now()
-        val accesses = userAccessRepository.findByFilter(
-            UserAccessFilter.Empty.copy(timeUpperBound = currentTime)
-        )
-        val entitiesToCountIncrements: Map<EntityKey, Long> = accesses.groupBy { it.entityKey }
-            .mapValues { access -> access.value.size.toLong() }
+        val currentTime = Instant.now()
+        val accesses = userAccessRepository.filterAccessTimeLessThanEqual(currentTime)
+        val entitiesToCountIncrements: Map<EntityKey, Int> = accesses.groupBy { it.entityKey }
+            .mapValues { access -> access.value.size }
         val entityKeys: List<EntityKey> = entitiesToCountIncrements.keys.toList()
-        val entityTypes: List<String> = entityKeys.map { it.entityType }
-        val entityIds: List<String> = entityKeys.map { it.entityId }
-        val entityAccessCounts = entityAccessCountRepository.findByFilter(
-            EntityAccessCountFilter.Empty.copy(entityTypeIn = entityTypes, entityIdIn = entityIds), listOf()
-        )
+        val entityAccessCounts = entityAccessCountRepository.findByEntityTypesAndIds(entityKeys)
         val entityKeysToCounts: Map<EntityKey, EntityAccessCount?> =
             entityAccessCounts.groupBy { it.entityKey }
                 .mapValues { entityAccess -> entityAccess.value.firstOrNull() /* only one exists */ }
@@ -110,10 +106,10 @@ open class UserAccessServiceImpl(
                 entityAccessCountRepository.update(currentEntityAccessCount.copy(count = currentEntityAccessCount.count + countIncrement))
             } else {
                 // No accesses so far, insert new record
-                entityAccessCountRepository.create(EntityAccessCount(entityKey, countIncrement), false)
+                entityAccessCountRepository.create(EntityAccessCount(entityKey, countIncrement))
             }
         }
-        userAccessRepository.deleteByFilter(UserAccessFilter.Empty.copy(ids = accesses.map { it.id }))
+        userAccessRepository.deleteByIds(accesses.map { it.id })
         logger.info("$operationMsg - finished")
     }
 

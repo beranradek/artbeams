@@ -1,6 +1,7 @@
 package org.xbery.artbeams.common.repository
 
 import org.jooq.*
+import org.xbery.artbeams.common.error.NotFoundException
 
 /**
  * Abstract implementation of repository that uses JOOQ mapper and unmapper.
@@ -16,11 +17,12 @@ abstract class AbstractMappingRepository<T : IdentifiedEntity, R : UpdatableReco
 
     protected abstract val idField: Field<String?>
 
-    override fun create(entity: T) {
-        create(entity, unmapper)
+    fun create(entity: T): T {
+        createWithoutReturn(entity, unmapper)
+        return requireById(entity.id)
     }
 
-    open fun update(entity: T) {
+    open fun update(entity: T): T {
         val record = unmapper.unmap(entity)
         val updatedCount = dsl.update(table)
             .set(record)
@@ -30,12 +32,20 @@ abstract class AbstractMappingRepository<T : IdentifiedEntity, R : UpdatableReco
             updatedCount == 0 -> error("Entity not updated")
             updatedCount > 1 -> error("More than one entity was updated")
         }
+        return requireById(entity.id)
     }
 
     open fun findById(id: String): T? =
         dsl.selectFrom(table)
             .where(idField.eq(id))
             .fetchOne(mapper)
+
+    open fun findAll(): List<T> =
+        dsl.selectFrom(table)
+            .fetch(mapper)
+
+    open fun requireById(id: String): T =
+        findById(id) ?: throw NotFoundException("Entity with ID $id was not found")
 
     open fun deleteByIds(ids: Collection<String>): Int {
         val deleted = dsl.deleteFrom(table)

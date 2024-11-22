@@ -28,14 +28,8 @@ open class ProductServiceImpl(
             if (edited.id == AssetAttributes.EMPTY_ID) {
                 productRepository.create(Product.Empty.updatedWith(edited, userId))
             } else {
-                val product = productRepository.findByIdAsOpt(edited.id)
-                if (product != null) {
-                    productRepository.updateEntity(product.updatedWith(edited,
-                        userId
-                    ))
-                } else {
-                    null
-                }
+                val product = productRepository.requireById(edited.id)
+                productRepository.update(product.updatedWith(edited, userId))
             }
         } catch (ex: Exception) {
             logger.error("Update of Product ${edited.id} finished with error ${ex.message}", ex)

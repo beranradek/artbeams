@@ -8,7 +8,7 @@ import org.jooq.*
  *
  * @author Radek Beran
  */
-internal interface AbstractRecordStorage<E, R : UpdatableRecord<R>> {
+internal interface AbstractRecordStorage<E, R : Record> {
 
     val dsl: DSLContext
 
@@ -17,7 +17,7 @@ internal interface AbstractRecordStorage<E, R : UpdatableRecord<R>> {
     /**
      * Inserts new entity using given entity-to-record mapping.
      */
-    fun create(entity: E, entityToRecord: RecordUnmapper<E, R>) {
+    fun createWithoutReturn(entity: E, entityToRecord: RecordUnmapper<E, R>) {
         val insertedCount = dsl.insertInto(table)
             .set(entityToRecord.unmap(entity))
             .execute()
@@ -27,7 +27,7 @@ internal interface AbstractRecordStorage<E, R : UpdatableRecord<R>> {
     /**
      * Inserts new entity using default POJO mapping.
      */
-    fun create(entity: E) {
+    fun createWithoutReturn(entity: E) {
         val insertedCount = dsl.insertInto(table)
             .set(dsl.newRecord(table, entity))
             .execute()

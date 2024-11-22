@@ -1,30 +1,47 @@
 package org.xbery.artbeams.categories.repository
 
+import org.jooq.Condition
+import org.jooq.DSLContext
+import org.jooq.Field
+import org.jooq.Table
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.categories.domain.Category
+import org.xbery.artbeams.categories.repository.mapper.CategoryMapper
+import org.xbery.artbeams.categories.repository.mapper.CategoryUnmapper
 import org.xbery.artbeams.common.assets.repository.AssetRepository
-import org.xbery.overview.Order
-import org.xbery.overview.Overview
+import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
+import org.xbery.artbeams.jooq.schema.tables.references.CATEGORIES
 import java.time.Instant
-import javax.sql.DataSource
 
 /**
  * Category repository.
  * @author Radek Beran
  */
 @Repository
-open class CategoryRepository(dataSource: DataSource) :
-    AssetRepository<Category, CategoryFilter>(dataSource, CategoryMapper.Instance) {
-    private val DefaultOrdering: List<Order> = listOf(Order((entityMapper as CategoryMapper).titleAttr, false))
+class CategoryRepository(
+    override val dsl: DSLContext,
+    override val mapper: CategoryMapper,
+    override val unmapper: CategoryUnmapper
+) : AssetRepository<Category, CategoriesRecord>(
+    dsl, mapper, unmapper
+) {
+    override val table: Table<CategoriesRecord> = CATEGORIES
+    override val idField: Field<String?> = CATEGORIES.ID
 
-    open fun findCategories(): List<Category> {
-        val overview: Overview<CategoryFilter> = Overview<CategoryFilter>(CategoryFilter.Empty, DefaultOrdering)
-        return findByOverview(overview)
-    }
+    fun findCategories(): List<Category> =
+        dsl.selectFrom(table)
+            .orderBy(CATEGORIES.TITLE)
+            .fetch(mapper)
 
-    open fun findBySlug(slug: String): Category? {
-        val filter: CategoryFilter =
-            CategoryFilter.Empty.copy(slug = slug, validityDate = Instant.now())
-        return this.findOneByFilter(filter)
-    }
+    fun findBySlug(slug: String): Category? =
+        dsl.selectFrom(table)
+            .where(CATEGORIES.SLUG.eq(slug).and(validityCondition(Instant.now())))
+            .fetchOne(mapper)
+
+    protected fun validityCondition(validityDate: Instant): Condition =
+        CATEGORIES.VALID_FROM.lessOrEqual(validityDate)
+            .and(
+                CATEGORIES.VALID_TO.isNull
+                .or(CATEGORIES.VALID_TO.greaterOrEqual(validityDate))
+            )
 }

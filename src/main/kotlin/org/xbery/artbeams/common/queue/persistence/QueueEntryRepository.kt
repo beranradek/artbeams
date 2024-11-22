@@ -1,8 +1,8 @@
 package org.xbery.artbeams.common.queue.persistence
 
-import kotlinx.datetime.Instant
 import org.xbery.artbeams.common.queue.model.AbstractQueueEntry
-import kotlin.time.Duration
+import java.time.Duration
+import java.time.Instant
 
 /**
  * Storage of a general-purpose persistent queue.

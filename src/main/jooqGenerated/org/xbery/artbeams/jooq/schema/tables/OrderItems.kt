@@ -4,11 +4,9 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 import kotlin.collections.List
-
-import kotlinx.datetime.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -107,7 +105,7 @@ open class OrderItems(
     /**
      * The column <code>order_items.downloaded</code>.
      */
-    val DOWNLOADED: TableField<OrderItemsRecord, LocalDateTime?> = createField(DSL.name("downloaded"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val DOWNLOADED: TableField<OrderItemsRecord, Instant?> = createField(DSL.name("downloaded"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     private constructor(alias: Name, aliased: Table<OrderItemsRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<OrderItemsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)

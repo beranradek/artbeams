@@ -1,5 +1,6 @@
 package org.xbery.artbeams.articles.admin
 
+import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
@@ -21,11 +22,10 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.form.SpringHttpServletRequestParams
-import org.xbery.artbeams.media.repository.MediaRepository
-import java.nio.channels.Channels
-import jakarta.servlet.http.HttpServletRequest
 import org.xbery.artbeams.error.OperationException
 import org.xbery.artbeams.google.error.GoogleErrorCode
+import org.xbery.artbeams.media.repository.ArticleImageRepository
+import java.nio.channels.Channels
 
 /**
  * Article administration routes.
@@ -33,10 +33,10 @@ import org.xbery.artbeams.google.error.GoogleErrorCode
  */
 @Controller
 @RequestMapping("/admin/articles")
-open class ArticleAdminController(
+class ArticleAdminController(
     private val articleService: ArticleService,
     private val categoryRepository: CategoryRepository,
-    private val mediaRepository: MediaRepository,
+    private val articleImageRepository: ArticleImageRepository,
     common: ControllerComponents
 ) : BaseController(common) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -66,11 +66,7 @@ open class ArticleAdminController(
                 // to external storage without leaving editor for further editing (expensive and useless operation).
                 val updateWithExternalData = request.getParameter(paramSaveWithinEditor) == null
                 val edited = articleService.findEditedArticle(id, updateWithExternalData)
-                return if (edited != null) {
-                    renderEditForm(request, edited, ValidationResult.empty, null)
-                } else {
-                    notFound(request)
-                }
+                return renderEditForm(request, edited, ValidationResult.empty, null)
             } catch (ex: OperationException) {
                 if (ex.errorCode == GoogleErrorCode.UNAUTHORIZED) {
                     redirect("/admin/google-docs/authorization")
@@ -95,7 +91,7 @@ open class ArticleAdminController(
                 val uploadedFile = edited.file
                 val originalFileName = uploadedFile?.fileName
                 if (uploadedFile != null && !originalFileName.isNullOrEmpty()) {
-                    val imageName = mediaRepository.storeArticleImage(Channels.newInputStream(uploadedFile.content), originalFileName)
+                    val imageName = articleImageRepository.storeArticleImage(Channels.newInputStream(uploadedFile.content), originalFileName)
                     imageName?.let { edited = edited.copy(image = it) }
                 }
 

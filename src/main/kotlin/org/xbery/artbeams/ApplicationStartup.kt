@@ -1,6 +1,5 @@
 package org.xbery.artbeams
 
-import kotlinx.datetime.Clock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -19,6 +18,7 @@ import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 import org.xbery.artbeams.users.service.UserService
+import java.time.Instant
 
 /**
  * Application startup logic (initialization).
@@ -52,7 +52,7 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         } else {
             val defaultPass = "adminadmin"
             val adminUser = EditedUser(AssetAttributes.EMPTY_ID, adminUserLogin, defaultPass, defaultPass, "Admin", "Admin", "", listOf(adminRole.id))
-            val operationCtx = OperationCtx(null, OriginStamp(Clock.System.now(), "ApplicationStartup", null))
+            val operationCtx = OperationCtx(null, OriginStamp(Instant.now(), "ApplicationStartup", null))
             val savedUser = requireNotNull(userService.saveUser(adminUser, operationCtx))
             logger.info("Default admin user created")
             savedUser

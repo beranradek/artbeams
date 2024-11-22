@@ -1,5 +1,6 @@
 package org.xbery.artbeams.categories.admin
 
+import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -20,7 +21,6 @@ import org.xbery.artbeams.categories.service.CategoryService
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Category administration routes.
@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletRequest
  */
 @Controller
 @RequestMapping("/admin/categories")
-open class CategoryAdminController(
+class CategoryAdminController(
     private val categoryRepository: CategoryRepository,
     private val categoryService: CategoryService,
     private val common: ControllerComponents
@@ -54,16 +54,12 @@ open class CategoryAdminController(
         return if (id == null || AssetAttributes.EMPTY_ID == id) {
             renderEditForm(request, Category.Empty.toEdited(), ValidationResult.empty, null)
         } else {
-            val category = categoryRepository.findByIdAsOpt(id)
-            return if (category != null) {
-                renderEditForm(
-                    request, category.toEdited(),
-                    ValidationResult.empty,
-                    null
-                )
-            } else {
-                notFound(request)
-            }
+            val category = categoryRepository.requireById(id)
+            renderEditForm(
+                request, category.toEdited(),
+                ValidationResult.empty,
+                null
+            )
         }
     }
 

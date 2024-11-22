@@ -1,7 +1,7 @@
 package org.xbery.artbeams.common.persistence.jooq.converter
 
-import kotlinx.datetime.Instant
 import org.jooq.Converter
+import java.time.Instant
 import java.time.LocalDateTime
 
 /**

@@ -12,7 +12,7 @@ import java.time.Instant
  * @author Radek Beran
  */
 interface UserService {
-    fun saveUser(edited: EditedUser, ctx: OperationCtx): User?
+    fun saveUser(edited: EditedUser, ctx: OperationCtx): User
     fun saveMyProfile(profile: MyProfile, ctx: OperationCtx): User?
     fun setPassword(passwordSetupData: PasswordSetupData, ctx: OperationCtx): User?
     fun findCurrentUserLogin(): String?

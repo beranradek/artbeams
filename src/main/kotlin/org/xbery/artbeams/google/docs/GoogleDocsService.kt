@@ -91,7 +91,7 @@ open class GoogleDocsService(
      * @throws UnauthorizedException if user is not authorized to access Google documents or authorization has expired
      */
     @CacheEvict(value = [ Article.CacheName ], allEntries = true)
-    open fun updateArticleWithGoogleDoc(article: Article): Article? {
+    fun updateArticleWithGoogleDoc(article: Article): Article? {
         if (article.externalId == null) {
             // Article without pairing to Google Doc id
             return null
@@ -106,14 +106,14 @@ open class GoogleDocsService(
             logger.info("Nothing to update from Google Doc (already up to date): Article with slug ${article.slug}, externalId ${article.externalId}")
             return article
         }
-        val updatedArticleOpt = articleRepository.updateEntity(
+        val updatedArticle = articleRepository.update(
             article.copy(
                 bodyMarkdown = docContent,
                 body = htmlBody
             )
         )
-        updatedArticleOpt?.let { updatedArticle -> logger.info("Updated from Google Doc: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}") }
-        return updatedArticleOpt
+        logger.info("Updated from Google Doc: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}")
+        return updatedArticle
     }
 
     private fun extractTextContent(document: Document): String {

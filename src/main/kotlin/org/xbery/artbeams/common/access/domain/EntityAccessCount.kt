@@ -11,7 +11,7 @@ data class EntityAccessCount(
     /* Unique key of an accessed entity. */
     val entityKey: EntityKey,
     /* Count of accesses. */
-    val count: Long
+    val count: Int
 ) : Serializable {
     companion object {
         const val CacheName = "entityAccessCounts"

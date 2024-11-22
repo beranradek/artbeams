@@ -25,7 +25,7 @@ import org.xbery.artbeams.common.form.FormErrors
  */
 @Controller
 @RequestMapping("/comments")
-open class CommentController(
+class CommentController(
     private val commentService: CommentService,
     private val recaptchaService: RecaptchaService,
     common: ControllerComponents
@@ -54,14 +54,9 @@ open class CommentController(
                 commentFormResponse(FormErrors.formDataWithCaptchaInvalidError(formData), request)
             } else {
                 try {
-                    val comment =
-                        commentService.saveComment(edited, ipAddress, userAgent, requestToOperationCtx(request))
-                    if (comment != null) {
-                        val referrer = getReferrerUrl(request)
-                        ajaxRedirect(referrer)
-                    } else {
-                        notFound(request)
-                    }
+                    commentService.saveComment(edited, ipAddress, userAgent, requestToOperationCtx(request))
+                    val referrer = getReferrerUrl(request)
+                    ajaxRedirect(referrer)
                 } catch (ex: Exception) {
                     logger.error("Error while saving comment for entity ${edited.entityId} from ${edited.userName} with comment text ${edited.comment}: ${ex.message}", ex)
                     commentFormResponse(FormErrors.formDataWithInternalError(formData), request)

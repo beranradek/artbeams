@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.domain.EditedArticle
-import org.xbery.artbeams.articles.repository.ArticleCategoryFilter
 import org.xbery.artbeams.articles.repository.ArticleCategoryRepository
 import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
@@ -21,7 +20,7 @@ import org.xbery.artbeams.google.docs.GoogleDocsService
  * @author Radek Beran
  */
 @Service
-open class ArticleServiceImpl(
+class ArticleServiceImpl(
     private val articleRepository: ArticleRepository,
     private val articleCategoryRepository: ArticleCategoryRepository,
     private val markdownConverter: MarkdownConverter,
@@ -44,31 +43,24 @@ open class ArticleServiceImpl(
             val updatedArticle = if (edited.id == AssetAttributes.EMPTY_ID) {
                 articleRepository.create(Article.Empty.updatedWith(edited, htmlBody, userId))
             } else {
-                val article = articleRepository.findByIdAsOpt(edited.id)
-                if (article != null) {
-                    articleRepository.updateEntity(article.updatedWith(edited,
-                        htmlBody,
-                        userId
-                    ))
-                } else {
-                    null
-                }
-
+                val article = articleRepository.requireById(edited.id)
+                articleRepository.update(article.updatedWith(edited,
+                    htmlBody,
+                    userId
+                ))
             }
-            if (updatedArticle != null) {
-                articleCategoryRepository.updateArticleCategories(updatedArticle.id, edited.categories)
+            articleCategoryRepository.updateArticleCategories(updatedArticle.id, edited.categories)
 
-                // Update article's markdown in Evernote, or Google Document
-                updatedArticle.externalId?.let { externalId ->
-                    if (externalId != "") {
-                        if (updatedArticle.bodyMarkdown.trim() != "") {
-                            // External id is set and also some content that can be synced was created
-                            // (so we do not replace the remote content accidentally with nothing!)
-                            if (evernoteImporter.isEvernoteIdentifier(externalId)) {
-                                evernoteApi.updateNote(externalId, updatedArticle.bodyMarkdown)
-                            } else {
-                                googleDocsService.writeGoogleDoc(externalId, updatedArticle.bodyMarkdown)
-                            }
+            // Update article's markdown in Evernote, or Google Document
+            updatedArticle.externalId?.let { externalId ->
+                if (externalId != "") {
+                    if (updatedArticle.bodyMarkdown.trim() != "") {
+                        // External id is set and also some content that can be synced was created
+                        // (so we do not replace the remote content accidentally with nothing!)
+                        if (evernoteImporter.isEvernoteIdentifier(externalId)) {
+                            evernoteApi.updateNote(externalId, updatedArticle.bodyMarkdown)
+                        } else {
+                            googleDocsService.writeGoogleDoc(externalId, updatedArticle.bodyMarkdown)
                         }
                     }
                 }
@@ -80,22 +72,21 @@ open class ArticleServiceImpl(
         }
     }
 
-    override fun findEditedArticle(id: String, updateWithExternalData: Boolean): EditedArticle? {
-        return articleRepository.findByIdAsOpt(id)?.let { article ->
-            val articleUpdatedWithExternalData = if (article.externalId != null && updateWithExternalData) {
-                if (evernoteImporter.isEvernoteIdentifier(article.externalId)) {
-                    // Evernote note identifier
-                    evernoteImporter.updateArticleWithNote(article) ?: article
-                } else {
-                    // Google doc identifier
-                    googleDocsService.updateArticleWithGoogleDoc(article) ?: article
-                }
+    override fun findEditedArticle(id: String, updateWithExternalData: Boolean): EditedArticle {
+        val article = articleRepository.requireById(id)
+        val articleUpdatedWithExternalData = if (article.externalId != null && updateWithExternalData) {
+            if (evernoteImporter.isEvernoteIdentifier(article.externalId)) {
+                // Evernote note identifier
+                evernoteImporter.updateArticleWithNote(article) ?: article
             } else {
-                article
+                // Google doc identifier
+                googleDocsService.updateArticleWithGoogleDoc(article) ?: article
             }
-            val categoryIds = findArticleCategories(articleUpdatedWithExternalData.id)
-            articleUpdatedWithExternalData.toEdited(categoryIds)
+        } else {
+            article
         }
+        val categoryIds = findArticleCategories(articleUpdatedWithExternalData.id)
+        return articleUpdatedWithExternalData.toEdited(categoryIds)
     }
 
     @Cacheable(Article.CacheName)
@@ -119,8 +110,6 @@ open class ArticleServiceImpl(
     }
 
     private fun findArticleCategories(articleId: String): List<String> {
-        val articleCategoryBindings =
-            articleCategoryRepository.findByFilter(ArticleCategoryFilter.Empty.copy(articleId = articleId))
-        return articleCategoryBindings.map { ac -> ac.categoryId }
+        return articleCategoryRepository.findArticleCategoryIdsByArticleId(articleId)
     }
 }

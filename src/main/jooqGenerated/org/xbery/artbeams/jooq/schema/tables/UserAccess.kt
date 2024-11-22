@@ -4,10 +4,10 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import kotlin.collections.List
+import java.time.Instant
+import java.time.LocalDate
 
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
+import kotlin.collections.List
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -24,7 +24,6 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
-import org.xbery.artbeams.common.persistence.jooq.converter.LocalDateConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ACCESS_UNIQUE
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_D
@@ -77,7 +76,7 @@ open class UserAccess(
     /**
      * The column <code>user_access.access_date</code>.
      */
-    val ACCESS_DATE: TableField<UserAccessRecord, LocalDate?> = createField(DSL.name("access_date"), SQLDataType.LOCALDATE.nullable(false), this, "", LocalDateConverter())
+    val ACCESS_DATE: TableField<UserAccessRecord, LocalDate?> = createField(DSL.name("access_date"), SQLDataType.LOCALDATE.nullable(false), this, "")
 
     /**
      * The column <code>user_access.ip</code>.

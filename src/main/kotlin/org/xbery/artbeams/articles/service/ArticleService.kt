@@ -20,7 +20,7 @@ interface ArticleService {
      * @param updateWithExternalData true if article with possible external identifier should be updated with external data during the loading
      * @throws UnauthorizedException if user is not authorized to access Google documents or authorization has expired
      */
-    fun findEditedArticle(id: String, updateWithExternalData: Boolean): EditedArticle?
+    fun findEditedArticle(id: String, updateWithExternalData: Boolean): EditedArticle
     fun findBySlug(slug: String): Article?
     fun findLatest(limit: Int): List<Article>
     fun findByCategoryId(categoryId: String, limit: Int): List<Article>

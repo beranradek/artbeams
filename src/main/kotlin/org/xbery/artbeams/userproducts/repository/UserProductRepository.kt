@@ -7,6 +7,7 @@ import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
 import org.xbery.artbeams.jooq.schema.tables.references.USER_PRODUCT
 import org.xbery.artbeams.userproducts.domain.UserProductDetail
 import org.xbery.artbeams.userproducts.domain.UserProductInfo
+import java.time.Instant
 import java.util.*
 
 /**
@@ -26,7 +27,7 @@ class UserProductRepository(
             .set(USER_PRODUCT.ID, UUID.randomUUID().toString())
             .set(USER_PRODUCT.USER_ID, userId)
             .set(USER_PRODUCT.PRODUCT_ID, productId)
-            .set(USER_PRODUCT.CREATED, Clock.System.now())
+            .set(USER_PRODUCT.CREATED, Instant.now())
             .execute() == 1
     }
 

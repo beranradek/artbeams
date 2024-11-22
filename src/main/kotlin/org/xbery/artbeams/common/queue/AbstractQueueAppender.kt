@@ -3,6 +3,7 @@ package org.xbery.artbeams.common.queue
 import org.xbery.artbeams.common.queue.model.AbstractQueueEntry
 import org.xbery.artbeams.common.queue.persistence.QueueEntryRepository
 import kotlinx.datetime.Clock
+import kotlinx.datetime.toJavaInstant
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -31,7 +32,7 @@ protected constructor(
      * This may be used by subclasses to submit (schedule) a new entity to the queue.
      */
     open fun appendNewEntry(entry: E): E {
-        if (entry.nextAction == null) entry.nextAction = clock.now()
+        if (entry.nextAction == null) entry.nextAction = clock.now().toJavaInstant()
         logEntryNew(entry)
         return repository.addNewEntry(entry)
         // TBD RBe: Awake the task for immediate processing? But the task can also reside in a different JVM...

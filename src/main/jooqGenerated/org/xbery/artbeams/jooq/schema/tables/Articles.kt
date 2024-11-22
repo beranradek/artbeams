@@ -4,7 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import kotlinx.datetime.Instant
+import java.time.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey

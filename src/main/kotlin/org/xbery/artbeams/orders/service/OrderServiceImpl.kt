@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderItem
-import org.xbery.artbeams.orders.repository.OrderItemFilter
 import org.xbery.artbeams.orders.repository.OrderItemRepository
 import org.xbery.artbeams.orders.repository.OrderRepository
 import java.time.Instant
@@ -14,7 +13,7 @@ import java.time.Instant
  * @author Radek Beran
  */
 @Service
-open class OrderServiceImpl(
+class OrderServiceImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository
 ) : OrderService {
@@ -32,20 +31,12 @@ open class OrderServiceImpl(
     }
 
     override fun findOrderItemOfUser(userId: String, productId: String): OrderItem? {
-        return orderItemRepository.findOneByFilter(
-            OrderItemFilter.Empty.copy(createdBy = userId,
-            productId = productId
-        ))
+        return orderItemRepository.findOrderItemOfUser(userId, productId)
     }
 
     override fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): Instant? {
-        val orderItem = orderItemRepository.findByIdAsOpt(orderItemId)
-        return if (orderItem != null) {
-            val updatedItemOpt = orderItemRepository.updateEntity(orderItem.copy(downloaded = downloaded))
-            updatedItemOpt?.downloaded
-        } else {
-            logger.warn("Cannot find order item with id $orderItemId to update its downloaded time")
-            null
-        }
+        val orderItem = orderItemRepository.requireById(orderItemId)
+        val updatedItemUpdated = orderItemRepository.update(orderItem.copy(downloaded = downloaded))
+        return updatedItemUpdated.downloaded
     }
 }

@@ -8,9 +8,15 @@ import java.util.*
  * Common asset attributes.
  * @author Radek Beran
  */
-data class AssetAttributes(val id: String, val created: Instant, val createdBy: String, val modified: Instant, val modifiedBy: String) : Serializable {
+data class AssetAttributes(
+    val id: String,
+    val created: Instant,
+    val createdBy: String,
+    val modified: Instant,
+    val modifiedBy: String
+) : Serializable {
     fun updatedWith(userId: String): AssetAttributes {
-        val now: Instant = Instant.now()
+        val now = Instant.now()
         return this.copy(
             created = if (this.created == EmptyDate) {
                     now

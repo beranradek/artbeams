@@ -4,9 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import java.time.LocalDateTime
-
-import kotlinx.datetime.Instant
+import java.time.Instant
 
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -113,7 +111,7 @@ open class Users(
     /**
      * The column <code>users.consent</code>.
      */
-    val CONSENT: TableField<UsersRecord, LocalDateTime?> = createField(DSL.name("consent"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "")
+    val CONSENT: TableField<UsersRecord, Instant?> = createField(DSL.name("consent"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
     private constructor(alias: Name, aliased: Table<UsersRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<UsersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)

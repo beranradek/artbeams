@@ -1,8 +1,7 @@
 package org.xbery.artbeams.common.queue.config
 
-import kotlinx.datetime.Instant
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
+import java.time.Duration
+import java.time.Instant
 
 /**
  * Configuration of a time to retry some operation.
@@ -72,18 +71,17 @@ open class RetryRulesConfig {
         } else {
             val maxDuration = rules
                 .filter { it.until != null }
-                .maxByOrNull { requireNotNull(it.until) }
-                ?.let { it.until }
+                .maxByOrNull { requireNotNull(it.until) }?.until
 
             // event has reached its maximum duration or maximum attempts
-            val entryWaitTime = now - age
+            val entryWaitTime = Duration.between(now, age)
             val moreThanMaxAttempts = maxAttempts != null && attempts > requireNotNull(maxAttempts)
             if (maxDuration == null || maxDuration < entryWaitTime || moreThanMaxAttempts) {
                 val infiniteRule = rules.firstOrNull { it.until == null }
                 infiniteRule?.let { now.plus(requireNotNull(it.delay)) }
             } else {
                 val sortedRules = rules.sortedBy { it.until }
-                val rule = sortedRules.firstOrNull { requireNotNull(it.until) >= (now - age) }
+                val rule = sortedRules.firstOrNull { requireNotNull(it.until) >= (Duration.between(now, age)) }
                 rule?.let { now + requireNotNull(it.delay) }
             }
         }
@@ -91,7 +89,7 @@ open class RetryRulesConfig {
 
     companion object {
         private val DEFAULT_RETRY_RULES: List<RetryRule> = createDefaultRules()
-        private val DEFAULT_DELAY: Duration = 20.minutes
+        private val DEFAULT_DELAY: Duration = Duration.ofMinutes(20)
 
         private fun createDefaultRules(): List<RetryRule> {
             val def1 = RetryRule()

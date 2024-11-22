@@ -4,9 +4,9 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
-import kotlin.collections.List
+import java.time.Instant
 
-import kotlinx.datetime.Instant
+import kotlin.collections.List
 
 import org.jooq.Field
 import org.jooq.ForeignKey

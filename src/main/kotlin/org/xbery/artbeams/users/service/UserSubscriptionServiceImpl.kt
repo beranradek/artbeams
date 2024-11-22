@@ -1,6 +1,7 @@
 package org.xbery.artbeams.users.service
 
 import kotlinx.datetime.Clock
+import kotlinx.datetime.toJavaInstant
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -70,9 +71,8 @@ open class UserSubscriptionServiceImpl(
         val user = EditedUser(
           AssetAttributes.EMPTY_ID, email, password, password, names.first, names.second, email, listOf()
         )
-        val ctx = OperationCtx(null, OriginStamp(Clock.System.now(), "RegisterUserAfterConsent", null))
-        val registeredUser = userService.saveUser(user, ctx) ?:
-            throw IllegalStateException("Error while saving new user $email")
+        val ctx = OperationCtx(null, OriginStamp(Clock.System.now().toJavaInstant(), "RegisterUserAfterConsent", null))
+        val registeredUser = userService.saveUser(user, ctx)
         logger.info("User ${registeredUser.id}/${registeredUser.login} was registered")
         return registeredUser
     }

@@ -40,7 +40,7 @@ open class EvernoteImporter(
             // Newer sync logic with pairing articles using their externalIds - ids of Evernote notes
             // Articles that have externalId set will be updated from the notes.
             // This allows to use notes from various notebooks.
-            val articles: List<Article> = articleRepository.findArticlesWithExternalIds()
+            val articles = articleRepository.findArticlesWithExternalIds()
             val noteStoreClient = evernoteApi.getEvernoteStoreClient()
             val updatedArticles = mutableListOf<Article>()
             for (article in articles) {
@@ -100,7 +100,7 @@ open class EvernoteImporter(
         return article
     }
 
-    private fun updateArticleWithNoteData(article: Article, note: Note): Article? {
+    private fun updateArticleWithNoteData(article: Article, note: Note): Article {
         if (note.body.trim().isEmpty()) {
             logger.info("Nothing to update from Evernote. Note is empty. Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
             return article
@@ -110,13 +110,13 @@ open class EvernoteImporter(
             logger.info("Nothing to update from Evernote (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
             return article
         }
-        val updatedArticleOpt =
-            articleRepository.updateEntity(article.copy(
+        val updatedArticle =
+            articleRepository.update(article.copy(
                 title = note.title,
                 bodyMarkdown = note.body,
                 body = htmlBody
             ))
-        updatedArticleOpt?.let { updatedArticle -> logger.info("Updated from Evernote: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}") }
-        return updatedArticleOpt
+        logger.info("Updated from Evernote: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}")
+        return updatedArticle
     }
 }

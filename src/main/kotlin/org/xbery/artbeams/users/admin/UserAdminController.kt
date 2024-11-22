@@ -1,5 +1,6 @@
 package org.xbery.artbeams.users.admin
 
+import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -22,7 +23,6 @@ import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 import org.xbery.artbeams.users.service.UserService
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * User administration routes.
@@ -43,13 +43,13 @@ open class UserAdminController(
     @GetMapping
     fun list(request: HttpServletRequest): Any {
         // TODO RBe: Pagination
-        val users: List<User> = userRepository.findUsers()
+        val users = userRepository.findUsers()
         val model = createModel(
             request, "users"
                     to users, "emptyId"
                     to AssetAttributes.EMPTY_ID
         )
-        return ModelAndView(TplBasePath + "/userList", model)
+        return ModelAndView("$TplBasePath/userList", model)
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
@@ -57,7 +57,7 @@ open class UserAdminController(
         return if (id == null || AssetAttributes.EMPTY_ID == id) {
             renderEditForm(request, User.Empty.toEdited(), ValidationResult.empty)
         } else {
-            val user = userRepository.findByIdAsOpt(id)
+            val user = userRepository.findByIdWithRoles(id)
             return if (user != null) {
                 renderEditForm(request, user.toEdited(), ValidationResult.empty)
             } else {
@@ -75,12 +75,8 @@ open class UserAdminController(
             renderEditForm(request, formData.data, formData.validationResult)
         } else {
             val edited: EditedUser = formData.data
-            val user = userService.saveUser(edited, requestToOperationCtx(request))
-            return if (user != null) {
-                redirect("/admin/users")
-            } else {
-                notFound(request)
-            }
+            userService.saveUser(edited, requestToOperationCtx(request))
+            redirect("/admin/users")
         }
     }
 

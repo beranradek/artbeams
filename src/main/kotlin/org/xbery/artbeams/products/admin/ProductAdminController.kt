@@ -54,17 +54,12 @@ open class ProductAdminController(
         return if (id == null || AssetAttributes.EMPTY_ID == id) {
             renderEditForm(request, Product.Empty.toEdited(), ValidationResult.empty, null)
         } else {
-            val product = productRepository.findByIdAsOpt(id)
-            if (product != null) {
-                renderEditForm(
-                    request, product.toEdited
-                        (),
-                    ValidationResult.empty,
-                    null
-                )
-            } else {
-                notFound(request)
-            }
+            val product = productRepository.requireById(id)
+            renderEditForm(
+                request, product.toEdited(),
+                ValidationResult.empty,
+                null
+            )
         }
     }
 

@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.Logging
 
 buildscript {
@@ -62,7 +63,6 @@ dependencies {
     // JOOQ
     // Configuration described at https://www.baeldung.com/spring-boot-support-for-jooq
     implementation "org.springframework.boot:spring-boot-starter-jooq:$springBootVersion"
-    implementation("org.xbery:overview-repo-sql:1.2.0")
 
     // JOOQ Code generation specific dependencies, like JDBC drivers, codegen extensions, etc.
     jooqGenerator "org.postgresql:postgresql:$postgresqlVersion"
@@ -71,7 +71,7 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
 
-    implementation("com.google.api-client:google-api-client:2.2.0")
+    implementation("com.google.api-client:google-api-client:2.7.0")
 
     // OAuth 2.0 Verification Code Receiver For Google OAuth Client Library For Java.
     // Runs an HTTP server on a free port, waiting for a redirect with the verification code.
@@ -81,9 +81,6 @@ dependencies {
     implementation("com.google.apis:google-api-services-docs:v1-rev20230929-2.0.0")
 
     compileOnly("org.springframework.boot:spring-boot-devtools")
-
-    // Temporary migration report
-    implementation("org.springframework.boot:spring-boot-properties-migrator")
 
     // Forms
     implementation("net.formio:formio:1.7.0")
@@ -122,12 +119,12 @@ dependencies {
     implementation "com.mailgun:mailgun-java:$mailgunVersion"
 
     // Working with PDF documents
-    implementation("org.apache.pdfbox:pdfbox:2.0.17")
+    implementation("org.apache.pdfbox:pdfbox:3.0.3")
 
     // Working with webp and other images
     implementation("com.sksamuel.scrimage:scrimage-core:4.1.1")
     implementation("com.sksamuel.scrimage:scrimage-webp:4.1.1")
-    implementation("com.drewnoakes:metadata-extractor:2.16.0")
+    implementation("com.drewnoakes:metadata-extractor:2.19.0")
 
     // Testing Spring Boot application
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -186,25 +183,25 @@ jooq {
                         }
                         forcedTypes {
                             forcedType {
-                                userType = "kotlinx.datetime.Instant"
+                                userType = "java.time.Instant"
                                 converter = "org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter"
                                 // A Java regex that must match target fully-qualified columns, attributes, parameters
                                 // for which converter is applied in generated code.
                                 // Use the pipe to separate several expressions.
                                 // Must match some used columns!
-                                includeExpression = ".*._time.*|created|modified|completed|finished|valid_from|valid_to|used"
+                                includeExpression = ".*._time.*|created|modified|completed|finished|valid_from|valid_to|used|consent|downloaded"
                                 includeTypes = ".*"
                             }
-                            forcedType {
-                                userType = "kotlinx.datetime.LocalDate"
-                                converter = "org.xbery.artbeams.common.persistence.jooq.converter.LocalDateConverter"
-                                // A Java regex that must match target fully-qualified columns, attributes, parameters
-                                // for which converter is applied in generated code.
-                                // Use the pipe to separate several expressions.
-                                // Must match some used columns!
-                                includeExpression = ".*._date"
-                                includeTypes = ".*"
-                            }
+                            //forcedType {
+                            //    userType = "kotlinx.datetime.LocalDate"
+                            //    converter = "org.xbery.artbeams.common.persistence.jooq.converter.LocalDateConverter"
+                            //    // A Java regex that must match target fully-qualified columns, attributes, parameters
+                            //    // for which converter is applied in generated code.
+                            //    // Use the pipe to separate several expressions.
+                            //    // Must match some used columns!
+                            //    includeExpression = ".*._date"
+                            //    includeTypes = ".*"
+                            //}
                         }
                     }
                     generate {
@@ -238,7 +235,7 @@ tasks.named('generateJooq').configure { allInputsDeclared = true }
 // Task stage for Heroku deployment
 task stage(dependsOn: ['build', 'clean'])
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+tasks.withType(KotlinCompile).all {
     kotlinOptions {
         // By default, types from Java APIs used in Kotlin are recognized as platform types for which null-checks are relaxed.
         // Kotlin support for JSR 305 annotations + Spring nullability annotations provide null-safety for the whole Spring Framework API

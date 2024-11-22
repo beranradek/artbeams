@@ -1,6 +1,5 @@
 package org.xbery.artbeams.common.queue.persistence
 
-import kotlinx.datetime.Instant
 import org.jooq.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -10,7 +9,8 @@ import org.xbery.artbeams.common.queue.model.AbstractQueueEntryMapper
 import org.xbery.artbeams.common.queue.model.AbstractQueueEntryUnmapper
 import org.xbery.artbeams.common.repository.AbstractRecordFetcher
 import org.xbery.artbeams.common.repository.AbstractRecordStorage
-import kotlin.time.Duration
+import java.time.Duration
+import java.time.Instant
 
 /**
  * Implementation of [QueueEntryRepository] using SQL database.
@@ -24,7 +24,7 @@ abstract class AbstractSqlQueueEntryRepository<R: UpdatableRecord<R>, E : Abstra
     override val dsl: DSLContext
 ) : QueueEntryRepository<E>, AbstractRecordFetcher<R>, AbstractRecordStorage<E, R> {
 
-    protected val logger: Logger = LoggerFactory.getLogger("${table.name}")
+    protected val logger: Logger = LoggerFactory.getLogger(table.name)
 
     protected abstract val idField: Field<String?>
     protected abstract val nextActionTimeField: Field<Instant?>
@@ -64,7 +64,7 @@ abstract class AbstractSqlQueueEntryRepository<R: UpdatableRecord<R>, E : Abstra
     }
 
     override fun addNewEntry(entry: E): E {
-        create(entry, queueEntryUnmapper)
+        createWithoutReturn(entry, queueEntryUnmapper)
         val insertedEntry = findEntryById(entry.id)
         return requireNotNull(insertedEntry) { "Entry not found: ${entry.id}" }
     }

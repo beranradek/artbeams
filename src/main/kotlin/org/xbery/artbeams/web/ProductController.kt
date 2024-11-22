@@ -5,7 +5,7 @@ import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
 import net.formio.validation.ValidationResult
-import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -50,7 +50,7 @@ import java.time.Instant
  * @author Radek Beran
  */
 @Controller
-open class ProductController(
+class ProductController(
     private val controllerComponents: ControllerComponents,
     private val articleService: ArticleService,
     private val productService: ProductService,
@@ -246,7 +246,7 @@ open class ProductController(
         customer: User,
         fileData: FileData
     ): ByteArrayOutputStream {
-        val pdfDocument: PDDocument = PDDocument.load(fileData.data)
+        val pdfDocument = Loader.loadPDF(fileData.data)
         val pdfOutputStream = ByteArrayOutputStream()
         pdfDocument.use { pdfDoc ->
             val nowCalendar: java.util.Calendar = java.util.Calendar.getInstance()

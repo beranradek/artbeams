@@ -31,14 +31,8 @@ open class CategoryServiceImpl(private val categoryRepository: CategoryRepositor
             val updatedCategoryOpt: Category? = if (edited.id == AssetAttributes.EMPTY_ID) {
                 categoryRepository.create(Category.Empty.updatedWith(edited, userId))
             } else {
-                val category = categoryRepository.findByIdAsOpt(edited.id)
-                if (category != null) {
-                    categoryRepository.updateEntity(category.updatedWith(edited,
-                        userId
-                    ))
-                } else {
-                    null
-                }
+                val category = categoryRepository.requireById(edited.id)
+                categoryRepository.update(category.updatedWith(edited, userId))
             }
             updatedCategoryOpt
         } catch (ex: Exception) {

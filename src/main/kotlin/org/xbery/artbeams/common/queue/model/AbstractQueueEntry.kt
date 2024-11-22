@@ -1,7 +1,7 @@
 package org.xbery.artbeams.common.queue.model
 
 import org.xbery.artbeams.common.context.OriginStamp
-import kotlinx.datetime.Instant
+import java.time.Instant
 
 /**
  * Queue entry model.

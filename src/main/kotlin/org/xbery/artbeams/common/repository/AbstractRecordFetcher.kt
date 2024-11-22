@@ -10,7 +10,7 @@ import org.xbery.artbeams.common.overview.RecordsPage
  *
  * @author Radek Beran
  */
-internal interface AbstractRecordFetcher<R : UpdatableRecord<R>> {
+internal interface AbstractRecordFetcher<R : Record> {
 
     val dsl: DSLContext
 
@@ -19,17 +19,19 @@ internal interface AbstractRecordFetcher<R : UpdatableRecord<R>> {
     /**
      * Returns page of records by given criteria.
      *
+     * @param fields fields to select; Asterisk (DSL.asterisk()) can be used to select all fields
      * @param whereCondition condition for WHERE clause
-     * @param pagination pagination (limit, offset) settings
      * @param orderByField field for ORDER BY clause
+     * @param pagination pagination (limit, offset) settings
      * @param mapper mapper of records to entities
      * @return result list of entities including pagination settings with filled total count of records
      */
-    fun <E, F> findByCriteria(
+    fun <REC: Record, E, F> findByCriteria(
+        fields: List<SelectFieldOrAsterisk>,
         whereCondition: Condition?,
-        pagination: Pagination,
         orderByField: OrderField<F>,
-        mapper: RecordMapper<R, E>
+        pagination: Pagination,
+        mapper: RecordMapper<REC, E>
     ): RecordsPage<E> {
         // Retrieve the total count of records
         val selectCountWhereStep = dsl.selectCount().from(table)
@@ -43,7 +45,7 @@ internal interface AbstractRecordFetcher<R : UpdatableRecord<R>> {
         ) { "Total count of records was not found (this should not happen?)" }
 
         // Fetch the records for the given page
-        val selectWhereStep = dsl.selectFrom(table)
+        val selectWhereStep = dsl.select(fields).from(table)
         val selectOrderByStep = if (whereCondition != null) {
             selectWhereStep.where(whereCondition)
         } else {
@@ -53,11 +55,41 @@ internal interface AbstractRecordFetcher<R : UpdatableRecord<R>> {
             .orderBy(orderByField)
             .limit(pagination.limit)
             .offset(pagination.offset)
-            .fetch(mapper)
+            .fetch(mapper as RecordMapper<in Record, E>)
 
         // Create a ResultList with the mapped records and updated Pagination
         val updatedPagination = pagination.withTotalCount(totalCount)
         return RecordsPage(records, updatedPagination)
+    }
+
+    /**
+     * Returns records by given criteria and limit.
+     *
+     * @param fields fields to select; Asterisk (DSL.asterisk()) can be used to select all fields
+     * @param whereCondition condition for WHERE clause
+     * @param orderByField field for ORDER BY clause
+     * @param limit maximum number of records to fetch
+     * @param mapper mapper of records to entities
+     * @return result list of entities
+     */
+    fun <REC: Record, E, F> findByCriteriaWithLimit(
+        fields: List<SelectFieldOrAsterisk>,
+        whereCondition: Condition?,
+        orderByField: OrderField<F>,
+        limit: Int,
+        mapper: RecordMapper<REC, E>
+    ): List<E> {
+        val selectWhereStep = dsl.select(fields).from(table)
+        val selectOrderByStep = if (whereCondition != null) {
+            selectWhereStep.where(whereCondition)
+        } else {
+            selectWhereStep
+        }
+        return selectOrderByStep
+            .orderBy(orderByField)
+            .limit(limit)
+            .offset(0)
+            .fetch(mapper as RecordMapper<in Record, E>)
     }
 
     fun <T, E> findOneBy(field: Field<T>, fieldValue: T, mapper: RecordMapper<R, E>): E? =
