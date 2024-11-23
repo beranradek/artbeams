@@ -9,7 +9,7 @@ import java.time.Instant
  */
 data class OrderInfo(
     val id: String,
-    val createdBy: UserInfo,
+    val createdBy: UserInfo?,
     val orderTime: Instant,
     val items: List<OrderItemInfo>
 )

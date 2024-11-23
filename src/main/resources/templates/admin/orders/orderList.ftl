@@ -14,8 +14,8 @@
 <#list orders as order>
     <tr>
         <td>${order.orderTime?string["d.M.yyyy, HH:mm"]}</td>
-        <td>${order.createdBy.login}</td>
-        <td>${order.createdBy.name}</td>
+        <td><#if order.createdBy??>${order.createdBy.login}</#if></td>
+        <td><#if order.createdBy??>${order.createdBy.name}</#if></td>
         <td>
             <ul>
             <#list order.items as item>

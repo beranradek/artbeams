@@ -53,13 +53,14 @@ class OrderRepository(
             .fetch()
 
         return records.groupBy { requireNotNull(it[ORDERS.ID]) }.map { (orderId, groupedRecords) ->
+            val userId = groupedRecords.first()[USERS.ID]
             OrderInfo(
                 id = orderId,
-                createdBy = UserInfo(
-                    id = requireNotNull(groupedRecords.first()[USERS.ID]),
+                createdBy = userId?.let { UserInfo(
+                    id = it,
                     name = "${groupedRecords.first()[USERS.FIRST_NAME]} ${groupedRecords.first()[USERS.LAST_NAME]}",
                     login = requireNotNull(groupedRecords.first()[USERS.LOGIN])
-                ),
+                )},
                 orderTime = requireNotNull(groupedRecords.first()[ORDERS.CREATED]),
                 items = groupedRecords.map { record ->
                     OrderItemInfo(
