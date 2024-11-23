@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.orders.domain.Order
+import org.xbery.artbeams.orders.domain.OrderInfo
 import org.xbery.artbeams.orders.domain.OrderItem
 import org.xbery.artbeams.orders.repository.OrderItemRepository
 import org.xbery.artbeams.orders.repository.OrderRepository
@@ -29,6 +30,9 @@ class OrderServiceImpl(
         logger.info("New order ${createdOrderWithItems.id} for user ${createdOrderWithItems.common.createdBy} was created")
         return createdOrderWithItems
     }
+
+    override fun findOrders(): List<OrderInfo> =
+        orderRepository.findOrders()
 
     override fun findOrderItemOfUser(userId: String, productId: String): OrderItem? {
         return orderItemRepository.findOrderItemOfUser(userId, productId)

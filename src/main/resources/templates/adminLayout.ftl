@@ -117,6 +117,9 @@
             <li class="nav-item">
               <a class="nav-link" href="/admin/products">Products</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/orders">Orders</a>
+            </li>
           </ul>
   
           <form class="form-inline my-2 my-lg-0 form-config-reload" action="/admin/config/reload" method="POST">
