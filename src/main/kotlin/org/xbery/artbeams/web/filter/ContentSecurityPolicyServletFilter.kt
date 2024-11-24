@@ -25,7 +25,7 @@ import jakarta.servlet.http.HttpServletResponse
  */
 @Component
 @Order(2) // the lower number, the sooner execution
-open class ContentSecurityPolicyServletFilter : Filter {
+class ContentSecurityPolicyServletFilter : Filter {
 
     companion object {
         private const val NONCE_SIZE = 32 // recommended is at least 128 bits/16 bytes

@@ -13,6 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.xbery.artbeams.admin.controller.AdminHomeController.Companion.ADMIN_SECTION_PATH
 import org.xbery.artbeams.members.controller.MemberSectionController
 import org.xbery.artbeams.members.controller.MemberSectionController.Companion.MEMBER_SECTION_PATH
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
@@ -28,11 +29,11 @@ import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 @EnableWebSecurity
 @Configuration
 @EnableWebMvc
-open class SecurityConfig {
+class SecurityConfig {
 
     @Bean
     @Throws(Exception::class)
-    open fun adminSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun adminSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.authorizeHttpRequests { request ->
                 request.requestMatchers(*ResourcePaths).permitAll()
             }
@@ -65,7 +66,9 @@ open class SecurityConfig {
                     // and https://www.baeldung.com/spring-security-csp
                     // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
                     val requestPath = request.requestURI
-                    if (!requestPath.startsWith(MEMBER_SECTION_PATH) && !response.containsHeader(CSP_HEADER_NAME)) {
+                    if (!requestPath.startsWith(MEMBER_SECTION_PATH) &&
+                        !requestPath.startsWith(ADMIN_SECTION_PATH) &&
+                        !response.containsHeader(CSP_HEADER_NAME)) {
                         val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
                         // sha256 is included for style element added additionally by Facebook's sdk.js
                         response.setHeader(

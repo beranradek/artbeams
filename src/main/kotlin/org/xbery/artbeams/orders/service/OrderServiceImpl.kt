@@ -34,6 +34,18 @@ class OrderServiceImpl(
     override fun findOrders(): List<OrderInfo> =
         orderRepository.findOrders()
 
+    override fun deleteOrder(orderId: String): Boolean {
+        logger.info("Deleting order $orderId")
+        val order = orderRepository.requireById(orderId)
+        val orderItems = orderItemRepository.findByOrderId(orderId)
+        orderItemRepository.deleteByIds(orderItems.map { it.id })
+        val result = orderRepository.deleteByIds(listOf(order.id)) == 1
+        if (result) {
+            logger.info("Order ${order.id} was deleted")
+        }
+        return result
+    }
+
     override fun findOrderItemOfUser(userId: String, productId: String): OrderItem? {
         return orderItemRepository.findOrderItemOfUser(userId, productId)
     }

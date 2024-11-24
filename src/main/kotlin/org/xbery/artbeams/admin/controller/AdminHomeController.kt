@@ -11,7 +11,11 @@ import org.xbery.artbeams.common.controller.ControllerComponents
  * @author Radek Beran
  */
 @Controller
-open class AdminHomeController(common: ControllerComponents) : BaseController(common) {
-    @GetMapping("/admin")
-    fun admin(): Any = redirect("/admin/articles")
+class AdminHomeController(common: ControllerComponents) : BaseController(common) {
+    @GetMapping(ADMIN_SECTION_PATH)
+    fun admin(): Any = redirect("$ADMIN_SECTION_PATH/articles")
+
+    companion object {
+        const val ADMIN_SECTION_PATH = "/admin"
+    }
 }

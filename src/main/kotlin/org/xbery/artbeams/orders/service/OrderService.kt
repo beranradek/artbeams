@@ -13,6 +13,8 @@ interface OrderService {
 
     fun findOrders(): List<OrderInfo>
 
+    fun deleteOrder(orderId: String): Boolean
+
     /**
      * Finds order item representing an order of given product by given user.
      * @param userId

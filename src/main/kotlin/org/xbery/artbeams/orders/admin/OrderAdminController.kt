@@ -2,7 +2,9 @@ package org.xbery.artbeams.orders.admin
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
@@ -32,5 +34,11 @@ class OrderAdminController(
             "emptyId" to AssetAttributes.EMPTY_ID
         )
         return ModelAndView("$TplBasePath/orderList", model)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable("id") id: String, request: HttpServletRequest): Any {
+        orderService.deleteOrder(id)
+        return redirect("/admin/orders")
     }
 }

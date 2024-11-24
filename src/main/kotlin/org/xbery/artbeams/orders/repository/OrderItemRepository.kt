@@ -26,6 +26,11 @@ class OrderItemRepository(
     override val table: Table<OrderItemsRecord> = ORDER_ITEMS
     override val idField: Field<String?> = ORDER_ITEMS.ID
 
+    fun findByOrderId(orderId: String): List<OrderItem> =
+        dsl.selectFrom(table)
+            .where(ORDER_ITEMS.ORDER_ID.eq(orderId))
+            .fetch(mapper)
+
     fun findOrderItemOfUser(userId: String, productId: String): OrderItem? =
         dsl.selectFrom(table)
             .where(ORDER_ITEMS.CREATED_BY.eq(userId).and(ORDER_ITEMS.PRODUCT_ID.eq(productId)))
