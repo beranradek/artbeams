@@ -22,6 +22,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
+import org.xbery.artbeams.jooq.schema.tables.Sequences
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserProduct
 import org.xbery.artbeams.jooq.schema.tables.UserRole
@@ -40,6 +41,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.QueueRecord
 import org.xbery.artbeams.jooq.schema.tables.records.RolesRecord
+import org.xbery.artbeams.jooq.schema.tables.records.SequencesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserAccessRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserProductRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserRoleRecord
@@ -65,6 +67,7 @@ val CONSTRAINT_C3: UniqueKey<OrdersRecord> = Internal.createUniqueKey(Orders.ORD
 val CONSTRAINT_C: UniqueKey<ProductsRecord> = Internal.createUniqueKey(Products.PRODUCTS, DSL.name("CONSTRAINT_C"), arrayOf(Products.PRODUCTS.ID), true)
 val CONSTRAINT_66: UniqueKey<QueueRecord> = Internal.createUniqueKey(Queue.QUEUE, DSL.name("CONSTRAINT_66"), arrayOf(Queue.QUEUE.ID), true)
 val CONSTRAINT_6: UniqueKey<RolesRecord> = Internal.createUniqueKey(Roles.ROLES, DSL.name("CONSTRAINT_6"), arrayOf(Roles.ROLES.ID), true)
+val CONSTRAINT_BD: UniqueKey<SequencesRecord> = Internal.createUniqueKey(Sequences.SEQUENCES, DSL.name("CONSTRAINT_BD"), arrayOf(Sequences.SEQUENCES.SEQUENCE_NAME), true)
 val CONSTRAINT_D: UniqueKey<UserAccessRecord> = Internal.createUniqueKey(UserAccess.USER_ACCESS, DSL.name("CONSTRAINT_D"), arrayOf(UserAccess.USER_ACCESS.ID), true)
 val CONSTRAINT_48: UniqueKey<UserProductRecord> = Internal.createUniqueKey(UserProduct.USER_PRODUCT, DSL.name("CONSTRAINT_48"), arrayOf(UserProduct.USER_PRODUCT.ID), true)
 val CONSTRAINT_6A: UniqueKey<UsersRecord> = Internal.createUniqueKey(Users.USERS, DSL.name("CONSTRAINT_6A"), arrayOf(Users.USERS.ID), true)

@@ -22,6 +22,7 @@ class OrderItemUnmapper : RecordUnmapper<OrderItem, OrderItemsRecord> {
         record.orderId = orderItem.orderId
         record.productId = orderItem.productId
         record.quantity = orderItem.quantity
+        record.price = orderItem.price.price
         record.downloaded = orderItem.downloaded
         return record
     }

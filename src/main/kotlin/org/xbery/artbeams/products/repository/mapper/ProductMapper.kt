@@ -4,6 +4,7 @@ import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
+import org.xbery.artbeams.prices.domain.Price
 import org.xbery.artbeams.products.domain.Product
 
 /**
@@ -28,7 +29,17 @@ class ProductMapper : RecordMapper<ProductsRecord, Product> {
             listingImage = record.listingImage,
             image = record.image,
             confirmationMailingGroupId = record.confirmationMailingGroupId,
-            mailingGroupId = record.mailingGroupId
+            mailingGroupId = record.mailingGroupId,
+            priceRegular = Price(
+                price = requireNotNull(record.priceRegular),
+                currency = Price.DEFAULT_CURRENCY
+            ),
+            priceDiscounted = record.priceDiscounted?.let {
+                Price(
+                    price = requireNotNull(it),
+                    currency = Price.DEFAULT_CURRENCY
+                )
+            }
         )
     }
 }

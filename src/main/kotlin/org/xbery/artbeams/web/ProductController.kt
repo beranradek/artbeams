@@ -90,7 +90,7 @@ class ProductController(
                 } else {
                     logger.info("Captcha token was correct, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
                     try {
-                        userSubscriptionService.subscribe(data.name, data.email, product.id)
+                        userSubscriptionService.subscribe(data.name, data.email, product)
                         mailingApi.subscribeToGroup(
                             data.email,
                             data.name,
@@ -157,8 +157,8 @@ class ProductController(
             val fullNameOpt = findNameInRequest(request)
             val emailOpt = findEmailInRequest(request)
             if (emailOpt != null) {
-                var user = requireAuthorized(userService.findByEmail(emailOpt)) { "User with email $emailOpt was not found" }
-                userSubscriptionService.confirmConsent(fullNameOpt, user.email, product.id)
+                val user = requireAuthorized(userService.findByEmail(emailOpt)) { "User with email $emailOpt was not found" }
+                userSubscriptionService.confirmConsent(fullNameOpt, user.email, product)
 
                 // TODO: Check product is already paid if this is paid product
                 // TODO: make user an member directly after subscription confirmation and store consent explicitly (?)

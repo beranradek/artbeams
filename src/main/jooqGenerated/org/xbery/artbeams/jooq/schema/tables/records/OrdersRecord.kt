@@ -37,6 +37,14 @@ open class OrdersRecord() : UpdatableRecordImpl<OrdersRecord>(Orders.ORDERS) {
         set(value): Unit = set(4, value)
         get(): String? = get(4) as String?
 
+    open var orderNumber: String?
+        set(value): Unit = set(5, value)
+        get(): String? = get(5) as String?
+
+    open var state: String?
+        set(value): Unit = set(6, value)
+        get(): String? = get(6) as String?
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -46,12 +54,14 @@ open class OrdersRecord() : UpdatableRecordImpl<OrdersRecord>(Orders.ORDERS) {
     /**
      * Create a detached, initialised OrdersRecord
      */
-    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null): this() {
+    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, orderNumber: String? = null, state: String? = null): this() {
         this.id = id
         this.created = created
         this.createdBy = createdBy
         this.modified = modified
         this.modifiedBy = modifiedBy
+        this.orderNumber = orderNumber
+        this.state = state
         resetChangedOnNotNull()
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.jooq.schema.tables.records.OrderItemsRecord
 import org.xbery.artbeams.orders.domain.OrderItem
+import org.xbery.artbeams.prices.domain.Price
 
 /**
  * @author Radek Beran
@@ -24,6 +25,10 @@ class OrderItemMapper : RecordMapper<OrderItemsRecord, OrderItem> {
             orderId = requireNotNull(record.orderId),
             productId = requireNotNull(record.productId),
             quantity = requireNotNull(record.quantity),
+            price = Price(
+                price = requireNotNull(record.price),
+                currency = Price.DEFAULT_CURRENCY
+            ),
             downloaded = record.downloaded
         )
     }

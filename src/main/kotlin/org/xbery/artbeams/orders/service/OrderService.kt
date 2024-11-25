@@ -3,12 +3,15 @@ package org.xbery.artbeams.orders.service
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderInfo
 import org.xbery.artbeams.orders.domain.OrderItem
+import org.xbery.artbeams.products.domain.Product
 import java.time.Instant
 
 /**
  * @author Radek Beran
  */
 interface OrderService {
+    fun createOrderOfProduct(userId: String, product: Product): Order
+
     fun createOrder(order: Order): Order
 
     fun findOrders(): List<OrderInfo>

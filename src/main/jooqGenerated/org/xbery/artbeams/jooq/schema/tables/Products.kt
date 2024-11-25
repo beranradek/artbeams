@@ -4,6 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
+import java.math.BigDecimal
 import java.time.Instant
 
 import org.jooq.Field
@@ -122,6 +123,16 @@ open class Products(
      * The column <code>products.mailing_group_id</code>.
      */
     val MAILING_GROUP_ID: TableField<ProductsRecord, String?> = createField(DSL.name("mailing_group_id"), SQLDataType.VARCHAR(128).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
+    /**
+     * The column <code>products.price_regular</code>.
+     */
+    val PRICE_REGULAR: TableField<ProductsRecord, BigDecimal?> = createField(DSL.name("price_regular"), SQLDataType.DECIMAL(19, 4).nullable(false), this, "")
+
+    /**
+     * The column <code>products.price_discounted</code>.
+     */
+    val PRICE_DISCOUNTED: TableField<ProductsRecord, BigDecimal?> = createField(DSL.name("price_discounted"), SQLDataType.DECIMAL(19, 4), this, "")
 
     private constructor(alias: Name, aliased: Table<ProductsRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<ProductsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)

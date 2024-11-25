@@ -1,5 +1,24 @@
 # Changelog
 
+1.6.0 (25.11.2024)
+
+* Prices in tables. Generating order number.
+```sql
+CREATE TABLE sequences (
+    sequence_name VARCHAR(20) NOT NULL PRIMARY KEY,
+    next_value BIGINT NOT NULL
+);
+
+INSERT INTO sequences (sequence_name, next_value) VALUES ('orderNumber', 1);
+
+ALTER TABLE orders ADD COLUMN order_number VARCHAR(20) NOT NULL DEFAULT '22411251';
+ALTER TABLE products ADD COLUMN price_regular DECIMAL(19, 4) NOT NULL DEFAULT 0;
+ALTER TABLE products ADD COLUMN price_discounted DECIMAL(19, 4);
+ALTER TABLE order_items ADD COLUMN price DECIMAL(19, 4) NOT NULL DEFAULT 0;
+
+CREATE UNIQUE INDEX idx_orders_order_number ON orders (order_number);
+```
+
 1.5.0 (12.10.2024)
 
 ```sql

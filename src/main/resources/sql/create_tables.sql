@@ -91,7 +91,9 @@ CREATE TABLE products (
 	listing_image VARCHAR(128) DEFAULT NULL,
 	image VARCHAR(128) DEFAULT NULL,
 	confirmation_mailing_group_id VARCHAR(128) DEFAULT NULL,
-	mailing_group_id VARCHAR(128) DEFAULT NULL
+	mailing_group_id VARCHAR(128) DEFAULT NULL,
+	price_regular DECIMAL(19, 4) NOT NULL,
+	price_discounted DECIMAL(19, 4)
 );
 
 CREATE TABLE user_access (
@@ -119,8 +121,11 @@ CREATE TABLE orders (
 	created timestamp NOT NULL,
 	created_by VARCHAR(40) NOT NULL,
 	modified timestamp NOT NULL,
-	modified_by VARCHAR(40) NOT NULL
+	modified_by VARCHAR(40) NOT NULL,
+	order_number VARCHAR(20) NOT NULL,
+	state VARCHAR(16) NOT NULL
 );
+CREATE UNIQUE INDEX idx_orders_order_number ON orders (order_number);
 
 CREATE TABLE order_items (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
@@ -131,6 +136,7 @@ CREATE TABLE order_items (
 	order_id VARCHAR(40) NOT NULL,
 	product_id VARCHAR(40) NOT NULL,
 	quantity integer NOT NULL,
+	price DECIMAL(19, 4) NOT NULL,
 	downloaded timestamp DEFAULT NULL
 );
 
@@ -212,3 +218,8 @@ CREATE TABLE user_product (
 
 ALTER TABLE user_product ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE user_product ADD CONSTRAINT product_fk FOREIGN KEY (product_id) REFERENCES products (id);
+
+CREATE TABLE sequences (
+    sequence_name VARCHAR(20) NOT NULL PRIMARY KEY,
+    next_value BIGINT NOT NULL
+);

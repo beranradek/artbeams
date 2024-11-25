@@ -4,6 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
+import java.math.BigDecimal
 import java.time.Instant
 
 import org.jooq.Record1
@@ -69,6 +70,14 @@ open class ProductsRecord() : UpdatableRecordImpl<ProductsRecord>(Products.PRODU
         set(value): Unit = set(12, value)
         get(): String? = get(12) as String?
 
+    open var priceRegular: BigDecimal?
+        set(value): Unit = set(13, value)
+        get(): BigDecimal? = get(13) as BigDecimal?
+
+    open var priceDiscounted: BigDecimal?
+        set(value): Unit = set(14, value)
+        get(): BigDecimal? = get(14) as BigDecimal?
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -78,7 +87,7 @@ open class ProductsRecord() : UpdatableRecordImpl<ProductsRecord>(Products.PRODU
     /**
      * Create a detached, initialised ProductsRecord
      */
-    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, subtitle: String? = null, filename: String? = null, listingImage: String? = null, image: String? = null, confirmationMailingGroupId: String? = null, mailingGroupId: String? = null): this() {
+    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, subtitle: String? = null, filename: String? = null, listingImage: String? = null, image: String? = null, confirmationMailingGroupId: String? = null, mailingGroupId: String? = null, priceRegular: BigDecimal? = null, priceDiscounted: BigDecimal? = null): this() {
         this.id = id
         this.created = created
         this.createdBy = createdBy
@@ -92,6 +101,8 @@ open class ProductsRecord() : UpdatableRecordImpl<ProductsRecord>(Products.PRODU
         this.image = image
         this.confirmationMailingGroupId = confirmationMailingGroupId
         this.mailingGroupId = mailingGroupId
+        this.priceRegular = priceRegular
+        this.priceDiscounted = priceDiscounted
         resetChangedOnNotNull()
     }
 }

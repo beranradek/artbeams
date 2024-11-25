@@ -3,6 +3,7 @@ package org.xbery.artbeams.orders.domain
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.repository.IdentifiedEntity
+import org.xbery.artbeams.prices.domain.Price
 import java.time.Instant
 
 /**
@@ -15,6 +16,7 @@ data class OrderItem(
     val productId: String,
     /** Ordered quantity of product */
     val quantity: Int,
+    val price: Price,
     val downloaded: Instant?
 ) : Asset() {
     companion object {
@@ -23,6 +25,7 @@ data class OrderItem(
             AssetAttributes.EMPTY_ID,
             AssetAttributes.EMPTY_ID,
             0,
+            Price.ZERO,
             null
         )
     }

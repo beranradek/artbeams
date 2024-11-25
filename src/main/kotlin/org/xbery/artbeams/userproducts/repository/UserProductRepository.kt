@@ -1,6 +1,5 @@
 package org.xbery.artbeams.userproducts.repository
 
-import kotlinx.datetime.Clock
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS

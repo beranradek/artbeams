@@ -83,6 +83,16 @@ open class Orders(
      */
     val MODIFIED_BY: TableField<OrdersRecord, String?> = createField(DSL.name("modified_by"), SQLDataType.VARCHAR(40).nullable(false), this, "")
 
+    /**
+     * The column <code>orders.order_number</code>.
+     */
+    val ORDER_NUMBER: TableField<OrdersRecord, String?> = createField(DSL.name("order_number"), SQLDataType.VARCHAR(20).nullable(false), this, "")
+
+    /**
+     * The column <code>orders.state</code>.
+     */
+    val STATE: TableField<OrdersRecord, String?> = createField(DSL.name("state"), SQLDataType.VARCHAR(16).nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<OrdersRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<OrdersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
 

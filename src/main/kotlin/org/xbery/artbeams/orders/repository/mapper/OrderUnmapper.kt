@@ -12,13 +12,15 @@ import org.xbery.artbeams.orders.domain.Order
 @Component
 class OrderUnmapper : RecordUnmapper<Order, OrdersRecord> {
 
-    override fun unmap(orderItem: Order): OrdersRecord {
+    override fun unmap(order: Order): OrdersRecord {
         val record = ORDERS.newRecord()
-        record.id = orderItem.common.id
-        record.created = orderItem.common.created
-        record.createdBy = orderItem.common.createdBy
-        record.modified = orderItem.common.modified
-        record.modifiedBy = orderItem.common.modifiedBy
+        record.id = order.common.id
+        record.created = order.common.created
+        record.createdBy = order.common.createdBy
+        record.modified = order.common.modified
+        record.modifiedBy = order.common.modifiedBy
+        record.orderNumber = order.orderNumber
+        record.state = order.state.name
         return record
     }
 }

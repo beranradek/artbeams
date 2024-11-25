@@ -2,6 +2,7 @@ package org.xbery.artbeams.products.domain
 
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.prices.domain.Price
 
 /**
  * Product entity.
@@ -21,8 +22,16 @@ data class Product(
     /** Intermediate mailing group id for subscription confirmation related to this product. */
     val confirmationMailingGroupId: String?,
     /** Mailing group id for subscription related to this product. */
-    val mailingGroupId: String?
+    val mailingGroupId: String?,
+    /** Regular price of product. */
+    val priceRegular: Price,
+    /** Discounted price of product. */
+    val priceDiscounted: Price?
 ) : Asset() {
+    /** Price of product. */
+    val price: Price
+        get() = priceDiscounted ?: priceRegular
+
     fun updatedWith(edited: EditedProduct, userId: String): Product {
         return this.copy(
             common = this.common.updatedWith(userId),
@@ -43,7 +52,8 @@ data class Product(
 
     companion object {
         val Empty = Product(
-            AssetAttributes.Empty, "", "New product", null, null, null, null, null, null
+            AssetAttributes.Empty, "", "New product",
+            null, null, null, null, null, null, Price.ZERO, null
         )
     }
 }

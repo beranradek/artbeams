@@ -1,5 +1,6 @@
 package org.xbery.artbeams.users.service
 
+import org.xbery.artbeams.products.domain.Product
 import java.time.Instant
 
 /**
@@ -11,16 +12,16 @@ interface UserSubscriptionService {
      * (as a reward).
      * @param fullName
      * @param email
-     * @param productId
+     * @param product
      */
-    fun subscribe(fullName: String?, email: String, productId: String)
+    fun subscribe(fullName: String?, email: String, product: Product)
 
     /**
      * Confirms user's consent with personal data processing and sending of newsletters.
      * @param fullName full name of user
      * @param email email of user
-     * @param productId product ordered with the registration to newsletter
+     * @param product product ordered with the registration to newsletter
      * @return time of consent confirmation if consent was successfully confirmed and stored
      */
-    fun confirmConsent(fullName: String?, email: String, productId: String): Instant?
+    fun confirmConsent(fullName: String?, email: String, product: Product): Instant?
 }

@@ -4,6 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables.records
 
 
+import java.math.BigDecimal
 import java.time.Instant
 
 import org.jooq.Record1
@@ -49,9 +50,13 @@ open class OrderItemsRecord() : UpdatableRecordImpl<OrderItemsRecord>(OrderItems
         set(value): Unit = set(7, value)
         get(): Int? = get(7) as Int?
 
-    open var downloaded: Instant?
+    open var price: BigDecimal?
         set(value): Unit = set(8, value)
-        get(): Instant? = get(8) as Instant?
+        get(): BigDecimal? = get(8) as BigDecimal?
+
+    open var downloaded: Instant?
+        set(value): Unit = set(9, value)
+        get(): Instant? = get(9) as Instant?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -62,7 +67,7 @@ open class OrderItemsRecord() : UpdatableRecordImpl<OrderItemsRecord>(OrderItems
     /**
      * Create a detached, initialised OrderItemsRecord
      */
-    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, orderId: String? = null, productId: String? = null, quantity: Int? = null, downloaded: Instant? = null): this() {
+    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, orderId: String? = null, productId: String? = null, quantity: Int? = null, price: BigDecimal? = null, downloaded: Instant? = null): this() {
         this.id = id
         this.created = created
         this.createdBy = createdBy
@@ -71,6 +76,7 @@ open class OrderItemsRecord() : UpdatableRecordImpl<OrderItemsRecord>(OrderItems
         this.orderId = orderId
         this.productId = productId
         this.quantity = quantity
+        this.price = price
         this.downloaded = downloaded
         resetChangedOnNotNull()
     }

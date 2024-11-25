@@ -4,6 +4,7 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
+import java.math.BigDecimal
 import java.time.Instant
 
 import kotlin.collections.List
@@ -101,6 +102,11 @@ open class OrderItems(
      * The column <code>order_items.quantity</code>.
      */
     val QUANTITY: TableField<OrderItemsRecord, Int?> = createField(DSL.name("quantity"), SQLDataType.INTEGER.nullable(false), this, "")
+
+    /**
+     * The column <code>order_items.price</code>.
+     */
+    val PRICE: TableField<OrderItemsRecord, BigDecimal?> = createField(DSL.name("price"), SQLDataType.DECIMAL(19, 4).nullable(false), this, "")
 
     /**
      * The column <code>order_items.downloaded</code>.
