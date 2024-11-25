@@ -12,6 +12,7 @@ CREATE TABLE sequences (
 INSERT INTO sequences (sequence_name, next_value) VALUES ('orderNumber', 1);
 
 ALTER TABLE orders ADD COLUMN order_number VARCHAR(20) NOT NULL DEFAULT '22411251';
+ALTER TABLE orders ADD COLUMN state VARCHAR(16) NOT NULL;
 ALTER TABLE products ADD COLUMN price_regular DECIMAL(19, 4) NOT NULL DEFAULT 0;
 ALTER TABLE products ADD COLUMN price_discounted DECIMAL(19, 4);
 ALTER TABLE order_items ADD COLUMN price DECIMAL(19, 4) NOT NULL DEFAULT 0;
