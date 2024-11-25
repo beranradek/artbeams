@@ -17,6 +17,6 @@ data class UserAccess(
     val entityKey: EntityKey
 ) : IdentifiedEntity, Serializable {
     companion object {
-        val Empty: UserAccess = UserAccess(AssetAttributes.EMPTY_ID, AssetAttributes.EmptyDate, "", "", EntityKey.Empty)
+        val Empty: UserAccess = UserAccess(AssetAttributes.EMPTY_ID, AssetAttributes.EMPTY_DATE, "", "", EntityKey.Empty)
     }
 }

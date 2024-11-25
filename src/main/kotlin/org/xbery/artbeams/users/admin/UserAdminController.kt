@@ -55,7 +55,7 @@ open class UserAdminController(
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
     fun editForm(request: HttpServletRequest, @PathVariable id: String?): Any {
         return if (id == null || AssetAttributes.EMPTY_ID == id) {
-            renderEditForm(request, User.Empty.toEdited(), ValidationResult.empty)
+            renderEditForm(request, User.EMPTY.toEdited(), ValidationResult.empty)
         } else {
             val user = userRepository.findByIdWithRoles(id)
             return if (user != null) {

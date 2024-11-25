@@ -62,7 +62,7 @@ data class User(
     }
 
     companion object {
-        val Empty = User(AssetAttributes.Empty, "", "", "", "", "", emptyList(), null)
+        val EMPTY = User(AssetAttributes.EMPTY, "", "", "", "", "", emptyList(), null)
 
         fun namesFromFullName(fullName: String): Pair<String, String> {
             return if (fullName.isEmpty()) {

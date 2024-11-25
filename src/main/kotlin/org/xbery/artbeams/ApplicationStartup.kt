@@ -65,7 +65,7 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
         return if (role != null) {
             role
         } else {
-            role = Role(AssetAttributes.Empty.updatedWith(AssetAttributes.EMPTY_ID), roleName)
+            role = Role(AssetAttributes.EMPTY.updatedWith(AssetAttributes.EMPTY_ID), roleName)
             role = roleRepository.create(role)
             logger.info("$roleName role created")
             role

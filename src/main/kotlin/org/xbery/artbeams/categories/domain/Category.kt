@@ -33,7 +33,7 @@ data class Category(
             this.slug,
             this.title,
             this.description,
-            if (this.validFrom == AssetAttributes.EmptyDate) {
+            if (this.validFrom == AssetAttributes.EMPTY_DATE) {
                 Date()
             } else {
                 Date(this.validFrom.toEpochMilli())
@@ -44,6 +44,6 @@ data class Category(
 
     companion object {
         const val CacheName: String = "categories"
-        val Empty: Category = Category(AssetAttributes.Empty, Validity.Empty, "", "New category", "")
+        val Empty: Category = Category(AssetAttributes.EMPTY, Validity.Empty, "", "New category", "")
     }
 }

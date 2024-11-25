@@ -1,6 +1,6 @@
 package org.xbery.artbeams.common.assets.domain
 
-import org.xbery.artbeams.common.assets.domain.AssetAttributes.Companion.EmptyDate
+import org.xbery.artbeams.common.assets.domain.AssetAttributes.Companion.EMPTY_DATE
 import java.io.Serializable
 import java.time.Instant
 
@@ -15,6 +15,6 @@ data class Validity(val validFrom: Instant, val validTo: Instant?) : Serializabl
     }
 
     companion object {
-        val Empty: Validity = Validity(EmptyDate, null)
+        val Empty: Validity = Validity(EMPTY_DATE, null)
     }
 }

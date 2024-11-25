@@ -2,7 +2,6 @@ package org.xbery.artbeams.orders.domain
 
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
-import org.xbery.artbeams.common.repository.IdentifiedEntity
 import org.xbery.artbeams.prices.domain.Price
 import java.time.Instant
 
@@ -21,7 +20,7 @@ data class OrderItem(
 ) : Asset() {
     companion object {
         val Empty: OrderItem = OrderItem(
-            AssetAttributes.Empty,
+            AssetAttributes.EMPTY,
             AssetAttributes.EMPTY_ID,
             AssetAttributes.EMPTY_ID,
             0,

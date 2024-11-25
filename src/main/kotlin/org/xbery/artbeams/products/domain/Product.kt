@@ -52,7 +52,7 @@ data class Product(
 
     companion object {
         val Empty = Product(
-            AssetAttributes.Empty, "", "New product",
+            AssetAttributes.EMPTY, "", "New product",
             null, null, null, null, null, null, Price.ZERO, null
         )
     }

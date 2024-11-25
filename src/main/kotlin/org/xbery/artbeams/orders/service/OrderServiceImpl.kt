@@ -11,7 +11,6 @@ import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.repository.OrderItemRepository
 import org.xbery.artbeams.orders.repository.OrderRepository
 import org.xbery.artbeams.products.domain.Product
-import org.xbery.artbeams.sequences.repository.SequenceRepository
 import java.time.Instant
 
 /**
@@ -26,7 +25,7 @@ class OrderServiceImpl(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun createOrderOfProduct(userId: String, product: Product): Order {
-        val commonAttributes: AssetAttributes = AssetAttributes.Empty.updatedWith(userId)
+        val commonAttributes: AssetAttributes = AssetAttributes.EMPTY.updatedWith(userId)
         val item =
             OrderItem(commonAttributes, AssetAttributes.EMPTY_ID, product.id, 1, product.price, null)
         val order = Order(

@@ -18,7 +18,12 @@ data class AssetAttributes(
     fun updatedWith(userId: String): AssetAttributes {
         val now = Instant.now()
         return this.copy(
-            created = if (this.created == EmptyDate) {
+            id = if (this.id == EMPTY_ID) {
+                newId()
+            } else {
+                this.id
+            },
+            created = if (this.created == EMPTY_DATE) {
                     now
                 } else {
                     this.created
@@ -34,9 +39,9 @@ data class AssetAttributes(
     }
 
     companion object {
-        fun newId(): String = UUID.randomUUID().toString()
-        const val EMPTY_ID: String = "0"
-        val EmptyDate: Instant = Instant.EPOCH
-        val Empty: AssetAttributes = AssetAttributes(EMPTY_ID, EmptyDate, EMPTY_ID, EmptyDate, EMPTY_ID)
+        fun newId() = UUID.randomUUID().toString()
+        const val EMPTY_ID = "0"
+        val EMPTY_DATE: Instant = Instant.EPOCH
+        val EMPTY = AssetAttributes(EMPTY_ID, EMPTY_DATE, EMPTY_ID, EMPTY_DATE, EMPTY_ID)
     }
 }

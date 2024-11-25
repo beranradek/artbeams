@@ -36,7 +36,7 @@ data class Comment(
     companion object {
         const val CacheName: String = "comments"
         val Empty: Comment = Comment(
-            AssetAttributes.Empty,
+            AssetAttributes.EMPTY,
             null, "", "", "",
             EntityKey.Empty, "", ""
         )

@@ -50,7 +50,7 @@ data class Article(
             null,
             this.perex,
             this.bodyMarkdown,
-            if (this.validFrom == AssetAttributes.EmptyDate) {
+            if (this.validFrom == AssetAttributes.EMPTY_DATE) {
                 Date()
             } else {
                 Date(this.validFrom.toEpochMilli())
@@ -69,7 +69,7 @@ data class Article(
     companion object {
         const val CacheName: String = "articles"
         val Empty: Article = Article(
-            AssetAttributes.Empty,
+            AssetAttributes.EMPTY,
             Validity.Empty,
             null, "", "New article",
             null, "", "", "", "", true
