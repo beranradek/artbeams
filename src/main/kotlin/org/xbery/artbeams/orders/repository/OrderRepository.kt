@@ -10,12 +10,10 @@ import org.xbery.artbeams.jooq.schema.tables.references.ORDERS
 import org.xbery.artbeams.jooq.schema.tables.references.ORDER_ITEMS
 import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
 import org.xbery.artbeams.jooq.schema.tables.references.USERS
-import org.xbery.artbeams.orders.domain.Order
-import org.xbery.artbeams.orders.domain.OrderInfo
-import org.xbery.artbeams.orders.domain.OrderItemInfo
-import org.xbery.artbeams.orders.domain.UserInfo
+import org.xbery.artbeams.orders.domain.*
 import org.xbery.artbeams.orders.repository.mapper.OrderMapper
 import org.xbery.artbeams.orders.repository.mapper.OrderUnmapper
+import org.xbery.artbeams.prices.domain.Price
 
 /**
  * Order repository.
@@ -35,7 +33,9 @@ class OrderRepository(
     fun findOrders(): List<OrderInfo> {
         val records = dsl.select(
             ORDERS.ID,
+            ORDERS.ORDER_NUMBER,
             ORDERS.CREATED,
+            ORDERS.STATE,
             USERS.ID,
             USERS.FIRST_NAME,
             USERS.LAST_NAME,
@@ -43,6 +43,8 @@ class OrderRepository(
             ORDER_ITEMS.ID,
             ORDER_ITEMS.QUANTITY,
             ORDER_ITEMS.PRODUCT_ID,
+            ORDER_ITEMS.PRICE,
+            ORDER_ITEMS.DOWNLOADED,
             PRODUCTS.TITLE
         )
             .from(ORDERS)
@@ -54,22 +56,28 @@ class OrderRepository(
 
         return records.groupBy { requireNotNull(it[ORDERS.ID]) }.map { (orderId, groupedRecords) ->
             val userId = groupedRecords.first()[USERS.ID]
+            val items = groupedRecords.map { record ->
+                OrderItemInfo(
+                    id = requireNotNull(record[ORDER_ITEMS.ID]),
+                    productId = requireNotNull(record[ORDER_ITEMS.PRODUCT_ID]),
+                    productName = requireNotNull(record[PRODUCTS.TITLE]),
+                    quantity = requireNotNull(record[ORDER_ITEMS.QUANTITY]),
+                    price = Price(requireNotNull(record[ORDER_ITEMS.PRICE]), Price.DEFAULT_CURRENCY),
+                    downloaded = record[ORDER_ITEMS.DOWNLOADED]
+                )
+            }
             OrderInfo(
                 id = orderId,
+                orderNumber = requireNotNull(groupedRecords.first()[ORDERS.ORDER_NUMBER]),
                 createdBy = userId?.let { UserInfo(
                     id = it,
                     name = "${groupedRecords.first()[USERS.FIRST_NAME]} ${groupedRecords.first()[USERS.LAST_NAME]}",
                     login = requireNotNull(groupedRecords.first()[USERS.LOGIN])
                 )},
                 orderTime = requireNotNull(groupedRecords.first()[ORDERS.CREATED]),
-                items = groupedRecords.map { record ->
-                    OrderItemInfo(
-                        id = requireNotNull(record[ORDER_ITEMS.ID]),
-                        productId = requireNotNull(record[ORDER_ITEMS.PRODUCT_ID]),
-                        productName = requireNotNull(record[PRODUCTS.TITLE]),
-                        quantity = requireNotNull(record[ORDER_ITEMS.QUANTITY])
-                    )
-                }
+                items = items,
+                state = OrderState.valueOf(requireNotNull(groupedRecords.first()[ORDERS.STATE])),
+                price = items.fold(Price.ZERO) { acc, item -> acc + item.price }
             )
         }
     }
