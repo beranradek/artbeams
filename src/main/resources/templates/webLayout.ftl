@@ -343,11 +343,13 @@
   
   <footer class="footer mt-auto py-3 bg-body-tertiary">
     <div class="container align-center">
+      <#if xlat['terms-and-conditions.url']??>
+          <span class="text-body-secondary"><a href="${xlat['terms-and-conditions.url']}">${xlat['terms-and-conditions.url.title']}</a></span> |
+      </#if>
       <#if xlat['personal-data.protection.url']??>
-          <span class="text-body-secondary"><a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a></span>
+          <span class="text-body-secondary"><a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a></span> |
       </#if>
       <#if xlat['cookies.url']??>
-          <#if xlat['personal-data.protection.url']??> | </#if>
           <span class="text-body-secondary"><a href="${xlat['cookies.url']}">${xlat['cookies.title']}</a></span>
       </#if>
     </div>

@@ -59,8 +59,10 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('social.networks', 'So
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.url', '/cookies');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.title', 'Cookies');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('terms-and-conditions.url', '/obchodni-podminky');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('terms-and-conditions.title', 'Obchodní podmínky');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('personal-data.protection.url', '/ochrana-osobnich-udaju');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('personal-data.protection.title', 'Zpracování a ochrana osobních údajů');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('personal-data.protection.title', 'Ochrana údajů');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('goto.up', 'Nahoru');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.info', 'Na webu používáme nezbytné a statistické cookies.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.info.more', 'Více informací');
