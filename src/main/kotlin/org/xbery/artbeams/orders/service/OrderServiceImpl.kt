@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderInfo
 import org.xbery.artbeams.orders.domain.OrderItem
@@ -25,12 +26,13 @@ class OrderServiceImpl(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun createOrderOfProduct(userId: String, product: Product): Order {
-        val commonAttributes: AssetAttributes = AssetAttributes.EMPTY.updatedWith(userId)
+        val commonAttributes = AssetAttributes.EMPTY.updatedWith(userId)
+        val orderNumber = orderNumberGenerator.generateOrderNumber()
         val item =
             OrderItem(commonAttributes, AssetAttributes.EMPTY_ID, product.id, 1, product.price, null)
         val order = Order(
             common = commonAttributes,
-            orderNumber = orderNumberGenerator.generateOrderNumber(),
+            orderNumber = orderNumber,
             state = OrderState.CREATED,
             items = listOf(item)
         )
@@ -38,12 +40,11 @@ class OrderServiceImpl(
     }
 
     override fun createOrder(order: Order): Order {
-        val createdOrder: Order = orderRepository.create(order)
-        val createdOrderItems = mutableListOf<OrderItem>()
-        for (orderItem in order.items) {
-            createdOrderItems.add(orderItemRepository.create(orderItem.copy(orderId = createdOrder.id)))
+        val createdOrder = orderRepository.create(order)
+        val createdOrderItems = order.items.map { orderItem ->
+            orderItemRepository.create(orderItem.copy(orderId = createdOrder.id))
         }
-        val createdOrderWithItems: Order = createdOrder.copy(items = createdOrderItems)
+        val createdOrderWithItems = createdOrder.copy(items = createdOrderItems)
         logger.info("New order ${createdOrderWithItems.id} for user ${createdOrderWithItems.common.createdBy} was created")
         return createdOrderWithItems
     }
@@ -63,13 +64,14 @@ class OrderServiceImpl(
         return result
     }
 
-    override fun findOrderItemOfUser(userId: String, productId: String): OrderItem? {
-        return orderItemRepository.findOrderItemOfUser(userId, productId)
+    override fun requireLastOrderItemOfUser(userId: String, productId: String): OrderItem {
+        return requireFound(orderItemRepository.findLastOrderItemOfUser(userId, productId)) {
+            "Order item for user $userId and product $productId was not found"
+        }
     }
 
-    override fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): Instant? {
+    override fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): OrderItem {
         val orderItem = orderItemRepository.requireById(orderItemId)
-        val updatedItemUpdated = orderItemRepository.update(orderItem.copy(downloaded = downloaded))
-        return updatedItemUpdated.downloaded
+        return orderItemRepository.update(orderItem.copy(downloaded = downloaded))
     }
 }

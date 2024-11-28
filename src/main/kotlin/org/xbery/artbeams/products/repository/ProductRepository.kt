@@ -5,6 +5,7 @@ import org.jooq.Field
 import org.jooq.Table
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.common.assets.repository.AssetRepository
+import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
 import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
 import org.xbery.artbeams.products.domain.Product
@@ -33,4 +34,9 @@ class ProductRepository(
         dsl.selectFrom(table)
             .where(PRODUCTS.SLUG.eq(slug))
             .fetchOne(mapper)
+
+    fun requireBySlug(slug: String): Product =
+        requireFound(findBySlug(slug)) {
+            "Product with slug $slug was not found"
+        }
 }

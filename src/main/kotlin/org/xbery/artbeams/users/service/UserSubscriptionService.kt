@@ -1,27 +1,22 @@
 package org.xbery.artbeams.users.service
 
 import org.xbery.artbeams.products.domain.Product
-import java.time.Instant
+import org.xbery.artbeams.users.domain.User
 
 /**
  * @author Radek Beran
  */
 interface UserSubscriptionService {
-    /**
-     * Subscribe user with given full name and email to newsletters and send him/her a product
-     * (as a reward).
-     * @param fullName
-     * @param email
-     * @param product
-     */
-    fun subscribe(fullName: String?, email: String, product: Product)
 
     /**
      * Confirms user's consent with personal data processing and sending of newsletters.
+     * This may lead to new registration of user if the user with given e-mail = login does not exist yet.
+     * This leads to creation of new order of given product for the user.
+     *
      * @param fullName full name of user
-     * @param email email of user
+     * @param login login = email of user
      * @param product product ordered with the registration to newsletter
-     * @return time of consent confirmation if consent was successfully confirmed and stored
+     * @return user created or updated
      */
-    fun confirmConsent(fullName: String?, email: String, product: Product): Instant?
+    fun createOrUpdateUserWithOrderAndConsent(fullName: String?, login: String, product: Product): User
 }

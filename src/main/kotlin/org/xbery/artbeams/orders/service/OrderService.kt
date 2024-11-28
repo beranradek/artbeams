@@ -19,12 +19,12 @@ interface OrderService {
     fun deleteOrder(orderId: String): Boolean
 
     /**
-     * Finds order item representing an order of given product by given user.
+     * Finds last order item representing an order of given product by given user.
      * @param userId
      * @param productId
      * @return
      */
-    fun findOrderItemOfUser(userId: String, productId: String): OrderItem?
+    fun requireLastOrderItemOfUser(userId: String, productId: String): OrderItem
 
     /**
      * Updates downloaded time of order item.
@@ -32,5 +32,5 @@ interface OrderService {
      * @param downloaded downloaded time
      * @return
      */
-    fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): Instant?
+    fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): OrderItem
 }

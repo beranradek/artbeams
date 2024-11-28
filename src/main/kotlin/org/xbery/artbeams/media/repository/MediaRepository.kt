@@ -161,7 +161,7 @@ class MediaRepository(
      * @return
      */
     open fun findFile(filename: String, requestedSize: String?): FileData? {
-        var files = mutableListOf<FileData>()
+        val files = mutableListOf<FileData>()
         dataSource.connection.use { conn ->
             val ps: PreparedStatement =
                 conn.prepareStatement("SELECT filename, content_type, size, data, private_access, width, height FROM media WHERE filename = ?")

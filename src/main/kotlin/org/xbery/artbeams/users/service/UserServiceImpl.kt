@@ -7,7 +7,10 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
-import org.xbery.artbeams.users.domain.*
+import org.xbery.artbeams.users.domain.EditedUser
+import org.xbery.artbeams.users.domain.MyProfile
+import org.xbery.artbeams.users.domain.Role
+import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.password.domain.PasswordSetupData
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
@@ -80,8 +83,8 @@ class UserServiceImpl(
         return userRepository.findByLogin(login)
     }
 
-    override fun findByEmail(email: String): User? {
-        return userRepository.findByEmail(email)
+    override fun requireByLogin(login: String): User {
+        return userRepository.requireByLogin(login)
     }
 
     override fun findById(userId: String): User? {
@@ -90,15 +93,9 @@ class UserServiceImpl(
 
     override fun updateUser(user: User): User = userRepository.update(user)
 
-    override fun confirmConsent(email: String): Instant? {
-        val user = findByEmail(email)
-        return if (user != null) {
-            val updatedUser = userRepository.update(user.copy(consent = Instant.now()))
-            updatedUser.consent
-        } else {
-            logger.warn("Cannot find user with email $email to confirm his/her consent")
-            null
-        }
+    override fun confirmConsent(userId: String): User {
+        val user = userRepository.requireById(userId)
+        return userRepository.update(user.copy(consent = Instant.now()))
     }
 
     private fun updateRoles(userId: String, roles: List<Role>) {

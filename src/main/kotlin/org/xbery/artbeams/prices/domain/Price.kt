@@ -12,6 +12,10 @@ data class Price(
     val price: BigDecimal,
     val currency: String
 ) {
+    fun isZero(): Boolean {
+        return price.compareTo(BigDecimal.ZERO) == 0
+    }
+
     operator fun plus(other: Price): Price {
         if (this.currency != other.currency) {
             throw IllegalArgumentException("Cannot sum prices with different currencies")

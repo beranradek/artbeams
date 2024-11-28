@@ -13,7 +13,7 @@ import org.xbery.artbeams.products.repository.ProductRepository
  * @author Radek Beran
  */
 @Service
-open class ProductServiceImpl(
+class ProductServiceImpl(
     private val productRepository: ProductRepository
 ) : ProductService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -38,4 +38,6 @@ open class ProductServiceImpl(
     }
 
     override fun findBySlug(slug: String): Product? = productRepository.findBySlug(slug)
+
+    override fun requireBySlug(slug: String): Product = productRepository.requireBySlug(slug)
 }

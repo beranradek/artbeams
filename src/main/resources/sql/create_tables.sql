@@ -9,17 +9,20 @@ CREATE TABLE roles (
 
 CREATE TABLE users (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
-	created timestamp DEFAULT NULL,
+	created timestamp NOT NULL,
 	created_by VARCHAR(40) NULL DEFAULT NULL,
-	modified timestamp DEFAULT NULL,
+	modified timestamp NOT NULL,
 	modified_by VARCHAR(40) DEFAULT NULL,
-	login VARCHAR(32) DEFAULT NULL,
-	password VARCHAR(500) DEFAULT NULL,
+	login VARCHAR(32) NOT NULL,
+	password VARCHAR(500) NOT NULL,
 	first_name VARCHAR(64) DEFAULT NULL,
 	last_name VARCHAR(64) DEFAULT NULL,
-	email VARCHAR(64) DEFAULT NULL,
+	email VARCHAR(64) NOT NULL,
 	consent timestamp DEFAULT NULL
 );
+
+CREATE UNIQUE INDEX idx_users_login ON users (login);
+CREATE UNIQUE INDEX idx_users_email ON users (email);
 
 CREATE TABLE user_role (
 	user_id VARCHAR(40) NOT NULL,

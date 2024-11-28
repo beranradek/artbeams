@@ -11,4 +11,5 @@ interface ProductService {
     fun findProducts(): List<Product>
     fun saveProduct(edited: EditedProduct, ctx: OperationCtx): Product?
     fun findBySlug(slug: String): Product?
+    fun requireBySlug(slug: String): Product
 }

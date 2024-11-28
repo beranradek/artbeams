@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.context.OriginStamp
-import org.xbery.artbeams.orders.domain.OrderItem
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.users.domain.EditedUser
@@ -18,57 +17,45 @@ import java.util.*
  * @author Radek Beran
  */
 @Service
-open class UserSubscriptionServiceImpl(
+class UserSubscriptionServiceImpl(
     private val userService: UserService,
     private val orderService: OrderService
 ) : UserSubscriptionService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun subscribe(fullName: String?, email: String, product: Product) {
-        if (email.isEmpty()) {
-            throw IllegalArgumentException("Cannot subscribe user with empty e-mail, fullName $fullName, productId ${product.id}")
+    override fun createOrUpdateUserWithOrderAndConsent(fullName: String?, login: String, product: Product): User {
+        if (login.isEmpty()) {
+            throw IllegalArgumentException("Cannot confirm consent for user with empty login (e-mail), fullName $fullName, productId ${product.id}")
         }
-        val user = findOrRegisterUser(fullName, email)
-        findOrCreateOrderItem(user.id, product)
+        val loginNormalized = login.trim().lowercase()
+        val user = findOrRegisterUser(fullName, loginNormalized)
+        orderService.createOrderOfProduct(user.id, product)
+        return userService.confirmConsent(user.id)
+        // TBD: Update order state to confirmed
     }
 
-    override fun confirmConsent(fullName: String?, email: String, product: Product): Instant? {
-        if (email.isEmpty()) {
-            throw IllegalArgumentException("Cannot confirm consent for user with empty e-mail, fullName $fullName, productId ${product.id}")
-        }
-        val user: User = findOrRegisterUser(fullName, email)
-        findOrCreateOrderItem(user.id, product)
-        return userService.confirmConsent(email)
-    }
-
-    private fun findOrCreateOrderItem(userId: String, product: Product): OrderItem {
-        // TBD: Really finding possible previous order item is necessary??? Is smells like a workaround.
-        // Do not create order if the product was already ordered
-        // (for e.g. user can refresh the page)
-        val orderItem = orderService.findOrderItemOfUser(userId, product.id)
-        return orderItem ?: orderService.createOrderOfProduct(userId, product).items[0]
-    }
-
-    private fun findOrRegisterUser(fullName: String?, email: String): User {
-        val user = userService.findByEmail(email)
+    private fun findOrRegisterUser(fullName: String?, login: String): User {
+        // We have users with unique logins (that are also e-mails)
+        val user = userService.findByLogin(login)
         return if (user != null) {
             logger.debug("User ${user.id}/${user.login} is already registered")
             user
         } else {
-            registerUser(fullName, email)
+            registerUser(fullName, login)
         }
     }
 
-    private fun registerUser(fullName: String?, email: String): User {
-        if (email.isEmpty()) {
-            throw IllegalArgumentException("Cannot register user with empty e-mail, fullName $fullName")
+    private fun registerUser(fullName: String?, login: String): User {
+        if (login.isEmpty()) {
+            throw IllegalArgumentException("Cannot register user with empty login (e-mail), fullName $fullName")
         }
         val names = User.namesFromFullName(fullName ?: "")
+        // Generate/store random password that can be re-set later by the user
         val password = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()
         val user = EditedUser(
-          AssetAttributes.EMPTY_ID, email, password, password, names.first, names.second, email, listOf()
+          AssetAttributes.EMPTY_ID, login, password, password, names.first, names.second, login, listOf()
         )
-        val ctx = OperationCtx(null, OriginStamp(Instant.now(), "RegisterUserAfterConsent", null))
+        val ctx = OperationCtx(null, OriginStamp(Instant.now(), "RegisterUser", null))
         val registeredUser = userService.saveUser(user, ctx)
         logger.info("User ${registeredUser.id}/${registeredUser.login} was registered")
         return registeredUser

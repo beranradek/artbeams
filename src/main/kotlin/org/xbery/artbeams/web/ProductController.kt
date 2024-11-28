@@ -35,6 +35,7 @@ import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.media.domain.FileData
 import org.xbery.artbeams.media.repository.MediaRepository
+import org.xbery.artbeams.orders.domain.OrderItem
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.service.ProductService
@@ -43,6 +44,7 @@ import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.users.service.UserSubscriptionService
 import java.io.ByteArrayOutputStream
+import java.math.BigDecimal
 import java.time.Instant
 
 /**
@@ -67,7 +69,8 @@ class ProductController(
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
     /**
-     * Processes form with subscription/ordering of given product.
+     * Processes leading form with subscription/ordering of given product - sends subscription
+     * confirmation email to the user.
      */
     @PostMapping("/produkt/{slug}/subscribe")
     fun subscribe(request: HttpServletRequest, @PathVariable slug: String): Any {
@@ -90,7 +93,9 @@ class ProductController(
                 } else {
                     logger.info("Captcha token was correct, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
                     try {
-                        userSubscriptionService.subscribe(data.name, data.email, product)
+                        // We should not register the user until he confirms the subscription from email,
+                        // so he does not occupy registration to real owner of the email address.
+                        // This triggers sending of confirmation email:
                         mailingApi.subscribeToGroup(
                             data.email,
                             data.name,
@@ -109,19 +114,58 @@ class ProductController(
         }
     }
 
-    private fun subscriptionFormResponse(
-        formData: FormData<SubscriptionFormData>,
-        request: HttpServletRequest
-    ): ResponseEntity<String> {
-        val filledFormData = WebController.subscriptionFormDef.fill(formData)
-        val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to filledFormData)
-        return ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
+    /**
+     * Shows confirmation page after subscription request to given product.
+     * Just read operation without side effect.
+     */
+    @GetMapping("/produkt/{slug}/potvrzeni")
+    fun showSubscriptionInfo(request: HttpServletRequest, @PathVariable slug: String): Any {
+        val product = productService.requireBySlug(slug)
+        return renderProductArticle(request, product, product.slug + "-potvrzeni", false)
+    }
+
+    /**
+     * Confirms user's consent with subscription and subscribes user to mailing group related to given product.
+     * This subscription sends an email with the digital product itself.
+     * Finally, an HTML page about sending of the product is rendered.
+     */
+    @GetMapping("/produkt/{slug}/odeslano") // TBD: Rename to /confirm action, also in emails
+    fun confirmSubscriptionAndSendProduct(request: HttpServletRequest, @PathVariable slug: String): Any {
+        val product = productService.requireBySlug(slug)
+        val fullNameOpt = findNameInRequest(request)
+        val email = findEmailInRequest(request)
+        return if (email != null) {
+            // Creates or updates user (possible new registration can be created). Adds consent to user.
+            val user = userSubscriptionService.createOrUpdateUserWithOrderAndConsent(fullNameOpt, email, product)
+
+            // TBD: Update order state to PROCESSING
+
+            // TODO: Check product is already paid if this is paid product
+            // TODO: make user an member directly after subscription confirmation (?)
+            userProductService.addProductToUserLibrary(user.id, product.id)
+
+            // This triggers sending of the product to the user:
+            // TBD: Send an alternative password setup email to member section for paid product
+            // TBD: Send instructions to login for user that already set his member section password (store this info in user entity)
+            // TBD: Also subscribe user to final mailing group for paid product but without triggering email with product download
+            mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
+
+            // TBD: Update order state to SHIPPED
+
+            // Redirect to this page without email and name parameters shown in URL
+            // TBD: Create separate /odeslano route for rendering -odeslano product article
+            redirect("/produkt/$slug/odeslano")
+        } else {
+            // No email in URL - this is second request after the subscription was already confirmed.
+            // Showing page informing product was sent.
+            renderProductArticle(request, product, product.slug + "-odeslano", false)
+        }
     }
 
     /**
      * Shows order page for given product (with possible details of order/integration of invoicing system).
      */
-    @GetMapping("/produkt/{slug}/objednavka")
+    @GetMapping("/produkt/{slug}$ORDER_SUB_PATH")
     fun showProductOrder(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.findBySlug(slug)
         return if (product != null) {
@@ -132,44 +176,15 @@ class ProductController(
     }
 
     /**
-     * Shows confirmation page after subscription request to given product.
-     * Just read operation without side effect.
+     * "Thank you" page for given product, displayed AFTER confirmation of order form and possible related online
+     * payment. This page is also shown in the case when an offline payment (such as bank transfer) should be performed yet,
+     * thus it is NOT a page offering access to the paid product.
      */
-    @GetMapping("/produkt/{slug}/potvrzeni")
-    fun showSubscriptionInfo(request: HttpServletRequest, @PathVariable slug: String): Any {
+    @GetMapping("/produkt/{slug}/podekovani")
+    fun showProductThankYouPage(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.findBySlug(slug)
         return if (product != null) {
-            renderProductArticle(request, product, product.slug + "-potvrzeni", false)
-        } else {
-            notFound(request)
-        }
-    }
-
-    /**
-     * Confirms user's consent with subscription and subscribes user to mailing group related to given product.
-     * This subscription sends an email with the digital product itself.
-     * Finally, an HTML page about sending of the product is rendered.
-     */
-    @GetMapping("/produkt/{slug}/odeslano")
-    fun confirmSubscriptionAndSendProduct(request: HttpServletRequest, @PathVariable slug: String): Any {
-        val product = productService.findBySlug(slug)
-        return if (product != null) {
-            val fullNameOpt = findNameInRequest(request)
-            val emailOpt = findEmailInRequest(request)
-            if (emailOpt != null) {
-                val user = requireAuthorized(userService.findByEmail(emailOpt)) { "User with email $emailOpt was not found" }
-                userSubscriptionService.confirmConsent(fullNameOpt, user.email, product)
-
-                // TODO: Check product is already paid if this is paid product
-                // TODO: make user an member directly after subscription confirmation and store consent explicitly (?)
-                userProductService.addProductToUserLibrary(user.id, product.id)
-
-                mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
-                // Redirect to this page without email and name parameters shown in URL
-                redirect("/produkt/$slug/odeslano")
-            } else {
-                renderProductArticle(request, product, product.slug + "-odeslano", false)
-            }
+            renderProductArticle(request, product, product.slug + "-podekovani", false)
         } else {
             notFound(request)
         }
@@ -181,24 +196,25 @@ class ProductController(
     @GetMapping("/produkt/{slug}/download")
     fun serveProductData(request: HttpServletRequest, @PathVariable slug: String): Any {
         return tryOrErrorResponse(request) {
-            val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
+            val product = productService.requireBySlug(slug)
+            // Allow this not fully secured download only for free products (with zero regular prices)
+            // For paid products, secure download is available only from member section.
+            if (!product.priceRegular.isZero()) {
+                throw IllegalStateException("Product $slug is not free and cannot be downloaded via this route.")
+            }
+
             val productFileName = requireFound(product.fileName) { "Product $slug has no file name" }
             val email = requireAuthorized(findEmailInRequest(request)) { "Email is missing" }
 
             // User must exist and must confirm the consent before he/she can download the product
-            var user = requireAuthorized(userService.findByEmail(email)) { "User with email $email was not found" }
+            val user = userService.requireByLogin(email)
             if (user.consent == null) throw UnauthorizedException("User with email $email has not confirmed the consent")
 
             // Update user with full name from request if it is present (and not set in user entity yet)
             updateUserWithFullName(request, user)
 
             // Check an order of the product for given user exists
-            val orderItem = requireAuthorized(orderService.findOrderItemOfUser(user.id, product.id)) {
-                "User with email $email has not ordered product $slug"
-            }
-            if (orderItem.quantity <= 0) throw UnauthorizedException(
-                "User with email $email has not ordered product $slug"
-            )
+            val orderItem = requireLastOrderItemWithProduct(user, product, email, slug)
 
             // TODO: In case of paid product, check the order was already paid
 
@@ -227,6 +243,19 @@ class ProductController(
                 )
                 .body(documentOutputStream.toByteArray())
         }
+    }
+
+    private fun requireLastOrderItemWithProduct(
+        user: User,
+        product: Product,
+        email: String,
+        slug: String
+    ): OrderItem {
+        val orderItem = orderService.requireLastOrderItemOfUser(user.id, product.id)
+        if (orderItem.quantity <= 0) throw UnauthorizedException(
+            "User with email $email has not ordered product $slug"
+        )
+        return orderItem
     }
 
     /**
@@ -357,8 +386,18 @@ class ProductController(
         }
     }
 
+    private fun subscriptionFormResponse(
+        formData: FormData<SubscriptionFormData>,
+        request: HttpServletRequest
+    ): ResponseEntity<String> {
+        val filledFormData = WebController.subscriptionFormDef.fill(formData)
+        val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to filledFormData)
+        return ajaxResponse(ModelAndView("mailing/subscriptionFormContent", model))
+    }
+
     companion object {
         val subscriptionFormDef: FormMapping<SubscriptionFormData> = SubscriptionForm.definition
         private const val TPL_PARAM_SUBSCRIPTION_FORM_MAPPING = "subscriptionFormMapping"
+        const val ORDER_SUB_PATH = "/objednavka"
     }
 }
