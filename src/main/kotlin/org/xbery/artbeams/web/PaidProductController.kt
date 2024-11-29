@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
@@ -69,7 +68,7 @@ class PaidProductController(
         }
     }
 
-    @PostMapping("/produkt/{slug}/ordered")
+    @GetMapping("/produkt/{slug}/ordered")
     fun createOrder(
         request: HttpServletRequest,
         @PathVariable slug: String,
@@ -96,7 +95,7 @@ class PaidProductController(
         return ResponseEntity.ok("Order created")
     }
 
-    @PostMapping("/produkt/{slug}/paid")
+    @GetMapping("/produkt/{slug}/paid")
     fun updateOrderPaid(
         request: HttpServletRequest,
         @PathVariable slug: String,
@@ -110,6 +109,7 @@ class PaidProductController(
         val order = orderService.requireByOrderNumber(orderNumber)
         requireOrderItemOfProductAndUser(order, product, user)
         orderService.updateOrderPaid(order.id)
+        // TBD: Ensure access to member section, send email with access details.
         return ResponseEntity.ok("Order created")
     }
 
