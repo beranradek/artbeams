@@ -36,6 +36,7 @@ import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.media.domain.FileData
 import org.xbery.artbeams.media.repository.MediaRepository
 import org.xbery.artbeams.orders.domain.OrderItem
+import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.service.ProductService
@@ -44,15 +45,14 @@ import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.users.service.UserSubscriptionService
 import java.io.ByteArrayOutputStream
-import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Product routes.
+ * Free product and base product routes.
  * @author Radek Beran
  */
 @Controller
-class ProductController(
+class FreeProductController(
     private val controllerComponents: ControllerComponents,
     private val articleService: ArticleService,
     private val productService: ProductService,
@@ -132,15 +132,21 @@ class ProductController(
     @GetMapping("/produkt/{slug}/odeslano") // TBD: Rename to /confirm action, also in emails
     fun confirmSubscriptionAndSendProduct(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.requireBySlug(slug)
+        if (!product.priceRegular.isZero()) {
+            throw IllegalStateException("Product $slug is not free and cannot be confirmed and sent via this route.")
+        }
         val fullNameOpt = findNameInRequest(request)
         val email = findEmailInRequest(request)
         return if (email != null) {
             // Creates or updates user (possible new registration can be created). Adds consent to user.
-            val user = userSubscriptionService.createOrUpdateUserWithOrderAndConsent(fullNameOpt, email, product)
+            val user = userSubscriptionService.createOrUpdateUserWithOrderAndConsent(
+                fullNameOpt,
+                email,
+                product,
+                orderService.generateOrderNumber(),
+                OrderState.CONFIRMED
+            )
 
-            // TBD: Update order state to PROCESSING
-
-            // TODO: Check product is already paid if this is paid product
             // TODO: make user an member directly after subscription confirmation (?)
             userProductService.addProductToUserLibrary(user.id, product.id)
 
@@ -159,34 +165,6 @@ class ProductController(
             // No email in URL - this is second request after the subscription was already confirmed.
             // Showing page informing product was sent.
             renderProductArticle(request, product, product.slug + "-odeslano", false)
-        }
-    }
-
-    /**
-     * Shows order page for given product (with possible details of order/integration of invoicing system).
-     */
-    @GetMapping("/produkt/{slug}$ORDER_SUB_PATH")
-    fun showProductOrder(request: HttpServletRequest, @PathVariable slug: String): Any {
-        val product = productService.findBySlug(slug)
-        return if (product != null) {
-            renderProductArticle(request, product, product.slug + "-objednavka", false)
-        } else {
-            notFound(request)
-        }
-    }
-
-    /**
-     * "Thank you" page for given product, displayed AFTER confirmation of order form and possible related online
-     * payment. This page is also shown in the case when an offline payment (such as bank transfer) should be performed yet,
-     * thus it is NOT a page offering access to the paid product.
-     */
-    @GetMapping("/produkt/{slug}/podekovani")
-    fun showProductThankYouPage(request: HttpServletRequest, @PathVariable slug: String): Any {
-        val product = productService.findBySlug(slug)
-        return if (product != null) {
-            renderProductArticle(request, product, product.slug + "-podekovani", false)
-        } else {
-            notFound(request)
         }
     }
 

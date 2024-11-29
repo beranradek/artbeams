@@ -5,6 +5,7 @@ import org.jooq.Field
 import org.jooq.Table
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.common.assets.repository.AssetRepository
+import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 import org.xbery.artbeams.jooq.schema.tables.references.ORDERS
 import org.xbery.artbeams.jooq.schema.tables.references.ORDER_ITEMS
@@ -14,6 +15,7 @@ import org.xbery.artbeams.orders.domain.*
 import org.xbery.artbeams.orders.repository.mapper.OrderMapper
 import org.xbery.artbeams.orders.repository.mapper.OrderUnmapper
 import org.xbery.artbeams.prices.domain.Price
+import java.time.Instant
 
 /**
  * Order repository.
@@ -29,6 +31,13 @@ class OrderRepository(
 ) {
     override val table: Table<OrdersRecord> = ORDERS
     override val idField: Field<String?> = ORDERS.ID
+
+    fun requireByOrderNumber(orderNumber: String): Order =
+        requireFound(
+            dsl.selectFrom(ORDERS)
+                .where(ORDERS.ORDER_NUMBER.eq(orderNumber))
+                .fetchOne(mapper)
+        ) { "Order with number $orderNumber was not found" }
 
     fun findOrders(): List<OrderInfo> {
         val records = dsl.select(
@@ -80,5 +89,14 @@ class OrderRepository(
                 price = items.fold(Price.ZERO) { acc, item -> acc + item.price }
             )
         }
+    }
+
+    fun updateOrderPaid(orderId: String) {
+        dsl.update(ORDERS)
+            .set(ORDERS.STATE, OrderState.PAID.name)
+            .set(ORDERS.MODIFIED, Instant.now())
+            // TBD: Update paid time (Instant)
+            .where(ORDERS.ID.eq(orderId))
+            .execute()
     }
 }

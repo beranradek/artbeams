@@ -25,15 +25,26 @@ class OrderServiceImpl(
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    override fun generateOrderNumber(): String
+        = orderNumberGenerator.generateOrderNumber()
+
     override fun createOrderOfProduct(userId: String, product: Product): Order {
+        return createOrderOfProduct(
+            userId,
+            product,
+            orderNumberGenerator.generateOrderNumber(),
+            OrderState.CREATED
+        )
+    }
+
+    override fun createOrderOfProduct(userId: String, product: Product, orderNumber: String, orderState: OrderState): Order {
         val commonAttributes = AssetAttributes.EMPTY.updatedWith(userId)
-        val orderNumber = orderNumberGenerator.generateOrderNumber()
         val item =
             OrderItem(commonAttributes, AssetAttributes.EMPTY_ID, product.id, 1, product.price, null)
         val order = Order(
             common = commonAttributes,
             orderNumber = orderNumber,
-            state = OrderState.CREATED,
+            state = orderState,
             items = listOf(item)
         )
         return createOrder(order)
@@ -51,6 +62,16 @@ class OrderServiceImpl(
 
     override fun findOrders(): List<OrderInfo> =
         orderRepository.findOrders()
+
+    override fun requireByOrderNumber(orderNumber: String): Order {
+        val order = orderRepository.requireByOrderNumber(orderNumber)
+        val orderItems = orderItemRepository.findByOrderId(order.id)
+        return order.copy(items = orderItems)
+    }
+
+    override fun updateOrderPaid(orderId: String) {
+        orderRepository.updateOrderPaid(orderId)
+    }
 
     override fun deleteOrder(orderId: String): Boolean {
         logger.info("Deleting order $orderId")

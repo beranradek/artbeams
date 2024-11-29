@@ -1,4 +1,6 @@
+<#if subscriptionFormMapping??>
 <#import "/mailing/subscriptionForm.ftl" as subscriptionForm>
+</#if>
 <#macro page>
 <!DOCTYPE html>
 <html lang="cs">

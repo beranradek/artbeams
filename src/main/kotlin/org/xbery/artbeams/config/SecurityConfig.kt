@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.xbery.artbeams.admin.controller.AdminHomeController.Companion.ADMIN_SECTION_PATH
 import org.xbery.artbeams.members.controller.MemberSectionController
 import org.xbery.artbeams.members.controller.MemberSectionController.Companion.MEMBER_SECTION_PATH
-import org.xbery.artbeams.web.ProductController.Companion.ORDER_SUB_PATH
+import org.xbery.artbeams.web.FreeProductController.Companion.ORDER_SUB_PATH
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 
 

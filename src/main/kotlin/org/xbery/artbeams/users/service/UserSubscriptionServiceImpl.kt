@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.context.OriginStamp
+import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.users.domain.EditedUser
@@ -23,15 +24,14 @@ class UserSubscriptionServiceImpl(
 ) : UserSubscriptionService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun createOrUpdateUserWithOrderAndConsent(fullName: String?, login: String, product: Product): User {
+    override fun createOrUpdateUserWithOrderAndConsent(fullName: String?, login: String, product: Product, orderNumber: String, orderState: OrderState): User {
         if (login.isEmpty()) {
             throw IllegalArgumentException("Cannot confirm consent for user with empty login (e-mail), fullName $fullName, productId ${product.id}")
         }
         val loginNormalized = login.trim().lowercase()
         val user = findOrRegisterUser(fullName, loginNormalized)
-        orderService.createOrderOfProduct(user.id, product)
+        orderService.createOrderOfProduct(user.id, product, orderNumber, orderState)
         return userService.confirmConsent(user.id)
-        // TBD: Update order state to confirmed
     }
 
     private fun findOrRegisterUser(fullName: String?, login: String): User {
@@ -49,6 +49,7 @@ class UserSubscriptionServiceImpl(
         if (login.isEmpty()) {
             throw IllegalArgumentException("Cannot register user with empty login (e-mail), fullName $fullName")
         }
+        // TBD: Validate user email!
         val names = User.namesFromFullName(fullName ?: "")
         // Generate/store random password that can be re-set later by the user
         val password = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()

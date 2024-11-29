@@ -23,5 +23,6 @@ INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSecret', 'bWEfiGx
 INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSalt', '892ibXGe32lzoVs');
 
 INSERT INTO config (entry_key, entry_value) VALUES ('recaptcha.secretKey', '???');
+INSERT INTO config (entry_key, entry_value) VALUES ('invoicingSystem.secret', '???');
 
 INSERT INTO sequences (sequence_name, next_value) VALUES ('orderNumber', 1);

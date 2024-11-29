@@ -1,5 +1,6 @@
 package org.xbery.artbeams.users.service
 
+import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.users.domain.User
 
@@ -18,5 +19,11 @@ interface UserSubscriptionService {
      * @param product product ordered with the registration to newsletter
      * @return user created or updated
      */
-    fun createOrUpdateUserWithOrderAndConsent(fullName: String?, login: String, product: Product): User
+    fun createOrUpdateUserWithOrderAndConsent(
+        fullName: String?,
+        login: String,
+        product: Product,
+        orderNumber: String,
+        orderState: OrderState
+    ): User
 }

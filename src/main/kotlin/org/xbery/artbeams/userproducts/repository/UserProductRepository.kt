@@ -17,11 +17,40 @@ class UserProductRepository(
     private val dsl: DSLContext
 ) {
 
+    fun findProductByUserIdAndProductId(userId: String, productId: String): UserProductInfo? {
+        return dsl.select(
+            USER_PRODUCT.ID,
+            PRODUCTS.TITLE,
+            PRODUCTS.SUBTITLE,
+            PRODUCTS.SLUG,
+            PRODUCTS.LISTING_IMAGE
+        )
+            .from(USER_PRODUCT)
+            .innerJoin(PRODUCTS).on(USER_PRODUCT.PRODUCT_ID.eq(PRODUCTS.ID))
+            .where(
+                USER_PRODUCT.USER_ID.eq(userId),
+                USER_PRODUCT.PRODUCT_ID.eq(productId)
+            )
+            .fetchOne { record ->
+                UserProductInfo(
+                    id = requireNotNull(record[USER_PRODUCT.ID]),
+                    title = requireNotNull(record[PRODUCTS.TITLE]),
+                    subtitle = record[PRODUCTS.SUBTITLE],
+                    slug = requireNotNull(record[PRODUCTS.SLUG]),
+                    listingImage = record[PRODUCTS.LISTING_IMAGE]
+                )
+            }
+    }
+
     /**
      * Adds a product to user's library.
      * @return true if the product was added, false if it was already present in the library
      */
     fun addProductToUserLibrary(userId: String, productId: String): Boolean {
+        val product = findProductByUserIdAndProductId(userId, productId)
+        if (product != null) {
+            return false
+        }
         return dsl.insertInto(USER_PRODUCT)
             .set(USER_PRODUCT.ID, UUID.randomUUID().toString())
             .set(USER_PRODUCT.USER_ID, userId)
