@@ -2,14 +2,12 @@ package org.xbery.artbeams.orders.admin
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 
 /**
@@ -31,9 +29,18 @@ class OrderAdminController(
         val model = createModel(
             request,
             "orders" to orders,
-            "emptyId" to AssetAttributes.EMPTY_ID
+            "orderStates" to OrderState.entries.map { it.name }
         )
         return ModelAndView("$TplBasePath/orderList", model)
+    }
+
+    @PostMapping("/{id}/state")
+    fun changeState(
+        @PathVariable("id") id: String,
+        @RequestParam("state") state: OrderState
+    ): Any {
+        orderService.updateOrderState(id, state)
+        return redirect("/admin/orders")
     }
 
     @DeleteMapping("/{id}")

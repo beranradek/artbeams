@@ -73,6 +73,11 @@ class OrderServiceImpl(
         orderRepository.updateOrderPaid(orderId)
     }
 
+    override fun updateOrderState(id: String, state: OrderState): Boolean {
+        logger.info("Updating state of order $id to $state")
+        return orderRepository.updateOrderState(id, state)
+    }
+
     override fun deleteOrder(orderId: String): Boolean {
         logger.info("Deleting order $orderId")
         val order = orderRepository.requireById(orderId)
@@ -90,6 +95,7 @@ class OrderServiceImpl(
             "Order item for user $userId and product $productId was not found"
         }
     }
+
 
     override fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): OrderItem {
         val orderItem = orderItemRepository.requireById(orderItemId)

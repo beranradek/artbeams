@@ -38,7 +38,16 @@
             </ul>
         </td>
         <td>${order.price}</td>
-        <td>${order.state}</td>
+        <td>
+            <form action="/admin/orders/${order.id}/state" method="POST">
+                <select name="state" onchange="this.form.submit()">
+                    <#list orderStates as state>
+                        <option value="${state}"<#if state == order.state> selected</#if>>${state}</option>
+                    </#list>
+                </select>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </form>
+        </td>
         <td>
             <form action="/admin/orders/${order.id}" method="POST" onsubmit="return window.confirm('Are you sure you want to delete this order?');">
                 <input type="hidden" name="_method" value="DELETE"/>

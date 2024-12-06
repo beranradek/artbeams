@@ -11,7 +11,8 @@
        <div class="comment-form-ajax-content">
           <#include "/comments/commentFormContent.ftl">
        </div>
-      <p class="comment-info">Povinné údaje jsou označeny *. Emailová adresa nebude zveřejněna. Vaše osobní údaje budou použity pouze pro účely zpracování tohoto komentáře. <a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a>.</p>
+      <p class="comment-info">Povinné údaje jsou označeny *. Emailová adresa nebude zveřejněna. Vaše osobní údaje budou použity pouze pro účely zpracování tohoto komentáře. <a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a>.
+      Komentáře s odkazy jsou před zveřejněním schvalovány.</p>
       <@forms.buttonSubmit text="Odeslat komentář" />
     </form>
 </div>

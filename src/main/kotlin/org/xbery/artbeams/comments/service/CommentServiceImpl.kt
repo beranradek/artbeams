@@ -15,17 +15,19 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
 import org.xbery.artbeams.common.text.NormalizationHelper
+import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.users.repository.UserRepository
 
 /**
  * @author Radek Beran
  */
 @Service
-open class CommentServiceImpl(
+class CommentServiceImpl(
     private val commentRepository: CommentRepository,
     private val articleRepository: ArticleRepository,
     private val userRepository: UserRepository,
-    private val mailSender: MailgunMailSender
+    private val mailSender: MailgunMailSender,
+    private val appConfig: AppConfig
 ) : CommentService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
@@ -47,19 +49,51 @@ open class CommentServiceImpl(
             val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
             val updatedComment = if (edited.id == AssetAttributes.EMPTY_ID) {
                 var comment =
-                    Comment.Empty.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent)
+                    approvedOrWaiting(Comment.Empty.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent))
                 comment = commentRepository.create(comment)
                 sendNewCommentNotification(comment)
                 comment
             } else {
                 val comment = commentRepository.requireById(edited.id)
-                commentRepository.update(comment.updatedWith(edited, userId))
+                commentRepository.update(approvedOrWaiting(comment.updatedWith(edited, userId)))
             }
             updatedComment
         } catch (ex: Exception) {
             logger.error("Update of comment ${edited.id} finished with error ${ex.message}", ex)
             throw ex
         }
+    }
+
+    override fun findComments(): List<Comment> {
+        return commentRepository.findComments()
+    }
+
+    @CacheEvict(value = [Comment.CacheName], allEntries = true)
+    override fun deleteComment(id: String): Boolean {
+        logger.info("Deleting comment $id")
+        return commentRepository.deleteById(id)
+    }
+
+    @CacheEvict(value = [Comment.CacheName], allEntries = true)
+    override fun updateCommentState(id: String, state: CommentState): Boolean {
+        logger.info("Updating state of comment $id to $state")
+        return commentRepository.updateState(id, state)
+    }
+
+    private fun approvedOrWaiting(comment: Comment): Comment {
+        if (containsSuspiciousWords(comment.comment)) {
+            return comment.copy(state = CommentState.WAITING_FOR_APPROVAL)
+        }
+        return comment.copy(state = CommentState.APPROVED)
+    }
+
+    private fun containsSuspiciousWords(commentText: String): Boolean {
+        val suspiciousWords = getSuspiciousWords()
+        return suspiciousWords.any { commentText.contains(it, ignoreCase = true) }
+    }
+
+    private fun getSuspiciousWords(): List<String> {
+        return appConfig.findConfig("comments.suspiciousWords")?.split(",") ?: DEFAULT_SUSPICIOUS_WORDS
     }
 
     private fun sendNewCommentNotification(comment: Comment) {
@@ -75,7 +109,10 @@ open class CommentServiceImpl(
                             val subject: String =
                                 normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
                             val body: String =
-                                normalizationHelper.removeDiacriticalMarks("${comment.userName}/${comment.email}:\n\n${comment.comment}")
+                                normalizationHelper.removeDiacriticalMarks("User ${comment.userName}/${comment.email} " +
+                                    "commented:\n\n${comment.comment}\n\n" +
+                                    "comment state:\n\n${comment.state}"
+                                )
                             mailSender.sendMailWithText(user.email, subject, body)
                         } else {
                             logger.warn("Author ${user.login}/${user.firstName} ${user.lastName} has no email set.")
@@ -90,17 +127,18 @@ open class CommentServiceImpl(
         }
     }
 
-    override fun findComments(): List<Comment> {
-        return commentRepository.findComments()
-    }
-
-    override fun deleteComment(id: String): Boolean {
-        logger.info("Deleting comment $id")
-        return commentRepository.deleteById(id)
-    }
-
-    override fun updateCommentState(id: String, state: CommentState): Boolean {
-        logger.info("Updating state of comment $id to $state")
-        return commentRepository.updateState(id, state)
+    companion object {
+        /**
+         * If comment contains any of these words, it needs approval.
+         */
+        private val DEFAULT_SUSPICIOUS_WORDS = listOf(
+            "viagra",
+            "levitra",
+            "www.",
+            "https:",
+            "http:",
+            // Some letters specific for foreign alphabets
+            "б", "в", "г", "д", "ж", "з", "и", "й", "к", "л", "м", "н", "п", "т", "ф", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"
+        )
     }
 }

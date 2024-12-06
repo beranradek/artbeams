@@ -99,4 +99,11 @@ class OrderRepository(
             .where(ORDERS.ID.eq(orderId))
             .execute()
     }
+
+    fun updateOrderState(id: String, state: OrderState): Boolean {
+        return dsl.update(ORDERS)
+            .set(ORDERS.STATE, state.name)
+            .where(ORDERS.ID.eq(id))
+            .execute() > 0
+    }
 }
