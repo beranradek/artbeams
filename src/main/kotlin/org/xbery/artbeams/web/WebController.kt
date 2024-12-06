@@ -141,7 +141,7 @@ open class WebController(
                 val fCommentsWithForm = CompletableFuture.supplyAsync {
                     if (article.showOnBlog) {
                         val newComment = Comment.Empty.toEdited().copy(entityId = article.id)
-                        val comments = commentService.findByEntityId(article.id)
+                        val comments = commentService.findApprovedByEntityId(article.id)
                         val commentForm = commentFormDef.fill(FormData(newComment, ValidationResult.empty))
                         Pair<List<Comment>, FormMapping<EditedComment>?>(comments, commentForm)
                     } else {

@@ -12,6 +12,7 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 data class Comment(
     override val common: AssetAttributes,
     val parentId: String?,
+    val state: CommentState,
     val comment: String,
     val userName: String,
     val email: String,
@@ -37,7 +38,9 @@ data class Comment(
         const val CacheName: String = "comments"
         val Empty: Comment = Comment(
             AssetAttributes.EMPTY,
-            null, "", "", "",
+            null,
+            CommentState.WAITING_FOR_APPROVAL,
+            "", "", "",
             EntityKey.Empty, "", ""
         )
     }

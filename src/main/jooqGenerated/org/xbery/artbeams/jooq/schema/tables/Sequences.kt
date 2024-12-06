@@ -63,7 +63,7 @@ open class Sequences(
     /**
      * The column <code>sequences.next_value</code>.
      */
-    val NEXT_VALUE: TableField<SequencesRecord, Long?> = createField(DSL.name("next_value"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.field(DSL.raw("1"), SQLDataType.BIGINT)), this, "")
+    val NEXT_VALUE: TableField<SequencesRecord, Long?> = createField(DSL.name("next_value"), SQLDataType.BIGINT.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<SequencesRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<SequencesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)

@@ -94,6 +94,11 @@ open class Comments(
     val MODIFIED_BY: TableField<CommentsRecord, String?> = createField(DSL.name("modified_by"), SQLDataType.VARCHAR(40).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
 
     /**
+     * The column <code>comments.state</code>.
+     */
+    val STATE: TableField<CommentsRecord, String?> = createField(DSL.name("state"), SQLDataType.VARCHAR(20).nullable(false).defaultValue(DSL.field(DSL.raw("'WAITING_FOR_APPROVAL'"), SQLDataType.VARCHAR)), this, "")
+
+    /**
      * The column <code>comments.comment</code>.
      */
     val COMMENT: TableField<CommentsRecord, String?> = createField(DSL.name("comment"), SQLDataType.VARCHAR(20000).nullable(false), this, "")

@@ -20,6 +20,7 @@ class CommentUnmapper : RecordUnmapper<Comment, CommentsRecord> {
         record.modified = comment.common.modified
         record.modifiedBy = comment.common.modifiedBy
         record.parentId = comment.parentId
+        record.state = comment.state.name
         record.comment = comment.comment
         record.username = comment.userName
         record.email = comment.email

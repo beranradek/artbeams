@@ -6,8 +6,11 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.List
+
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.Name
 import org.jooq.Record
 import org.jooq.Schema
@@ -21,6 +24,8 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_EMAIL
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_LOGIN
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A
 import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
 
@@ -66,7 +71,7 @@ open class Users(
     /**
      * The column <code>users.created</code>.
      */
-    val CREATED: TableField<UsersRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
+    val CREATED: TableField<UsersRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>users.created_by</code>.
@@ -76,7 +81,7 @@ open class Users(
     /**
      * The column <code>users.modified</code>.
      */
-    val MODIFIED: TableField<UsersRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
+    val MODIFIED: TableField<UsersRecord, Instant?> = createField(DSL.name("modified"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
     /**
      * The column <code>users.modified_by</code>.
@@ -86,12 +91,12 @@ open class Users(
     /**
      * The column <code>users.login</code>.
      */
-    val LOGIN: TableField<UsersRecord, String?> = createField(DSL.name("login"), SQLDataType.VARCHAR(32).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+    val LOGIN: TableField<UsersRecord, String?> = createField(DSL.name("login"), SQLDataType.VARCHAR(32).nullable(false), this, "")
 
     /**
      * The column <code>users.password</code>.
      */
-    val PASSWORD: TableField<UsersRecord, String?> = createField(DSL.name("password"), SQLDataType.VARCHAR(500).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+    val PASSWORD: TableField<UsersRecord, String?> = createField(DSL.name("password"), SQLDataType.VARCHAR(500).nullable(false), this, "")
 
     /**
      * The column <code>users.first_name</code>.
@@ -106,7 +111,7 @@ open class Users(
     /**
      * The column <code>users.email</code>.
      */
-    val EMAIL: TableField<UsersRecord, String?> = createField(DSL.name("email"), SQLDataType.VARCHAR(64).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+    val EMAIL: TableField<UsersRecord, String?> = createField(DSL.name("email"), SQLDataType.VARCHAR(64).nullable(false), this, "")
 
     /**
      * The column <code>users.consent</code>.
@@ -133,6 +138,7 @@ open class Users(
 
     constructor(child: Table<out Record>, key: ForeignKey<out Record, UsersRecord>): this(Internal.createPathAlias(child, key), child, key, USERS, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_USERS_EMAIL, IDX_USERS_LOGIN)
     override fun getPrimaryKey(): UniqueKey<UsersRecord> = CONSTRAINT_6A
     override fun `as`(alias: String): Users = Users(DSL.name(alias), this)
     override fun `as`(alias: Name): Users = Users(alias, this)

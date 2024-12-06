@@ -41,33 +41,37 @@ open class CommentsRecord() : UpdatableRecordImpl<CommentsRecord>(Comments.COMME
         set(value): Unit = set(5, value)
         get(): String? = get(5) as String?
 
-    open var comment: String?
+    open var state: String?
         set(value): Unit = set(6, value)
         get(): String? = get(6) as String?
 
-    open var username: String?
+    open var comment: String?
         set(value): Unit = set(7, value)
         get(): String? = get(7) as String?
 
-    open var email: String?
+    open var username: String?
         set(value): Unit = set(8, value)
         get(): String? = get(8) as String?
 
-    open var entityType: String?
+    open var email: String?
         set(value): Unit = set(9, value)
         get(): String? = get(9) as String?
 
-    open var entityId: String?
+    open var entityType: String?
         set(value): Unit = set(10, value)
         get(): String? = get(10) as String?
 
-    open var ip: String?
+    open var entityId: String?
         set(value): Unit = set(11, value)
         get(): String? = get(11) as String?
 
-    open var userAgent: String?
+    open var ip: String?
         set(value): Unit = set(12, value)
         get(): String? = get(12) as String?
+
+    open var userAgent: String?
+        set(value): Unit = set(13, value)
+        get(): String? = get(13) as String?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -78,13 +82,14 @@ open class CommentsRecord() : UpdatableRecordImpl<CommentsRecord>(Comments.COMME
     /**
      * Create a detached, initialised CommentsRecord
      */
-    constructor(id: String? = null, parentId: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, comment: String? = null, username: String? = null, email: String? = null, entityType: String? = null, entityId: String? = null, ip: String? = null, userAgent: String? = null): this() {
+    constructor(id: String? = null, parentId: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, state: String? = null, comment: String? = null, username: String? = null, email: String? = null, entityType: String? = null, entityId: String? = null, ip: String? = null, userAgent: String? = null): this() {
         this.id = id
         this.parentId = parentId
         this.created = created
         this.createdBy = createdBy
         this.modified = modified
         this.modifiedBy = modifiedBy
+        this.state = state
         this.comment = comment
         this.username = username
         this.email = email

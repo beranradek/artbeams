@@ -2,11 +2,9 @@ package org.xbery.artbeams.comments.admin
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
+import org.xbery.artbeams.comments.domain.CommentState
 import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
@@ -29,14 +27,24 @@ class CommentAdminController(
         val comments = commentService.findComments()
         val model = createModel(
             request,
-            "comments" to comments
+            "comments" to comments,
+            "commentStates" to CommentState.entries.map { it.name }
         )
         return ModelAndView("$TplBasePath/commentList", model)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable("id") id: String, request: HttpServletRequest): Any {
+    fun delete(@PathVariable("id") id: String): Any {
         commentService.deleteComment(id)
+        return redirect("/admin/comments")
+    }
+
+    @PostMapping("/{id}/state")
+    fun changeState(
+        @PathVariable("id") id: String,
+        @RequestParam("state") state: CommentState
+    ): Any {
+        commentService.updateCommentState(id, state)
         return redirect("/admin/comments")
     }
 }

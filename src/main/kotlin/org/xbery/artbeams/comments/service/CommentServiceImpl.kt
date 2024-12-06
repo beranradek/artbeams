@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.comments.domain.Comment
+import org.xbery.artbeams.comments.domain.CommentState
 import org.xbery.artbeams.comments.domain.EditedComment
 import org.xbery.artbeams.comments.repository.CommentRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
@@ -30,9 +31,9 @@ open class CommentServiceImpl(
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
     @Cacheable(Comment.CacheName)
-    override fun findByEntityId(entityId: String): List<Comment> {
-        logger.trace("Finding comments by entity id $entityId")
-        return commentRepository.findByEntityId(entityId)
+    override fun findApprovedByEntityId(entityId: String): List<Comment> {
+        logger.trace("Finding approved comments by entity id $entityId")
+        return commentRepository.findApprovedByEntityId(entityId)
     }
 
     @CacheEvict(value = [Comment.CacheName], allEntries = true)
@@ -96,5 +97,10 @@ open class CommentServiceImpl(
     override fun deleteComment(id: String): Boolean {
         logger.info("Deleting comment $id")
         return commentRepository.deleteById(id)
+    }
+
+    override fun updateCommentState(id: String, state: CommentState): Boolean {
+        logger.info("Updating state of comment $id to $state")
+        return commentRepository.updateState(id, state)
     }
 }

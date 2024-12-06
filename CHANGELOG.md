@@ -1,5 +1,13 @@
 # Changelog
 
+1.6.1 (6.12.2024)
+
+* Comments administration/approval.
+```sql
+ALTER TABLE comments ADD COLUMN state VARCHAR(20) NOT NULL DEFAULT 'WAITING_FOR_APPROVAL';
+CREATE INDEX idx_comments_state ON comments (state);
+```
+
 1.6.0 (25.11.2024)
 
 * Prices in tables. Generating order number.

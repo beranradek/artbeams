@@ -155,6 +155,7 @@ CREATE TABLE comments (
 	created_by VARCHAR(40) NULL DEFAULT NULL,
 	modified timestamp NOT NULL,
 	modified_by VARCHAR(40) DEFAULT NULL,
+	state VARCHAR(20) NOT NULL DEFAULT 'WAITING_FOR_APPROVAL',
 	comment VARCHAR(20000) NOT NULL,
 	username VARCHAR(64) NOT NULL,
 	email VARCHAR(64) NOT NULL,
@@ -166,6 +167,7 @@ CREATE TABLE comments (
 
 ALTER TABLE comments ADD CONSTRAINT parent_id_fk FOREIGN KEY (parent_id) REFERENCES comments (id);
 CREATE INDEX idx_comments_entity_id ON comments (entity_id);
+CREATE INDEX idx_comments_state ON comments (state);
 
 CREATE TABLE config (
 	entry_key VARCHAR(120) NOT NULL PRIMARY KEY,
