@@ -15,7 +15,6 @@ import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.users.repository.UserRepository
-import java.util.*
 
 /**
  * @author Radek Beran
@@ -88,5 +87,14 @@ open class CommentServiceImpl(
         } catch (ex: Exception) {
             logger.error("Sending new comment notification for comment ${comment.id} finished with error ${ex.message}", ex)
         }
+    }
+
+    override fun findComments(): List<Comment> {
+        return commentRepository.findComments()
+    }
+
+    override fun deleteComment(id: String): Boolean {
+        logger.info("Deleting comment $id")
+        return commentRepository.deleteById(id)
     }
 }

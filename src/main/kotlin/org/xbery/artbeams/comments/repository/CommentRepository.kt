@@ -28,7 +28,7 @@ class CommentRepository(
 
     fun findComments(): List<Comment> =
         dsl.selectFrom(table)
-            .orderBy(COMMENTS.CREATED)
+            .orderBy(COMMENTS.CREATED.desc())
             .fetch(mapper)
 
     fun findByEntityId(entityId: String): List<Comment> =

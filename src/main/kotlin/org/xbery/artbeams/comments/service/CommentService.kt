@@ -13,4 +13,7 @@ interface CommentService {
         userAgent: String,
         ctx: OperationCtx
     ): Comment
+
+    fun findComments(): List<Comment>
+    fun deleteComment(id: String): Boolean
 }

@@ -2,6 +2,7 @@ package org.xbery.artbeams.common.repository
 
 import org.jooq.*
 import org.xbery.artbeams.common.error.NotFoundException
+import org.xbery.artbeams.jooq.schema.tables.references.COMMENTS
 
 /**
  * Abstract implementation of repository that uses JOOQ mapper and unmapper.
@@ -46,6 +47,12 @@ abstract class AbstractMappingRepository<T : IdentifiedEntity, R : UpdatableReco
 
     open fun requireById(id: String): T =
         findById(id) ?: throw NotFoundException("Entity with ID $id was not found")
+
+    open fun deleteById(id: String): Boolean {
+        return dsl.deleteFrom(table)
+            .where(idField.eq(id))
+            .execute() > 0
+    }
 
     open fun deleteByIds(ids: Collection<String>): Int {
         val deleted = dsl.deleteFrom(table)
