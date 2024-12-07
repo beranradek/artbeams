@@ -22,14 +22,15 @@ class ContactService(
     ) {
         val subject = "Contact form request"
         val body = """
-            E-mail: ${contactRequest.email}\n\n
-            Name: ${contactRequest.name}\n\n
-            Phone: ${contactRequest.phone}\n\n
-            IP: $ipAddress\n\n
-            User-Agent: $userAgent\n\n
-            Message:\n\n${contactRequest.message}
+            E-mail: ${contactRequest.email}
+            Name: ${contactRequest.name}
+            Phone: ${contactRequest.phone}
+            IP: $ipAddress
+            User-Agent: $userAgent
+            Message:
+            ${contactRequest.message}
         """.trimIndent()
-        mailSender.sendMailWithText(getContactEmail(), subject, body)
+        mailSender.sendMailWithText(getContactEmail(), subject, body, replyTo = contactRequest.email)
     }
 
     /**

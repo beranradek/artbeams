@@ -45,12 +45,12 @@ open class MailgunMailSender(
         }
     }
 
-    open fun sendMailWithText(recipientEmail: String, subject: String, body: String) {
+    open fun sendMailWithText(recipientEmail: String, subject: String, body: String, replyTo: String? = null) {
         logger.info("Sending email $subject to $recipientEmail")
         try {
             val message = Message.builder()
                 .from(mailerConfig.getFrom())
-                .replyTo(mailerConfig.getReplyTo())
+                .replyTo(replyTo ?: mailerConfig.getReplyTo())
                 .to(recipientEmail)
                 .subject(subject)
                 .text(body)
