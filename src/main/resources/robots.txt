@@ -2,3 +2,4 @@ User-agent: *
 Disallow: /WEB-INF/
 Disallow: /ochrana-osobnich-udaju
 Disallow: /obchodni-podminky
+Disallow: /kontakt
