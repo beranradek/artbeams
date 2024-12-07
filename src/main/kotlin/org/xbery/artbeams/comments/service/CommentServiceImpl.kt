@@ -14,6 +14,8 @@ import org.xbery.artbeams.comments.repository.CommentRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.users.repository.UserRepository
@@ -64,8 +66,8 @@ class CommentServiceImpl(
         }
     }
 
-    override fun findComments(): List<Comment> {
-        return commentRepository.findComments()
+    override fun findComments(pagination: Pagination): ResultPage<Comment> {
+        return commentRepository.findComments(pagination)
     }
 
     @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)

@@ -5,7 +5,7 @@ package org.xbery.artbeams.common.overview
  *
  * @author Radek Beran
  */
-open class RecordsPage<T>(
+open class ResultPage<T>(
     val records: List<T>,
     /**
      * Pagination settings. Filled if this is result with pagination capability.

@@ -3,12 +3,15 @@ package org.xbery.artbeams.comments.repository
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Table
+import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.comments.domain.CommentState
 import org.xbery.artbeams.comments.repository.mapper.CommentMapper
 import org.xbery.artbeams.comments.repository.mapper.CommentUnmapper
 import org.xbery.artbeams.common.assets.repository.AssetRepository
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
 import org.xbery.artbeams.jooq.schema.tables.references.COMMENTS
 
@@ -27,10 +30,13 @@ class CommentRepository(
     override val table: Table<CommentsRecord> = COMMENTS
     override val idField: Field<String?> = COMMENTS.ID
 
-    fun findComments(): List<Comment> =
-        dsl.selectFrom(table)
-            .orderBy(COMMENTS.CREATED.desc())
-            .fetch(mapper)
+    fun findComments(pagination: Pagination): ResultPage<Comment> =
+        findByCriteria(
+            null,
+            COMMENTS.CREATED.desc(),
+            pagination,
+            mapper
+        )
 
     /**
      * Finds approved comments for an entity (e.g. article id).

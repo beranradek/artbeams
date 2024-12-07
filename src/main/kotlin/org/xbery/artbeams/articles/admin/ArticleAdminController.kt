@@ -6,10 +6,7 @@ import net.formio.FormMapping
 import net.formio.validation.ValidationResult
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.domain.EditedArticle
@@ -20,6 +17,7 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.form.SpringHttpServletRequestParams
+import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.error.OperationException
 import org.xbery.artbeams.google.error.GoogleErrorCode
 import org.xbery.artbeams.media.repository.ArticleImageRepository
@@ -42,12 +40,16 @@ class ArticleAdminController(
     private val editFormDef: FormMapping<EditedArticle> = ArticleForm.definition
 
     @GetMapping
-    fun list(request: HttpServletRequest): Any {
-        // TODO: Pagination
-        val articles: List<Article> = articleService.findArticles()
+    fun list(
+        @RequestParam("offset", defaultValue = "0") offset: Int,
+        @RequestParam("limit", defaultValue = "20") limit: Int,
+        request: HttpServletRequest
+    ): Any {
+        val pagination = Pagination(offset, limit)
+        val resultPage = articleService.findArticles(pagination)
         val model = createModel(
-            request, "articles"
-                    to articles, "emptyId"
+            request, "resultPage"
+                    to resultPage, "emptyId"
                     to AssetAttributes.EMPTY_ID
         )
         return ModelAndView("$tplBasePath/articleList", model)

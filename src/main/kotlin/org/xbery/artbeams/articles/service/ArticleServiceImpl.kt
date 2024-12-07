@@ -12,6 +12,8 @@ import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.markdown.MarkdownConverter
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.evernote.service.EvernoteApi
 import org.xbery.artbeams.evernote.service.EvernoteImporter
 import org.xbery.artbeams.google.docs.GoogleDocsService
@@ -30,9 +32,9 @@ class ArticleServiceImpl(
 ) : ArticleService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun findArticles(): List<Article> {
+    override fun findArticles(pagination: Pagination): ResultPage<Article> {
         logger.trace("Finding articles")
-        return articleRepository.findArticles()
+        return articleRepository.findArticles(pagination)
     }
 
     @CacheEvict(value = [ Article.CacheName ], allEntries = true)

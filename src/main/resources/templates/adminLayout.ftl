@@ -1,4 +1,4 @@
-<#macro page>
+<#macro page noUp=false>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -165,9 +165,11 @@
         <#nested/>
     </main><!-- /.container -->
       <footer class="footer mt-auto py-3 bg-body-tertiary">
+        <#if !noUp>
         <div class="container align-right">
           <a href="#">${xlat['goto.up']}</a>
         </div>
+        </#if>
       </footer>
     
     <!-- Bootstrap core JavaScript -->

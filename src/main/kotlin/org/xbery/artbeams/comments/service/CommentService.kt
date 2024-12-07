@@ -4,6 +4,8 @@ import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.comments.domain.CommentState
 import org.xbery.artbeams.comments.domain.EditedComment
 import org.xbery.artbeams.common.context.OperationCtx
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 
 interface CommentService {
     fun findApprovedByEntityId(entityId: String): List<Comment>
@@ -15,7 +17,7 @@ interface CommentService {
         ctx: OperationCtx
     ): Comment
 
-    fun findComments(): List<Comment>
+    fun findComments(pagination: Pagination): ResultPage<Comment>
     fun deleteComment(id: String): Boolean
     fun updateCommentState(id: String, state: CommentState): Boolean
 }

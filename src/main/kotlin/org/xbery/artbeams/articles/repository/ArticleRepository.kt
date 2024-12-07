@@ -8,6 +8,8 @@ import org.xbery.artbeams.articles.repository.mapper.ArticleUnmapper
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.assets.domain.Validity
 import org.xbery.artbeams.common.assets.repository.AssetRepository
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.jooq.schema.tables.records.ArticlesRecord
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLES
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLE_CATEGORY
@@ -28,11 +30,14 @@ class ArticleRepository(
     override val table: Table<ArticlesRecord> = ARTICLES
     override val idField: Field<String?> = ARTICLES.ID
 
-    fun findArticles(): List<Article> =
-        dsl.select(INFO_ATTRIBUTES)
-            .from(table)
-            .orderBy(ARTICLES.MODIFIED.desc())
-            .fetch(articleInfoMapper())
+    fun findArticles(pagination: Pagination): ResultPage<Article> =
+        findByCriteria(
+            INFO_ATTRIBUTES,
+            null,
+            ARTICLES.MODIFIED.desc(),
+            pagination,
+            articleInfoMapper()
+        )
 
     fun findLatest(limit: Int): List<Article> {
         val validityDate = Instant.now()

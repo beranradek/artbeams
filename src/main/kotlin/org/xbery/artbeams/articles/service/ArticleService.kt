@@ -3,6 +3,8 @@ package org.xbery.artbeams.articles.service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.domain.EditedArticle
 import org.xbery.artbeams.common.context.OperationCtx
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 
 /**
  * Service operations with articles.
@@ -10,7 +12,7 @@ import org.xbery.artbeams.common.context.OperationCtx
  * @author Radek Beran
  */
 interface ArticleService {
-    fun findArticles(): List<Article>
+    fun findArticles(pagination: Pagination): ResultPage<Article>
     fun saveArticle(edited: EditedArticle, ctx: OperationCtx): Article?
 
     /**

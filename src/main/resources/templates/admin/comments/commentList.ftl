@@ -1,5 +1,6 @@
 <#import "/adminLayout.ftl" as layout>
-<@layout.page>
+<#import "/pagination.ftl" as pagination>
+<@layout.page noUp=true>
 
 <table class="table table-sm">
   <thead>
@@ -13,7 +14,7 @@
     </tr>
   </thead>
   <tbody>
-<#list comments as comment>
+<#list resultPage.records as comment>
     <tr>
         <td>${comment.common.created?string["d.M.yyyy, HH:mm"]}</td>
         <td>${comment.userName}</td>
@@ -40,4 +41,7 @@
 </#list>
   </tbody>
 </table>
+
+<@pagination.pagination pagination=resultPage.pagination />
+
 </@layout.page>

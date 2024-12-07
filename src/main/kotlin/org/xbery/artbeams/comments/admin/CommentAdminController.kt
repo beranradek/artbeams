@@ -8,6 +8,7 @@ import org.xbery.artbeams.comments.domain.CommentState
 import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.overview.Pagination
 
 /**
  * Comments administration routes.
@@ -22,12 +23,16 @@ class CommentAdminController(
     private val TplBasePath: String = "admin/comments"
 
     @GetMapping
-    fun list(request: HttpServletRequest): Any {
-        // TODO RBe: Pagination
-        val comments = commentService.findComments()
+    fun list(
+        @RequestParam("offset", defaultValue = "0") offset: Int,
+        @RequestParam("limit", defaultValue = "20") limit: Int,
+        request: HttpServletRequest
+    ): Any {
+        val pagination = Pagination(offset, limit)
+        val resultPage = commentService.findComments(pagination)
         val model = createModel(
             request,
-            "comments" to comments,
+            "resultPage" to resultPage,
             "commentStates" to CommentState.entries.map { it.name }
         )
         return ModelAndView("$TplBasePath/commentList", model)

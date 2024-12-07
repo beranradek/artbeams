@@ -2,7 +2,7 @@ package org.xbery.artbeams.common.repository
 
 import org.jooq.*
 import org.xbery.artbeams.common.overview.Pagination
-import org.xbery.artbeams.common.overview.RecordsPage
+import org.xbery.artbeams.common.overview.ResultPage
 
 /**
  * Minimalistic abstract class for fetching data from database. It can serve as a base
@@ -32,7 +32,7 @@ internal interface AbstractRecordFetcher<R : Record> {
         orderByField: OrderField<F>,
         pagination: Pagination,
         mapper: RecordMapper<REC, E>
-    ): RecordsPage<E> {
+    ): ResultPage<E> {
         // Retrieve the total count of records
         val selectCountWhereStep = dsl.selectCount().from(table)
         val selectCountLastStep = if (whereCondition != null) {
@@ -59,7 +59,51 @@ internal interface AbstractRecordFetcher<R : Record> {
 
         // Create a ResultList with the mapped records and updated Pagination
         val updatedPagination = pagination.withTotalCount(totalCount)
-        return RecordsPage(records, updatedPagination)
+        return ResultPage(records, updatedPagination)
+    }
+
+    /**
+     * Returns page of records by given criteria.
+     *
+     * @param whereCondition condition for WHERE clause
+     * @param orderByField field for ORDER BY clause
+     * @param pagination pagination (limit, offset) settings
+     * @param mapper mapper of records to entities
+     * @return result list of entities including pagination settings with filled total count of records
+     */
+    fun <E, F> findByCriteria(
+        whereCondition: Condition?,
+        orderByField: OrderField<F>,
+        pagination: Pagination,
+        mapper: RecordMapper<R, E>
+    ): ResultPage<E> {
+        // Retrieve the total count of records
+        val selectCountWhereStep = dsl.selectCount().from(table)
+        val selectCountLastStep = if (whereCondition != null) {
+            selectCountWhereStep.where(whereCondition)
+        } else {
+            selectCountWhereStep
+        }
+        val totalCount = requireNotNull(
+            selectCountLastStep.fetchOne(0, Long::class.java)
+        ) { "Total count of records was not found (this should not happen?)" }
+
+        // Fetch the records for the given page
+        val selectWhereStep = dsl.selectFrom(table)
+        val selectOrderByStep = if (whereCondition != null) {
+            selectWhereStep.where(whereCondition)
+        } else {
+            selectWhereStep
+        }
+        val records = selectOrderByStep
+            .orderBy(orderByField)
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .fetch(mapper)
+
+        // Create a ResultList with the mapped records and updated Pagination
+        val updatedPagination = pagination.withTotalCount(totalCount)
+        return ResultPage(records, updatedPagination)
     }
 
     /**

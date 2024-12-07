@@ -1,5 +1,6 @@
 <#import "/adminLayout.ftl" as layout>
-<@layout.page>
+<#import "/pagination.ftl" as pagination>
+<@layout.page noUp=true>
 
 <a class="btn btn-primary" href="/admin/articles/${emptyId}/edit" role="button">New Article</a>
 <a class="btn btn-secondary" href="/admin/evernote/import" role="button">Sync with Evernote</a>
@@ -16,7 +17,7 @@
     </tr>
   </thead>
   <tbody>
-<#list articles as article>
+<#list resultPage.records as article>
     <tr>
         <td>${article.title!}</td>
         <td>${article.slug!}</td>
@@ -27,4 +28,7 @@
 </#list>
   </tbody>
 </table>
+
+<@pagination.pagination pagination=resultPage.pagination />
+
 </@layout.page>
