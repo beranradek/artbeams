@@ -5,8 +5,6 @@ import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
 import net.formio.validation.ValidationResult
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,7 +31,6 @@ class CategoryAdminController(
     private val categoryService: CategoryService,
     private val common: ControllerComponents
 ) : BaseController(common) {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val TplBasePath: String = "admin/categories"
     private val editFormDef: FormMapping<EditedCategory> = CategoryForm.definition
 

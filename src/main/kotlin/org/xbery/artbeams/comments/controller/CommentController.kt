@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -30,7 +28,6 @@ class CommentController(
     private val recaptchaService: RecaptchaService,
     common: ControllerComponents
 ) : BaseController(common) {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping
     fun save(request: HttpServletRequest): Any {

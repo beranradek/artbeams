@@ -1,6 +1,8 @@
 package org.xbery.artbeams.common.controller
 
 import jakarta.servlet.http.HttpServletRequest
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.*
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils
 import org.springframework.web.servlet.ModelAndView
@@ -9,7 +11,6 @@ import org.xbery.artbeams.common.ajax.AjaxResponseBody
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.error.CommonErrorCode
 import org.xbery.artbeams.common.error.StatusCode
-import org.xbery.artbeams.common.error.logger
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.error.OperationException
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
@@ -20,6 +21,8 @@ import java.util.*
  * @author Radek Beran
  */
 abstract class BaseController(private val common: ControllerComponents) {
+
+    val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
     fun createModel(request: HttpServletRequest, vararg args: Pair<String, Any?>): MutableMap<String, Any?> {
         val model = mutableMapOf<String, Any?>()

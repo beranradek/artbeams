@@ -1,10 +1,9 @@
 package org.xbery.artbeams.media.admin
 
+import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -20,7 +19,6 @@ import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.repository.MediaRepository
 import java.nio.channels.Channels
 import java.util.concurrent.TimeUnit
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Image upload/serving controller.
@@ -32,8 +30,6 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
     private val tplBasePath: String = "admin/media"
 
     private val mediaFileUploadFormDef: FormMapping<UploadedMediaFile> = MediaFileUploadForm.definition
-
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/admin/media")
     fun listFiles(request: HttpServletRequest): Any {

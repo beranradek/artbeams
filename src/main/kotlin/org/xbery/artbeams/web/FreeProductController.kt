@@ -7,8 +7,6 @@ import net.formio.servlet.ServletRequestParams
 import net.formio.validation.ValidationResult
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -65,7 +63,6 @@ class FreeProductController(
     private val mailingApi: MailingApi,
     private val recaptchaService: RecaptchaService
 ) : BaseController(controllerComponents) {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
     /**

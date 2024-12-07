@@ -271,7 +271,9 @@
   </#if>
 
   <!-- Page content -->
+  <#if !showSidebar??>
   <#assign showSidebar = !article?? || article.showOnBlog>
+  </#if>
   <main role="main" class="page-content flex-shrink-0 container">
 
     <#if showSidebar>

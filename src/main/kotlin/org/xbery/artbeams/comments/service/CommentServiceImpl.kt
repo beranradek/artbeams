@@ -32,13 +32,13 @@ class CommentServiceImpl(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
-    @Cacheable(Comment.CacheName)
+    @Cacheable(Comment.CACHE_NAME)
     override fun findApprovedByEntityId(entityId: String): List<Comment> {
         logger.trace("Finding approved comments by entity id $entityId")
         return commentRepository.findApprovedByEntityId(entityId)
     }
 
-    @CacheEvict(value = [Comment.CacheName], allEntries = true)
+    @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
     override fun saveComment(
         edited: EditedComment,
         ipAddress: String,
@@ -49,7 +49,7 @@ class CommentServiceImpl(
             val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
             val updatedComment = if (edited.id == AssetAttributes.EMPTY_ID) {
                 var comment =
-                    approvedOrWaiting(Comment.Empty.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent))
+                    approvedOrWaiting(Comment.EMPTY.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent))
                 comment = commentRepository.create(comment)
                 sendNewCommentNotification(comment)
                 comment
@@ -68,13 +68,13 @@ class CommentServiceImpl(
         return commentRepository.findComments()
     }
 
-    @CacheEvict(value = [Comment.CacheName], allEntries = true)
+    @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
     override fun deleteComment(id: String): Boolean {
         logger.info("Deleting comment $id")
         return commentRepository.deleteById(id)
     }
 
-    @CacheEvict(value = [Comment.CacheName], allEntries = true)
+    @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
     override fun updateCommentState(id: String, state: CommentState): Boolean {
         logger.info("Updating state of comment $id to $state")
         return commentRepository.updateState(id, state)
@@ -111,7 +111,7 @@ class CommentServiceImpl(
                             val body: String =
                                 normalizationHelper.removeDiacriticalMarks("User ${comment.userName}/${comment.email} " +
                                     "commented:\n\n${comment.comment}\n\n" +
-                                    "comment state:\n\n${comment.state}"
+                                    "comment state: ${comment.state}"
                                 )
                             mailSender.sendMailWithText(user.email, subject, body)
                         } else {

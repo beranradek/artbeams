@@ -27,7 +27,6 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
-import org.xbery.artbeams.users.password.setup.service.PasswordSetupMailer
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -36,14 +35,13 @@ import java.util.concurrent.TimeUnit
  * @author Radek Beran
  */
 @Controller
-open class WebController(
+class WebController(
     val articleService: ArticleService,
     private val categoryService: CategoryService,
     val productService: ProductService,
     val commentService: CommentService,
     val controllerComponents: ControllerComponents,
-    val resourceLoader: ResourceLoader,
-    val passwordSetupMailer: PasswordSetupMailer
+    val resourceLoader: ResourceLoader
 ) : BaseController(controllerComponents), SitemapWriter {
 
     override fun articleService(): ArticleService = articleService
@@ -140,7 +138,7 @@ open class WebController(
                     CompletableFuture.supplyAsync { controllerComponents.userAccessService.findCountOfVisits(entityKey) }
                 val fCommentsWithForm = CompletableFuture.supplyAsync {
                     if (article.showOnBlog) {
-                        val newComment = Comment.Empty.toEdited().copy(entityId = article.id)
+                        val newComment = Comment.EMPTY.toEdited().copy(entityId = article.id)
                         val comments = commentService.findApprovedByEntityId(article.id)
                         val commentForm = commentFormDef.fill(FormData(newComment, ValidationResult.empty))
                         Pair<List<Comment>, FormMapping<EditedComment>?>(comments, commentForm)

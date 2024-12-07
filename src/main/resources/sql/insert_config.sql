@@ -26,3 +26,5 @@ INSERT INTO config (entry_key, entry_value) VALUES ('recaptcha.secretKey', '???'
 INSERT INTO config (entry_key, entry_value) VALUES ('invoicingSystem.secret', '???');
 
 INSERT INTO sequences (sequence_name, next_value) VALUES ('orderNumber', 1);
+
+INSERT INTO config (entry_key, entry_value) VALUES ('contact.email', '???');

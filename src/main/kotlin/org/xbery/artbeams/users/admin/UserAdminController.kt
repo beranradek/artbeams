@@ -5,8 +5,6 @@ import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
 import net.formio.validation.ValidationResult
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,13 +28,12 @@ import org.xbery.artbeams.users.service.UserService
  */
 @Controller
 @RequestMapping("/admin/users")
-open class UserAdminController(
+class UserAdminController(
     private val userRepository: UserRepository,
     private val userService: UserService,
     private val roleRepository: RoleRepository,
     private val common: ControllerComponents
 ) : BaseController(common) {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val TplBasePath: String = "admin/users"
     private val editFormDef: FormMapping<EditedUser> = UserForm.definition
 

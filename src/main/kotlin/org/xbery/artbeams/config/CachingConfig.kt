@@ -20,7 +20,7 @@ open class CachingConfig() {
     @Bean
     open fun cacheManager(): ConcurrentMapCacheManager =
         ConcurrentMapCacheManager(
-            Article.CacheName, Category.CacheName, Comment.CacheName,
+            Article.CacheName, Category.CacheName, Comment.CACHE_NAME,
             EntityAccessCount.CacheName,
             AntispamQuiz.CacheName
         )

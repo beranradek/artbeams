@@ -35,8 +35,8 @@ data class Comment(
     }
 
     companion object {
-        const val CacheName: String = "comments"
-        val Empty: Comment = Comment(
+        const val CACHE_NAME: String = "comments"
+        val EMPTY: Comment = Comment(
             AssetAttributes.EMPTY,
             null,
             CommentState.WAITING_FOR_APPROVAL,

@@ -22,8 +22,8 @@ interface UserService {
 
     /**
      * Confirms user's consent with personal data processing and sending of newsletters.
-     * @param login login of user
+     * @param userId user ID
      * @return user updated
      */
-    fun confirmConsent(login: String): User
+    fun confirmConsent(userId: String): User
 }

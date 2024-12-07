@@ -1,8 +1,6 @@
 package org.xbery.artbeams.web
 
 import jakarta.servlet.http.HttpServletRequest
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -42,7 +40,6 @@ class PaidProductController(
     private val userProductService: UserProductService,
     private val appConfig: AppConfig
 ) : BaseController(controllerComponents) {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     /**
      * Shows order page for given product (with possible details of order/integration of invoicing system).

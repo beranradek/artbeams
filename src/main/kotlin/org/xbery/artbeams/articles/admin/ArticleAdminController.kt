@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -39,7 +37,6 @@ class ArticleAdminController(
     private val articleImageRepository: ArticleImageRepository,
     common: ControllerComponents
 ) : BaseController(common) {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val tplBasePath: String = "admin/articles"
     private val paramSaveWithinEditor: String = "saveWithinEditor"
     private val editFormDef: FormMapping<EditedArticle> = ArticleForm.definition
