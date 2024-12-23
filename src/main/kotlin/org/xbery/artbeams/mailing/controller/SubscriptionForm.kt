@@ -3,9 +3,9 @@ package org.xbery.artbeams.mailing.controller
 import net.formio.Field
 import net.formio.FormMapping
 import net.formio.Forms
-import net.formio.validation.validators.EmailValidator
 import net.formio.validation.validators.RequiredValidator
 import org.xbery.artbeams.common.form.FormUtils
+import org.xbery.artbeams.common.form.validation.ChainedEmailValidator
 
 /**
  * Subscription form.
@@ -17,7 +17,7 @@ open class SubscriptionForm {
             Forms.basic(SubscriptionFormData::class.java, "subscription")
                 .field(Forms.field<String>("email", Field.EMAIL)
                     .validator(RequiredValidator())
-                    .validator(EmailValidator.getInstance())
+                    .validator(ChainedEmailValidator.INSTANCE)
                     .build()
                 )
                 .field<String>("name", Field.TEXT)

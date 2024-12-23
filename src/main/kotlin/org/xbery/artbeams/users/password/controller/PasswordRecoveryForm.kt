@@ -3,9 +3,9 @@ package org.xbery.artbeams.users.password.controller
 import net.formio.Field
 import net.formio.FormMapping
 import net.formio.Forms
-import net.formio.validation.validators.EmailValidator
 import net.formio.validation.validators.RequiredValidator
 import org.xbery.artbeams.common.form.FormUtils
+import org.xbery.artbeams.common.form.validation.ChainedEmailValidator
 import org.xbery.artbeams.users.password.domain.PasswordRecoveryData
 
 /**
@@ -19,7 +19,7 @@ open class PasswordRecoveryForm {
             Forms.basic(PasswordRecoveryData::class.java, "passwordRecovery")
                 .field(Forms.field<String>("email", Field.EMAIL)
                     .validator(RequiredValidator())
-                    .validator(EmailValidator.getInstance())
+                    .validator(ChainedEmailValidator.INSTANCE)
                     .build()
                 )
                 .build(FormUtils.CZ_CONFIG)
