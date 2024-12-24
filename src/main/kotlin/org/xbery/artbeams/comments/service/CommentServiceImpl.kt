@@ -130,17 +130,17 @@ class CommentServiceImpl(
     }
 
     companion object {
+        val RU_CHARS = setOf('б', 'в', 'г', 'д', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'п', 'т', 'ф', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я')
+
         /**
          * If comment contains any of these words, it needs approval.
          */
-        private val DEFAULT_SUSPICIOUS_WORDS = listOf(
+        private val DEFAULT_SUSPICIOUS_WORDS = mutableListOf(
             "viagra",
             "levitra",
             "www.",
             "https:",
-            "http:",
-            // Some letters specific for foreign alphabets
-            "б", "в", "г", "д", "ж", "з", "и", "й", "к", "л", "м", "н", "п", "т", "ф", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"
-        )
+            "http:"
+        ) + RU_CHARS.map { it.toString() }
     }
 }

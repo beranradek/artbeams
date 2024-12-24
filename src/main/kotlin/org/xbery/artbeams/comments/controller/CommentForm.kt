@@ -17,7 +17,7 @@ open class CommentForm {
             Forms.basic(EditedComment::class.java, "comment")
                 .field<String>("id", Field.HIDDEN)
                 .field<String>("entityId", Field.HIDDEN)
-                .field<String>("comment", Field.TEXT)
+                .field(Forms.field<String>("comment", Field.TEXT).validator(CommentValidator.INSTANCE))
                 .field<String>("userName", Field.TEXT)
                 .field(Forms.field<String>("email", Field.TEXT).validator(ChainedEmailValidator.INSTANCE))
                 .build(FormUtils.CZ_CONFIG)

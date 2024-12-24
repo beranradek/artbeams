@@ -93,7 +93,6 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('newPassword', 'Nové 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('recaptcha.siteKey', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('captcha.invalid', 'Nevalidní captcha (ochrana proti robotům). Zkuste prosím hýbat myší více jako člověk :-), nebo mě kontaktujte emailem.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('form-processing.error', 'Chyba při zpracování formuláře. Zkuste to prosím později nebo mě kontaktujte emailem.');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Email.message', 'Nevalidní email.');
 
 -- Form validation messages:
 INSERT INTO localisation (entry_key, entry_value) VALUES ('jakarta.validation.constraints.NotNull.message', 'Zadejte prosím povinný údaj.');
@@ -105,3 +104,4 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.NotEmpty.
 INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Email.message', 'Zadejte prosím validní e-mail.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Phone.message', 'Zadejte prosím validní telefonní číslo.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.URL.message', 'Zadejte prosím validní URL adresu.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Comment.message', 'Komentář obsahuje nepovolený obsah.');

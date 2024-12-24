@@ -6,6 +6,7 @@ target
 tmp
 .history
 dist
+/.ai
 /.idea
 /*.iml
 /out
