@@ -1,6 +1,6 @@
 package org.xbery.artbeams.common.html
 
-import org.apache.commons.text.StringEscapeUtils
+import org.springframework.web.util.HtmlUtils
 import java.util.regex.Pattern
 
 /**
@@ -32,10 +32,14 @@ object HtmlUtils {
             HYPERLINK.matcher(html).replaceAll("$2 [$1]") // uprava odkazu na format: Text odkazu [http://...]
         html =
             WORD_DOCUMENT_SECTION.matcher(html).replaceAll("") // uplne odstraneni specialniho elementu z Wordu
-        html = BR_TAG.matcher(html).replaceAll("\r\n") // nahrada br tagu za novy radek
+        html = BR_TAG.matcher(html).replaceAll("\n") // nahrada br tagu za novy radek
         html = TAG.matcher(html).replaceAll("") // stripovani vsech tagu - pocatecnich nebo koncovych
-        html = SPACES_BEFORE_LINE_END.matcher(html).replaceAll("\r\n")
-        html = StringEscapeUtils.unescapeHtml4(html)
+        html = SPACES_BEFORE_LINE_END.matcher(html).replaceAll("\n")
+        html = HtmlUtils.htmlUnescape(html)
         return html
+    }
+
+    fun containsHtmlMarkup(text: String): Boolean {
+        return TAG.matcher(text).find()
     }
 }

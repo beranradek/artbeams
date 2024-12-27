@@ -5,6 +5,7 @@ import net.formio.validation.InterpolatedMessage
 import net.formio.validation.ValidationContext
 import net.formio.validation.validators.AbstractValidator
 import org.xbery.artbeams.comments.service.CommentServiceImpl
+import org.xbery.artbeams.common.html.HtmlUtils
 import java.io.Serializable
 
 /**
@@ -16,7 +17,7 @@ class CommentValidator : AbstractValidator<String>() {
     override fun <U : String> validate(ctx: ValidationContext<U>): List<InterpolatedMessage> {
         val msgs: MutableList<InterpolatedMessage> = mutableListOf()
         val comment = ctx.validatedValue
-        if (comment.isNotEmpty() && containsAtLeastNChars(comment, 15, CommentServiceImpl.RU_CHARS)) {
+        if (comment.isNotEmpty() && (HtmlUtils.containsHtmlMarkup(comment) || containsAtLeastNChars(comment, 15, CommentServiceImpl.RU_CHARS))) {
             msgs.add(
                 this.error(
                     ctx.elementName,
