@@ -47,7 +47,7 @@ class PaidProductController(
     @GetMapping("/produkt/{slug}$ORDER_SUB_PATH")
     fun showProductOrder(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.requireBySlug(slug)
-        return renderProductArticle(request, product, product.slug + "-objednavka", false)
+        return renderProductArticle(request, "productArticle", product, product.slug + "-objednavka")
     }
 
     /**
@@ -59,7 +59,19 @@ class PaidProductController(
     fun showProductThankYouPage(request: HttpServletRequest, @PathVariable slug: String): Any {
         val product = productService.findBySlug(slug)
         return if (product != null) {
-            renderProductArticle(request, product, product.slug + "-podekovani", false)
+            renderProductArticle(
+                request,
+                "products/productOrderConfirmed",
+                product,
+                product.slug + "-podekovani",
+                null,
+                "accountNumber" to appConfig.requireConfig("bankTransfer.accountNumber"),
+                "bankCode" to appConfig.requireConfig("bankTransfer.bankCode"),
+                "amount" to product.price.price,
+                "currency" to product.price.currency,
+                "variableSymbol" to "123456", // TBD: Order number
+                "message" to "Order of product ${product.title}"
+            )
         } else {
             notFound(request)
         }
@@ -127,7 +139,7 @@ class PaidProductController(
         val user = userService.requireByLogin(mail)
         val order = orderService.requireByOrderNumber(orderNumber)
         requireOrderItemOfProductAndUser(order, product, user)
-        return renderProductArticle(request, product, product.slug + "-doruceni", false)
+        return renderProductArticle(request, "productArticle", product, product.slug + "-doruceni")
     }
 
     private fun checkInvoicingSystemSecret(state: String) {
@@ -148,30 +160,28 @@ class PaidProductController(
 
     private fun renderProductArticle(
         request: HttpServletRequest,
+        viewName: String,
         product: Product,
         articleSlug: String,
-        saveUserAccess: Boolean,
-        errorMessage: String? = null
+        errorMessage: String? = null,
+        vararg args: Pair<String, Any?>
     ): Any {
         val article = articleService.findBySlug(articleSlug)
         return if (article != null) {
             // Checks user device capabilities.
-            val userAccessReport = if (saveUserAccess) {
-                // Logs user access
-                val entityKey = EntityKey.fromClassAndId(Article::class.java, article.id)
-                controllerComponents.userAccessService.saveUserAccess(entityKey, request)
-            } else {
-                controllerComponents.userAccessService.getUserAccessReport(request)
-            }
+            val userAccessReport = controllerComponents.userAccessService.getUserAccessReport(request)
 
-            val model = createModel(
-                request,
+            val params = mapOf(
                 "product" to product,
                 "article" to article,
                 "userAccessReport" to userAccessReport,
                 "errorMessage" to errorMessage
+            ) + args.toMap()
+            val model = createModel(
+                request,
+                *params.toList().toTypedArray()
             )
-            ModelAndView("productArticle", model)
+            ModelAndView(viewName, model)
         } else {
             logger.error("Article $articleSlug not found")
             notFound(request)

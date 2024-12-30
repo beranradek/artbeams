@@ -34,7 +34,7 @@ data class Price(
     }
 
     companion object {
-        const val DEFAULT_CURRENCY = "CZK"
+        const val DEFAULT_CURRENCY = "CZK" // used also in QR code parameters
         val ZERO = Price(BigDecimal.ZERO, DEFAULT_CURRENCY)
     }
 }

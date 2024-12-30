@@ -24,6 +24,8 @@ INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSalt', '892ibXGe3
 
 INSERT INTO config (entry_key, entry_value) VALUES ('recaptcha.secretKey', '???');
 INSERT INTO config (entry_key, entry_value) VALUES ('invoicingSystem.secret', '???');
+INSERT INTO config (entry_key, entry_value) VALUES ('bankTransfer.accountNumber', 'FILL IN YOUR ACCOUNT NUMBER');
+INSERT INTO config (entry_key, entry_value) VALUES ('bankTransfer.bankCode', 'FILL IN YOUR BANK CODE');
 
 INSERT INTO sequences (sequence_name, next_value) VALUES ('orderNumber', 1);
 

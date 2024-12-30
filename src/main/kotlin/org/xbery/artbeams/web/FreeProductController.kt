@@ -253,8 +253,8 @@ class FreeProductController(
         val pdfDocument = Loader.loadPDF(fileData.data)
         val pdfOutputStream = ByteArrayOutputStream()
         pdfDocument.use { pdfDoc ->
-            val nowCalendar: java.util.Calendar = java.util.Calendar.getInstance()
-            val pdfMetadata: PDDocumentInformation = pdfDoc.documentInformation
+            val nowCalendar = java.util.Calendar.getInstance()
+            val pdfMetadata = pdfDoc.documentInformation
             userService.findById(product.common.createdBy) // check product author
             pdfMetadata.author = ("")
             pdfMetadata.creationDate = nowCalendar
