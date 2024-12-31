@@ -5,7 +5,6 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDDocumentInformation
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
-import org.apache.pdfbox.pdmodel.common.PDRectangle
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy
 import org.apache.pdfbox.pdmodel.font.PDFont
@@ -38,7 +37,7 @@ class PdfSigner(private val appConfig: AppConfig) {
         val pdfOutputStream = ByteArrayOutputStream()
         pdfDocument.use { pdfDoc ->
             addMetadata(pdfDoc, author, productTitle, customerEmail, customerFullName, orderNumber)
-            replaceSecondBlankPage(pdfDoc, customerEmail, customerFullName, orderNumber)
+            signSecondBlankPage(pdfDoc, customerEmail, customerFullName, orderNumber)
 
             // Add user's email and name to each page
 //            for (page in pdfDoc.pages) {
@@ -71,7 +70,7 @@ class PdfSigner(private val appConfig: AppConfig) {
         pdfDoc.documentInformation = pdfMetadata
     }
 
-    private fun replaceSecondBlankPage(
+    private fun signSecondBlankPage(
         document: PDDocument,
         customerEmail: String,
         customerFullName: String,
@@ -82,8 +81,7 @@ class PdfSigner(private val appConfig: AppConfig) {
             throw IllegalArgumentException("The PDF must have at least two pages.")
         }
 
-        // Create a new page with the same size as the second page
-        val newPage = PDPage(PDRectangle.A4) // Change A4 to the desired size
+        val page = document.getPage(1)
 
         // Load the lock image
         val lockImage = PDImageXObject.createFromByteArray(
@@ -92,7 +90,7 @@ class PdfSigner(private val appConfig: AppConfig) {
         )
 
         // Create a content stream for the new page
-        PDPageContentStream(document, newPage).use { contentStream ->
+        PDPageContentStream(document, page).use { contentStream ->
             // Set margins
             val margin = 50f // Set the desired margin
             val imageWidth = lockImage.width.toFloat()
@@ -100,10 +98,10 @@ class PdfSigner(private val appConfig: AppConfig) {
 
             // Draw the lock image repeatedly within the margins
             var row = 0
-            for (j in margin.toInt() until (newPage.mediaBox.height - 2 * margin).toInt() step imageHeight.toInt()) {
+            for (j in margin.toInt() until (page.mediaBox.height - 2 * margin).toInt() step imageHeight.toInt()) {
                 row++
                 if (row < 3) continue // Limit the number of rows
-                for (i in margin.toInt() until (newPage.mediaBox.width - 2 * margin).toInt() step imageWidth.toInt()) {
+                for (i in margin.toInt() until (page.mediaBox.width - 2 * margin).toInt() step imageWidth.toInt()) {
                     contentStream.drawImage(lockImage, i.toFloat(), j.toFloat())
                 }
             }
@@ -118,7 +116,7 @@ class PdfSigner(private val appConfig: AppConfig) {
             // Define the position and maximum width for the text
             val x = 100f // X position
             var y = 180f // Initial Y position
-            val maxWidth = newPage.mediaBox.width - 2 * x // Maximum width based on page margins
+            val maxWidth = page.mediaBox.width - 2 * x // Maximum width based on page margins
 
             val serverText = "E-book byl zakoupen na serveru " + appConfig.findConfig("web.baseUrl")
             addWrappedText(contentStream, serverText, font, 10f, x, y, maxWidth)
@@ -139,13 +137,6 @@ class PdfSigner(private val appConfig: AppConfig) {
                         "Děkuji za pochopení a respektování tohoto sdělení."
             addWrappedText(contentStream, statementText, font, 10f, x, y, maxWidth)
         }
-
-        // Insert the new page as the second page
-        document.addPage(newPage)
-        document.pages.insertBefore(newPage, document.getPage(1)) // Insert before the current second page
-
-        // Remove the original second blank page (which is now at index 2)
-        document.removePage(2)
     }
 
     private fun addWrappedText(

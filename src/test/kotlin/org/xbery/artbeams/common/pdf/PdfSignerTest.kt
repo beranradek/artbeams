@@ -31,20 +31,22 @@ class PdfSignerTest : StringSpec({
         val outputFile = File("src/test/resources/test_ebook_signed.pdf")
         outputFile.writeBytes(outputStream.toByteArray())
 
-        // Assert
-        val pdfDocument = Loader.loadPDF(outputFile)
-        pdfDocument.use { document ->
-            val metadata = document.documentInformation
-            metadata.title shouldBe productTitle
-            metadata.author shouldBe author
-            metadata.creator shouldBe "$customerEmail $customerFullName $orderNumber"
+        try {
+            // Assert
+            val pdfDocument = Loader.loadPDF(outputFile)
+            pdfDocument.use { document ->
+                val metadata = document.documentInformation
+                metadata.title shouldBe productTitle
+                metadata.author shouldBe author
+                metadata.creator shouldBe "$customerEmail $customerFullName $orderNumber"
 
-            // Check if the document is protected against copying
-            val permissions = document.currentAccessPermission
-            permissions.canExtractContent() shouldBe false
+                // Check if the document is protected against copying
+                val permissions = document.currentAccessPermission
+                permissions.canExtractContent() shouldBe false
+            }
+        } finally {
+            // Clean up
+            outputFile.delete()
         }
-
-        // Clean up
-        outputFile.delete()
     }
 })
