@@ -8,6 +8,8 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item2.title', '?
 INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item2.url', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item3.title', '???');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item3.url', '???');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item4.title', 'Kontakt');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('menu.item4.url', '/kontakt');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('administration', 'Administrace');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('category', 'Kategorie');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('categories.url.base', '/kategorie');
