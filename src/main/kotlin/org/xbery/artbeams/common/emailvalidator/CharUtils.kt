@@ -199,7 +199,7 @@ object CharUtils {
      * Digits 0 to 9 (ASCII: 48-57)
      */
     fun isNumber(ch: Char): Boolean {
-        return ch.code >= 48 && ch.code <= 57
+        return ch.code in 48..57
     }
 
     private fun isColon(ch: Char): Boolean {
@@ -234,7 +234,7 @@ object CharUtils {
      * (a-z) (ASCII: 65-90)
      */
     private fun isAsciiLowerCaseDigit(ch: Char): Boolean {
-        return ch.code >= 65 && ch.code <= 90
+        return ch.code in 65..90
     }
 
     private fun isOpeningBracket(ch: Char): Boolean {
@@ -253,7 +253,7 @@ object CharUtils {
      * (A-Z) (ASCII: 97-122)
      */
     private fun isAsciiUpperCaseDigit(ch: Char): Boolean {
-        return ch.code >= 97 && ch.code <= 122
+        return ch.code in 97..122
     }
 
     /**
@@ -270,14 +270,14 @@ object CharUtils {
     fun isNameSpecialCharacter(ch: Char): Boolean {
         return isHyphen(ch) //'-'
                 || isExclamationPoint(ch) //'!'
-                || (ch.code >= 35 && ch.code <= 39) //#$%&' 35-39
+                || (ch.code in 35..39) //#$%&' 35-39
                 || isAsterisk(ch) //'*'
                 || isPlusSign(ch) //'+'
                 || isSlash(ch) //'/'
                 || isEqualSign(ch) //'='
                 || isQuestionMark(ch) //'?'
-                || (ch.code >= 94 && ch.code <= 96) //^_` 94-96
-                || (ch.code >= 123 && ch.code <= 126) //{|}~ 123-126
+                || (ch.code in 94..96) //^_` 94-96
+                || (ch.code in 123..126) //{|}~ 123-126
     }
 
     /**

@@ -20,14 +20,12 @@ object DNSLookup {
     private val MX_ATTRIBS = arrayOf(MX_ATTRIB)
     private val ADDR_ATTRIBS = arrayOf(ADDR_ATTRIB_IPV4, ADDR_ATTRIB_IPV6)
 
-    //private static final Logger LOG = Logger.getRootLogger();
     private val env = Properties()
 
     init {
         env[Context.INITIAL_CONTEXT_FACTORY] = "com.sun.jndi.dns.DnsContextFactory"
     }
 
-    //============== VEREJNE METODY INSTANCE ====================================
     /**
      * @return list of mx records for domain
      */
@@ -59,7 +57,6 @@ object DNSLookup {
     /**
      * @return list of IP adresses for domain
      */
-	@JvmStatic
 	fun getIPAddresses(hostname: String?): List<String> {
         val ipAddresses: MutableList<String> = ArrayList()
         try {

@@ -1,11 +1,25 @@
 <#import "/webLayout.ftl" as layout>
 <#import "/contact/contactFormEnvelope.ftl" as contactFormEnvelope>
 <@layout.page>
+  <style type="text/css" nonce="${_cspNonce}">
+    .author-portrait {
+      margin: 0.8rem;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .author-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+  </style>
   <div class="container my-5">
       <div class="row">
           <!-- Left Section -->
           <div class="col-md-6">
-              <h3>${xlat['author.name']}</h3>
+              <img src="/media/author-portrait.webp" class="img-fluid author-portrait" width="261" height="377" alt="${xlat['author.name']}">
+              <h3 class="author-name">${xlat['author.name']}</h3>
               <#if idNumber??><p><strong>IČ:</strong> ${idNumber}</p></#if>
               <#if contactAddress??><p>${contactAddress}</p></#if>
               <#if contactEmail??>
