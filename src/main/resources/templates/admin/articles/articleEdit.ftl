@@ -129,12 +129,17 @@ function ready(callback) {
 }
 
 var md = null;
-var markdownContentElement = document.getElementById('markdown-content');
+var editedContentElement = document.getElementById('markdown-content');
 function updateResult(md) {
     if (md) {
-        if (markdownContentElement) {
-            var markdown = markdownContentElement.value;
-            var html = md.render(markdown);
+        if (editedContentElement) {
+            var editorSelect = document.getElementById("${fields.editor.elementId}");
+            var html = "";
+            if (editorSelect && editorSelect.value === "html") {
+                html = editedContentElement.value;
+            } else {
+                html = md.render(editedContentElement.value);
+            }
             var markdownOutputElement = document.getElementById('markdown-output');
             if (markdownOutputElement) {
                 markdownOutputElement.innerHTML = html;
@@ -151,7 +156,7 @@ ready(function() {
 
 var oldVal = "";
 function onMarkdownChange() {
-    var currentVal = markdownContentElement.value;
+    var currentVal = editedContentElement.value;
     if (currentVal == oldVal) {
       return; // check to prevent multiple simultaneous triggers
     }
@@ -161,10 +166,10 @@ function onMarkdownChange() {
     updateResult(md);
 }
 
-if (markdownContentElement) {
-    markdownContentElement.addEventListener('change', onMarkdownChange, false);
-    markdownContentElement.addEventListener('keyup', onMarkdownChange, false);
-    markdownContentElement.addEventListener('paste', onMarkdownChange, false);
+if (editedContentElement) {
+    editedContentElement.addEventListener('change', onMarkdownChange, false);
+    editedContentElement.addEventListener('keyup', onMarkdownChange, false);
+    editedContentElement.addEventListener('paste', onMarkdownChange, false);
 }
 </script>
 </@layout.page>
