@@ -12,29 +12,30 @@ import org.xbery.artbeams.jooq.schema.tables.records.ArticlesRecord
  */
 @Component
 class ArticleMapper : RecordMapper<ArticlesRecord, Article> {
-
-    override fun map(record: ArticlesRecord): Article {
-        return Article(
-            common = AssetAttributes(
-                id = requireNotNull(record.id),
-                created = requireNotNull(record.created),
-                createdBy = requireNotNull(record.createdBy),
-                modified = requireNotNull(record.modified),
-                modifiedBy = requireNotNull(record.modifiedBy)
-            ),
-            validity = Validity(
-                validFrom = requireNotNull(record.validFrom),
-                validTo = record.validTo
-            ),
+    override fun map(record: ArticlesRecord): Article =
+        Article(
+            common =
+                AssetAttributes(
+                    id = requireNotNull(record.id),
+                    created = requireNotNull(record.created),
+                    createdBy = requireNotNull(record.createdBy),
+                    modified = requireNotNull(record.modified),
+                    modifiedBy = requireNotNull(record.modifiedBy),
+                ),
+            validity =
+                Validity(
+                    validFrom = requireNotNull(record.validFrom),
+                    validTo = record.validTo,
+                ),
             externalId = record.externalId,
             slug = requireNotNull(record.slug),
             title = requireNotNull(record.title),
             image = record.image,
             perex = requireNotNull(record.perex),
-            bodyMarkdown = requireNotNull(record.bodyMarkdown),
+            bodyEdited = requireNotNull(record.bodyEdited),
+            editor = requireNotNull(record.editor),
             body = requireNotNull(record.body),
             keywords = requireNotNull(record.keywords),
-            showOnBlog = requireNotNull(record.showOnBlog)
+            showOnBlog = requireNotNull(record.showOnBlog),
         )
-    }
 }

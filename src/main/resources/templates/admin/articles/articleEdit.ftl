@@ -35,7 +35,7 @@
     <div class="col-sm-6">
         <button type="submit" name="save" accesskey="s" class="btn btn-secondary btn-sm align-right">Save</button>
         <div class="align-left"><label for="markdown-content">Article body</label></div>
-        <textarea name="${fields.bodyMarkdown.name}" id="markdown-content" rows="32">${fields.bodyMarkdown.value!}</textarea>
+        <textarea name="${fields.bodyEdited.name}" id="markdown-content" rows="32">${fields.bodyEdited.value!}</textarea>
         <button type="submit" name="save" accesskey="s" class="btn btn-secondary btn-sm align-right">Save</button>
     </div>
     <div class="col-sm-6">
@@ -51,6 +51,15 @@
   </div>
   </div>
 
+  <div class="form-group row">
+    <label for="${fields.editor.elementId}" class="col-form-label col-sm-2 label-fix">Editor</label>
+    <div class="col-sm-3">
+      <select name="${fields.editor.name}" id="${fields.editor.elementId}" class="form-control">
+        <option value="markdown" <#if fields.editor.value == "markdown">selected</#if>>Markdown</option>
+        <option value="html" <#if fields.editor.value == "html">selected</#if>>HTML</option>
+      </select>
+    </div>
+  </div>
   <div class="form-group row">
     <label for="${fields.externalId.elementId}" class="col-form-label col-sm-2 label-fix">External ID</label>
     <div class="col-sm-3">

@@ -124,9 +124,14 @@ open class Articles(
     val BODY: TableField<ArticlesRecord, String?> = createField(DSL.name("body"), SQLDataType.CLOB, this, "")
 
     /**
-     * The column <code>articles.body_markdown</code>.
+     * The column <code>articles.body_edited</code>.
      */
-    val BODY_MARKDOWN: TableField<ArticlesRecord, String?> = createField(DSL.name("body_markdown"), SQLDataType.CLOB, this, "")
+    val BODY_EDITED: TableField<ArticlesRecord, String?> = createField(DSL.name("body_edited"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column <code>articles.editor</code>.
+     */
+    val EDITOR: TableField<ArticlesRecord, String?> = createField(DSL.name("editor"), SQLDataType.VARCHAR(16).defaultValue(DSL.field(DSL.raw("'markdown'"), SQLDataType.VARCHAR)), this, "")
 
     /**
      * The column <code>articles.keywords</code>.

@@ -23,6 +23,7 @@ import org.xbery.artbeams.jooq.schema.tables.Users
 
 val IDX_AUTH_CODE_USER_ID: Index = Internal.createIndex(DSL.name("idx_auth_code_user_id"), AuthCode.AUTH_CODE, arrayOf(AuthCode.AUTH_CODE.USER_ID), false)
 val IDX_COMMENTS_ENTITY_ID: Index = Internal.createIndex(DSL.name("idx_comments_entity_id"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.ENTITY_ID), false)
+val IDX_COMMENTS_STATE: Index = Internal.createIndex(DSL.name("idx_comments_state"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.STATE), false)
 val IDX_MEDIA_FILENAME: Index = Internal.createIndex(DSL.name("idx_media_filename"), Media.MEDIA, arrayOf(Media.MEDIA.FILENAME), false)
 val IDX_ORDERS_ORDER_NUMBER: Index = Internal.createIndex(DSL.name("idx_orders_order_number"), Orders.ORDERS, arrayOf(Orders.ORDERS.ORDER_NUMBER), true)
 val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)

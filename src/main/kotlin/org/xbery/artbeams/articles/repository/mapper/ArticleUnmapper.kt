@@ -11,7 +11,6 @@ import org.xbery.artbeams.jooq.schema.tables.references.ARTICLES
  */
 @Component
 class ArticleUnmapper : RecordUnmapper<Article, ArticlesRecord> {
-
     override fun unmap(article: Article): ArticlesRecord {
         val record = ARTICLES.newRecord()
         record.id = article.common.id
@@ -26,7 +25,8 @@ class ArticleUnmapper : RecordUnmapper<Article, ArticlesRecord> {
         record.title = article.title
         record.image = article.image
         record.perex = article.perex
-        record.bodyMarkdown = article.bodyMarkdown
+        record.bodyEdited = article.bodyEdited
+        record.editor = article.editor
         record.body = article.body
         record.keywords = article.keywords
         record.showOnBlog = article.showOnBlog

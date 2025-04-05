@@ -119,10 +119,11 @@ class ArticleRepository(
             image = record[ARTICLES.IMAGE],
             perex = requireNotNull(record[ARTICLES.PEREX]),
             externalId = null,
-            bodyMarkdown = "",
+            bodyEdited = "",
             body = "",
             keywords = "",
-            showOnBlog = false
+            showOnBlog = false,
+            editor = ""
         )
     }
 

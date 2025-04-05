@@ -1,5 +1,17 @@
 # Changelog
 
+1.7.0 (5.4.2025)
+
+* Configurable editor type per article. Field bodyMarkdown renamed to bodyEdited.
+
+```sql
+ALTER TABLE articles ADD COLUMN body_edited TEXT;
+UPDATE articles SET body_edited = body_markdown;
+ALTER TABLE articles DROP COLUMN body_markdown;
+
+ALTER TABLE articles ADD COLUMN editor VARCHAR(16) DEFAULT 'markdown';
+```
+
 1.6.1 (6.12.2024)
 
 * Comments administration/approval.

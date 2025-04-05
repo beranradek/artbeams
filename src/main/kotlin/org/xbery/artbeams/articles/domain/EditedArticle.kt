@@ -2,7 +2,7 @@ package org.xbery.artbeams.articles.domain
 
 import net.formio.upload.UploadedFile
 import org.xbery.artbeams.common.assets.domain.EditedTimeValidity
-import java.util.*
+import java.util.Date
 
 /**
  * Editable article attributes.
@@ -16,11 +16,11 @@ data class EditedArticle(
     val image: String?,
     val file: UploadedFile?,
     val perex: String,
-    val bodyMarkdown: String,
+    val bodyEdited: String,
+    val editor: String,
     override val validFrom: Date,
     override val validTo: Date?,
     val keywords: String,
     val showOnBlog: Boolean,
-    val categories: List<String>
+    val categories: List<String>,
 ) : EditedTimeValidity
-

@@ -59,7 +59,8 @@ CREATE TABLE articles (
 	image VARCHAR(128) DEFAULT NULL,
 	perex VARCHAR(4000) DEFAULT NULL,
 	body TEXT,
-	body_markdown TEXT,
+	body_edited TEXT,
+	editor VARCHAR(16) DEFAULT 'markdown',
 	keywords VARCHAR(256) DEFAULT NULL,
 	show_on_blog boolean DEFAULT TRUE
 );

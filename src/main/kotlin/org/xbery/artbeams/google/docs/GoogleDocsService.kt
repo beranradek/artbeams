@@ -102,13 +102,13 @@ open class GoogleDocsService(
             return article
         }
         val htmlBody = markdownConverter.markdownToHtml(docContent)
-        if (article.bodyMarkdown == docContent && article.body == htmlBody) {
+        if (article.bodyEdited == docContent && article.body == htmlBody) {
             logger.info("Nothing to update from Google Doc (already up to date): Article with slug ${article.slug}, externalId ${article.externalId}")
             return article
         }
         val updatedArticle = articleRepository.update(
             article.copy(
-                bodyMarkdown = docContent,
+                bodyEdited = docContent,
                 body = htmlBody
             )
         )

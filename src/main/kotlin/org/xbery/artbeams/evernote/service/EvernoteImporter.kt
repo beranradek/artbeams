@@ -106,14 +106,14 @@ open class EvernoteImporter(
             return article
         }
         val htmlBody = markdownConverter.markdownToHtml(note.body)
-        if (article.bodyMarkdown == note.body && article.body == htmlBody && article.title == note.title) {
+        if (article.bodyEdited == note.body && article.body == htmlBody && article.title == note.title) {
             logger.info("Nothing to update from Evernote (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
             return article
         }
         val updatedArticle =
             articleRepository.update(article.copy(
                 title = note.title,
-                bodyMarkdown = note.body,
+                bodyEdited = note.body,
                 body = htmlBody
             ))
         logger.info("Updated from Evernote: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}")

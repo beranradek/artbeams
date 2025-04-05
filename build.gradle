@@ -31,7 +31,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'org.xbery'
-version = '1.6.0-SNAPSHOT'
+version = '1.7.0-SNAPSHOT'
 def jvmTargetVersion = JavaVersion.VERSION_21
 
 repositories {

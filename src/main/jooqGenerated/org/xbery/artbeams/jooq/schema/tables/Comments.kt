@@ -25,6 +25,7 @@ import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_COMMENTS_ENTITY_ID
+import org.xbery.artbeams.jooq.schema.indexes.IDX_COMMENTS_STATE
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_DC
 import org.xbery.artbeams.jooq.schema.keys.PARENT_ID_FK
 import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
@@ -153,7 +154,7 @@ open class Comments(
 
     constructor(child: Table<out Record>, key: ForeignKey<out Record, CommentsRecord>): this(Internal.createPathAlias(child, key), child, key, COMMENTS, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getIndexes(): List<Index> = listOf(IDX_COMMENTS_ENTITY_ID)
+    override fun getIndexes(): List<Index> = listOf(IDX_COMMENTS_ENTITY_ID, IDX_COMMENTS_STATE)
     override fun getPrimaryKey(): UniqueKey<CommentsRecord> = CONSTRAINT_DC
     override fun getReferences(): List<ForeignKey<CommentsRecord, *>> = listOf(PARENT_ID_FK)
 
