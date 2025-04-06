@@ -1,7 +1,7 @@
 <#if subscriptionFormMapping??>
 <#import "/mailing/subscriptionForm.ftl" as subscriptionForm>
 </#if>
-<#macro page>
+<#macro page pageStyles="" pageStyles2="">
 <!DOCTYPE html>
 <html lang="cs">
  <head nonce="${_cspNonce}">
@@ -136,6 +136,14 @@
         --bs-btn-active-border-color: #5a23c8;
       }
   </style>
+
+  <#if pageStyles?has_content>
+    <link href="${pageStyles}" type="text/css" rel="stylesheet">
+  </#if>
+
+  <#if pageStyles2?has_content>
+    <link href="${pageStyles2}" type="text/css" rel="stylesheet">
+  </#if>
 
   <#if xlat['google-tag.url']??>
     <!-- Global site tag (gtag JavaScript) - Google Analytics -->

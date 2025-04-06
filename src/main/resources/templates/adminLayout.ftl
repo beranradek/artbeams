@@ -89,6 +89,8 @@
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="/static/css/common-styles.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/admin-styles.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/sales-styles.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <#include "/commonScripts.ftl">
   </head>

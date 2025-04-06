@@ -116,6 +116,7 @@ cite {
 .blog-main h1, .blog-sidebar h1 {
     font-size: 2.1rem;
     line-height: 3rem;
+    text-align: center;
 }
 
 .blog-main h2, .blog-sidebar h2 {
@@ -234,12 +235,123 @@ cite {
     margin-left: auto;
 }
 
+.label-fix {
+  /* Otherwise label does not start right bellow above inputs */
+  padding-left:0;
+}
+
+.no-bullets {
+  list-style: none;
+}
+
+.checklist {
+    list-style: none;
+    padding-left: 0;
+}
+
+.checklist li {
+    position: relative;
+    padding-left: 2em; /* Space from the bullet symbol. */
+}
+
+.checklist li::before {
+    content: "✅";
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
 /* Font awesome icons indentation. */
 .fas {
     padding-bottom: 3px;
 }
 
-.label-fix {
-  /* Otherwise label does not start right bellow above inputs */
-  padding-left:0;
+/* Font Awesome Icons */
+.check-icon {
+    color: #28a745;
+    /* Green checkmark */
+}
+
+.clock-icon {
+    color: #007bff;
+    /* Blue clock */
+}
+
+.fire-icon {
+    color: #dc3545;
+    /* Red fire */
+}
+
+/* Graphic elements */
+.rounded-box {
+    background-color: #ffe5cc;
+    /* Light orange */
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.rounded-box-shadow {
+    background-color: #f8f0e3; /* Light background */
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.shadow-box {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Light shadow */
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.info-box {
+    background-color: #e0f7fa;
+    /* Light blue */
+    border-left: 5px solid #00bcd4;
+    /* Blue accent */
+    padding: 30px 15px;
+    margin-bottom: 15px;
+}
+
+.guarantee-box {
+    background-color: #e9f5f1;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 2px solid #b0e0d3;
+}
+.guarantee-box-title {
+    color: #2b5989;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.features {
+    padding: 4rem 0;
+}
+
+.feature {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.feature-icon {
+    font-size: 2rem;
+    /* color: #007bff; */
+    color: #d2691e;
+    margin-bottom: 1rem;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    color: #343a40;
+}
+
+.feature-text {
+    /* color: #6c757d; */
+    color: #2b5989;
 }

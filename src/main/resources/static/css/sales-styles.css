@@ -1,0 +1,234 @@
+.btn-primary {
+    background-color: #d2691e;
+    border-color: #d2691e;
+}
+
+.btn-primary:hover {
+    background-color: #b85e1a;
+    border-color: #b85e1a;
+}
+
+.hero {
+    background-color: #f8f9fa;
+    padding: 30px 15px;
+    margin-bottom: 15px;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+    text-align: center;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #2b5989;
+    text-align: center;
+}
+
+.cta {
+    background-color: #e9ecef;
+    padding: 30px 15px;
+    margin-bottom: 15px;
+}
+
+.cta-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+    text-align: center;
+}
+
+.price {
+    padding: 4rem 0;
+    margin-bottom: 15px;
+}
+
+.price-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+    text-align: center;
+}
+
+.price-value {
+    font-size: 2.5rem;
+    color: #28a745;
+    text-align: center;
+}
+
+.testimonials {
+    padding: 4rem 0;
+    background-color: #f8f9fa;
+    margin-bottom: 15px;
+}
+
+.testimonial {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+}
+
+.testimonial-text {
+    font-style: italic;
+    color: #6c757d;
+}
+
+.testimonial-author {
+    font-weight: bold;
+    color: #343a40;
+    margin-top: 1rem;
+}
+
+.faq {
+    padding: 4rem 0;
+    margin-bottom: 15px;
+}
+
+.faq-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+    text-align: center;
+}
+
+.faq-item {
+    margin-bottom: 1rem;
+}
+
+.faq-question {
+    font-weight: bold;
+    color: #343a40;
+    cursor: pointer;
+}
+
+.faq-answer {
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+.guarantee {
+    background-color: #e9ecef;
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.guarantee-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+}
+
+.guarantee-text {
+    color: #6c757d;
+}
+
+.bonuses {
+    padding: 4rem 0;
+    margin-bottom: 15px;
+}
+
+.bonuses-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+}
+
+.bonus {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+}
+
+.bonus-title {
+    font-size: 1.5rem;
+    color: #343a40;
+    margin-bottom: 1rem;
+}
+
+.bonus-description {
+    color: #6c757d;
+}
+
+.author-section {
+    padding: 4rem 0;
+    margin-bottom: 15px;
+}
+
+.author-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+    text-align: center;
+}
+
+.author-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.author-name {
+    font-size: 1.5rem;
+    color: #343a40;
+    font-weight: bold;
+    text-align: center;
+}
+
+.author-bio {
+    /* color: #6c757d; */
+    color: #2b5989;
+}
+
+.final-cta {
+    background-color: #f8f9fa;
+    padding: 30px 15px;
+    margin-bottom: 15px;
+}
+
+.final-cta-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #343a40;
+    text-align: center;
+}
+
+.offer-highlight {
+    background-color: #fff8e5; /* Very light yellow */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    color: #d2691e;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .cta-title {
+        font-size: 1.5rem;
+    }
+
+    .price-value {
+        font-size: 2rem;
+    }
+
+    .author-image {
+        width: 120px;
+        height: 120px;
+    }
+
+    .final-cta-title {
+        font-size: 1.5rem;
+    }
+}
