@@ -20,7 +20,7 @@ open class LoginServiceImpl(
     private val roleRepository: RoleRepository,
     private val cmsAuthenticationProvider: CmsAuthenticationProvider
 ) : AbstractLoginService(), LoginService {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     override fun loginUser(user: User, plainPassword: String, request: HttpServletRequest) {
         // Implemented based on:

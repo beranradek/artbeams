@@ -11,8 +11,6 @@ import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.NotFoundException
-import org.xbery.artbeams.common.error.UnauthorizedException
-import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.pdf.PdfSigner
 import org.xbery.artbeams.media.repository.MediaRepository
@@ -22,7 +20,6 @@ import org.xbery.artbeams.userproducts.service.UserProductService
 import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.web.FreeProductController
 import java.io.ByteArrayOutputStream
-import java.time.Instant
 import jakarta.servlet.http.HttpServletRequest
 
 /**
@@ -90,7 +87,7 @@ class UserProductController(
                     fileData.data,
                     product.title,
                     "Radek Beran", // TBD: Author
-                    user.email,
+                    user.login,
                     user.fullName,
                     "2025-preview" // TBD: Order number
                 )
