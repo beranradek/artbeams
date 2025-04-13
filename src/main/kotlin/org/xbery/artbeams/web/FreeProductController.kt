@@ -256,7 +256,7 @@ class FreeProductController(
             val nowCalendar = java.util.Calendar.getInstance()
             val pdfMetadata = pdfDoc.documentInformation
             userService.findById(product.common.createdBy) // check product author
-            pdfMetadata.author = ("")
+            pdfMetadata.author = ""
             pdfMetadata.creationDate = nowCalendar
             pdfMetadata.modificationDate = nowCalendar
             pdfMetadata.title = product.title
@@ -341,7 +341,7 @@ class FreeProductController(
      * @param product
      * @param user
      */
-    private fun sendProductDownloadedNotification(product: Product, user: User) {
+    fun sendProductDownloadedNotification(product: Product, user: User) {
         try {
             val productAuthor = userService.findById(product.createdBy)
             if (productAuthor != null) {

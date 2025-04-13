@@ -1,15 +1,12 @@
 package org.xbery.artbeams.web
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
-import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.service.ArticleService
-import org.xbery.artbeams.common.access.domain.EntityKey
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.ForbiddenException
@@ -24,6 +21,7 @@ import org.xbery.artbeams.userproducts.service.UserProductService
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.users.service.UserSubscriptionService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Paid product routes.
