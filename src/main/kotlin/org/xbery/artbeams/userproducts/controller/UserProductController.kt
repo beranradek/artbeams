@@ -44,7 +44,11 @@ class UserProductController(
 
     @GetMapping("$MEMBER_SECTION_PATH/{productSlug}")
     fun userProductDetail(@PathVariable productSlug: String, request: HttpServletRequest): Any {
-        val userProduct = userProductService.findUserProductBySlug(productSlug, request)
+        // TBD RBe: Remove this temporary code:
+        val userProduct = userProductService.findAllProducts().find { it.slug == productSlug }
+            ?: throw NotFoundException("Product with slug $productSlug was not found")
+        // TBD RBe: Uncomment:
+//        val userProduct = userProductService.findUserProductBySlug(productSlug, request)
         val model = createModel(
             request,
             "userProduct" to userProduct
