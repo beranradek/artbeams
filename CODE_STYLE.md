@@ -13,6 +13,7 @@
 * Packages are organized by feature. Each encapsulated feature has its own package with subpackages: domain, repository, service, controller (for public controllers), admin (for administration controllers) (if applicable).
 * Create reusable methods and classes, especially avoid the code duplication.
 * Use meaningful names for variables, methods, classes, etc.
+* Use require checks from Preconditions.kt for handling of missing data or access rights.
 * Never create a file longer than 500 lines of code. If a file approaches this limit, refactor by splitting it into more classes or helper files. 
 * Check correctness of your code, also for the edge cases.
 * Use proper error handling and logging. Do not use System.err or System.out, but SLF4J logger.

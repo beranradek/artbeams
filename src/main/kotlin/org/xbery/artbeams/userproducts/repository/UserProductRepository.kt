@@ -121,7 +121,7 @@ class UserProductRepository(
             .orderBy(PRODUCTS.CREATED.desc()) // from newest to oldest
             .fetch { record ->
                 UserProductInfo(
-                    id = requireNotNull(record[PRODUCTS.ID]), // TBD RBe: Fix this, or remove whole method
+                    id = requireNotNull(record[PRODUCTS.ID]), // TBD RBe: Fix this, or remove whole findAllProducts method
                     title = requireNotNull(record[PRODUCTS.TITLE]),
                     subtitle = record[PRODUCTS.SUBTITLE],
                     slug = requireNotNull(record[PRODUCTS.SLUG]),

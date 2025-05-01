@@ -1,6 +1,10 @@
 <#import "/adminLayout.ftl" as layout>
 <@layout.page>
 
+<div class="mb-3">
+  <a href="/admin/orders/create" class="btn btn-primary">New Order</a>
+</div>
+
 <table class="table table-sm">
   <thead>
     <tr>
