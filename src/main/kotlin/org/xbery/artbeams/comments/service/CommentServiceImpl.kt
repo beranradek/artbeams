@@ -29,7 +29,8 @@ class CommentServiceImpl(
     private val articleRepository: ArticleRepository,
     private val userRepository: UserRepository,
     private val mailSender: MailgunMailSender,
-    private val appConfig: AppConfig
+    private val appConfig: AppConfig,
+    private val spamDetector: SpamDetector
 ) : CommentService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
@@ -83,19 +84,11 @@ class CommentServiceImpl(
     }
 
     private fun approvedOrWaiting(comment: Comment): Comment {
-        if (containsSuspiciousWords(comment.comment)) {
+        if (spamDetector.isSpam(comment.comment, comment.userName, comment.email)) {
+            logger.info("Comment detected as spam: userName=${comment.userName}, email=${comment.email}, comment=${comment.comment}")
             return comment.copy(state = CommentState.WAITING_FOR_APPROVAL)
         }
         return comment.copy(state = CommentState.APPROVED)
-    }
-
-    private fun containsSuspiciousWords(commentText: String): Boolean {
-        val suspiciousWords = getSuspiciousWords()
-        return suspiciousWords.any { commentText.contains(it, ignoreCase = true) }
-    }
-
-    private fun getSuspiciousWords(): List<String> {
-        return appConfig.findConfig("comments.suspiciousWords")?.split(",") ?: DEFAULT_SUSPICIOUS_WORDS
     }
 
     private fun sendNewCommentNotification(comment: Comment) {
@@ -129,18 +122,5 @@ class CommentServiceImpl(
         }
     }
 
-    companion object {
-        val RU_CHARS = setOf('б', 'в', 'г', 'д', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'п', 'т', 'ф', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я')
-
-        /**
-         * If comment contains any of these words, it needs approval.
-         */
-        private val DEFAULT_SUSPICIOUS_WORDS = mutableListOf(
-            "viagra",
-            "levitra",
-            "www.",
-            "https:",
-            "http:"
-        ) + RU_CHARS.map { it.toString() }
-    }
+    
 }

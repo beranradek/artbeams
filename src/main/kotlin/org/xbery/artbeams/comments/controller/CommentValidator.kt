@@ -17,7 +17,7 @@ class CommentValidator : AbstractValidator<String>() {
     override fun <U : String> validate(ctx: ValidationContext<U>): List<InterpolatedMessage> {
         val msgs: MutableList<InterpolatedMessage> = mutableListOf()
         val comment = ctx.validatedValue
-        if (comment.isNotEmpty() && (HtmlUtils.containsHtmlMarkup(comment) || containsAtLeastNChars(comment, 15, CommentServiceImpl.RU_CHARS))) {
+        if (comment.isNotEmpty() && (HtmlUtils.containsHtmlMarkup(comment) || containsAtLeastNChars(comment, 15, RU_CHARS))) {
             msgs.add(
                 this.error(
                     ctx.elementName,
@@ -35,6 +35,8 @@ class CommentValidator : AbstractValidator<String>() {
     }
 
     companion object {
+        val RU_CHARS = setOf('б', 'в', 'г', 'д', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'п', 'т', 'ф', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я')
+
         val INSTANCE = CommentValidator()
     }
 }
