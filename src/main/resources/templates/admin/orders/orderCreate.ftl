@@ -12,7 +12,7 @@
 <form action="/admin/orders/create" method="POST">
     <div class="mb-3">
         <label for="userId" class="form-label">Customer:</label>
-        <select name="userId" id="userId" class="form-select">
+        <select name="${createForm.fields.userId.name}" id="${createForm.fields.userId.elementId}" class="form-select">
             <option value="">-- Select Customer --</option>
             <#list users as user>
                 <option value="${user.id}" <#if createForm.fields.userId.value == user.id>selected</#if>>
@@ -27,7 +27,7 @@
     
     <div class="mb-3">
         <label for="productId" class="form-label">Product:</label>
-        <select name="productId" id="productId" class="form-select">
+        <select name="${createForm.fields.productId.name}" id="${createForm.fields.productId.elementId}" class="form-select">
             <option value="">-- Select Product --</option>
             <#list products as product>
                 <option value="${product.id}" <#if createForm.fields.productId.value == product.id>selected</#if>>
