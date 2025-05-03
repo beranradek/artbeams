@@ -9,6 +9,8 @@
       <th scope="col">Title</th>
       <th scope="col">Slug</th>
       <th scope="col">File name</th>
+      <th scope="col">Regular price</th>
+      <th scope="col">Discounted price</th>
       <th scope="col">Last modified</th>
       <th scope="col">Actions</th>
     </tr>
@@ -19,6 +21,8 @@
         <td>${product.title!}</td>
         <td>${product.slug!}</td>
         <td>${product.fileName!}</td>
+        <td>${product.priceRegular!}</td>
+        <td>${product.priceDiscounted!}</td>
         <td><#if product.common.modified??>${product.common.modified?string["d.M.yyyy, HH:mm"]}</#if></td>
         <td><a href="/admin/products/${product.id}/edit">Edit</a></td>
     </tr>
