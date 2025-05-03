@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.error.requireFound
+import org.xbery.artbeams.members.service.MemberSectionMailer
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderInfo
 import org.xbery.artbeams.orders.domain.OrderItem
@@ -12,7 +13,11 @@ import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.repository.OrderItemRepository
 import org.xbery.artbeams.orders.repository.OrderRepository
 import org.xbery.artbeams.products.domain.Product
+import org.xbery.artbeams.users.domain.CommonRoles
+import org.xbery.artbeams.users.password.setup.service.PasswordSetupMailer
+import org.xbery.artbeams.users.repository.UserRepository
 import java.time.Instant
+import kotlin.requireNotNull
 
 /**
  * @author Radek Beran
@@ -21,7 +26,10 @@ import java.time.Instant
 class OrderServiceImpl(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
-    private val orderNumberGenerator: OrderNumberGenerator
+    private val orderNumberGenerator: OrderNumberGenerator,
+    private val userRepository: UserRepository,
+    private val passwordSetupMailer: PasswordSetupMailer,
+    private val memberSectionMailer: MemberSectionMailer
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -71,15 +79,26 @@ class OrderServiceImpl(
 
     override fun updateOrderPaid(orderId: String): Boolean {
         val updated = orderRepository.updateOrderPaid(orderId)
-        // TBD: Ensure access to member section and sending email with access details to ordered product in this way:
-        // If user of the order does not have role CommonRoles.MEMBER or has null or empty password,
-        // send password setup email to him using org.xbery.artbeams.users.password.setup.service.PasswordSetupMailer.sendPasswordSetupMail,
-        // else send generic email confirming the payment, with link to member section login and instructions that the user
-        // can login with his current login and password to see and download his newly ordered product.
-        // The email should contain also forgotten password link if the user no longer remembers his password
-        // (but concrete content of the email will be realized in the template; the code will work only with configurable templateId).
-        // For this type of email,
-        // new MemberSectionMailer with method sendMemberSectionLoginMail should be created (PasswordSetupMailer can be taken as an inspiration).
+        val order = orderRepository.requireById(orderId)
+        val userId = order.common.createdBy
+        
+        // Get user with roles to check member status
+        val user = requireNotNull(userRepository.findByIdWithRoles(userId)) {
+            "User with ID $userId not found for paid order $orderId"
+        }
+        
+        val isMember = user.roles.any { it.name == CommonRoles.MEMBER.roleName }
+        val hasPassword = !user.password.isNullOrEmpty()
+        
+        if (!isMember || !hasPassword) {
+            // User needs member role or password setup
+            passwordSetupMailer.sendPasswordSetupMail(user.login)
+            logger.info("Sent password setup email to user ${user.login} for order $orderId")
+        } else {
+            // User already has member role and password, send member section login info
+            memberSectionMailer.sendMemberSectionLoginMail(user.login)
+            logger.info("Sent member section login email to user ${user.login} for order $orderId")
+        }
 
         return updated
     }

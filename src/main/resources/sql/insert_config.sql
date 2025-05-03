@@ -14,6 +14,8 @@ INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.recovery.su
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.recovery.template', 'password.recovery');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.setup.subject', 'Nastavení hesla');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.setup.template', 'password.setup');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.subject', 'Potvrzení platby a přístup do členské sekce');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.template', 'member.section');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.baseUrl', 'https://connect.mailerlite.com');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.token', 'FILL IN API TOKEN');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.offer1.subscription.groupId', 'FILL IN SUBSCRIBER GROUP ID for offer1');

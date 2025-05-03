@@ -1,5 +1,13 @@
 # Changelog
 
+1.7.1 (3.5.2025)
+
+* Member section mailer for order payment confirmations:
+```sql
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.subject', 'Potvrzení platby a přístup do členské sekce');
+INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.template', 'member.section');
+```
+
 1.7.0 (5.4.2025)
 
 * Configurable editor type per article. Field bodyMarkdown renamed to bodyEdited.

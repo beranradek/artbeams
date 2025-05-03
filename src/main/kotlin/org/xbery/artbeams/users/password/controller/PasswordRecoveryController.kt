@@ -25,7 +25,7 @@ import org.xbery.artbeams.users.password.recovery.service.PasswordRecoveryServic
  * @author Radek Beran
  */
 @Controller
-@RequestMapping("/password-recovery")
+@RequestMapping(PasswordRecoveryController.PASSWORD_RECOVERY_PATH)
 open class PasswordRecoveryController(
     private val passwordRecoveryService: PasswordRecoveryService,
     private val recaptchaService: RecaptchaService,
@@ -64,7 +64,7 @@ open class PasswordRecoveryController(
                     logger.info("Valid password recovery form data, email=${formData.data.email}")
                     val passwordRecoveryData = formData.data
                     passwordRecoveryService.requestPasswordRecovery(passwordRecoveryData.email, request.remoteAddr)
-                    redirect("/password-recovery/sent")
+                    redirect("$PASSWORD_RECOVERY_PATH/sent")
                 }
             }
         }
@@ -90,6 +90,7 @@ open class PasswordRecoveryController(
     }
 
     companion object {
+        const val PASSWORD_RECOVERY_PATH: String = "/password-recovery"
         private const val TPL_BASE_PATH: String = "user"
     }
 }
