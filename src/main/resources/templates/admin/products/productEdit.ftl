@@ -43,6 +43,14 @@
     <div class="col-sm-3"><input type="text" name="${fields.mailingGroupId.name}" value="${fields.mailingGroupId.value!}" id="${fields.mailingGroupId.elementId}" size="80" class="form-control"/></div>
   </div>
   <div class="form-group row">
+    <label for="${fields.priceRegularAmount.elementId}" class="col-sm-2 col-form-label">Regular price</label>
+    <div class="col-sm-3"><input type="text" name="${fields.priceRegularAmount.name}" value="${fields.priceRegularAmount.value!}" id="${fields.priceRegularAmount.elementId}" size="10" class="form-control"/></div>
+  </div>
+  <div class="form-group row">
+    <label for="${fields.priceDiscountedAmount.elementId}" class="col-sm-2 col-form-label">Discounted price</label>
+    <div class="col-sm-3"><input type="text" name="${fields.priceDiscountedAmount.name}" value="${fields.priceDiscountedAmount.value!}" id="${fields.priceDiscountedAmount.elementId}" size="10" class="form-control"/></div>
+  </div>
+  <div class="form-group row">
     <div class="col-sm-2 col-form-label"></div>
     <div class="col-sm-3"><button type="submit" class="btn btn-primary">Submit</button></div>
   </div>

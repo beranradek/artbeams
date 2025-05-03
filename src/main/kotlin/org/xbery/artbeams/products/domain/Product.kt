@@ -3,6 +3,7 @@ package org.xbery.artbeams.products.domain
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.prices.domain.Price
+import java.math.BigDecimal
 
 /**
  * Product entity.
@@ -33,6 +34,16 @@ data class Product(
         get() = priceDiscounted ?: priceRegular
 
     fun updatedWith(edited: EditedProduct, userId: String): Product {
+        // Create updated priceRegular from the edited amount or keep the current one if null
+        val updatedPriceRegular = edited.priceRegularAmount?.let { 
+            Price(it, Price.DEFAULT_CURRENCY) 
+        } ?: this.priceRegular
+        
+        // Create updated priceDiscounted from the edited amount or set to null if amount is null
+        val updatedPriceDiscounted = edited.priceDiscountedAmount?.let { 
+            Price(it, Price.DEFAULT_CURRENCY) 
+        }
+        
         return this.copy(
             common = this.common.updatedWith(userId),
             slug = edited.slug,
@@ -42,12 +53,26 @@ data class Product(
             listingImage = edited.listingImage,
             image = edited.image,
             confirmationMailingGroupId = edited.confirmationMailingGroupId,
-            mailingGroupId = edited.mailingGroupId
+            mailingGroupId = edited.mailingGroupId,
+            priceRegular = updatedPriceRegular,
+            priceDiscounted = updatedPriceDiscounted
         )
     }
 
     fun toEdited(): EditedProduct {
-        return EditedProduct(this.id, this.slug, this.title, this.subtitle, this.fileName, this.listingImage, this.image, this.confirmationMailingGroupId, this.mailingGroupId)
+        return EditedProduct(
+            this.id, 
+            this.slug, 
+            this.title, 
+            this.subtitle, 
+            this.fileName, 
+            this.listingImage, 
+            this.image, 
+            this.confirmationMailingGroupId, 
+            this.mailingGroupId,
+            this.priceRegular.price,
+            this.priceDiscounted?.price
+        )
     }
 
     companion object {

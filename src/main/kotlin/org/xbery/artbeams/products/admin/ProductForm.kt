@@ -5,6 +5,7 @@ import net.formio.FormMapping
 import net.formio.Forms
 import org.xbery.artbeams.common.form.FormUtils
 import org.xbery.artbeams.products.domain.EditedProduct
+import java.math.BigDecimal
 
 /**
  * Product edit form.
@@ -23,6 +24,8 @@ open class ProductForm {
                 .field<String?>("image", Field.TEXT)
                 .field<String?>("confirmationMailingGroupId", Field.TEXT)
                 .field<String?>("mailingGroupId", Field.TEXT)
+                .field<BigDecimal?>("priceRegularAmount", Field.TEXT)
+                .field<BigDecimal?>("priceDiscountedAmount", Field.TEXT)
                 .build(FormUtils.CZ_CONFIG)
     }
 }
