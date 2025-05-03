@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
+import org.xbery.artbeams.users.domain.CommonRoles
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.MyProfile
 import org.xbery.artbeams.users.domain.Role
@@ -57,7 +58,21 @@ class UserServiceImpl(
     override fun setPassword(passwordSetupData: PasswordSetupData, ctx: OperationCtx): User {
         val user = requireByLogin(passwordSetupData.login)
         val userToUpdate = user.updatedWith(toEditedProfile(user, passwordSetupData.password), user.id)
-        val updatedUser = userRepository.update(userToUpdate)
+        
+        // Check if user has MEMBER role, if not, assign it
+        var userRoles = roleRepository.findRolesOfUser(user.id)
+        if (userRoles.none { it.name == CommonRoles.MEMBER.roleName }) {
+            // Find MEMBER role in all roles
+            val allRoles = roleRepository.findRoles()
+            val memberRole = allRoles.find { it.name == CommonRoles.MEMBER.roleName }
+            if (memberRole != null) {
+                // Add MEMBER role to user's roles
+                userRoles = userRoles + memberRole
+                updateRoles(user.id, userRoles)
+            }
+        }
+        
+        val updatedUser = userRepository.update(userToUpdate.copy(roles = userRoles))
         logger.info("Password for user ${userToUpdate.login} was set")
         return updatedUser
     }
