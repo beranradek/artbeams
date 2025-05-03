@@ -23,9 +23,9 @@ interface OrderService {
 
     fun requireByOrderNumber(orderNumber: String): Order
 
-    fun updateOrderPaid(orderId: String)
+    fun updateOrderPaid(orderId: String): Boolean
 
-    fun updateOrderState(id: String, state: OrderState): Boolean
+    fun updateOrderState(orderId: String, state: OrderState): Boolean
 
     fun deleteOrder(orderId: String): Boolean
 

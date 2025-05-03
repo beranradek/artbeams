@@ -116,8 +116,7 @@ class PaidProductController(
         val order = orderService.requireByOrderNumber(orderNumber)
         requireOrderItemOfProductAndUser(order, product, user)
         orderService.updateOrderPaid(order.id)
-        // TBD: Ensure access to member section, send email with access details.
-        return ResponseEntity.ok("Order created")
+        return ResponseEntity.ok("Order updated as paid")
     }
 
     /**

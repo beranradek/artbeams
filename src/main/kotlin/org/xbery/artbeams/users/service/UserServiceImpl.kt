@@ -54,17 +54,12 @@ class UserServiceImpl(
         }
     }
 
-    override fun setPassword(passwordSetupData: PasswordSetupData, ctx: OperationCtx): User? {
-        val user = findByLogin(passwordSetupData.login)
-        return if (user != null) {
-            val userToUpdate = user.updatedWith(toEditedProfile(user, passwordSetupData.password), user.id)
-            val updatedUser = userRepository.update(userToUpdate)
-            logger.info("Password for user ${userToUpdate.login} was set")
-            updatedUser
-        } else {
-            logger.info("User ${passwordSetupData.login} was not found")
-            null
-        }
+    override fun setPassword(passwordSetupData: PasswordSetupData, ctx: OperationCtx): User {
+        val user = requireByLogin(passwordSetupData.login)
+        val userToUpdate = user.updatedWith(toEditedProfile(user, passwordSetupData.password), user.id)
+        val updatedUser = userRepository.update(userToUpdate)
+        logger.info("Password for user ${userToUpdate.login} was set")
+        return updatedUser
     }
 
     override fun findCurrentUserLogin(): String? {

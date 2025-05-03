@@ -69,13 +69,27 @@ class OrderServiceImpl(
         return order.copy(items = orderItems)
     }
 
-    override fun updateOrderPaid(orderId: String) {
-        orderRepository.updateOrderPaid(orderId)
+    override fun updateOrderPaid(orderId: String): Boolean {
+        val updated = orderRepository.updateOrderPaid(orderId)
+        // TBD: Ensure access to member section and sending email with access details to ordered product in this way:
+        // If user of the order does not have role CommonRoles.MEMBER or has null or empty password,
+        // send password setup email to him using org.xbery.artbeams.users.password.setup.service.PasswordSetupMailer.sendPasswordSetupMail,
+        // else send generic email confirming the payment, with link to member section login and instructions that the user
+        // can login with his current login and password to see and download his newly ordered product.
+        // The email should contain also forgotten password link if the user no longer remembers his password
+        // (but concrete content of the email will be realized in the template; the code will work only with configurable templateId).
+        // For this type of email,
+        // new MemberSectionMailer with method sendMemberSectionLoginMail should be created (PasswordSetupMailer can be taken as an inspiration).
+
+        return updated
     }
 
-    override fun updateOrderState(id: String, state: OrderState): Boolean {
-        logger.info("Updating state of order $id to $state")
-        return orderRepository.updateOrderState(id, state)
+    override fun updateOrderState(orderId: String, state: OrderState): Boolean {
+        logger.info("Updating state of order $orderId to $state")
+        if (state == OrderState.PAID) {
+            return updateOrderPaid(orderId)
+        }
+        return orderRepository.updateOrderState(orderId, state)
     }
 
     override fun deleteOrder(orderId: String): Boolean {

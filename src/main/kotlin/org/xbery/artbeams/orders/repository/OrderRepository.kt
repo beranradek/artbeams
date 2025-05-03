@@ -91,19 +91,20 @@ class OrderRepository(
         }
     }
 
-    fun updateOrderPaid(orderId: String) {
-        dsl.update(ORDERS)
+    fun updateOrderPaid(orderId: String): Boolean {
+        return dsl.update(ORDERS)
             .set(ORDERS.STATE, OrderState.PAID.name)
             .set(ORDERS.MODIFIED, Instant.now())
             // TBD: Update paid time (Instant)
             .where(ORDERS.ID.eq(orderId))
-            .execute()
+            .execute() > 0
     }
 
-    fun updateOrderState(id: String, state: OrderState): Boolean {
+    fun updateOrderState(orderId: String, state: OrderState): Boolean {
         return dsl.update(ORDERS)
             .set(ORDERS.STATE, state.name)
-            .where(ORDERS.ID.eq(id))
+            .set(ORDERS.MODIFIED, Instant.now())
+            .where(ORDERS.ID.eq(orderId))
             .execute() > 0
     }
 }

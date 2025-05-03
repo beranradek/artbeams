@@ -1,6 +1,5 @@
 package org.xbery.artbeams.users.password.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -16,12 +15,14 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.UnauthorizedException
+import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.security.SecureTokens
 import org.xbery.artbeams.members.controller.MemberSectionController
 import org.xbery.artbeams.users.password.controller.PasswordSetupController.Companion.PASSWORD_SETUP_PATH
 import org.xbery.artbeams.users.password.domain.PasswordSetupData
 import org.xbery.artbeams.users.service.LoginService
 import org.xbery.artbeams.users.service.UserService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * New password setup form.
@@ -48,7 +49,7 @@ open class PasswordSetupController(
             val authCode =
                 authorizationCodeValidator.validateEncryptedAuthorizationCode(token, PasswordSetupData.TOKEN_PURPOSE)
             // We stored user login into the token
-            val user = userService.findByLogin(authCode.userId) ?: throw NotFoundException("User ${authCode.userId} from authorization code was not found")
+            val user = userService.requireByLogin(authCode.userId)
             renderForm(request, PasswordSetupData(user.login, token, "", ""), ValidationResult.empty)
         }
     }
@@ -70,10 +71,11 @@ open class PasswordSetupController(
                 userService.setPassword(
                     passwordSetupData,
                     requestToOperationCtx(request)
-                ) ?: throw NotFoundException("User $login was not found")
+                )
 
                 // Automatically log the user in
-                userService.findByLogin(login)?.let { loginService.loginUser(it, passwordSetupData.password, request) }
+                val password = passwordSetupData.password
+                userService.findByLogin(login)?.let { loginService.loginUser(it, password, request) }
                 redirect(MemberSectionController.MEMBER_SECTION_PATH)
             }
         }

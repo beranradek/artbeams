@@ -55,7 +55,6 @@ class WebController(
 
     @GetMapping("/")
     fun homepage(request: HttpServletRequest): Any {
-        //passwordSetupMailer.sendPasswordSetupMail("beran.radek@seznam.cz")
         //val fArticles = CompletableFuture.supplyAsync { articleService.findLatest(ArticlesPerPageLimit) }
         //val fUserAccessReport =
         //    CompletableFuture.supplyAsync { controllerComponents.userAccessService.getUserAccessReport(request) }
