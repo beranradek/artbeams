@@ -31,10 +31,9 @@ class OrderItemRepository(
             .where(ORDER_ITEMS.ORDER_ID.eq(orderId))
             .fetch(mapper)
 
-    fun findLastOrderItemOfUser(userId: String, productId: String): OrderItem? =
+    fun findAllOrderItemsOfUserAndProduct(userId: String, productId: String): List<OrderItem> =
         dsl.selectFrom(table)
             .where(ORDER_ITEMS.CREATED_BY.eq(userId).and(ORDER_ITEMS.PRODUCT_ID.eq(productId)))
             .orderBy(ORDER_ITEMS.CREATED.desc())
-            .limit(1)
-            .fetchOne(mapper)
+            .fetch(mapper)
 }

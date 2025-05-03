@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.context.OriginStamp
+import org.xbery.artbeams.common.form.validation.ChainedEmailValidator
 import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
@@ -49,7 +50,10 @@ class UserSubscriptionServiceImpl(
         if (login.isEmpty()) {
             throw IllegalArgumentException("Cannot register user with empty login (e-mail), fullName $fullName")
         }
-        // TBD: Validate user email!
+        // Validate user email
+        if (!ChainedEmailValidator.isValidEmail(login)) {
+            throw IllegalArgumentException("Cannot register user with invalid e-mail (login), fullName $fullName, login $login")
+        }
         val names = User.namesFromFullName(fullName ?: "")
         // Generate/store random password that can be re-set later by the user
         val password = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()

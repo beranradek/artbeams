@@ -21,9 +21,7 @@ class MemberSectionController(
 
     @GetMapping(MEMBER_SECTION_PATH)
     fun memberSectionHome(request: HttpServletRequest): Any {
-        // TBD RBe: Remove this temporary code:
-        val userProducts = userProductService.findAllProducts()
-        // val userProducts = userProductService.findUserProducts(request)
+        val userProducts = userProductService.findUserProducts(request)
         val model = createModel(
             request,
             "userProducts" to userProducts

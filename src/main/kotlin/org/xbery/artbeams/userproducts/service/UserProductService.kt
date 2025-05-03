@@ -41,8 +41,4 @@ class UserProductService(
         val loggedUser = loginService.requireLoggedUser(request)
         return userProductRepository.findUserProduct(loggedUser.id, productSlug)
     }
-
-    fun findAllProducts(): List<UserProductInfo> {
-        return userProductRepository.findAllProducts()
-    }
 }

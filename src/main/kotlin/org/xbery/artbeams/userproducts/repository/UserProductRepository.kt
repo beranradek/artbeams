@@ -108,25 +108,4 @@ class UserProductRepository(
                 )
             }
     }
-
-    fun findAllProducts(): List<UserProductInfo> {
-        return dsl.select(
-            PRODUCTS.ID,
-            PRODUCTS.TITLE,
-            PRODUCTS.SUBTITLE,
-            PRODUCTS.SLUG,
-            PRODUCTS.LISTING_IMAGE
-        )
-            .from(PRODUCTS)
-            .orderBy(PRODUCTS.CREATED.desc()) // from newest to oldest
-            .fetch { record ->
-                UserProductInfo(
-                    id = requireNotNull(record[PRODUCTS.ID]), // TBD RBe: Fix this, or remove whole findAllProducts method
-                    title = requireNotNull(record[PRODUCTS.TITLE]),
-                    subtitle = record[PRODUCTS.SUBTITLE],
-                    slug = requireNotNull(record[PRODUCTS.SLUG]),
-                    listingImage = record[PRODUCTS.LISTING_IMAGE]
-                )
-            }
-    }
 }

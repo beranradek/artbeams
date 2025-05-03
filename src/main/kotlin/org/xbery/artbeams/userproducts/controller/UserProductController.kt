@@ -21,6 +21,13 @@ import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.web.FreeProductController
 import java.io.ByteArrayOutputStream
 import jakarta.servlet.http.HttpServletRequest
+import org.xbery.artbeams.common.error.UnauthorizedException
+import org.xbery.artbeams.orders.service.OrderService
+import org.xbery.artbeams.orders.domain.OrderItem
+import org.xbery.artbeams.users.domain.User
+import org.xbery.artbeams.products.domain.Product
+import java.time.Instant
+import org.xbery.artbeams.orders.domain.OrderState
 
 /**
  * User product detail.
@@ -32,6 +39,7 @@ class UserProductController(
     private val userProductService: UserProductService,
     private val productService: ProductService,
     private val userService: UserService,
+    private val orderService: OrderService,
     private val mediaRepository: MediaRepository,
     private val pdfSigner: PdfSigner,
     // TBD RBe: Separate common component/controller
@@ -41,11 +49,7 @@ class UserProductController(
 
     @GetMapping("$MEMBER_SECTION_PATH/{productSlug}")
     fun userProductDetail(@PathVariable productSlug: String, request: HttpServletRequest): Any {
-        // TBD RBe: Remove this temporary code:
-        val userProduct = userProductService.findAllProducts().find { it.slug == productSlug }
-            ?: throw NotFoundException("Product with slug $productSlug was not found")
-        // TBD RBe: Uncomment:
-//        val userProduct = userProductService.findUserProductBySlug(productSlug, request)
+        val userProduct = userProductService.findUserProductBySlug(productSlug, request)
         val model = createModel(
             request,
             "userProduct" to userProduct
@@ -55,7 +59,6 @@ class UserProductController(
 
     /**
      * Serves binary data of product to user logged in client zone.
-     * !!! TBD RBe: Check if user purchased the product !!!
      */
     @GetMapping("$MEMBER_SECTION_PATH/{productSlug}/download")
     fun serveProductData(request: HttpServletRequest, @PathVariable productSlug: String): Any {
@@ -65,18 +68,21 @@ class UserProductController(
 
             val productFileName = requireFound(product.fileName) { "Product $productSlug has no file name" }
 
-            // User must exist and must confirm the consent before he/she can download the product
+            // User must exist and must confirm the consent before he/she can download the product (free or paid)
             val user = userService.requireByLogin(login)
 
-            // TBD RBe: Implement!
-            // if (user.consent == null) throw UnauthorizedException("User with email $email has not confirmed the consent")
+            if (user.consent == null) throw UnauthorizedException("User with login $login has not confirmed the consent yet, product $productSlug cannot be downloaded")
 
-
-            // TBD RBe: Implement!
-            // Check an order of the product for given user exists
-            // val orderItem = requireLastOrderItemWithProduct(user, product, email, slug)
-
-            // TBD RBe: In case of paid product, check the order was already paid
+            // Check an order (any order) of the product for given user exists
+            val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
+            if (orderItems.isEmpty()) throw UnauthorizedException("User ${user.login} has not ordered product ${product.slug}")
+            val orders = orderItems.map { orderService.requireByOrderId(it.orderId) }
+            if (orders.isEmpty()) throw UnauthorizedException("Order of the product ${product.slug} was not found for user ${user.login}")
+            
+            val completedOrders = orders.filter { it.state.isAfterPayment() || product.priceRegular.isZero() }
+            if (completedOrders.isEmpty()) throw UnauthorizedException("User ${user.login} has not paid for the product ${product.slug} that requires payment")
+            val completedOrder = completedOrders.first()        
+            val orderItem = orderItems.first()
 
             val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
                 "File $productFileName was not found"
@@ -89,7 +95,7 @@ class UserProductController(
                     "Radek Beran", // TBD: Author
                     user.login,
                     user.fullName,
-                    "2025-preview" // TBD: Order number
+                    completedOrder.orderNumber
                 )
             } else {
                 val os = ByteArrayOutputStream()
@@ -97,8 +103,8 @@ class UserProductController(
                 os
             }
 
-            // TBD RBe: Update order item as downloaded
-            // orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
+            // Update order item as downloaded
+            orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
             freeProductController.sendProductDownloadedNotification(product, user)
 
             ResponseEntity.ok()

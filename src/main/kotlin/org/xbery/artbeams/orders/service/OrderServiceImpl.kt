@@ -77,6 +77,12 @@ class OrderServiceImpl(
         return order.copy(items = orderItems)
     }
 
+    override fun requireByOrderId(orderId: String): Order {
+        val order = orderRepository.requireById(orderId)
+        val orderItems = orderItemRepository.findByOrderId(order.id)
+        return order.copy(items = orderItems)
+    }
+
     override fun updateOrderPaid(orderId: String): Boolean {
         val updated = orderRepository.updateOrderPaid(orderId)
         val order = orderRepository.requireById(orderId)
@@ -90,6 +96,9 @@ class OrderServiceImpl(
         val isMember = user.roles.any { it.name == CommonRoles.MEMBER.roleName }
         val hasPassword = !user.password.isNullOrEmpty()
         
+        // TBD: Also subscribe user to final mailing group for paid product 
+        // but without triggering email with product download
+
         if (!isMember || !hasPassword) {
             // User needs member role or password setup
             passwordSetupMailer.sendPasswordSetupMail(user.login)
@@ -123,12 +132,9 @@ class OrderServiceImpl(
         return result
     }
 
-    override fun requireLastOrderItemOfUser(userId: String, productId: String): OrderItem {
-        return requireFound(orderItemRepository.findLastOrderItemOfUser(userId, productId)) {
-            "Order item for user $userId and product $productId was not found"
-        }
+    override fun findOrderItemsOfUserAndProduct(userId: String, productId: String): List<OrderItem> {
+        return orderItemRepository.findAllOrderItemsOfUserAndProduct(userId, productId)
     }
-
 
     override fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): OrderItem {
         val orderItem = orderItemRepository.requireById(orderItemId)

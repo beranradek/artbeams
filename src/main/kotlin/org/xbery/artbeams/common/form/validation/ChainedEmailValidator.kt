@@ -17,7 +17,7 @@ class ChainedEmailValidator : AbstractValidator<String>() {
     override fun <U : String> validate(ctx: ValidationContext<U>): List<InterpolatedMessage> {
         val msgs: MutableList<InterpolatedMessage> = mutableListOf()
         val email = ctx.validatedValue
-        if (email.isNotEmpty() && (!EmailValidation.isEmail(email) || !EMAIL_VALIDATOR.validate(email).isValid)) {
+        if (email.isNotEmpty() && !isValidEmail(email)) {
             msgs.add(
                 this.error(
                     ctx.elementName,
@@ -33,5 +33,9 @@ class ChainedEmailValidator : AbstractValidator<String>() {
     companion object {
         val INSTANCE = ChainedEmailValidator()
         private val EMAIL_VALIDATOR = EmailValidatorBuilder().build()
+
+        fun isValidEmail(email: String): Boolean {
+            return EmailValidation.isEmail(email) && EMAIL_VALIDATOR.validate(email).isValid
+        }
     }
 }

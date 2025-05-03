@@ -148,9 +148,6 @@ class FreeProductController(
             userProductService.addProductToUserLibrary(user.id, product.id)
 
             // This triggers sending of the product to the user:
-            // TBD: Send an alternative password setup email to member section for paid product
-            // TBD: Send instructions to login for user that already set his member section password (store this info in user entity)
-            // TBD: Also subscribe user to final mailing group for paid product but without triggering email with product download
             mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
 
             // TBD: Update order state to SHIPPED
@@ -189,9 +186,9 @@ class FreeProductController(
             updateUserWithFullName(request, user)
 
             // Check an order of the product for given user exists
-            val orderItem = requireLastOrderItemWithProduct(user, product, email, slug)
-
-            // TODO: In case of paid product, check the order was already paid
+            val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
+            if (orderItems.isEmpty()) throw UnauthorizedException("User ${user.login} has not ordered product ${product.slug}")
+            val orderItem = orderItems.first()
 
             val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
                 "File $productFileName was not found"
@@ -218,19 +215,6 @@ class FreeProductController(
                 )
                 .body(documentOutputStream.toByteArray())
         }
-    }
-
-    private fun requireLastOrderItemWithProduct(
-        user: User,
-        product: Product,
-        email: String,
-        slug: String
-    ): OrderItem {
-        val orderItem = orderService.requireLastOrderItemOfUser(user.id, product.id)
-        if (orderItem.quantity <= 0) throw UnauthorizedException(
-            "User with email $email has not ordered product $slug"
-        )
-        return orderItem
     }
 
     /**

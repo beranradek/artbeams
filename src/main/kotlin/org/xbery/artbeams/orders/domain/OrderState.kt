@@ -39,5 +39,9 @@ enum class OrderState {
     /**
      * Order price was refunded back to customer.
      */
-    REFUNDED
+    REFUNDED;
+
+    fun isAfterPayment(): Boolean {
+        return this == PAID || this == PROCESSING || this == SHIPPED || this == DELIVERED
+    }
 }

@@ -23,19 +23,15 @@ interface OrderService {
 
     fun requireByOrderNumber(orderNumber: String): Order
 
+    fun requireByOrderId(orderId: String): Order
+
     fun updateOrderPaid(orderId: String): Boolean
 
     fun updateOrderState(orderId: String, state: OrderState): Boolean
 
     fun deleteOrder(orderId: String): Boolean
 
-    /**
-     * Finds last order item representing an order of given product by given user.
-     * @param userId
-     * @param productId
-     * @return
-     */
-    fun requireLastOrderItemOfUser(userId: String, productId: String): OrderItem
+    fun findOrderItemsOfUserAndProduct(userId: String, productId: String): List<OrderItem>
 
     /**
      * Updates downloaded time of order item.
