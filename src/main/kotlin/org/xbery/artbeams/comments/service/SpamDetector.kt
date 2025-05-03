@@ -1,5 +1,6 @@
 package org.xbery.artbeams.comments.service
 
+import org.slf4j.LoggerFactory
 import org.xbery.artbeams.common.html.HtmlUtils
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.config.repository.AppConfig
@@ -8,10 +9,13 @@ import java.util.regex.Pattern
 
 /**
  * Detects spam in comments using multiple methods.
+ * @author Radek Beran
+ * @author AI
  */
 @Component
 open class SpamDetector(private val appConfig: AppConfig) {
     private val normalizationHelper = NormalizationHelper()
+    private val logger = LoggerFactory.getLogger(this.javaClass)
     
     open fun isSpam(comment: String, userName: String, email: String): Boolean {
         return containsSuspiciousPatterns(comment) ||
@@ -25,42 +29,62 @@ open class SpamDetector(private val appConfig: AppConfig) {
     protected open fun containsSuspiciousPatterns(comment: String): Boolean {
         // Check for common spam patterns
         val normalizedComment = normalizationHelper.removeDiacriticalMarks(comment.lowercase())
-        return SPAM_PATTERNS.any { pattern -> 
+        val spam = SPAM_PATTERNS.any { pattern ->
             pattern.matcher(normalizedComment).find()
         }
+        if (spam) {
+            logger.info("Spam: Suspicious pattern in comment: $comment")
+        }
+        return spam
     }
 
     protected open fun containsSuspiciousEmail(email: String): Boolean {
         // Check for disposable email domains and suspicious patterns
         val domain = email.substringAfter('@').lowercase()
-        return DISPOSABLE_EMAIL_DOMAINS.any { it in domain } ||
+        val spam = DISPOSABLE_EMAIL_DOMAINS.any { it in domain } ||
                SUSPICIOUS_EMAIL_PATTERNS.any { pattern ->
                    pattern.matcher(email).find()
                }
+        if (spam) {
+            logger.info("Spam: Suspicious email: $email")
+        }
+        return spam
     }
 
     protected open fun containsSuspiciousUsername(userName: String): Boolean {
         // Check for suspicious username patterns
         val normalizedUsername = normalizationHelper.removeDiacriticalMarks(userName.lowercase())
-        return SUSPICIOUS_USERNAME_PATTERNS.any { pattern ->
+        val spam = SUSPICIOUS_USERNAME_PATTERNS.any { pattern ->
             pattern.matcher(normalizedUsername).find()
         }
+        if (spam) {
+            logger.info("Spam: Suspicious username: $userName")
+        }
+        return spam
     }
 
     protected open fun containsSuspiciousContent(comment: String): Boolean {
         // Check for suspicious content patterns
         val normalizedComment = normalizationHelper.removeDiacriticalMarks(comment.lowercase())
-        return SUSPICIOUS_CONTENT_PATTERNS.any { pattern ->
+        val spam = SUSPICIOUS_CONTENT_PATTERNS.any { pattern ->
             pattern.matcher(normalizedComment).find()
         }
+        if (spam) {
+            logger.info("Spam: Suspicious content in comment: $comment")
+        }
+        return spam
     }
 
     protected open fun containsSuspiciousLinks(comment: String): Boolean {
         // Check for suspicious URLs and link patterns
         val normalizedComment = normalizationHelper.removeDiacriticalMarks(comment.lowercase())
-        return SUSPICIOUS_LINK_PATTERNS.any { pattern ->
+        val spam = SUSPICIOUS_LINK_PATTERNS.any { pattern ->
             pattern.matcher(normalizedComment).find()
         }
+        if (spam) {
+            logger.info("Spam: Suspicious link in comment: $comment")
+        }
+        return spam
     }
     
     /**
@@ -79,7 +103,11 @@ open class SpamDetector(private val appConfig: AppConfig) {
         
         // If the comment is long and has very few Czech characters, it's probably not Czech
         // The threshold is set to 2% of the text - adjust as needed
-        return czechCharCount < comment.length * 0.02
+        val spam = czechCharCount < comment.length * 0.02
+        if (spam) {
+            logger.info("Spam: Non-Czech content detected in comment: $comment")
+        }
+        return spam
     }
 
     companion object {

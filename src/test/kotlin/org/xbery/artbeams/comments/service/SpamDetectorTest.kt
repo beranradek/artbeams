@@ -55,25 +55,23 @@ class SpamDetectorTest : StringSpec({
             "Děkuji za rychlou odpověď na můj předchozí komentář."
         )
 
-        // These are Czech texts with special characters, so we need to explicitly avoid
-        // language detection by using the special detector
         legitimateTexts.forEach { comment ->
-            spamDetectorWithoutLanguageCheck.isSpam(comment, "VázeníUser", "dobry@seznam.cz") shouldBe false
+            spamDetector.isSpam(comment, "Radek B.", "dobry@seznam.cz") shouldBe false
         }
     }
 
     // Test for suspicious emails using direct isSpam check
     "should detect spam based on suspicious email patterns" {
         // Test spam emails directly
-        spamDetector.isSpam("Normal comment", "Normal User", "random123user@yahoo.com") shouldBe true
-        spamDetector.isSpam("Normal comment", "Normal User", "test123test@hotmail.com") shouldBe true
-        spamDetector.isSpam("Normal comment", "Normal User", "temp123@tempmail.com") shouldBe true
-        spamDetector.isSpam("Normal comment", "Normal User", "whatever@mailinator.com") shouldBe true
-        spamDetector.isSpam("Normal comment", "Normal User", "test@guerrillamail.com") shouldBe true
-        spamDetector.isSpam("Normal comment", "Normal User", "user123@throwawaymail.com") shouldBe true
+        spamDetector.isSpam("Český normální komentář", "Normal User", "random123user@yahoo.com") shouldBe true
+        spamDetector.isSpam("Český normální komentář", "Normal User", "test123test@hotmail.com") shouldBe true
+        spamDetector.isSpam("Český normální komentář", "Normal User", "temp123@tempmail.com") shouldBe true
+        spamDetector.isSpam("Český normální komentář", "Normal User", "whatever@mailinator.com") shouldBe true
+        spamDetector.isSpam("Český normální komentář", "Normal User", "test@guerrillamail.com") shouldBe true
+        spamDetector.isSpam("Český normální komentář", "Normal User", "user123@throwawaymail.com") shouldBe true
         
-        // Gmail should not be detected as spam
-        spamDetector.isSpam("Normal comment", "Normal User", "abcdef123456@gmail.com") shouldBe false
+        // Gmail should not be detected as spam if also name in prefix is not suspicious
+        spamDetector.isSpam("Český normální komentář", "Normal User", "jana.novotna@gmail.com") shouldBe false
     }
 
     "should not flag legitimate emails as spam" {
