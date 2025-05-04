@@ -96,7 +96,6 @@ class PaidProductController(
             OrderState.CONFIRMED
         )
 
-        // TODO: make user an member directly after this order confirmation (?)
         // Add product to user's library if not already there
         userProductService.addProductToUserLibrary(user.id, product.id)
         return ResponseEntity.ok("Order created")

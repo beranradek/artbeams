@@ -144,7 +144,7 @@ class FreeProductController(
                 OrderState.CONFIRMED
             )
 
-            // TODO: make user an member directly after subscription confirmation (?)
+            // Add product to user library
             userProductService.addProductToUserLibrary(user.id, product.id)
 
             // This triggers sending of the product to the user:

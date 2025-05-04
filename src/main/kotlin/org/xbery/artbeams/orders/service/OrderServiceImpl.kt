@@ -94,7 +94,7 @@ class OrderServiceImpl(
         }
         
         val isMember = user.roles.any { it.name == CommonRoles.MEMBER.roleName }
-        val hasPassword = !user.password.isNullOrEmpty()
+        val hasPassword = user.password.isNotEmpty()
         
         // TBD: Also subscribe user to final mailing group for paid product 
         // but without triggering email with product download

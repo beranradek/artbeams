@@ -9,6 +9,7 @@ import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.repository.ProductRepository
+import org.xbery.artbeams.userproducts.service.UserProductService
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.UserRepository
 import org.xbery.artbeams.users.service.UserService
@@ -22,7 +23,8 @@ class OrderCreatingAdminServiceImpl(
     private val orderService: OrderService,
     private val userRepository: UserRepository,
     private val productRepository: ProductRepository,
-    private val userService: UserService
+    private val userService: UserService,
+    private val userProductService: UserProductService
 ) : OrderCreatingAdminService {
 
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
@@ -52,6 +54,9 @@ class OrderCreatingAdminServiceImpl(
                 orderState
             )
             userService.confirmConsent(user.id)
+
+            // Add product to user's library if not already there
+            userProductService.addProductToUserLibrary(user.id, product.id)
             
             return Pair(true, null)
         } catch (e: Exception) {
