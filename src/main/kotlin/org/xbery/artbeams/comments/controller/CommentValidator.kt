@@ -4,7 +4,6 @@ import net.formio.validation.Arg
 import net.formio.validation.InterpolatedMessage
 import net.formio.validation.ValidationContext
 import net.formio.validation.validators.AbstractValidator
-import org.xbery.artbeams.comments.service.CommentServiceImpl
 import org.xbery.artbeams.common.html.HtmlUtils
 import java.io.Serializable
 
@@ -17,7 +16,7 @@ class CommentValidator : AbstractValidator<String>() {
     override fun <U : String> validate(ctx: ValidationContext<U>): List<InterpolatedMessage> {
         val msgs: MutableList<InterpolatedMessage> = mutableListOf()
         val comment = ctx.validatedValue
-        if (comment.isNotEmpty() && (HtmlUtils.containsHtmlMarkup(comment) || containsAtLeastNChars(comment, 15, RU_CHARS))) {
+        if (comment.isNotEmpty() && (HtmlUtils.containsHtmlMarkup(comment) || containsAtLeastNChars(comment, 15, RU_CHARS) || startsWithLink(comment))) {
             msgs.add(
                 this.error(
                     ctx.elementName,
@@ -32,6 +31,11 @@ class CommentValidator : AbstractValidator<String>() {
 
     private fun containsAtLeastNChars(str: String, n: Int, chars: Set<Char>): Boolean {
         return str.count { chars.contains(it) } >= n
+    }
+
+    private fun startsWithLink(comment: String): Boolean {
+        val trimmedComment = comment.trim()
+        return trimmedComment.startsWith("http://") || trimmedComment.startsWith("https://")
     }
 
     companion object {
