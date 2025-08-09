@@ -6,16 +6,16 @@
 <#import "/comments/commentAdd.ftl" as commentAdd>
 <#import "/comments/commentList.ftl" as commentList>
 <@layout.page>
-    <h1 class="blog-post-title">${article.title!}</h1>
+    <h1 class="display-4 fw-bold mb-4 text-primary-custom">${article.title!}</h1>
 
     <#if userAccessReport?? && userAccessReport.mobileDevice && article.image??>
-      <div class="article-image-detail">
-        <img alt="" src="/media/${article.image}?size=${xlat['article.img.small.width']}" />
+      <div class="article-image-detail mb-4">
+        <img alt="" src="/media/${article.image}?size=${xlat['article.img.small.width']}" class="featured-image rounded-4 shadow-sm" />
       </div>
     <#else>
       <#if article.image??>
-        <div class="article-image-detail">
-          <img alt="" src="/media/${article.image}?size=${xlat['article.img.big.width']}" />
+        <div class="article-image-detail mb-4">
+          <img alt="" src="/media/${article.image}?size=${xlat['article.img.big.width']}" class="featured-image rounded-4 shadow-sm" />
         </div>
       </#if>
     </#if>
@@ -24,7 +24,7 @@
       <@metadata.metadata></@metadata.metadata>
       <@socialShare.share></@socialShare.share>
     </#if>
-    <div>${article.body!}</div>
+    <div class="fs-5 lh-lg">${article.body!}</div>
     <#if article.showOnBlog>
       <@socialShare.share></@socialShare.share>
       <#-- <@fbComments.fbComments></@fbComments.fbComments> -->

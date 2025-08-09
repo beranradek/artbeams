@@ -14,7 +14,7 @@ I want to preserve my poor bootstrap and plain CSS and JavaScript solution if po
 I want to use new components (their markup, CSS styles) in public part of the project (web) only, not in administration. 
 Can you do the comprehensive reseach of the provided repo, web, my project and write the comprehensive plan into REDESIGN_PLAN.md with desired structure for my artbeams project, implementation steps
 filled with concrete files and components, including migration of my images, reworking my templates, current CSS styles and possibly some JavaScripts? 
-JavaScript funtionality should be mainly preserved from my current web site. Write the plan so the AI programming agent can easily follow it and implement the whole redesign.
+JavaScript functionality should be mainly preserved from my current web site. Write the plan so the AI programming agent can easily follow it and implement the whole redesign.
  
 - [ ] Add unit tests for some uncovered services
 

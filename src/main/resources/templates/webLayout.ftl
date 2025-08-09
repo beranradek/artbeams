@@ -167,85 +167,110 @@
     </#if>
 
     <header>
-      <!-- Navbar, not fixed to the top (fixed-top), but static -->
-      <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/">${xlat['website.title']}</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-              <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <!-- Redesigned Navbar (Lovable style, Bootstrap, FreeMarker) -->
+      <nav class="navbar navbar-expand-lg nav-custom fixed-top py-3">
+        <div class="container-fluid-custom">
+          <div class="d-flex align-items-center justify-content-between w-100">
+            <!-- Logo -->
+            <a class="navbar-brand" href="/">
+              <span class="fw-bold fs-4" style="color: var(--primary);">
+                Vysněné<span style="color: var(--secondary);">Zdraví</span>
+              </span>
+            </a>
+            <!-- Desktop Navigation -->
+            <div class="d-none d-md-flex align-items-center">
+              <div class="navbar-nav d-flex flex-row me-3">
                 <#if xlat['menu.item1.title']??>
-                  <li class="nav-item">
-                    <a class="nav-link" href="${xlat['menu.item1.url']}">${xlat['menu.item1.title']}</a>
-                  </li>
+                  <a href="${xlat['menu.item1.url']}" class="nav-link nav-link-custom px-2 px-lg-3">${xlat['menu.item1.title']}</a>
                 </#if>
                 <#if xlat['menu.item2.title']??>
-                  <li class="nav-item">
-                    <a class="nav-link" href="${xlat['menu.item2.url']}">${xlat['menu.item2.title']}</a>
-                  </li>
+                  <a href="${xlat['menu.item2.url']}" class="nav-link nav-link-custom px-2 px-lg-3">${xlat['menu.item2.title']}</a>
                 </#if>
                 <#if xlat['menu.item3.title']??>
-                  <li class="nav-item">
-                    <a class="nav-link" href="${xlat['menu.item3.url']}">${xlat['menu.item3.title']}</a>
-                  </li>
+                  <a href="${xlat['menu.item3.url']}" class="nav-link nav-link-custom px-2 px-lg-3">${xlat['menu.item3.title']}</a>
                 </#if>
                 <#if xlat['menu.item4.title']??>
-                  <li class="nav-item">
-                    <a class="nav-link" href="${xlat['menu.item4.url']}">${xlat['menu.item4.title']}</a>
-                  </li>
+                  <a href="${xlat['menu.item4.url']}" class="nav-link nav-link-custom px-2 px-lg-3">${xlat['menu.item4.title']}</a>
                 </#if>
                 <#if xlat['menu.item5.title']??>
-                  <li class="nav-item">
-                    <a class="nav-link" href="${xlat['menu.item5.url']}">${xlat['menu.item5.title']}</a>
-                  </li>
+                  <a href="${xlat['menu.item5.url']}" class="nav-link nav-link-custom px-2 px-lg-3">${xlat['menu.item5.title']}</a>
                 </#if>
                 <#if xlat['menu.item6.title']??>
-                  <li class="nav-item">
-                    <a class="nav-link" href="${xlat['menu.item6.url']}">${xlat['menu.item6.title']}</a>
-                  </li>
+                  <a href="${xlat['menu.item6.url']}" class="nav-link nav-link-custom px-2 px-lg-3">${xlat['menu.item6.title']}</a>
                 </#if>
-              </ul>
-              <form method="get" action="/search" class="d-flex" role="search">
-                <input type="search" name="query" class="form-control me-2" placeholder="Hledat" aria-label="${xlat['search']}">
-                <button class="btn btn-search btn-search-blue" type="submit">${xlat['search']}</button>
+              </div>
+              <form method="get" action="/search" class="d-flex ms-lg-4" role="search">
+                <div class="input-group">
+                  <input class="form-control search-box" type="search" name="query" placeholder="Hledat..." aria-label="${xlat['search']}" />
+                  <button class="btn btn-outline-secondary" type="submit">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
               </form>
-         </div>
-       </div>
-     </nav>
+            </div>
+            <!-- Mobile menu button -->
+            <div class="d-md-none">
+              <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-controls="mobileMenu" aria-expanded="false" aria-label="Toggle navigation" style="background: none; border: none; padding: 8px;">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="collapse" id="mobileMenu">
+          <div class="container-fluid-custom py-3">
+            <div class="d-flex flex-column text-start">
+              <#if xlat['menu.item1.title']??>
+                <a href="${xlat['menu.item1.url']}" class="nav-link nav-link-custom py-2 px-2">${xlat['menu.item1.title']}</a>
+              </#if>
+              <#if xlat['menu.item2.title']??>
+                <a href="${xlat['menu.item2.url']}" class="nav-link nav-link-custom py-2 px-2">${xlat['menu.item2.title']}</a>
+              </#if>
+              <#if xlat['menu.item3.title']??>
+                <a href="${xlat['menu.item3.url']}" class="nav-link nav-link-custom py-2 px-2">${xlat['menu.item3.title']}</a>
+              </#if>
+              <#if xlat['menu.item4.title']??>
+                <a href="${xlat['menu.item4.url']}" class="nav-link nav-link-custom py-2 px-2">${xlat['menu.item4.title']}</a>
+              </#if>
+              <#if xlat['menu.item5.title']??>
+                <a href="${xlat['menu.item5.url']}" class="nav-link nav-link-custom py-2 px-2">${xlat['menu.item5.title']}</a>
+              </#if>
+              <#if xlat['menu.item6.title']??>
+                <a href="${xlat['menu.item6.url']}" class="nav-link nav-link-custom py-2 px-2">${xlat['menu.item6.title']}</a>
+              </#if>
+              <form method="get" action="/search" class="d-flex mt-2 mb-2 px-2" role="search">
+                <div class="input-group">
+                  <input class="form-control search-box" type="search" name="query" placeholder="Hledat..." aria-label="${xlat['search']}" />
+                  <button class="btn btn-outline-secondary" type="submit">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
      <#if showHeadline??>
-       <div id="headline" class="<#if userAccessReport?? && userAccessReport.mobileDevice>headline-mobile<#else>headline-desktop</#if>">
-       <div class="row">
-           <div class="col-md-3">
-             <#if !userAccessReport?? || !userAccessReport.mobileDevice>
-               <div id="headline-portrait">
-                 <div id="headline-portrait-holder">
-                   <a href="${xlat['headline.portrait.url']}"><img alt="Portrét" src="${xlat['headline.portrait.src']}" width="${xlat['headline.portrait.width']}" height="${xlat['headline.portrait.height']}" /></a>
-                 </div>
+       <!-- Lovable Hero Section (Bootstrapified) -->
+       <section class="hero-section d-flex align-items-center justify-content-center text-center" style="background: linear-gradient(rgba(10,22,34,0.7), rgba(10,22,34,0.7)), url('/static/images/person-beside-bare-tree-at-night-3262249.jpg'); background-size: cover; background-position: center; color: var(--text-light); padding: 8rem 0; position: relative; overflow: hidden;">
+         <div class="container position-relative z-2">
+           <div class="row align-items-center">
+             <div class="col-lg-7 text-lg-start text-center mb-4 mb-lg-0">
+               <h1 class="display-3 fw-bold mb-4 gradient-text">Vysněné zdraví začíná kvalitním spánkem</h1>
+               <p class="lead mb-5">Objevte cestu k lepšímu zdraví a vitalitě prostřednictvím kvalitního spánku, zdravého životního stylu a osvědčených metod, jak se cítit každý den lépe.</p>
+               <div class="d-flex flex-column flex-sm-row gap-3 justify-content-lg-start justify-content-center">
+                 <a href="https://www.vysnenezdravi.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-primary-custom btn-lg rounded-pill px-5">Objevit více</a>
+                 <a href="#contact" class="btn btn-secondary-custom btn-lg rounded-pill px-5">Kontaktujte nás</a>
                </div>
-             </#if>
-           </div>
-           <div class="col-md-3" id="headline-offer">
-             <p class="headline-offer-header">${xlat['headline.offer.header']}</p>
-             <p class="align-center" class="headline-offer-img-holder">
-                <a href="${xlat['headline.offer.url']}">
-                  <img alt="${xlat['headline.offer.img.alt']}" src="${xlat['headline.offer.img.src']}" width="${xlat['headline.offer.img.width']}" height="${xlat['headline.offer.img.height']}" />
-                </a>
-             </p>
-             <p>${xlat['headline.offer.description']}</p>
-
-             <div id="headline-offer1">
-               <#if xlat['headline.offer.action']??>
-                 <button type="button" data-bs-toggle="modal" data-bs-target="#headline-offer1-modal" class="btn headline-offer1-button">${xlat['headline.offer.action']}</button>
-               </#if>
              </div>
-
+             <div class="col-lg-5 d-flex justify-content-center">
+               <div class="featured-image-wrapper">
+                 <img src="/static/images/person-beside-bare-tree-at-night-3262249.jpg" alt="Klidný spánek v moderní ložnici" class="featured-image rounded-4 shadow-lg" style="max-width: 400px;" />
+               </div>
+             </div>
            </div>
-           <div class="col-md-3"></div>
-           <div class="col-md-3"></div>
-       </div>
-       </div>
+         </div>
+       </section>
      </#if>
 
      <#if subscriptionFormMapping??>
@@ -353,26 +378,68 @@
     </#if>
   </main>
   
-  <footer class="footer mt-auto py-3 bg-body-tertiary">
-    <div class="container align-center">
-      <#if xlat['terms-and-conditions.url']??>
-          <span class="text-body-secondary"><a href="${xlat['terms-and-conditions.url']}">${xlat['terms-and-conditions.title']}</a></span> |
-      </#if>
-      <#if xlat['personal-data.protection.url']??>
-          <span class="text-body-secondary"><a href="${xlat['personal-data.protection.url']}">${xlat['personal-data.protection.title']}</a></span> |
-      </#if>
-      <#if xlat['cookies.url']??>
-          <span class="text-body-secondary"><a href="${xlat['cookies.url']}">${xlat['cookies.title']}</a></span>
-      </#if>
-    </div>
-    <div class="container align-center">
-      <span class="text-muted">&copy; ${xlat['website.title']} | ${xlat['website.disclaimer']} | <a href="#">${xlat['goto.up']}</a></span>
+  <!-- Lovable-style Footer -->
+  <footer class="bg-dark text-white pt-5 pb-4 mt-auto">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <h3 class="footer-heading mb-3">Vysněné Zdraví</h3>
+          <p class="mb-4">Průvodce k lepšímu spánku a zdravějšímu životnímu stylu.</p>
+          <div class="d-flex">
+            <a href="#" class="footer-social-icon me-2"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="footer-social-icon me-2"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="footer-social-icon"><i class="bi bi-twitter"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <h3 class="footer-heading mb-3">Užitečné odkazy</h3>
+          <ul class="list-unstyled">
+            <li><a href="/" class="footer-link">O nás</a></li>
+            <li><a href="#" class="footer-link">Náš tým</a></li>
+            <li><a href="#" class="footer-link">Často kladené otázky</a></li>
+            <#if xlat['terms-and-conditions.url']??>
+              <li><a href="${xlat['terms-and-conditions.url']}" class="footer-link">${xlat['terms-and-conditions.title']}</a></li>
+            </#if>
+            <#if xlat['personal-data.protection.url']??>
+              <li><a href="${xlat['personal-data.protection.url']}" class="footer-link">${xlat['personal-data.protection.title']}</a></li>
+            </#if>
+            <#if xlat['cookies.url']??>
+              <li><a href="${xlat['cookies.url']}" class="footer-link">${xlat['cookies.title']}</a></li>
+            </#if>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <h3 class="footer-heading mb-3">Kategorie</h3>
+          <ul class="list-unstyled">
+            <li><a href="#" class="footer-link">Spánek</a></li>
+            <li><a href="#" class="footer-link">Zdravé stravování</a></li>
+            <li><a href="#" class="footer-link">Relaxace</a></li>
+            <li><a href="#" class="footer-link">Pohyb</a></li>
+            <li><a href="#" class="footer-link">Duševní zdraví</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h3 class="footer-heading mb-3">Kontaktujte nás</h3>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="bi bi-geo-alt me-2"></i> Spánková 42, Praha 2</li>
+            <li class="mb-2"><i class="bi bi-telephone me-2"></i> +420 123 456 789</li>
+            <li><i class="bi bi-envelope me-2"></i> info@vysnenezdravi.cz</li>
+          </ul>
+        </div>
+      </div>
+      <div class="row mt-4 pt-3 border-top border-secondary">
+        <div class="col-md-6 text-start text-secondary small">
+          &copy; ${xlat['website.title']} ${.now?string['yyyy']} | ${xlat['website.disclaimer']}
+        </div>
+        <div class="col-md-6 text-end">
+          <a href="#" class="footer-link">${xlat['goto.up']}</a>
+        </div>
+      </div>
     </div>
     <div id="cookie-disclaimer" class="cookie-disclaimer">
       <div class="cookie-close"><i class="fa fa-times"></i></div>
       <div class="container">
         <p>${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}">${xlat['cookies.info.more']}</a>.
-
         <#if xlat['cookies.acceptAll']??>&nbsp;<button type="button" id="accept-cookie" class="btn btn-success">${xlat['cookies.acceptAll']}</button></#if>
         <button type="button" id="close-cookie" class="btn btn-secondary">X</button></p>
       </div>
