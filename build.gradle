@@ -269,12 +269,18 @@ task minifyCss {
                 writer << "\n"
             }
         }
-        println "✅ CSS files minified and merged into: ${outputCss}"
+        println "CSS files minified and merged into: ${outputCss}"
     }
 }
 
-// Automatic addition of task to the build
-build.dependsOn(minifyCss)
+// Ensure minifyCss runs before processResources
+// See https://docs.gradle.org/8.5/userguide/validation_problems.html#implicit_dependency
+
+// Remove build.dependsOn(minifyCss) as processResources already depends on minifyCss
+
+tasks.named('processResources') {
+    dependsOn(tasks.named('minifyCss'))
+}
 
 // force Spring Boot plugin to keep jOOQ version in sync
 ext["jooq.version"] = property("jooqVersion")
