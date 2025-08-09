@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.Logging
+import com.yahoo.platform.yui.compressor.CssCompressor
 
 buildscript {
     repositories {
@@ -14,6 +15,8 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
+        // Minification of CSS files:
+        classpath "com.yahoo.platform.yui:yuicompressor:2.4.8"
     }
 }
 
@@ -226,6 +229,52 @@ sourceSets {
         }
     }
 }
+
+def cssDir = file("$projectDir/src/main/resources/static/css")
+def outputCss = file("$cssDir/styles.css")
+
+task minifyCss {
+    group = "build"
+    description = "Minifies and merges CSS files into styles.css"
+
+    inputs.files(
+        "$cssDir/bootstrap.min.css", // already minified
+        "$cssDir/common-styles.css",
+        "$cssDir/public-styles.css"
+    )
+    outputs.file(outputCss)
+
+    doLast {
+        outputCss.withWriter("UTF-8") { writer ->
+            // Header ofr merged CSS file
+            writer << '@charset "UTF-8";\n'
+            writer << """/*
+ File automatically generated during the build,
+ composed from more sources:
+   - bootstrap.min.css
+   - common-styles.css
+   - public-styles.css
+*/
+"""
+
+            // 1) Add bootstrap.min.css
+            writer << file("$cssDir/bootstrap.min.css").getText("UTF-8") << "\n"
+
+            // 2) Minify and add common-styles.css a public-styles.css
+            ["common-styles.css", "public-styles.css"].each { cssFile ->
+                file("$cssDir/$cssFile").withReader("UTF-8") { reader ->
+                    def compressor = new CssCompressor(reader)
+                    compressor.compress(writer, -1) // -1 = bez omezení délky řádku
+                }
+                writer << "\n"
+            }
+        }
+        println "✅ CSS files minified and merged into: ${outputCss}"
+    }
+}
+
+// Automatic addition of task to the build
+build.dependsOn(minifyCss)
 
 // force Spring Boot plugin to keep jOOQ version in sync
 ext["jooq.version"] = property("jooqVersion")
