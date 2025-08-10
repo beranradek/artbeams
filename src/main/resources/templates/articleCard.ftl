@@ -1,13 +1,33 @@
-<#macro articleCard article>
+<#import "/components/badgeComponent.ftl" as badge>
 
-  <div class="blog-item border rounded overflow-hidden shadow-sm p-3">
-    <#if article.image??>
-      <a href="/${article.slug}" class="blog-item-image"><img alt="${article.image}" src="/media/${article.image}?size=${xlat['article.img.small.width']}" loading="lazy" height="${xlat['article.img.small.width']}" width="${xlat['article.img.small.width']}" /></a>
-    </#if>
-    <span class="blog-item-text">
-        <h3 class="item-title mb-0"><a href="/${article.slug}">${article.title}</a></h3>
-        <span class="item-date mb-1 text-muted">${article.validFrom?string["d.M.yyyy, HH:mm"]}</span>
-        <p class="item-perex mb-auto">${(article.perex)[0..*350]}</p>
-    </span>
+<#macro articleCard article>
+<!-- Modern Article Card -->
+<div class="card article-card border-0 bg-light">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <#if article.image??>
+        <img src="/media/${article.image}?size=${xlat['article.img.small.width']}" 
+             class="article-image" 
+             alt="${article.title}" 
+             loading="lazy" />
+      <#else>
+        <img src="https://images.unsplash.com/photo-1520206183501-b80df61043c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+             class="article-image" 
+             alt="${article.title}" 
+             loading="lazy" />
+      </#if>
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <div class="mb-2">
+          <@badge.categoryBadge article=article />
+          <small class="text-muted ms-2">${article.validFrom?string["d. MMMM yyyy"]}</small>
+        </div>
+        <h3 class="card-title"><a href="/${article.slug}" class="text-decoration-none">${article.title}</a></h3>
+        <p class="card-text">${(article.perex!"")?truncate(150, "...")}</p>
+        <a href="/${article.slug}" class="btn btn-sm btn-outline-primary">Přečíst článek</a>
+      </div>
+    </div>
   </div>
+</div>
 </#macro>

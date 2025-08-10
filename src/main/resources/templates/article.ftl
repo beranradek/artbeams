@@ -5,7 +5,7 @@
 <#-- <#import "/fbComments.ftl" as fbComments> -->
 <#import "/comments/commentAdd.ftl" as commentAdd>
 <#import "/comments/commentList.ftl" as commentList>
-<@layout.page>
+<@layout.page pageStyles="/static/css/articles.css">
     <h1 class="blog-post-title">${article.title!}</h1>
 
     <#if userAccessReport?? && userAccessReport.mobileDevice && article.image??>

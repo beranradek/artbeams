@@ -1,0 +1,261 @@
+/* Component Styles - Based on Lovable Design */
+
+/* Article cards styling */
+.article-card {
+  border: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.article-card .card-body {
+  padding: 1.5rem;
+}
+
+.article-card .card-title {
+  color: var(--text-dark);
+  font-size: 1.25rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.article-card .card-text {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Featured article card */
+.featured-article-card {
+  background: var(--accent);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+}
+
+/* Featured image styling */
+.featured-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  height: 250px;
+}
+
+.featured-image {
+  transition: transform 0.5s;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featured-image-wrapper:hover .featured-image {
+  transform: scale(1.05);
+}
+
+/* Article card images */
+.article-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Sidebar styling */
+.sidebar {
+  border-radius: 12px;
+  background-color: var(--light);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.sidebar .card-body {
+  padding: 2rem;
+}
+
+.sidebar h4 {
+  color: var(--primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+}
+
+.sidebar .list-unstyled li {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar .list-unstyled li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Sidebar links */
+.sidebar a {
+  color: var(--text-dark);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.sidebar a:hover {
+  color: var(--primary);
+}
+
+/* Social icons in sidebar */
+.social-icon {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
+  background-color: rgba(26, 59, 92, 0.2);
+  border-radius: 50%;
+  margin-right: 10px;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  background-color: var(--secondary);
+  color: var(--dark);
+  transform: translateY(-2px);
+}
+
+/* Newsletter/offer section */
+.newsletter-section {
+  background: var(--primary);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.newsletter-section h4 {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+  border-bottom: none;
+}
+
+.newsletter-section p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.newsletter-section .form-control {
+  border-radius: 8px;
+  border: none;
+  padding: 0.75rem;
+}
+
+.newsletter-section .btn {
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+}
+
+/* Footer styling */
+footer {
+  background-color: var(--dark);
+  color: var(--footer-text);
+  padding: 3rem 0 2rem;
+}
+
+/* Footer headings and links with improved contrast */
+.footer-heading {
+  color: var(--secondary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+}
+
+.footer-link {
+  color: var(--footer-text);
+  opacity: 0.9;
+  display: block;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.footer-link:hover {
+  opacity: 1;
+  color: var(--warm);
+  text-decoration: underline;
+}
+
+/* Footer social icons */
+.footer-social-icon {
+  color: var(--warm);
+  background-color: rgba(255, 255, 255, 0.15);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.footer-social-icon:hover {
+  background-color: var(--secondary);
+  color: var(--dark);
+  transform: translateY(-3px);
+}
+
+/* Pagination styling */
+.pagination .page-link {
+  color: var(--primary);
+  border-color: var(--accent);
+  background-color: transparent;
+  border-radius: 8px;
+  margin: 0 0.25rem;
+}
+
+.pagination .page-link:hover {
+  background-color: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--text-light);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-light);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    margin-bottom: 1rem;
+  }
+  
+  .article-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .featured-image-wrapper {
+    height: 200px;
+  }
+  
+  footer {
+    padding: 2rem 0 1rem;
+  }
+  
+  .footer-heading {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+}

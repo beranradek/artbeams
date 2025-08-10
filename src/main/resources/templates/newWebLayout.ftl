@@ -5,6 +5,7 @@
 <#import "/components/heroSection.ftl" as hero>
 <#import "/components/modernSidebar.ftl" as sidebar>
 <#import "/components/modernFooter.ftl" as footer>
+
 <#macro page pageStyles="" pageStyles2="">
 <!DOCTYPE html>
 <html lang="cs">
@@ -48,11 +49,6 @@
     <#if article.image??>
       <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.big.width']}" />
     </#if>
-    <#-- TODO: Add additional metas:
-    <meta property="article:tag" content="Some tag/keyword" />
-    <meta property="article:published_time" content="2017-05-09T12:39:34+00:00" />
-    article:modified_time, article:author, ...
-    -->
   <#elseif category??>
     <meta property="og:title" content="${category.title!}" />
     <meta property="og:type" content="article:section" />
@@ -74,77 +70,6 @@
   
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
-  
-  <style nonce="${_cspNonce}">
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-
-      .b-example-divider {
-        width: 100%;
-        height: 3rem;
-        background-color: rgba(0, 0, 0, .1);
-        border: solid rgba(0, 0, 0, .15);
-        border-width: 1px 0;
-        box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
-      }
-
-      .b-example-vr {
-        flex-shrink: 0;
-        width: 1.5rem;
-        height: 100vh;
-      }
-
-      .bi {
-        vertical-align: -.125em;
-        fill: currentColor;
-      }
-
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.75rem;
-        overflow-y: hidden;
-      }
-
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .btn-bd-primary {
-        --bd-violet-bg: #712cf9;
-        --bd-violet-rgb: 112.520718, 44.062154, 249.437846;
-
-        --bs-btn-font-weight: 600;
-        --bs-btn-color: var(--bs-white);
-        --bs-btn-bg: var(--bd-violet-bg);
-        --bs-btn-border-color: var(--bd-violet-bg);
-        --bs-btn-hover-color: var(--bs-white);
-        --bs-btn-hover-bg: #6528e0;
-        --bs-btn-hover-border-color: #6528e0;
-        --bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
-        --bs-btn-active-color: var(--bs-btn-hover-color);
-        --bs-btn-active-bg: #5a23c8;
-        --bs-btn-active-border-color: #5a23c8;
-      }
-  </style>
 
   <#if pageStyles?has_content>
     <link href="${pageStyles}" type="text/css" rel="stylesheet">
@@ -176,26 +101,29 @@
     </#if>
 
     <@navbar.modernNavbar />
+
+    <#-- Show hero section only on homepage -->
     <#if showHeadline??>
       <@hero.heroSection />
     </#if>
 
-     <#if subscriptionFormMapping??>
-         <#if xlat['mailer-lite.form.title']??>
-           <div id="headline-offer1-modal" class="modal fade" tabindex="-1" aria-hidden="true">
-              <div class="modal-dialog">
-                  <div class="modal-content">
-                      <div class="modal-header no-title">
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
-                      </div>
-                      <div class="modal-body">
-                         <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-header-subscription-form'></@subscriptionForm.subscriptionForm>
-                      </div>
-                  </div>
-              </div>
-           </div>
-         </#if>
-     </#if>
+    <#-- Modal for subscription form from header -->
+    <#if subscriptionFormMapping??>
+        <#if xlat['mailer-lite.form.title']??>
+          <div id="headline-offer1-modal" class="modal fade" tabindex="-1" aria-hidden="true">
+             <div class="modal-dialog">
+                 <div class="modal-content">
+                     <div class="modal-header no-title">
+                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+                     </div>
+                     <div class="modal-body">
+                        <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-header-subscription-form'></@subscriptionForm.subscriptionForm>
+                     </div>
+                 </div>
+             </div>
+          </div>
+        </#if>
+    </#if>
 
   <#if errorMessage??>
     <div class="alert alert-danger" role="alert">${errorMessage}</div>
@@ -235,17 +163,6 @@
   </main>
   
   <@footer.modernFooter />
-  
-  <!-- Cookie disclaimer -->
-  <div id="cookie-disclaimer" class="cookie-disclaimer">
-    <div class="cookie-close"><i class="fa fa-times"></i></div>
-    <div class="container">
-      <p>${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}">${xlat['cookies.info.more']}</a>.
-
-      <#if xlat['cookies.acceptAll']??>&nbsp;<button type="button" id="accept-cookie" class="btn btn-success">${xlat['cookies.acceptAll']}</button></#if>
-      <button type="button" id="close-cookie" class="btn btn-secondary">X</button></p>
-    </div>
-  </div>
 
   <!-- Bootstrap core JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
@@ -327,7 +244,7 @@
 
             checkCookie();
 
-            if (cookie === true) {
+            if (cookie === true && cookieContent) {
                 cookieContent.style.visibility = "hidden";
             }
 
@@ -353,18 +270,17 @@
               if (check !== "") {
                 return cookie = true;
               } else {
-                  return cookie = false; //setCookie(cookieName, "accepted", 365);
+                  return cookie = false;
               }
             }
 
             function acceptCookieHandler() {
                 setCookie(cookieName, "accepted", 365);
-                cookieContent.style.visibility = "hidden";
+                if (cookieContent) cookieContent.style.visibility = "hidden";
             }
 
             function unsetCookiesHandler() {
                 var Cookies = document.cookie.split(';');
-                // set 1 Jan, 1970 expiry for every cookies
                 for (var i = 0; i < Cookies.length; i++) {
                     document.cookie = Cookies[i] + "=;expires=" + new Date(0).toUTCString();
                 }
@@ -373,7 +289,7 @@
             }
 
             function closeCookieHandler() {
-                cookieContent.style.visibility = "hidden";
+                if (cookieContent) cookieContent.style.visibility = "hidden";
             }
 
             registerOnClickHandler('accept-cookie', acceptCookieHandler);

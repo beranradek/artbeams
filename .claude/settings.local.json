@@ -4,7 +4,12 @@
       "mcp__fetch__fetch",
       "mcp__puppeteer__puppeteer_navigate",
       "mcp__puppeteer__puppeteer_screenshot",
-      "mcp__puppeteer__puppeteer_evaluate"
+      "mcp__puppeteer__puppeteer_evaluate",
+      "Bash(./gradlew:*)",
+      "mcp__puppeteer__puppeteer_click",
+      "Bash(pkill:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)"
     ],
     "deny": []
   }
