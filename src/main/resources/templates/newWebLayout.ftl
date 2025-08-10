@@ -132,7 +132,7 @@
   <#if category??>
     <div class="row category-header">
       <div class="col-md-12">
-        <h1>${xlat['category']}: ${category.title}</h1>
+        <h1>${category.title}</h1>
       </div>
     </div>
   </#if>

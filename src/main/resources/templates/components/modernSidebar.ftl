@@ -89,7 +89,6 @@
     <#if xlat['mailer-lite.form.title']??>
     <div class="newsletter-section">
       <h4>Stáhněte si zdarma e-book</h4>
-      <p>Zadejte svůj e-mail a získejte zdarma můj e-book "${xlat['headline.offer.action']!'Klíčová opatření pro regenerující spánek'}".</p>
       <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-sidebar-subscription-form'></@subscriptionForm.subscriptionForm>
     </div>
     </#if>

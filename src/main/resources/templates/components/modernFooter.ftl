@@ -21,7 +21,8 @@
           </#if>
         </div>
       </div>
-      
+
+      <#-- TBD: Not useful with only blog link. Maybe create list of e-books?
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
         <h5 class="footer-heading text-uppercase mb-4">Užitečné odkazy</h5>
         <ul class="list-unstyled">
@@ -45,27 +46,25 @@
           </#if>
         </ul>
       </div>
-      
+      -->
+
+      <#if articleCategories??>
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
         <h5 class="footer-heading text-uppercase mb-4">Rubriky</h5>
         <ul class="list-unstyled">
-          <#if articleCategories??>
-            <#list articleCategories as category>
-              <#if category?index < 5>
-              <li>
-                <a href="${xlat['categories.url.base']}/${category.slug}" class="footer-link">${category.title}</a>
-              </li>
-              </#if>
-            </#list>
-          <#else>
-            <li><a href="#" class="footer-link">Spánek</a></li>
-            <li><a href="#" class="footer-link">Zdravé stravování</a></li>
-            <li><a href="#" class="footer-link">Relaxační techniky</a></li>
-            <li><a href="#" class="footer-link">Duševní zdraví</a></li>
-          </#if>
+          <#-- TBD: Fill in article categories for contact page and product pages. -->
+          <#list articleCategories as category>
+            <#if category?index < 5>
+            <li>
+              <a href="${xlat['categories.url.base']}/${category.slug}" class="footer-link">${category.title}</a>
+            </li>
+            </#if>
+          </#list>
         </ul>
       </div>
-      
+      </#if>
+
+      <#-- TBD: We have separate contact page. Fill in short info later.
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
         <h5 class="footer-heading text-uppercase mb-4">Kontakt</h5>
         <ul class="list-unstyled">
@@ -90,6 +89,7 @@
         </ul>
       </div>
     </div>
+    -->
     
     <hr class="my-4" style="background-color: rgba(255,255,255,0.2);" />
     
@@ -113,6 +113,14 @@
           <li class="list-inline-item">
             <a href="${xlat['personal-data.protection.url']}" class="footer-link small">${xlat['personal-data.protection.title']}</a>
           </li>
+          <li class="list-inline-item">
+            <span class="text-secondary-custom mx-2">•</span>
+          </li>
+          </#if>
+          <#if xlat['cookies.url']??>
+            <li class="list-inline-item">
+              <a href="${xlat['cookies.url']}" class="footer-link small">${xlat['cookies.title']}</a>
+            </li>
           </#if>
         </ul>
       </div>

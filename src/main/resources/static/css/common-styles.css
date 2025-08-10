@@ -11,6 +11,10 @@ cite {
   font-style: italic;
 }
 
+.page-content {
+  margin-top: 2rem;
+}
+
 .page-content .form-control {
   margin-bottom: 0.5rem;
 }

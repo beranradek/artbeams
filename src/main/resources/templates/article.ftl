@@ -1,4 +1,4 @@
-<#import "/webLayout.ftl" as layout>
+<#import "/newWebLayout.ftl" as layout>
 <#import "/author.ftl" as author>
 <#import "/metadata.ftl" as metadata>
 <#import "/socialShare.ftl" as socialShare>

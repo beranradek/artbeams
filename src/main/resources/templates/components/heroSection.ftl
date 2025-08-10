@@ -26,7 +26,7 @@
                  width="200" 
                  height="200" />
             <h4 class="card-title text-secondary-custom mb-2">${xlat['author.name']}</h4>
-            <p class="card-text text-light">${xlat['author.description']!'Váš průvodce světem kvalitního spánku a zdravého životního stylu'}</p>
+            <p class="card-text text-light">${xlat['author.description']!'Pomohu Vám zaléčit chronické potíže a dosáhnout kvalitní regenerace skvělými spánkovými návyky.'}</p>
           </div>
         </div>
       </div>

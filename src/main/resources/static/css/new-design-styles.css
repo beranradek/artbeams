@@ -28,6 +28,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Custom utility classes */
+.page-content {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.page-content .form-control {
+  margin-bottom: 0.5rem;
+}
+
+.category-header {
+    text-align: center;
+    padding-top: 1.2rem;
+    padding-bottom: 0.8rem;
+}
+
 .bg-primary-custom {
   background-color: var(--primary);
 }

@@ -1,4 +1,4 @@
-<#import "/webLayout.ftl" as layout>
+<#import "/newWebLayout.ftl" as layout>
 <#import "/contact/contactFormEnvelope.ftl" as contactFormEnvelope>
 <@layout.page>
   <style type="text/css" nonce="${_cspNonce}">

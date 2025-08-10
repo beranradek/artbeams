@@ -59,7 +59,7 @@
     <input type="hidden" name="${field.name}" value="${field.value!}"/>
 </#macro>
 
-<#macro buttonSubmit text class="btn">
+<#macro buttonSubmit text class="btn btn-primary-custom">
     <div class="form-group">
       <button name="submitButton" type="submit" class="${class}">${text}</button>
     </div>

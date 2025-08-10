@@ -1,7 +1,7 @@
-<#import "/webLayout.ftl" as layout>
-<#import "/articleCard.ftl" as articleCard>
+<#import "/newWebLayout.ftl" as layout>
+<#import "/components/articleCardModern.ftl" as articleCard>
 <@layout.page>
   <#list articles as article>
-    <@articleCard.articleCard article=article />
+    <@articleCard.articleCardModern article=article />
   </#list>
 </@layout.page>

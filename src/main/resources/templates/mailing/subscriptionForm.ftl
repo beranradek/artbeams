@@ -10,7 +10,7 @@
      margin: 0 auto;
      position: static;
      width: 100% !important;
-     color: black;
+     color: white;
      }
      .ml-form-embedContainer h4,
      .ml-form-embedContainer p,
@@ -52,7 +52,7 @@
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedContent,
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody .ml-form-successContent {
-     color: black;
+     color: white;
      text-align: left;
      margin: 0 0 20px 0;
      }
@@ -68,7 +68,7 @@
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedContent p,
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody .ml-form-successContent p {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 14px;
      font-weight: 400;
@@ -80,7 +80,7 @@
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedContent ol,
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody .ml-form-successContent ul,
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody .ml-form-successContent ol {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 14px;
      }
@@ -94,7 +94,7 @@
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedContent p a,
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-successBody .ml-form-successContent p a {
-     color: #000000;
+     color: white;
      text-decoration: underline;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .subscription-form .ml-field-group {
@@ -309,7 +309,7 @@
      padding: 0;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-fieldRow .custom-radio .custom-control-label, .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-horizontalRow .custom-radio .custom-control-label, .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-fieldRow .custom-checkbox .custom-control-label, .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-horizontalRow .custom-checkbox .custom-control-label {
-     color: #000000;
+     color: white;
      font-size: 12px!important;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      line-height: 22px;
@@ -399,7 +399,7 @@
      overflow: visible;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-checkboxRow .label-description {
-     color: #000000;
+     color: white;
      display: block;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 12px;
@@ -418,7 +418,7 @@
      padding-left: 24px;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-checkboxRow label a {
-     color: #000000;
+     color: white;
      text-decoration: underline;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-checkboxRow label p {
@@ -505,7 +505,7 @@
      margin: 0 0 15px 0;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent h4 {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 12px;
      font-weight: 700;
@@ -514,27 +514,27 @@
      word-break: break-word;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent p {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 12px;
      line-height: 18px;
      margin: 0 0 10px 0;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent.privacy-policy p {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 12px;
      line-height: 22px;
      margin: 0 0 10px 0;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent.privacy-policy p a {
-     color: #000000;
+     color: white;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent.privacy-policy p:last-child {
      margin: 0;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent p a {
-     color: #000000;
+     color: white;
      text-decoration: underline;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsContent p:last-child { margin: 0 0 15px 0; }
@@ -558,7 +558,7 @@
      padding-left: 24px;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsOptionsCheckbox .label-description {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 12px;
      line-height: 18px;
@@ -570,7 +570,7 @@
      font-weight: 700;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedPermissionsOptionsCheckbox .description {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 12px;
      font-style: italic;
@@ -592,7 +592,7 @@
      padding-bottom: 20px;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedMailerLite-GDPR p {
-     color: #000000;
+     color: white;
      font-family: 'Open Sans', Arial, Helvetica, sans-serif;
      font-size: 10px;
      line-height: 14px;
@@ -600,7 +600,7 @@
      padding: 0;
      }
      .ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedPermissions .ml-form-embedMailerLite-GDPR p a {
-     color: #000000;
+     color: white;
      text-decoration: underline;
      }
      @media (max-width: 768px) {
