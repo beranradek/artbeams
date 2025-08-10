@@ -117,7 +117,7 @@
                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
                      </div>
                      <div class="modal-body">
-                        <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-header-subscription-form'></@subscriptionForm.subscriptionForm>
+                        <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-header-subscription-form' textColor='black'></@subscriptionForm.subscriptionForm>
                      </div>
                  </div>
              </div>
