@@ -1,6 +1,10 @@
 /* Article-specific styles - Migrated from common-styles.css and public-styles.css */
 
 /* Article content styling */
+img {
+  max-width: 100%;
+}
+
 .blog-main h1, .blog-sidebar h1,
 .blog-main h2, .blog-sidebar h2,
 .blog-main h3, .blog-sidebar h3,
