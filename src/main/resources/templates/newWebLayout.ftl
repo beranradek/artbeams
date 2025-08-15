@@ -311,6 +311,30 @@
             registerOnClickHandler('accept-cookie', acceptCookieHandler);
             registerOnClickHandler('close-cookie', closeCookieHandler);
             registerOnClickHandler('unset-cookies', unsetCookiesHandler);
+
+            // Go to top button functionality
+            var scrollToTopBtn = document.getElementById('scroll-to-top');
+            
+            function toggleScrollToTopButton() {
+                if (window.scrollY > 300) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            }
+            
+            function scrollToTopHandler() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+            
+            // Show/hide button on scroll
+            window.addEventListener('scroll', toggleScrollToTopButton);
+            
+            // Register click handler for scroll to top
+            registerOnClickHandler('scroll-to-top', scrollToTopHandler);
       });
   </script>
  </body>

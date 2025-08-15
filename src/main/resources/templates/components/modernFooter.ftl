@@ -126,5 +126,10 @@
       </div>
     </div>
   </div>
+
+  <!-- Go to top button -->
+  <button type="button" class="btn-scroll-top" id="scroll-to-top" title="${xlat['goto.up']}">
+    <i class="fas fa-arrow-up"></i>
+  </button>
 </footer>
 </#macro>
