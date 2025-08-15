@@ -157,3 +157,59 @@ h1, h2, h3, h4, h5, h6 {
 .navbar-nav {
   align-items: center;
 }
+
+.comments {
+    border-top: 1px solid lightgrey;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.comments .comment {
+    border-bottom: 1px solid lightgrey;
+    padding: 0.5rem 0 0 0;
+    margin: 1rem 0 0 0;
+}
+
+.comments .comment .comment-author {
+    float: left;
+    font-size: smaller;
+}
+
+.comments .comment .comment-meta {
+    float: right;
+    font-size: smaller;
+}
+
+.comments .comment .comment-body {
+    clear: both;
+}
+
+.comment-info {
+    font-size: 0.95rem;
+}
+
+.comment-add {
+    margin-bottom: 2rem;
+}
+
+.cookie-disclaimer {
+  background: #000000;
+  color: #FFF;
+  opacity: 0.8;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.cookie-disclaimer .container {
+  text-align: center;
+  padding-top: 20px;
+}
+
+.cookie-disclaimer .cookie-close {
+  float: right;
+  padding: 10px;
+  cursor: pointer;
+}

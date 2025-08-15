@@ -21,6 +21,11 @@
     <#if article.perex??>
       <#assign description = "${(article.perex)[0..*350]}">
     </#if>
+    <#-- TODO: Add additional metas:
+    <meta property="article:tag" content="Some tag/keyword" />
+    <meta property="article:published_time" content="2017-05-09T12:39:34+00:00" />
+    article:modified_time, article:author, ...
+    -->
   <#elseif category??>
     <#assign title = "${(category.title)[0..*200]}">
     <#if category.description??>
@@ -67,6 +72,7 @@
   <link href="/static/css/new-design-styles.css" type="text/css" rel="stylesheet">
   <link href="/static/css/new-hero-styles.css" type="text/css" rel="stylesheet">
   <link href="/static/css/new-components.css" type="text/css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
@@ -163,6 +169,16 @@
   </main>
   
   <@footer.modernFooter />
+
+  <!-- Cookie disclaimer -->
+  <div id="cookie-disclaimer" class="cookie-disclaimer">
+    <div class="container">
+      <p>${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}">${xlat['cookies.info.more']}</a>.
+
+      <#if xlat['cookies.acceptAll']??>&nbsp;<button type="button" id="accept-cookie" class="btn btn-success">${xlat['cookies.acceptAll']}</button></#if>
+      <button type="button" id="close-cookie" class="btn btn-secondary">X</button></p>
+    </div>
+  </div>
 
   <!-- Bootstrap core JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
