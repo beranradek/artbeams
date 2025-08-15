@@ -7,8 +7,8 @@ Parameters:
 - loading: loading attribute (lazy by default)
 - aspectRatio: aspect ratio for CLS prevention (16:9 by default)
 -->
-<#macro responsiveImage imageName alt cssClass="" loading="lazy" aspectRatio="16:9">
-<#if imageName??>
+<#macro responsiveImage imageName="" alt="" cssClass="" loading="lazy" aspectRatio="16:9">
+<#if imageName?? && imageName?length gt 0>
 <img src="/media/${imageName}?size=${xlat['article.img.tablet.width']}" 
      srcset="/media/${imageName}?size=${xlat['article.img.mobile.width']} ${xlat['article.img.mobile.width']}w,
              /media/${imageName}?size=${xlat['article.img.tablet.width']} ${xlat['article.img.tablet.width']}w,
@@ -26,8 +26,8 @@ Parameters:
 <#--
 Article card responsive image - optimized for article cards
 -->
-<#macro articleCardImage imageName alt cssClass="article-image">
-<#if imageName??>
+<#macro articleCardImage imageName="" alt="" cssClass="article-image">
+<#if imageName?? && imageName?length gt 0>
 <img src="/media/${imageName}?size=${xlat['article.img.mobile.width']}" 
      srcset="/media/${imageName}?size=${xlat['article.img.mobile.width']} ${xlat['article.img.mobile.width']}w,
              /media/${imageName}?size=${xlat['article.img.tablet.width']} ${xlat['article.img.tablet.width']}w"
@@ -50,8 +50,8 @@ Article card responsive image - optimized for article cards
 <#--
 Article detail responsive image - optimized for article detail pages
 -->
-<#macro articleDetailImage imageName alt cssClass="article-image-detail">
-<#if imageName??>
+<#macro articleDetailImage imageName="" alt="" cssClass="article-image-detail">
+<#if imageName?? && imageName?length gt 0>
 <#if userAccessReport?? && userAccessReport.mobileDevice>
 <img src="/media/${imageName}?size=${xlat['article.img.mobile.width']}" 
      srcset="/media/${imageName}?size=${xlat['article.img.mobile.width']} ${xlat['article.img.mobile.width']}w,
@@ -80,8 +80,8 @@ Article detail responsive image - optimized for article detail pages
 <#--
 Small thumbnail responsive image - for sidebars and small cards
 -->
-<#macro thumbnailImage imageName alt size="50" cssClass="rounded">
-<#if imageName??>
+<#macro thumbnailImage imageName="" alt="" size="50" cssClass="rounded">
+<#if imageName?? && imageName?length gt 0>
 <img src="/media/${imageName}?size=${size}" 
      alt="${alt}" 
      class="${cssClass}" 
