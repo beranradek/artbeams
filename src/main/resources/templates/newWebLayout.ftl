@@ -261,7 +261,7 @@
             checkCookie();
 
             if (cookie === true && cookieContent) {
-                cookieContent.style.visibility = "hidden";
+                cookieContent.style.display = "none";
             }
 
             function setCookie(cname, cvalue, exdays) {
@@ -292,7 +292,7 @@
 
             function acceptCookieHandler() {
                 setCookie(cookieName, "accepted", 365);
-                if (cookieContent) cookieContent.style.visibility = "hidden";
+                if (cookieContent) cookieContent.style.display = "none";
             }
 
             function unsetCookiesHandler() {
@@ -305,7 +305,7 @@
             }
 
             function closeCookieHandler() {
-                if (cookieContent) cookieContent.style.visibility = "hidden";
+                if (cookieContent) cookieContent.style.display = "none";
             }
 
             registerOnClickHandler('accept-cookie', acceptCookieHandler);
