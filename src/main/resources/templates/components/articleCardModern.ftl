@@ -8,7 +8,7 @@
     <div class="row g-0">
       <div class="col-md-6">
         <div class="featured-image-wrapper">
-          <@img.responsiveImage imageName=article.image alt=article.title cssClass="featured-image" aspectRatio="16:9" />
+          <@img.articleCardImage imageName=article.image alt=article.title cssClass="featured-image" />
         </div>
       </div>
       <div class="col-md-6">
