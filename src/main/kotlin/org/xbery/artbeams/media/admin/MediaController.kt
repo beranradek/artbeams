@@ -65,15 +65,28 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
                         )
                     } else {
                         val file = edited.file!!
-                        val success = mediaRepository.storeFile(
-                            Channels.newInputStream(file.content),
-                            file.fileName,
-                            file.size,
-                            file.contentType,
-                            edited.format,
-                            edited.width,
-                            edited.privateAccess ?: false
-                        )
+                        val success = if (file.contentType?.startsWith("image/") == true) {
+                            // Generate responsive variants for images
+                            mediaRepository.storeImageWithResponsiveVariants(
+                                Channels.newInputStream(file.content),
+                                file.fileName,
+                                file.size,
+                                file.contentType,
+                                edited.format,
+                                edited.privateAccess ?: false
+                            )
+                        } else {
+                            // Store non-image files as before
+                            mediaRepository.storeFile(
+                                Channels.newInputStream(file.content),
+                                file.fileName,
+                                file.size,
+                                file.contentType,
+                                edited.format,
+                                edited.width,
+                                edited.privateAccess ?: false
+                            )
+                        }
                         if (success) {
                             redirect("/admin/media")
                         } else {

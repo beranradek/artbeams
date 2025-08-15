@@ -1,6 +1,7 @@
 <#if subscriptionFormMapping??>
 <#import "/mailing/subscriptionForm.ftl" as subscriptionForm>
 </#if>
+<#import "/components/responsiveImage.ftl" as img>
 
 <#macro modernSidebar>
 <!-- Sidebar -->
@@ -23,11 +24,7 @@
         <li>
           <a href="/${article.slug}" class="text-decoration-none d-flex align-items-center">
             <div class="flex-shrink-0">
-              <#if article.image??>
-                <img src="/media/${article.image}?size=50" alt="${article.title}" class="rounded" width="50" height="50" style="object-fit: cover;" />
-              <#else>
-                <img src="https://images.unsplash.com/photo-1520206183501-b80df61043c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=50&q=80" alt="${article.title}" class="rounded" width="50" height="50" style="object-fit: cover;" />
-              </#if>
+              <@img.thumbnailImage imageName=article.image alt=article.title size="50" />
             </div>
             <div class="flex-grow-1 ms-3">
               <p class="mb-0">${article.title}</p>

@@ -2,22 +2,17 @@
 <#import "/author.ftl" as author>
 <#import "/metadata.ftl" as metadata>
 <#import "/socialShare.ftl" as socialShare>
+<#import "/components/responsiveImage.ftl" as img>
 <#-- <#import "/fbComments.ftl" as fbComments> -->
 <#import "/comments/commentAdd.ftl" as commentAdd>
 <#import "/comments/commentList.ftl" as commentList>
 <@layout.page pageStyles="/static/css/articles.css">
     <h1 class="blog-post-title">${article.title!}</h1>
 
-    <#if userAccessReport?? && userAccessReport.mobileDevice && article.image??>
+    <#if article.image??>
       <div class="article-image-detail">
-        <img alt="" src="/media/${article.image}?size=${xlat['article.img.small.width']}" />
+        <@img.articleDetailImage imageName=article.image alt=article.title />
       </div>
-    <#else>
-      <#if article.image??>
-        <div class="article-image-detail">
-          <img alt="" src="/media/${article.image}?size=${xlat['article.img.big.width']}" />
-        </div>
-      </#if>
     </#if>
 
     <#if article.showOnBlog>

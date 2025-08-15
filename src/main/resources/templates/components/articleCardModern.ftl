@@ -1,4 +1,5 @@
 <#import "/components/badgeComponent.ftl" as badge>
+<#import "/components/responsiveImage.ftl" as img>
 
 <#macro articleCardModern article featured=false>
 <#if featured>
@@ -7,17 +8,7 @@
     <div class="row g-0">
       <div class="col-md-6">
         <div class="featured-image-wrapper">
-          <#if article.image??>
-            <img src="/media/${article.image}?size=${xlat['article.img.big.width']}" 
-                 class="featured-image" 
-                 alt="${article.title}" 
-                 loading="lazy" />
-          <#else>
-            <img src="https://images.unsplash.com/photo-1520206183501-b80df61043c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                 class="featured-image" 
-                 alt="${article.title}" 
-                 loading="lazy" />
-          </#if>
+          <@img.responsiveImage imageName=article.image alt=article.title cssClass="featured-image" aspectRatio="16:9" />
         </div>
       </div>
       <div class="col-md-6">
@@ -38,17 +29,7 @@
   <div class="card article-card border-0 bg-light">
     <div class="row g-0">
       <div class="col-md-4">
-        <#if article.image??>
-          <img src="/media/${article.image}?size=${xlat['article.img.small.width']}" 
-               class="article-image" 
-               alt="${article.title}" 
-               loading="lazy" />
-        <#else>
-          <img src="https://images.unsplash.com/photo-1520206183501-b80df61043c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
-               class="article-image" 
-               alt="${article.title}" 
-               loading="lazy" />
-        </#if>
+        <@img.articleCardImage imageName=article.image alt=article.title />
       </div>
       <div class="col-md-8">
         <div class="card-body">

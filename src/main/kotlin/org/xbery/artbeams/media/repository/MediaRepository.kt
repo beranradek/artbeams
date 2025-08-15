@@ -3,6 +3,8 @@ package org.xbery.artbeams.media.repository
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.webp.WebpDirectory
 import org.apache.commons.io.IOUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
 import org.springframework.web.multipart.MultipartFile
@@ -33,9 +35,80 @@ class MediaRepository(
     private val dataSource: DataSource,
     private val imageTransformer: ImageTransformer
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     fun storeFile(file: MultipartFile, privateAccess: Boolean): Boolean =
         storeFile(file.inputStream, file.originalFilename, file.size, file.contentType, privateAccess)
+
+    /**
+     * Stores image file with responsive variants (mobile, tablet, desktop sizes).
+     */
+    fun storeImageWithResponsiveVariants(
+        inputStream: InputStream,
+        filename: String?,
+        size: Long,
+        contentType: String?,
+        targetFormat: String?,
+        privateAccess: Boolean
+    ): Boolean {
+        if (filename == null || !isImage(contentType ?: "")) {
+            return storeFile(inputStream, filename, size, contentType, privateAccess)
+        }
+
+        // Must be in sync with FE "localizations" (article.img.[mobile|tablet|desktop].width)
+        val responsiveWidths = listOf(400, 800, 1200) // mobile, tablet, desktop
+        var allSuccessful = true
+        
+        return TempFiles.createTempFilePath("uploaded-media-file-", "-$filename").use { inputFileTempPath ->
+            // Save original file to temp location for processing
+            Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
+            
+            // Generate and store each responsive variant
+            responsiveWidths.forEach { width ->
+                TempFiles.createTempFilePath(
+                    "uploaded-media-file-responsive-",
+                    "-$width-$filename"
+                ).use { transformedImageTempPath ->
+                    try {
+                        val imageFormat = (
+                            if (targetFormat != null && targetFormat.isNotEmpty()) {
+                                ImageFormat.fromFormatName(targetFormat)
+                            } else {
+                                ImageFormat.fromFileName(filename)
+                            }
+                        ) ?: ImageFormat.WEBP
+                        
+                        val targetFileName = FileNames.replaceOrAddExtension(filename, imageFormat.name.lowercase())
+                        val targetContentType = imageFormat.contentType
+                        
+                        imageTransformer.transform(
+                            inputFileTempPath.path,
+                            transformedImageTempPath.path,
+                            imageFormat,
+                            targetWidth = width
+                        )
+                        
+                        val transformedImageTempFile = transformedImageTempPath.path.toFile()
+                        val success = storeFile(
+                            FileInputStream(transformedImageTempFile),
+                            targetFileName,
+                            transformedImageTempFile.length(),
+                            targetContentType,
+                            privateAccess
+                        )
+                        
+                        if (!success) {
+                            allSuccessful = false
+                        }
+                    } catch (e: Exception) {
+                        logger.error("Error storing responsive image variant for $filename at width $width", e)
+                        allSuccessful = false
+                    }
+                }
+            }
+            allSuccessful
+        }
+    }
 
     fun storeFile(
         inputStream: InputStream,

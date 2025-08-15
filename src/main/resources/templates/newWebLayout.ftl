@@ -52,7 +52,7 @@
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="${xlat['website.title']}" />
     <#if article.image??>
-      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.big.width']}" />
+      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
     </#if>
   <#elseif category??>
     <meta property="og:title" content="${category.title!}" />
@@ -72,6 +72,7 @@
   <link href="/static/css/new-design-styles.css" type="text/css" rel="stylesheet">
   <link href="/static/css/new-hero-styles.css" type="text/css" rel="stylesheet">
   <link href="/static/css/new-components.css" type="text/css" rel="stylesheet">
+  <link href="/static/css/responsive-images.css" type="text/css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   
   <!-- Bootstrap Icons -->
@@ -182,6 +183,8 @@
 
   <!-- Bootstrap core JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
+  <!-- Responsive Images JavaScript -->
+  <script nonce="${_cspNonce}" src="/static/js/responsive-images.js"></script>
   <!-- reCaptcha -->
   <script  nonce="${_cspNonce}" src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 

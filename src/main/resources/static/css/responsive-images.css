@@ -1,0 +1,99 @@
+/* Responsive Images CSS - Optimized for PageSpeed Insights */
+
+/* Article images - ensure proper aspect ratio and prevent layout shift */
+.article-image {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    border-radius: 8px 8px 0 0;
+    transition: transform 0.3s ease;
+}
+
+.article-image:hover {
+    transform: scale(1.02);
+}
+
+/* Featured article images */
+.featured-image {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* Article detail images */
+.article-image-detail img {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+/* Thumbnail images */
+.rounded {
+    border-radius: 8px !important;
+}
+
+/* Responsive image containers */
+.featured-image-wrapper {
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .article-image-detail img {
+        margin-bottom: 1rem;
+    }
+    
+    /* Ensure images don't cause horizontal scroll */
+    .article-image,
+    .featured-image,
+    .article-image-detail img {
+        max-width: 100%;
+    }
+}
+
+/* Prevent cumulative layout shift */
+img[loading="lazy"] {
+    min-height: 200px; /* Placeholder height during loading */
+}
+
+/* Loaded images */
+img[loading="lazy"].loaded {
+    min-height: auto;
+}
+
+/* Loading placeholder for better UX */
+img[loading="lazy"]:not(.loaded) {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* High-resolution display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Modern browsers will automatically select appropriate srcset images */
+}
+
+/* Print styles - use highest quality images */
+@media print {
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
