@@ -121,15 +121,16 @@
             <li class="list-inline-item">
               <a href="${xlat['cookies.url']}" class="footer-link small">${xlat['cookies.title']}</a>
             </li>
+            <li class="list-inline-item">
+              <span class="text-secondary-custom mx-2">•</span>
+            </li>
           </#if>
+          <li class="list-inline-item">
+            <a href="#body-element" class="footer-link small"><i class="fa-solid fa-arrow-up"></i> ${xlat['goto.up']}</a>
+          </li>
         </ul>
       </div>
     </div>
   </div>
-
-  <!-- Go to top button -->
-  <button type="button" class="btn-scroll-top" id="scroll-to-top" title="${xlat['goto.up']}">
-    <i class="fas fa-arrow-up"></i>
-  </button>
 </footer>
 </#macro>

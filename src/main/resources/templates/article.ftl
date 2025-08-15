@@ -24,7 +24,7 @@
       <@metadata.metadata></@metadata.metadata>
       <@socialShare.share></@socialShare.share>
     </#if>
-    <div>${article.body!}</div>
+    <div class="article-body">${article.body!}</div>
     <#if article.showOnBlog>
       <@socialShare.share></@socialShare.share>
       <#-- <@fbComments.fbComments></@fbComments.fbComments> -->

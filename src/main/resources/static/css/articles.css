@@ -5,6 +5,10 @@ img {
   max-width: 100%;
 }
 
+.blog-main {
+  background-color: white;
+  padding: 1rem 1.5rem 1rem 1.5rem;
+}
 .blog-main h1, .blog-sidebar h1,
 .blog-main h2, .blog-sidebar h2,
 .blog-main h3, .blog-sidebar h3,
