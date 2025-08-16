@@ -2,7 +2,7 @@
 
 /* Article images - ensure proper aspect ratio and prevent layout shift */
 .article-image {
-    aspect-ratio: 1/1;
+    aspect-ratio: 8/7;
     object-fit: cover;
     width: 100%;
     height: auto;
@@ -16,7 +16,7 @@
 
 /* Featured article images */
 .featured-image {
-    aspect-ratio: 1/1;
+    aspect-ratio: 8/7;
     object-fit: cover;
     width: 100%;
     height: auto;

@@ -5,9 +5,9 @@ Parameters:
 - alt: alt text for accessibility
 - cssClass: CSS class for styling (optional)
 - loading: loading attribute (lazy by default)
-- aspectRatio: aspect ratio for CLS prevention (1:1 by default)
+- aspectRatio: aspect ratio for CLS prevention (8:7 by default)
 -->
-<#macro responsiveImage imageName="" alt="" cssClass="" loading="lazy" aspectRatio="1:1">
+<#macro responsiveImage imageName="" alt="" cssClass="" loading="lazy" aspectRatio="8:7">
 <#if imageName?? && imageName?length gt 0>
 <img src="/media/${imageName}?size=${xlat['article.img.tablet.width']}" 
      srcset="/media/${imageName}?size=${xlat['article.img.mobile.width']} ${xlat['article.img.mobile.width']}w,
@@ -35,14 +35,14 @@ Article card responsive image - optimized for article cards
      alt="${alt}"
      class="${cssClass}"
      loading="lazy"
-     width="400" height="400"
+     width="400" height="350"
      style="object-fit: cover; width: 100%; height: auto;" />
 <#else>
 <img src="https://images.unsplash.com/photo-1520206183501-b80df61043c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
      alt="${alt}"
      class="${cssClass}"
      loading="lazy"
-     width="400" height="400"
+     width="400" height="350"
      style="object-fit: cover; width: 100%; height: auto;" />
 </#if>
 </#macro>
