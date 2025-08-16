@@ -28,14 +28,7 @@ class ArticleImageRepository(
      * (all size variants have the same name, only stored image width/size differs).
      */
     open fun storeArticleImage(inputStream: InputStream, originalFileName: String): String? {
-        return TempFiles.createTempFilePath("article-image-", "-$originalFileName").use { inputFileTempPath ->
-            Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
-            val localisations = localisationRepository.getEntries()
-            val bigImgWidth = localisations.getOrElse("article.img.big.width") { "730" }.toInt()
-            val smallImgWidth = localisations.getOrElse("article.img.small.width") { "260" }.toInt()
-            storeArticleImageWithWidth(originalFileName, bigImgWidth, inputFileTempPath)
-            storeArticleImageWithWidth(originalFileName, smallImgWidth, inputFileTempPath)
-        }
+        return mediaRepository.storeImageResponsiveVariants(inputStream, originalFileName, ImageFormat.WEBP.name, false)
     }
 
     /**

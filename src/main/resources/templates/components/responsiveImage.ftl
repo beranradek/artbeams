@@ -80,7 +80,7 @@ Article detail responsive image - optimized for article detail pages
 <#--
 Small thumbnail responsive image - for sidebars and small cards
 -->
-<#macro thumbnailImage imageName="" alt="" size="50" cssClass="rounded">
+<#macro thumbnailImage imageName="" alt="" size="${xlat['article.img.thumbnail.width']}" cssClass="rounded">
 <#if imageName?? && imageName?length gt 0>
 <img src="/media/${imageName}?size=${size}" 
      alt="${alt}" 

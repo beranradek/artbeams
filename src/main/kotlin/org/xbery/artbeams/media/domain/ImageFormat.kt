@@ -20,7 +20,7 @@ enum class ImageFormat(val contentType: String) {
 
         fun fromFormatName(value: String): ImageFormat? {
             val valueUc = value.uppercase()
-            return values().find { f -> f.name == valueUc }
+            return ImageFormat.entries.find { f -> f.name == valueUc }
         }
     }
 }

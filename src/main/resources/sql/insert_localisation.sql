@@ -76,12 +76,10 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('cookies.rejectAll', '
 INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.url', '/admin/articles/???/edit');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('markdown.examples.title', 'Examples');
 
+INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.thumbnail.width', '50');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.mobile.width', '400');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.tablet.width', '800');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.desktop.width', '1200');
--- Legacy configurations for backward compatibility
-INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.small.width', '400');
-INSERT INTO localisation (entry_key, entry_value) VALUES ('article.img.big.width', '800');
 
 INSERT INTO localisation (entry_key, entry_value) VALUES ('member-section.title', 'Členská sekce');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('member.passwordSetup.header', 'Nastavení hesla');

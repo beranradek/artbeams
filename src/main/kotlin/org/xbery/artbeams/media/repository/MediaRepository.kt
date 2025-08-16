@@ -41,7 +41,8 @@ class MediaRepository(
         storeFile(file.inputStream, file.originalFilename, file.size, file.contentType, privateAccess)
 
     /**
-     * Stores image file with responsive variants (mobile, tablet, desktop sizes).
+     * Stores image file with responsive variants (thumbnail, mobile, tablet, desktop sizes).
+     * Returns name of target image if all responsive variants were stored successfully.
      */
     fun storeImageWithResponsiveVariants(
         inputStream: InputStream,
@@ -50,64 +51,83 @@ class MediaRepository(
         contentType: String?,
         targetFormat: String?,
         privateAccess: Boolean
-    ): Boolean {
+    ): String? {
         if (filename == null || !isImage(contentType ?: "")) {
-            return storeFile(inputStream, filename, size, contentType, privateAccess)
+            val res = storeFile(inputStream, filename, size, contentType, privateAccess)
+            return if (res) {
+                filename
+            } else {
+                null
+            }
         }
 
-        // Must be in sync with FE "localizations" (article.img.[mobile|tablet|desktop].width)
-        val responsiveWidths = listOf(400, 800, 1200) // mobile, tablet, desktop
+        return storeImageResponsiveVariants(inputStream, filename, targetFormat, privateAccess)
+    }
+
+    fun storeImageResponsiveVariants(
+        inputStream: InputStream,
+        filename: String,
+        targetFormat: String?,
+        privateAccess: Boolean
+    ): String? {
+        // Must be in sync with FE "localizations" (article.img.[thumbnail|mobile|tablet|desktop].width)
+        val responsiveWidths = listOf(50, 400, 800, 1200) // thumbnail, mobile, tablet, desktop
         var allSuccessful = true
-        
-        return TempFiles.createTempFilePath("uploaded-media-file-", "-$filename").use { inputFileTempPath ->
-            // Save original file to temp location for processing
-            Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
-            
-            // Generate and store each responsive variant
-            responsiveWidths.forEach { width ->
-                TempFiles.createTempFilePath(
-                    "uploaded-media-file-responsive-",
-                    "-$width-$filename"
-                ).use { transformedImageTempPath ->
-                    try {
-                        val imageFormat = (
-                            if (targetFormat != null && targetFormat.isNotEmpty()) {
-                                ImageFormat.fromFormatName(targetFormat)
-                            } else {
-                                ImageFormat.fromFileName(filename)
+        val imageFormat = (
+            if (targetFormat != null && targetFormat.isNotEmpty()) {
+                ImageFormat.fromFormatName(targetFormat)
+            } else {
+                ImageFormat.fromFileName(filename)
+            }
+            ) ?: ImageFormat.WEBP
+
+        val targetFileName = FileNames.replaceOrAddExtension(filename, imageFormat.name.lowercase())
+        val targetContentType = imageFormat.contentType
+
+        return TempFiles.createTempFilePath("uploaded-media-file-", "-$filename")
+            .use { inputFileTempPath ->
+                // Save original file to temp location for processing
+                Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
+
+                // Generate and store each responsive variant
+                responsiveWidths.forEach { width ->
+                    TempFiles.createTempFilePath(
+                        "uploaded-media-file-responsive-",
+                        "-$width-$filename"
+                    )
+                        .use { transformedImageTempPath ->
+                            try {
+                                imageTransformer.transform(
+                                    inputFileTempPath.path,
+                                    transformedImageTempPath.path,
+                                    imageFormat,
+                                    targetWidth = width
+                                )
+
+                                val transformedImageTempFile = transformedImageTempPath.path.toFile()
+                                val success = storeFile(
+                                    FileInputStream(transformedImageTempFile),
+                                    targetFileName,
+                                    transformedImageTempFile.length(),
+                                    targetContentType,
+                                    privateAccess
+                                )
+
+                                if (!success) {
+                                    allSuccessful = false
+                                }
+                            } catch (e: Exception) {
+                                logger.error("Error storing responsive image variant for $filename at width $width", e)
+                                allSuccessful = false
                             }
-                        ) ?: ImageFormat.WEBP
-                        
-                        val targetFileName = FileNames.replaceOrAddExtension(filename, imageFormat.name.lowercase())
-                        val targetContentType = imageFormat.contentType
-                        
-                        imageTransformer.transform(
-                            inputFileTempPath.path,
-                            transformedImageTempPath.path,
-                            imageFormat,
-                            targetWidth = width
-                        )
-                        
-                        val transformedImageTempFile = transformedImageTempPath.path.toFile()
-                        val success = storeFile(
-                            FileInputStream(transformedImageTempFile),
-                            targetFileName,
-                            transformedImageTempFile.length(),
-                            targetContentType,
-                            privateAccess
-                        )
-                        
-                        if (!success) {
-                            allSuccessful = false
                         }
-                    } catch (e: Exception) {
-                        logger.error("Error storing responsive image variant for $filename at width $width", e)
-                        allSuccessful = false
-                    }
+                }
+                if (allSuccessful) {
+                    targetFileName
+                } else {
+                    null
                 }
             }
-            allSuccessful
-        }
     }
 
     fun storeFile(
