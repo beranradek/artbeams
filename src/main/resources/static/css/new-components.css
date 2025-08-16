@@ -45,7 +45,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  height: 250px;
+  height: 400px;
 }
 
 .featured-image {
@@ -247,7 +247,7 @@ footer {
   }
   
   .featured-image-wrapper {
-    height: 200px;
+    height: 400px;
   }
   
   footer {

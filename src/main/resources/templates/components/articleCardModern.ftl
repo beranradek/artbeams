@@ -18,7 +18,7 @@
             <small class="text-muted ms-2">${article.validFrom?string["d. MMMM yyyy"]}</small>
           </div>
           <h2 class="card-title h3 mb-3"><a href="/${article.slug}" class="text-decoration-none">${article.title}</a></h2>
-          <p class="card-text">${(article.perex!"")?truncate(180, "...")}</p>
+          <p class="card-text">${(article.perex!"")?truncate(350, "...")}</p>
           <a href="/${article.slug}" class="btn btn-primary-custom">Přečíst článek</a>
         </div>
       </div>
@@ -38,7 +38,7 @@
             <small class="text-muted ms-2">${article.validFrom?string["d. MMMM yyyy"]}</small>
           </div>
           <h3 class="card-title"><a href="/${article.slug}" class="text-decoration-none">${article.title}</a></h3>
-          <p class="card-text">${(article.perex!"")?truncate(150, "...")}</p>
+          <p class="card-text">${(article.perex!"")?truncate(350, "...")}</p>
           <a href="/${article.slug}" class="btn btn-sm btn-outline-primary">Přečíst článek</a>
         </div>
       </div>
