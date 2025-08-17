@@ -45,7 +45,7 @@
   position: relative;
   overflow: hidden;
   border-radius: 8px;
-  height: 400px;
+  height: 350px;
 }
 
 .featured-image {
@@ -244,10 +244,6 @@ footer {
   
   .article-card {
     margin-bottom: 1.5rem;
-  }
-  
-  .featured-image-wrapper {
-    height: 400px;
   }
   
   footer {
