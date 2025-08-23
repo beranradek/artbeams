@@ -97,3 +97,16 @@ img[loading="lazy"]:not(.loaded) {
         height: auto !important;
     }
 }
+
+.responsive-image-aspect-ratio {
+    aspect-ratio: 8:7;
+}
+
+.responsive-image-width-height {
+    object-fit: cover; width: 100%; height: auto;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+

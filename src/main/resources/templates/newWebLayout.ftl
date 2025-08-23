@@ -40,7 +40,7 @@
   </#if>
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
   <#-- Preload of Largest Contentful Paint (LCP) image with a high fetch priority so it starts loading with the stylesheet. -->
-  <link rel="preload" fetchpriority="high" as="image" href="/static/images/person-beside-bare-tree-at-night-3262249.jpg" type="image/jpeg">
+  <link rel="preload" fetchpriority="high" as="image" href="/static/images/header.jpg" type="image/jpeg">
 
   <!-- Open Graph data -->
   <#if article??>
@@ -63,16 +63,18 @@
 
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 
-  <!-- New Design CSS files instead of the old combined styles.css -->
+  <#-- CSS files merged and minified into styles.css
   <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">
   <link href="/static/css/new-design-styles.css" type="text/css" rel="stylesheet">
   <link href="/static/css/new-hero-styles.css" type="text/css" rel="stylesheet">
   <link href="/static/css/new-components.css" type="text/css" rel="stylesheet">
   <link href="/static/css/responsive-images.css" type="text/css" rel="stylesheet">
+  -->
+  <link href="/static/css/styles.css" type="text/css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  
+
   <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" />
 
   <#if pageStyles?has_content>
     <link href="${pageStyles}" type="text/css" rel="stylesheet">

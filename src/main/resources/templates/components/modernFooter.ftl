@@ -91,7 +91,7 @@
     </div>
     -->
     
-    <hr class="my-4" style="background-color: rgba(255,255,255,0.2);" />
+    <hr class="my-4 footer-line" />
     
     <div class="row align-items-center">
       <div class="col-md-7 text-center text-md-start">

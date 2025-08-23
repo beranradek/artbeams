@@ -60,9 +60,9 @@
         <#if xlat['fb.page.url']??>
           <a href="${xlat['fb.page.url']}?ref=embed_page" title="Sledovat Facebook stránku">
             <img src="/media/facebook_page.webp"
-                 class="social-page-image"
+                 class="social-page-image responsive-image-width-height"
                  alt="Sledovat Facebook stránku"
-                 width="394"
+                 width="381"
                  height="69"
                  loading="lazy"
             />

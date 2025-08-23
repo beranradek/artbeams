@@ -3,7 +3,7 @@
 /* Hero section styling */
 .hero-section {
   background: linear-gradient(rgba(10, 22, 34, 0.7), rgba(10, 22, 34, 0.7)), 
-              url("/static/images/person-beside-bare-tree-at-night-3262249.jpg");
+              url("/static/images/header.jpg");
   background-size: cover;
   background-position: center;
   color: var(--text-light);

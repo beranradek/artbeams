@@ -236,3 +236,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 10px;
   cursor: pointer;
 }
+
+.footer-line {
+  background-color: rgba(255,255,255,0.2);
+}
