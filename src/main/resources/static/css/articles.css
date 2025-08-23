@@ -297,7 +297,6 @@ img {
 /* Article metadata */
 .metadata {
     font-size: 90%;
-    color: #bbb;
     border-bottom: 1px solid lightgrey;
     margin-top: 1rem;
     padding-bottom: 1rem;
@@ -305,7 +304,6 @@ img {
 }
 
 .metadata a {
-    color: #ccc;
 }
 
 .author {
@@ -329,4 +327,22 @@ img {
 .article-image-detail {
   margin-top: 1.5rem;
   text-align: center;
+}
+
+.fb-share-btn {
+  display: inline-block;
+  margin: 6px 0;
+  padding: 4px 7px;
+  background: #1877f2;
+  color: #fff;
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-family: sans-serif;
+  transition: background 0.2s ease;
+}
+
+.fb-share-btn:hover {
+  background: #145dbf;
 }

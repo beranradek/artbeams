@@ -38,10 +38,6 @@
   <#else>
     <meta name="keywords" content="${xlat['website.keywords']}"/>
   </#if>
-  <#if xlat['fb.app-id']??>
-    <!-- FB-features (comments, fanpage etc.) -->
-    <meta property="fb:app_id" content="${xlat['fb.app-id']}" />
-  </#if>
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
   <#-- Preload of Largest Contentful Paint (LCP) image with a high fetch priority so it starts loading with the stylesheet. -->
   <link rel="preload" fetchpriority="high" as="image" href="/static/images/person-beside-bare-tree-at-night-3262249.jpg" type="image/jpeg">
@@ -101,12 +97,6 @@
 
   </head>
   <body class="d-flex flex-column h-100" id="body-element">
-    <div id="fb-root" nonce="${_cspNonce}"></div>
-    <#-- Facebook SDK for comments; and for FB fanpage appId is added -->
-    <#if xlat['fb.sdk.url']??>
-        <script nonce="${_cspNonce}" async defer crossorigin="anonymous" data-type="lazy" data-src="${xlat['fb.sdk.url']}&appId=${xlat['fb.app-id']}"></script>
-    </#if>
-
     <@navbar.modernNavbar />
 
     <#-- Show hero section only on homepage -->

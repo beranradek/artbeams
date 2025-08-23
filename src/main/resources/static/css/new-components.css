@@ -162,6 +162,10 @@
   font-weight: 500;
 }
 
+.social-page-image {
+  max-width: 100%;
+}
+
 /* Footer styling */
 footer {
   background-color: var(--dark);

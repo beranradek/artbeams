@@ -191,18 +191,6 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
     margin-bottom: 1rem;
 }
 
-.metadata {
-    font-size: 90%;
-    color: #bbb;
-    border-bottom: 1px solid lightgrey;
-    margin-top: 1rem;
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-}
-.metadata a {
-    color: #ccc;
-}
-
 .avatar {
     margin-right: 1rem;
 }

@@ -17,7 +17,6 @@
 
     <#if article.showOnBlog>
       <@metadata.metadata></@metadata.metadata>
-      <@socialShare.share></@socialShare.share>
     </#if>
     <div class="article-body">${article.body!}</div>
     <#if article.showOnBlog>

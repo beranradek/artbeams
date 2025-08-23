@@ -58,9 +58,20 @@
       <h4>Sociální sítě</h4>
       <div class="d-flex">
         <#if xlat['fb.page.url']??>
+          <a href="${xlat['fb.page.url']}?ref=embed_page" title="Sledovat Facebook stránku">
+            <img src="/media/facebook_page.webp"
+                 class="social-page-image"
+                 alt="Sledovat Facebook stránku"
+                 width="394"
+                 height="69"
+                 loading="lazy"
+            />
+          </a>
+          <#-- Facebook Icon:
           <a href="${xlat['fb.page.url']}" class="social-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook">
             <i class="bi bi-facebook"></i>
           </a>
+          -->
         </#if>
         <#if xlat['twitter.url']??>
           <a href="${xlat['twitter.url']}" class="social-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter">
@@ -91,7 +102,7 @@
     </#if>
   </#if>
   
-  <!-- Facebook Page Widget -->
+  <#-- Facebook Page Widget - not used anymore
   <#if xlat['fb.page.url']??>
   <div class="card sidebar border-0 shadow-sm">
     <div class="card-body p-2">
@@ -106,5 +117,6 @@
     </div>
   </div>
   </#if>
+  -->
 </div>
 </#macro>
