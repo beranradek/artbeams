@@ -58,10 +58,10 @@
       <h4>Sociální sítě</h4>
       <div class="d-flex">
         <#if xlat['fb.page.url']??>
-          <a href="${xlat['fb.page.url']}?ref=embed_page" title="Sledovat Facebook stránku">
+          <a href="${xlat['fb.page.url']}?ref=embed_page">
             <img src="/media/facebook_page.webp"
                  class="social-page-image responsive-image-width-height"
-                 alt="Sledovat Facebook stránku"
+                 alt="Facebook stránka"
                  width="381"
                  height="69"
                  loading="lazy"

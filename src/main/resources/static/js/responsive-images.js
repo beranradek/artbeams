@@ -77,9 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     clsValue += entry.value;
                 }
             }
-            if (clsValue > 0.1) {
-                console.warn('High CLS detected:', clsValue);
-            }
+            //if (clsValue > 0.1) {
+            //    console.warn('High CLS detected:', clsValue);
+            //}
         }).observe({ entryTypes: ['layout-shift'] });
     }
 });
