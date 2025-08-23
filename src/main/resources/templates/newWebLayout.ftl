@@ -84,17 +84,6 @@
     <link href="${pageStyles2}" type="text/css" rel="stylesheet">
   </#if>
 
-  <#if xlat['google-tag.url']??>
-    <!-- Global site tag (gtag JavaScript) - Google Analytics -->
-    <script nonce="${_cspNonce}" async src="${xlat['google-tag.url']}"></script>
-    <script nonce="${_cspNonce}" async>
-      window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${xlat['google-tag.config']}');
-    </script>
-  </#if>
-
   <#include "/commonScripts.ftl">
 
   </head>
