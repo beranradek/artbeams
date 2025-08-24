@@ -224,7 +224,7 @@ class FreeProductController(
     fun productDetail(request: HttpServletRequest, @PathVariable slug: String): Any {
         return tryOrErrorResponse(request) {
             val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
-            renderProductArticle(request, product, product.slug, true)
+            renderProductArticle(request, product, product.slug, true, "productSalesPage")
         }
     }
 
@@ -269,6 +269,7 @@ class FreeProductController(
         product: Product,
         articleSlug: String,
         saveUserAccess: Boolean,
+        viewName: String = "productArticle",
         errorMessage: String? = null
     ): Any {
         val article = articleService.findBySlug(articleSlug)
@@ -292,7 +293,7 @@ class FreeProductController(
                 "userAccessReport" to userAccessReport,
                 "errorMessage" to errorMessage
             )
-            ModelAndView("productArticle", model)
+            ModelAndView(viewName, model)
         } else {
             logger.error("Article $articleSlug not found")
             notFound(request)

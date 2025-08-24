@@ -9,7 +9,9 @@
       "mcp__puppeteer__puppeteer_click",
       "Bash(pkill:*)",
       "Bash(taskkill:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(copy \"C:\\dev\\dream-weaver-sales\\src\\assets\\*\" \"C:\\dev\\artbeams\\src\\main\\resources\\static\\images\"\")",
+      "Bash(cp:*)"
     ],
     "deny": []
   }
