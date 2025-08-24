@@ -12,7 +12,7 @@
 <div class="min-h-screen bg-background">
   
   <!-- Hero Section -->
-  <section class="min-h-screen flex items-center justify-center px-4 bg-white">
+  <section class="min-h-screen flex items-center justify-center px-4 bg-white mb-16">
     <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
       <!-- E-book Cover - Left Side -->
       <div class="flex justify-center lg:justify-start lg:pl-16">
@@ -27,9 +27,11 @@
 
       <!-- Hero Content - Right Side -->
       <div class="text-center lg:text-left space-y-8">
+        <#--
         <div class="inline-block px-4 py-2 bg-gradient-peaceful text-primary font-semibold rounded-full">
           E-book pro kvalitní spánek
         </div>
+        -->
         <h1 class="text-4xl lg:text-6xl font-bold text-primary leading-tight">
           ${product.title!}
         </h1>
@@ -53,13 +55,12 @@
 
   <!-- Parallax Image Section 1 -->
   <section 
-    class="parallax-section"
-    style="background-image: url('/static/images/starry-night-water.jpg')"
+    class="parallax-section parallax-bg-starry"
   >
     <div class="parallax-overlay"></div>
     <div class="parallax-content h-full flex items-center justify-center">
-      <div class="text-center text-white mt-32">
-        <h2 class="text-4xl font-bold mb-4">Najděte zpět svůj klidný spánek</h2>
+      <div class="text-center text-white mt-48">
+        <h2 class="text-4xl font-bold mb-4 text-white">Najděte zpět svůj klidný spánek</h2>
         <p class="text-xl opacity-90">Každá noc může být regenerační a osvěžující</p>
       </div>
     </div>
@@ -67,7 +68,7 @@
 
   <!-- Problem Section -->
   <section class="py-20 px-4 bg-background">
-    <div class="max-w-4xl mx-auto text-center space-y-8">
+    <div class="max-w-4xl mx-auto space-y-8">
       <h2 class="text-4xl font-bold text-primary">Zbavte se únavy a získejte zpět svůj život!</h2>
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
         <p>
@@ -101,12 +102,12 @@
         <p>
           Když spíte špatně nebo málo, vaše tělo nemá čas na důležité procesy, jako je:
         </p>
-        <ul class="text-left max-w-2xl mx-auto space-y-2">
-          <li>• Posílení imunitního systému</li>
-          <li>• Regenerace svalů a tkání</li>
-          <li>• Ukládání vzpomínek do dlouhodobé paměti</li>
-          <li>• Vylučování toxinů z mozku</li>
-          <li>• Regulace hormonů ovlivňujících hlad a metabolismus</li>
+        <ul class="text-left max-w-2xl mx-auto space-y-2 custom-bullet-list">
+          <li>Posílení imunitního systému</li>
+          <li>Regenerace svalů a tkání</li>
+          <li>Ukládání vzpomínek do dlouhodobé paměti</li>
+          <li>Vylučování toxinů z mozku</li>
+          <li>Regulace hormonů ovlivňujících hlad a metabolismus</li>
         </ul>
         <p class="text-xl font-semibold text-primary mt-6">
           Co vás čeká, pokud nekvalitní spánek nevyřešíte?
@@ -115,14 +116,14 @@
           Chronický nedostatek kvalitního spánku má dlouhodobé důsledky, které se projevují nejen ráno, 
           ale ovlivňují celý váš život:
         </p>
-        <ul class="text-left max-w-2xl mx-auto space-y-2">
-          <li>• Oslabená imunita a častější nemoci</li>
-          <li>• Zhoršená koncentrace a paměť</li>
-          <li>• Vyšší riziko deprese a úzkosti</li>
-          <li>• Zvýšené riziko obezity a diabetu</li>
-          <li>• Problémy v partnerských vztazích</li>
-          <li>• Snížená produktivita v práci</li>
-          <li>• Předčasné stárnutí</li>
+        <ul class="text-left max-w-2xl mx-auto space-y-2 custom-bullet-list">
+          <li>Oslabená imunita a častější nemoci</li>
+          <li>Zhoršená koncentrace a paměť</li>
+          <li>Vyšší riziko deprese a úzkosti</li>
+          <li>Zvýšené riziko obezity a diabetu</li>
+          <li>Problémy v partnerských vztazích</li>
+          <li>Snížená produktivita v práci</li>
+          <li>Předčasné stárnutí</li>
         </ul>
       </div>
     </div>
@@ -161,13 +162,12 @@
 
   <!-- Parallax Image Section 2 -->
   <section 
-    class="parallax-section"
-    style="background-image: url('/static/images/dark-bedroom-ambient.jpg')"
+    class="parallax-section parallax-bg-bedroom"
   >
     <div class="parallax-overlay"></div>
     <div class="parallax-content h-full flex items-center justify-center">
-      <div class="text-center text-white mt-32">
-        <h2 class="text-4xl font-bold mb-4">Každé ráno vstanete svěží</h2>
+      <div class="text-center text-white mt-48">
+        <h2 class="text-4xl font-bold mb-4 text-white">Každé ráno vstanete svěží</h2>
         <p class="text-xl opacity-90">Prožijte rozdíl mezi skutečným odpočinkem a pouhým spánkem</p>
       </div>
     </div>
@@ -179,7 +179,7 @@
       <h2 class="text-4xl font-bold text-primary text-center mb-16">Představte si, jaké to bude, až...</h2>
       
       <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
-        <div>
+        <div class="mb-16">
           <img 
             src="/static/images/night-landscape.jpg" 
             alt="Klidná noční krajina"
@@ -276,7 +276,6 @@
         <div class="text-center text-sm text-foreground-muted space-y-2 mt-8">
           <p>30denní záruka vrácení peněz</p>
           <p>Okamžité doručení na email</p>
-          <p>Kompatibilní se všemi zařízeními</p>
         </div>
       </div>
     </div>

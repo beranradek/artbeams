@@ -5,7 +5,6 @@
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-primary mb-4">Co říkají naši čtenáři</h2>
       <div class="flex items-center justify-center gap-2 mb-6">
-        <i class="bi bi-people w-6 h-6 text-primary"></i>
         <span class="text-xl text-primary-muted">Více než 1 000 spokojených čtenářů</span>
       </div>
     </div>

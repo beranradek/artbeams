@@ -447,3 +447,21 @@
     .grid.md\\:grid-cols-2, .grid.md\\:grid-cols-3 { grid-template-columns: 1fr; }
     .w-48, .h-48 { width: 8rem; height: 8rem; }
 }
+
+/* Parallax classes for background images */
+.parallax-bg-starry {
+  background-image: url('/static/images/starry-night-water.jpg');
+}
+
+.parallax-bg-bedroom {
+  background-image: url('/static/images/dark-bedroom-ambient.jpg');
+}
+
+.bg-gradient-peaceful {
+  background: linear-gradient(135deg, hsl(195, 85%, 85%), hsl(210, 20%, 98%));
+}
+
+/* Margin top utilities */
+.mt-48 {
+  margin-top: 2rem;
+}

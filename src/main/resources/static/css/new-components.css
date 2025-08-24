@@ -259,3 +259,47 @@ footer {
     margin-bottom: 1rem;
   }
 }
+
+/* Image Gallery Styles */
+.image-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Mobile responsive for image gallery */
+@media (max-width: 768px) {
+  .image-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Text color utilities */
+.text-white {
+  color: #ffffff !important;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Custom bullet list styling */
+.custom-bullet-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.custom-bullet-list li {
+  position: relative;
+  padding-left: 2rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.custom-bullet-list li::before {
+  content: "•";
+  color: hsl(220, 85%, 25%);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 1.2em;
+}

@@ -11,7 +11,9 @@
       "Bash(taskkill:*)",
       "Bash(powershell:*)",
       "Bash(copy \"C:\\dev\\dream-weaver-sales\\src\\assets\\*\" \"C:\\dev\\artbeams\\src\\main\\resources\\static\\images\"\")",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:localhost)"
     ],
     "deny": []
   }
