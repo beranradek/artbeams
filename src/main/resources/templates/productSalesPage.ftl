@@ -18,7 +18,7 @@
       <div class="flex justify-center lg:justify-start lg:pl-16">
         <div class="relative">
           <img 
-            src="/media/klicova-opatreni-pro-regenerujici-spanek-big.png"
+            src="${product.image!}"
             alt="E-book ${product.title!}"
             class="w-full max-w-md h-auto"
           />
