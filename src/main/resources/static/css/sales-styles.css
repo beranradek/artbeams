@@ -91,6 +91,45 @@
     background: var(--background);
     position: relative;
     overflow: hidden;
+    margin-bottom: 4rem;
+}
+
+.hero-container {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.hero-image {
+    display: flex;
+    justify-content: center;
+}
+
+.hero-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Two column layout on medium screens and up */
+@media (min-width: 768px) {
+    .hero-container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .hero-image {
+        justify-content: flex-start;
+        padding-left: 4rem;
+    }
+    
+    .hero-content {
+        text-align: left;
+    }
 }
 
 /* Parallax sections */
@@ -384,6 +423,9 @@
 @media (min-width: 768px) {
   .md\\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
   .md\\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md\\:justify-start { justify-content: flex-start; }
+  .md\\:text-left { text-align: left; }
+  .md\\:pl-16 { padding-left: 4rem; }
 }
 
 @media (min-width: 1024px) {

@@ -12,10 +12,10 @@
 <div class="min-h-screen bg-background">
   
   <!-- Hero Section -->
-  <section class="min-h-screen flex items-center justify-center px-4 bg-white mb-16">
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+  <section class="hero-section">
+    <div class="hero-container">
       <!-- E-book Cover - Left Side -->
-      <div class="flex justify-center lg:justify-start lg:pl-16">
+      <div class="hero-image">
         <div class="relative">
           <img 
             src="${product.image!}"
@@ -26,7 +26,7 @@
       </div>
 
       <!-- Hero Content - Right Side -->
-      <div class="text-center lg:text-left space-y-8">
+      <div class="hero-content">
         <#--
         <div class="inline-block px-4 py-2 bg-gradient-peaceful text-primary font-semibold rounded-full">
           E-book pro kvalitní spánek
@@ -42,11 +42,8 @@
           <p class="font-semibold text-primary">Konečně se zbavte nekvalitního spánku a získejte zpět svou vitalitu!</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-4">
-          <a href="#benefits" class="btn-primary">
-            Více informací
-          </a>
           <a href="#order" class="btn-purchase">
-            Objednat nyní
+            Koupit e-book &gt;&gt;
           </a>
         </div>
       </div>
