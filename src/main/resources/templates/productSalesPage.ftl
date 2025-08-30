@@ -37,14 +37,16 @@
         </h1>
         <h2>Zbavte se nekvalitního spánku a získejte zpět svou vitalitu!</h2>
         <ul class="space-y-4 text-xl text-primary-muted">
-          <li>"Proč se každé ráno cítíte unavení, i když spíte celých osm hodin?"</p>
-          <li>"Stává se vám, že večer nemůžete usnout, i když jste vyčerpaní?"</p>
-          <li>"Máte pocit, že spánek vás neosvěží a zůstáváte vyčerpaní?"</p>
+          <li>Proč se každé ráno cítíte unavení, i když spíte celých osm hodin?</p>
+          <li>Stává se vám, že večer nemůžete usnout, i když jste vyčerpaní?</p>
+          <li>Máte pocit, že spánek vás neosvěží a zůstáváte vyčerpaní?</p>
         </ul>
         <div class="flex flex-col sm:flex-row gap-4 centered">
-          <a href="#order" class="btn-purchase">
+          <p class="offer-highlight">Připravuji pro Vás nový e-book. Už brzy. Prozatím děkuji za strpení. Máte se na co těšit!</p>
+          <#-- <a href="#order" class="btn-purchase">
             Koupit e-book &gt;&gt;
           </a>
+          -->
         </div>
       </div>
     </div>
@@ -58,7 +60,7 @@
     <div class="parallax-content h-full flex items-center justify-center">
       <div class="text-center text-white mt-48">
         <h2 class="text-4xl font-bold mb-4 text-white">Najděte zpět svůj klidný spánek</h2>
-        <p class="text-xl opacity-90">Každá noc může být regenerační a osvěžující</p>
+        <p class="text-xl opacity-90">Každá noc může být regenerující a osvěžující</p>
       </div>
     </div>
   </section>
@@ -69,7 +71,24 @@
       <h2 class="text-4xl font-bold text-primary">Zbavte se únavy a získejte zpět svůj život!</h2>
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
         <p>
-          Problémy s nekvalitním spánkem trápí až polovinu dospělé populace. Na první pohled to vypadá jako drobnost – 
+        Rozumím, jaké to je – ležet v posteli a přešlapovat mezi únavou a neklidem.
+        Trápit se tím, že necítím ten vytoužený klid a energii.
+        I já jsem si dlouho myslel, že se s tím nedá nic dělat. Že spánek je prostě "takový, jaký je",
+        a že únava je přirozenou součástí života.
+        </p>
+        <p>
+        Ale pak jsem pochopil, že kvalita spánku není dílem náhody a častá únava opravdu není normální.
+        Zjistil jsem, že malé změny v návycích, prostředí a způsobu, jakým přistupujeme ke spánku, mohou přinést velké výsledky.
+        Postupně jsem si vytvořil rutinu, díky které dokážu snadno usnout, probouzet se svěží a cítit se po celý den plný energie.
+        </p>
+        <p>
+        A co víc – tyto změny nebyly složité, ani mě nestály velké peníze nebo měsíce úsilí.
+        Všechny tyto metody jsem si na vlastní kůži vyzkoušel, ověřil jejich účinnost a zjistil,
+        co skutečně funguje. A vím, že to může fungovat i pro Vás. Stačí jen vědět, kde začít.
+        Nemusíte žít v neustálém koloběhu únavy a podrážděnosti. Existuje způsob, jak spánek proměnit ve skutečný zdroj energie a zdraví. A já vám ukážu, jak na to.
+        </p>
+        <p>
+          Nejste určitě sami, kdo řeší problémy s neuspokojujícím spánkem. Problémy s nekvalitním spánkem trápí až polovinu dospělé populace. Na první pohled to vypadá jako drobnost –
           prostě si lehnout a spát. Ale co když to nefunguje? Co když se každé ráno budíte unavení, vaše tělo neodpočívá, 
           a vy se ocitáte v nekonečném koloběhu stresu a únavy?
         </p>
@@ -136,7 +155,7 @@
         </p>
         <p>
           Chronický nedostatek kvalitního spánku má dlouhodobé důsledky, které se projevují nejen ráno, 
-          ale ovlivňují celý váš život:
+          ale ovlivňují celý Váš život:
         </p>
         <ul class="text-left max-w-2xl mx-auto space-y-2">
           <li>Oslabená imunita a častější nemoci</li>
@@ -148,7 +167,7 @@
           <li>Předčasné stárnutí</li>
         </ul>
         <p>
-          Ale nebojte se. S tímto e-bookem spolu vše podchytíme a opečujeme tak, abyste měli dostatek energie na vše, co potřebujete a co vás baví.
+          Ale není třeba se tím trápit. V e-booku vše spolu podchytíme a opečujeme tak, abyste měli dostatek energie na vše, co potřebujete a co vás baví.
         </p>
       </div>
     </div>
@@ -178,11 +197,11 @@
     }
   ] features=[
     "Konečně pořádně vyspíte a probudíte se plní energie. Už žádná ranní únava nebo pocit, že potřebujete další šálek kávy, abyste přežili den.",
-    "Naučíte se, jak snadno usínat, i když máte stresující den. Získáte metody a techniky, které vám pomohou rychle přepnout z hektického režimu do klidového stavu.",
-    "Zlepšíte své zdraví a podpoříte regeneraci těla. Kvalitní spánek přispívá k lepšímu imunitnímu systému, lepšímu metabolismu a zdravější pokožce.",
-    "Zbavíte se nočních probouzení. Už vás nebudou rušit zbytečné myšlenky nebo špatné návyky, které kazí váš odpočinek.",
+    "Naučíte se, jak snadno usínat, i když máte stresující den. Získáte metody a techniky, které Vám pomohou rychle přepnout z hektického režimu do klidového stavu.",
+    "Zlepšíte své zdraví a podpoříte regeneraci těla. Kvalitní spánek přispívá k účinnému imunitnímu systému, lepšímu metabolismu a zdravější pokožce.",
+    "Zbavíte se nočních probouzení. Už vás nebudou rušit zbytečné myšlenky nebo špatné návyky, které kazí Váš odpočinek.",
     "Získáte jasný plán na přizpůsobení svého spánkového režimu. Všechny kroky jsou praktické a zvládnete je aplikovat bez složitých změn nebo drahých investic.",
-    "Zvýšíte svou koncentraci a produktivitu během dne. Díky hlubokému spánku bude váš mozek pracovat lépe, rychleji a efektivněji."
+    "Zvýšíte svou koncentraci a produktivitu během dne. Díky hlubokému spánku bude Váš mozek pracovat lépe, rychleji a efektivněji."
   ] />
 
   <!-- Parallax Image Section 2 -->
@@ -209,7 +228,10 @@
             <i class="bi bi-moon w-8 h-8 text-primary mt-1"></i>
             <div>
               <h3 class="text-xl font-semibold text-primary mb-2">Každé ráno vstanete svěží a odpočatí</h3>
-              <p class="text-foreground-muted">Už žádné kruhy pod očima, nekonečné zívání nebo pocit, že noc byla krátká.</p>
+              <p class="text-foreground-muted">
+                Už žádné kruhy pod očima, nekonečné zívání nebo pocit, že noc byla krátká. Vaše tělo i mysl budou plné energie, připravené zvládnout jakýkoli den.
+                Přestanete se cítit unavení a podráždění. Místo toho budete klidní, vyrovnaní a budete mít prostor věnovat se svým blízkým i svým snům s radostí a nadšením.
+              </p>
             </div>
           </div>
           
@@ -217,7 +239,9 @@
             <i class="bi bi-sun w-8 h-8 text-secondary mt-1"></i>
             <div>
               <h3 class="text-xl font-semibold text-primary mb-2">Budete konečně spát celou noc</h3>
-              <p class="text-foreground-muted">Váš spánek bude hluboký, regenerační a přinese vám vnitřní klid.</p>
+              <p class="text-foreground-muted">
+                Vaš spánek bude hluboký, regenerační a přinese vám vnitřní klid, po kterém jste vždy toužili.
+              </p>
             </div>
           </div>
           
@@ -225,7 +249,13 @@
             <i class="bi bi-heart w-8 h-8 text-gentle-red mt-1"></i>
             <div>
               <h3 class="text-xl font-semibold text-primary mb-2">Najdete zpět svou radost ze života</h3>
-              <p class="text-foreground-muted">Když zmizí neustálá únava, otevře se vám svět plný nových příležitostí.</p>
+              <p class="text-foreground-muted">
+                Když zmizí neustálá únava, otevře se vám svět plný nových příležitostí - budete mít sílu zkoušet nové věci,
+                věnovat se svým koníčkům a cítit se dobře ve svém těle i mysli.
+                Objevíte nový smysl pro rovnováhu a zdraví.
+                Kvalitní spánek je základem zdravého těla i ducha.
+                Budete se cítit silnější, zdravější a šťastnější.
+              </p>
             </div>
           </div>
         </div>
@@ -233,6 +263,7 @@
     </div>
   </section>
 
+  <#--
   <@testimonials.testimonialCarousel [
     {
       "name": "Anna Svobodová",
@@ -260,19 +291,20 @@
       "photo": "testimonial-marie.jpg"
     }
   ] />
+  -->
 
   <@faq.faqAccordion [
     {
       "question": "Co když tento e-book nebude fungovat i pro mě?",
-      "answer": "Všechny techniky jsou podložené vědeckými výzkumy a osvědčenými metodami. Pokud budete postupovat podle návodu, je velmi pravděpodobné, že pocítíte zlepšení."
+      "answer": "Rozumím, že máte obavy, zda Vám informace v tomto e-booku opravdu pomohou. Techniky a návyky, které v něm najdete, jsou podložené vědeckými výzkumy, léty praxe a mým testováním. Pokud budete postupovat podle návodu, je velmi pravděpodobné, že pocítíte zlepšení. A pokud zjistíte, že Vám něco nefunguje, můžete se na mě obrátit s doplňující otázkou."
     },
     {
       "question": "Co když to nedokážu nebo se mi to nebude dařit?",
-      "answer": "Každý postup je jednoduchý a praktický. I když to bude ze začátku výzva, budete mít jasný plán, jak dosáhnout výsledků."
+      "answer": "Vím, že změnit některé spánkové návyky může být možná náročné, ale s tímto e-bookem máte podporu krok za krokem. Každý postup je jednoduchý a praktický, takže i když to bude ze začátku někdy výzva, budete mít jasný plán, jak dosáhnout výsledků."
     },
     {
       "question": "Ale co když si najdu tyto informace zdarma jinde?",
-      "answer": "V tomto e-booku je vše na jednom místě, konkrétní a praktické. Ušetříte si hodiny hledání a experimentování s různými metodami."
+      "answer": "Ano, řadu informací o spánku můžete najít i jinde. Ale v tomto e-booku je vše na jednom místě, konkrétní a praktické. Ušetříte si hodiny hledání, čtení článků a experimentování s různými metodami, které ve výsledku možná nebudou fungovat. Právě v tomto e-booku se podrobněji dozvíte, co funguje, a co ne. E-book vám poskytne ucelený přehled a efektivní kroky ke skutečnému zlepšení spánku. Investice do tohoto e-booku je investicí do Vaší pohody, zdraví a kvalitního spánku. A pokud byste nebyli spokojeni, vrátím Vám peníze jednoduše bez dotazů zpět."
     }
   ] />
 
@@ -283,18 +315,21 @@
     <div class="max-w-4xl mx-auto text-center">
       <div class="final-cta-card">
         <h2 class="text-4xl font-bold text-primary mb-8">
-          Začněte svou cestu ke kvalitnímu spánku ještě dnes
+          <#-- Začněte svou cestu ke kvalitnímu spánku ještě dnes -->
+          Připravuji pro Vás nový e-book. Už brzy. Prozatím děkuji za strpení. Máte se na co těšit!
         </h2>
-        
+
+        <#--
         <div class="text-center mb-8">
           <div class="price-display">${product.priceRegular.price} ${product.priceRegular.currency}</div>
-          <p class="text-xl text-foreground-muted">Investice do vašeho zdraví a pohody</p>
+          <p class="text-xl text-foreground-muted">Investice do Vašeho zdraví a pohody</p>
         </div>
 
         <div class="text-center text-sm text-foreground-muted space-y-2 mt-8">
           <p>30denní záruka vrácení peněz</p>
           <p>Okamžité doručení na email</p>
         </div>
+        -->
       </div>
     </div>
   </section>
