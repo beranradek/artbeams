@@ -82,19 +82,18 @@
 }
 
 /* Hero section styles */
-.hero-section {
-    min-height: 100vh;
+.sales-hero-section {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4rem 1rem;
+    padding: 0rem 1rem;
     background: var(--background);
     position: relative;
     overflow: hidden;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
 }
 
-.hero-container {
+.sales-hero-container {
     max-width: 80rem;
     margin-left: auto;
     margin-right: auto;
@@ -104,12 +103,12 @@
     align-items: center;
 }
 
-.hero-image {
+.sales-hero-image {
     display: flex;
     justify-content: center;
 }
 
-.hero-content {
+.sales-hero-content {
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -118,16 +117,16 @@
 
 /* Two column layout on medium screens and up */
 @media (min-width: 768px) {
-    .hero-container {
+    .sales-hero-container {
         grid-template-columns: 1fr 1fr;
     }
-    
-    .hero-image {
+
+    .sales-hero-image {
         justify-content: flex-start;
         padding-left: 4rem;
     }
-    
-    .hero-content {
+
+    .sales-hero-content {
         text-align: left;
     }
 }
@@ -185,8 +184,8 @@
 /* Typography */
 .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
 .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.65rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.65rem; }
 .font-bold { font-weight: 700; }
 .font-semibold { font-weight: 600; }
 .italic { font-style: italic; }

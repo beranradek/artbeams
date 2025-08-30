@@ -12,10 +12,10 @@
 <div class="min-h-screen bg-background">
   
   <!-- Hero Section -->
-  <section class="hero-section">
-    <div class="hero-container">
+  <section class="sales-hero-section">
+    <div class="sales-hero-container">
       <!-- E-book Cover - Left Side -->
-      <div class="hero-image">
+      <div class="sales-hero-image">
         <div class="relative">
           <img 
             src="${product.image!}"
@@ -26,22 +26,22 @@
       </div>
 
       <!-- Hero Content - Right Side -->
-      <div class="hero-content">
+      <div class="sales-hero-content">
         <#--
         <div class="inline-block px-4 py-2 bg-gradient-peaceful text-primary font-semibold rounded-full">
           E-book pro kvalitní spánek
         </div>
         -->
-        <h1 class="text-4xl lg:text-6xl font-bold text-primary leading-tight">
+        <h1>
           ${product.title!}
         </h1>
-        <div class="space-y-4 text-xl text-primary-muted">
-          <p class="italic">"Proč se každé ráno cítíte unavení, i když spíte celých osm hodin?"</p>
-          <p class="italic">"Stává se vám, že večer nemůžete usnout, i když jste vyčerpaní?"</p>
-          <p class="italic">"Máte pocit, že spánek vás neosvěží a zůstáváte vyčerpaní?"</p>
-          <p class="font-semibold text-primary">Konečně se zbavte nekvalitního spánku a získejte zpět svou vitalitu!</p>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-4">
+        <h2>Zbavte se nekvalitního spánku a získejte zpět svou vitalitu!</h2>
+        <ul class="space-y-4 text-xl text-primary-muted">
+          <li>"Proč se každé ráno cítíte unavení, i když spíte celých osm hodin?"</p>
+          <li>"Stává se vám, že večer nemůžete usnout, i když jste vyčerpaní?"</p>
+          <li>"Máte pocit, že spánek vás neosvěží a zůstáváte vyčerpaní?"</p>
+        </ul>
+        <div class="flex flex-col sm:flex-row gap-4 centered">
           <a href="#order" class="btn-purchase">
             Koupit e-book &gt;&gt;
           </a>
@@ -78,6 +78,31 @@
           Hraje zde roli to, jaké máme návyky, prostředí, ve kterém usínáme, nebo dokonce náš denní režim. 
           A pokud tyto klíčové faktory nejsou správně nastavené, nedokáže ani náš organismus využít regenerativní sílu spánku.
         </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bedroom Gallery Section -->
+  <section class="py-20 px-4 bg-gradient-peaceful">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-8 mb-16">
+        <img
+          src="/static/images/cozy-bedroom.jpg"
+          alt="Útulná ložnice s kvalitním spánkem"
+          class="rounded-2xl shadow-peaceful w-full"
+        />
+        <img
+          src="/static/images/luxury-bedding.jpg"
+          alt="Luxusní ložní prádlo pro kvalitní spánek"
+          class="rounded-2xl shadow-peaceful w-full"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 px-4 bg-background">
+    <div class="max-w-4xl mx-auto space-y-8">
+      <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
         <p class="text-xl font-semibold text-primary">
           Možná si říkáte: „Spánek je přece přirozený – proč bych měl něco měnit?"
         </p>
@@ -99,7 +124,7 @@
         <p>
           Když spíte špatně nebo málo, vaše tělo nemá čas na důležité procesy, jako je:
         </p>
-        <ul class="text-left max-w-2xl mx-auto space-y-2 custom-bullet-list">
+        <ul class="text-left max-w-2xl mx-auto space-y-2">
           <li>Posílení imunitního systému</li>
           <li>Regenerace svalů a tkání</li>
           <li>Ukládání vzpomínek do dlouhodobé paměti</li>
@@ -113,7 +138,7 @@
           Chronický nedostatek kvalitního spánku má dlouhodobé důsledky, které se projevují nejen ráno, 
           ale ovlivňují celý váš život:
         </p>
-        <ul class="text-left max-w-2xl mx-auto space-y-2 custom-bullet-list">
+        <ul class="text-left max-w-2xl mx-auto space-y-2">
           <li>Oslabená imunita a častější nemoci</li>
           <li>Zhoršená koncentrace a paměť</li>
           <li>Vyšší riziko deprese a úzkosti</li>
@@ -122,12 +147,15 @@
           <li>Snížená produktivita v práci</li>
           <li>Předčasné stárnutí</li>
         </ul>
+        <p>
+          Ale nebojte se. S tímto e-bookem spolu vše podchytíme a opečujeme tak, abyste měli dostatek energie na vše, co potřebujete a co vás baví.
+        </p>
       </div>
     </div>
   </section>
 
   <@gallery.imageGallery [
-    {"src": "sunset-gallery-1.jpg", "alt": "Krásný západ slunce nad klidnou vodou"},
+    {"src": "sunset-gallery-1.jpg", "alt": "Západ slunce nad klidnou vodou"},
     {"src": "nature-gallery-2.jpg", "alt": "Poklidná lesní krajina v ranním světle"},
     {"src": "sleep-nature-3.jpg", "alt": "Klidný spánek v přírodě pod hvězdami"}
   ] />
@@ -176,13 +204,6 @@
       <h2 class="text-4xl font-bold text-primary text-center mb-16">Představte si, jaké to bude, až...</h2>
       
       <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
-        <div class="mb-16">
-          <img 
-            src="/static/images/night-landscape.jpg" 
-            alt="Klidná noční krajina"
-            class="rounded-2xl shadow-peaceful w-full"
-          />
-        </div>
         <div class="space-y-6">
           <div class="flex items-start gap-4">
             <i class="bi bi-moon w-8 h-8 text-primary mt-1"></i>

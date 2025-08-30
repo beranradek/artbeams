@@ -13,7 +13,8 @@
       "Bash(copy \"C:\\dev\\dream-weaver-sales\\src\\assets\\*\" \"C:\\dev\\artbeams\\src\\main\\resources\\static\\images\"\")",
       "Bash(cp:*)",
       "Bash(curl:*)",
-      "WebFetch(domain:localhost)"
+      "WebFetch(domain:localhost)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
