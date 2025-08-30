@@ -304,6 +304,18 @@
   box-shadow: var(--shadow-peaceful);
 }
 
+/* Ensure benefits grid displays as 3 columns on medium screens and up */
+.benefits-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .benefits-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .benefit-icon-wrapper {
   display: flex;
   justify-content: center;

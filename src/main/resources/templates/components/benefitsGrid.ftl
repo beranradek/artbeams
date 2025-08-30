@@ -9,7 +9,7 @@
       žít kvalitnější a šťastnější život díky správným návykům, které vás budou provázet každý den.</p>
     </div>
     
-    <div class="grid md:grid-cols-3 gap-8 mb-16">
+    <div class="benefits-grid grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
       <#list benefits as benefit>
         <div class="benefit-card p-8 text-center hover:shadow-peaceful transition-shadow duration-300">
           <div class="benefit-icon-wrapper flex justify-center mb-4">
