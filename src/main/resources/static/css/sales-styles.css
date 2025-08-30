@@ -12,10 +12,6 @@
   --primary-glow: hsl(220, 85%, 45%);
   --primary-muted: hsl(220, 45%, 55%);
 
-  /* Golden yellow - warm morning light */
-  --secondary: hsl(48, 100%, 67%);
-  --secondary-foreground: hsl(227, 84%, 15%);
-
   /* Soft muted tones for calm feeling */
   --muted: hsl(210, 40%, 96%);
   --muted-foreground: hsl(215, 20%, 55%);
@@ -61,7 +57,7 @@
 .shadow-glow { box-shadow: var(--shadow-glow); }
 
 /* Modern button styles */
-.btn-primary, .btn-purchase {
+.btn-purchase {
     background: var(--gradient-sleep);
     border: none;
     color: var(--primary-foreground);
@@ -74,7 +70,7 @@
     display: inline-block;
 }
 
-.btn-primary:hover, .btn-purchase:hover {
+.btn-purchase:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-warm);
     background: var(--gradient-dawn);
