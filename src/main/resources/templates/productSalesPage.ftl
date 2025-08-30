@@ -42,7 +42,7 @@
           <li>Máte pocit, že spánek vás neosvěží a zůstáváte vyčerpaní?</p>
         </ul>
         <div class="flex flex-col sm:flex-row gap-4 centered">
-          <p class="offer-highlight">Připravuji pro Vás nový e-book. Už brzy. Prozatím děkuji za strpení. Máte se na co těšit!</p>
+          <p class="offer-highlight text-xl">Připravuji pro Vás nový e-book. Už brzy. Prozatím děkuji za strpení. Máte se na co těšit!</p>
           <#-- <a href="#order" class="btn-purchase">
             Koupit e-book &gt;&gt;
           </a>
@@ -77,7 +77,7 @@
         a že únava je přirozenou součástí života.
         </p>
         <p>
-        Ale pak jsem pochopil, že kvalita spánku není dílem náhody a častá únava opravdu není normální.
+        Ale pak jsem pochopil, že <strong>kvalita spánku není dílem náhody</strong> a častá únava opravdu není normální.
         Zjistil jsem, že malé změny v návycích, prostředí a způsobu, jakým přistupujeme ke spánku, mohou přinést velké výsledky.
         Postupně jsem si vytvořil rutinu, díky které dokážu snadno usnout, probouzet se svěží a cítit se po celý den plný energie.
         </p>
@@ -88,7 +88,7 @@
         Nemusíte žít v neustálém koloběhu únavy a podrážděnosti. Existuje způsob, jak spánek proměnit ve skutečný zdroj energie a zdraví. A já vám ukážu, jak na to.
         </p>
         <p>
-          Nejste určitě sami, kdo řeší problémy s neuspokojujícím spánkem. Problémy s nekvalitním spánkem trápí až polovinu dospělé populace. Na první pohled to vypadá jako drobnost –
+          <strong>Nejste určitě sami, kdo řeší problémy s neuspokojujícím spánkem.</strong> Problémy s nekvalitním spánkem trápí až polovinu dospělé populace. Na první pohled to vypadá jako drobnost –
           prostě si lehnout a spát. Ale co když to nefunguje? Co když se každé ráno budíte unavení, vaše tělo neodpočívá, 
           a vy se ocitáte v nekonečném koloběhu stresu a únavy?
         </p>

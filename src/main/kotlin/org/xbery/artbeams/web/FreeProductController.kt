@@ -224,7 +224,8 @@ class FreeProductController(
     fun productDetail(request: HttpServletRequest, @PathVariable slug: String): Any {
         return tryOrErrorResponse(request) {
             val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
-            renderProductArticle(request, product, product.slug, true, "productSalesPage")
+            val viewName = if (product.price.isZero()) "productArticle" else "productSalesPage"
+            renderProductArticle(request, product, product.slug, true, viewName)
         }
     }
 
