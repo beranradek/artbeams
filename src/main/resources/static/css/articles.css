@@ -1,5 +1,9 @@
 /* Article-specific styles - Migrated from common-styles.css and public-styles.css */
 
+:root {
+  --primary: #1a3b5c; /* Deep blue */
+}
+
 /* Article content styling */
 img {
   max-width: 100%;
@@ -18,7 +22,6 @@ img {
 .blog-main h6, .blog-sidebar h6 {
   margin-top: 0;
   font-weight: 500;
-  color: var(--primary);
 }
 
 .blog-main h1, .blog-sidebar h1 {

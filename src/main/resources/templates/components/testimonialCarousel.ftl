@@ -3,7 +3,7 @@
 <section class="py-20 px-4 bg-gradient-peaceful">
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-primary mb-4">Co říkají naši čtenáři</h2>
+      <h2 class="text-4xl font-bold text-primary-custom mb-4">Co říkají naši čtenáři</h2>
       <div class="flex items-center justify-center gap-2 mb-6">
         <span class="text-xl text-primary-muted">Více než 1 000 spokojených čtenářů</span>
       </div>
@@ -16,7 +16,7 @@
             <div class="speech-bubble">
               <p class="text-foreground-muted italic text-lg">"${testimonial.text}"</p>
             </div>
-            <p class="font-semibold text-primary mb-4 text-lg">– ${testimonial.name}</p>
+            <p class="font-semibold text-primary-custom mb-4 text-lg">– ${testimonial.name}</p>
             <img 
               src="/static/images/${testimonial.photo}" 
               alt="${testimonial.name}"

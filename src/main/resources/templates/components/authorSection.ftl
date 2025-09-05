@@ -3,7 +3,7 @@
 <section class="py-20 px-4 bg-gradient-peaceful">
   <div class="max-w-4xl mx-auto">
     <div class="text-center mb-16">
-      <h2 class="text-4xl font-bold text-primary mb-8">Proč vám mohu pomoci?</h2>
+      <h2 class="text-4xl font-bold text-primary-custom mb-8">Proč vám mohu pomoci?</h2>
       
       <div class="grid lg:grid-cols-3 gap-8 items-center">
         <div class="lg:col-span-1">
@@ -12,7 +12,7 @@
             alt="Radek Beran - autor e-booku"
             class="w-48 h-48 mx-auto rounded-full object-cover shadow-glow"
           />
-          <p class="text-2xl font-semibold text-primary mt-4">Radek Beran</p>
+          <p class="text-2xl font-semibold text-primary-custom mt-4">Radek Beran</p>
         </div>
         
         <div class="lg:col-span-2 text-left space-y-6">

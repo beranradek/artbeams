@@ -2,7 +2,7 @@
 <!-- FAQ Section -->
 <section class="py-20 px-4 bg-background">
   <div class="max-w-4xl mx-auto">
-    <h2 class="text-4xl font-bold text-primary text-center mb-16">Nejčastější dotazy</h2>
+    <h2 class="text-4xl font-bold text-primary-custom text-center mb-16">Nejčastější dotazy</h2>
     
     <div class="faq-accordion space-y-4">
       <#list faqItems as item>
@@ -10,8 +10,8 @@
           <button class="faq-question w-full text-left px-6 py-4 bg-background hover:bg-muted transition-colors duration-200" 
                   data-faq-toggle="${item?index}">
             <div class="flex justify-between items-center">
-              <span class="text-lg font-semibold text-primary">"${item.question}"</span>
-              &nbsp;<i class="bi bi-chevron-down faq-chevron text-primary transition-transform duration-200"></i>
+              <span class="text-lg font-semibold text-primary-custom">"${item.question}"</span>
+              &nbsp;<i class="bi bi-chevron-down faq-chevron text-primary-custom transition-transform duration-200"></i>
             </div>
           </button>
           <div class="faq-answer px-6 py-0 max-h-0 overflow-hidden transition-all duration-300" 

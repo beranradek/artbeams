@@ -1,4 +1,8 @@
 /** Styles common for both administration and public web */
+:root {
+  --primary: #1a3b5c; /* Deep blue */
+}
+
 code {
   font-size: 80%;
 }
@@ -106,6 +110,10 @@ cite {
 
 /** Blog-nested styles are used in public web and for preview of article in administration */
 
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary);
+}
+
 .blog-main h1, .blog-sidebar h1,
 .blog-main h2, .blog-sidebar h2,
 .blog-main h3, .blog-sidebar h3,
@@ -114,7 +122,6 @@ cite {
 .blog-main h6, .blog-sidebar h6 {
   margin-top: 0;
   font-weight: 500;
-  color: Chocolate;
 }
 
 .blog-main h1, .blog-sidebar h1 {

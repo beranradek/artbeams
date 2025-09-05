@@ -66,7 +66,7 @@
   <!-- Problem Section -->
   <section class="py-20 px-4 bg-background">
     <div class="max-w-4xl mx-auto space-y-8">
-      <h2 class="text-4xl font-bold text-primary">Zbavte se únavy a získejte zpět svůj život!</h2>
+      <h2>Zbavte se únavy a získejte zpět svůj život!</h2>
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
         <p>
         Rozumím, jaké to je – ležet v posteli a přešlapovat mezi únavou a neklidem.
@@ -120,7 +120,7 @@
   <section class="py-20 px-4 bg-background">
     <div class="max-w-4xl mx-auto space-y-8">
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
-        <p class="text-xl font-semibold text-primary">
+        <p class="text-xl font-semibold text-primary-custom">
           Možná si říkáte: „Spánek je přece přirozený – proč bych měl něco měnit?"
         </p>
         <p>
@@ -131,7 +131,7 @@
           Pokud vás už nebaví neustálý pocit vyčerpání a chcete konečně začít vstávat svěží a plní energie, čtěte dál. 
           Tento e-book vám ukáže cestu k hlubokému a kvalitnímu spánku, který si zasloužíte.
         </p>
-        <p class="text-xl font-semibold text-primary mt-8">
+        <p class="text-xl font-semibold text-primary-custom mt-8">
           Necháváte si ukrást zdraví kvůli nekvalitnímu spánku?
         </p>
         <p>
@@ -148,7 +148,7 @@
           <li>Vylučování toxinů z mozku</li>
           <li>Regulace hormonů ovlivňujících hlad a metabolismus</li>
         </ul>
-        <p class="text-xl font-semibold text-primary mt-6">
+        <p class="text-xl font-semibold text-primary-custom mt-6">
           Co vás čeká, pokud nekvalitní spánek nevyřešíte?
         </p>
         <p>
@@ -218,14 +218,14 @@
   <!-- Visual Section -->
   <section class="py-20 px-4 bg-background">
     <div class="max-w-6xl mx-auto">
-      <h2 class="text-4xl font-bold text-primary text-center mb-16">Představte si, jaké to bude, až...</h2>
+      <h2 class="text-4xl font-bold text-primary-custom text-center mb-16">Představte si, jaké to bude, až...</h2>
       
       <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
         <div class="space-y-6">
           <div class="flex items-start gap-4">
-            <i class="bi bi-moon w-8 h-8 text-primary mt-1"></i>
+            <i class="bi bi-moon w-8 h-8 text-primary-custom mt-1"></i>
             <div>
-              <h3 class="text-xl font-semibold text-primary mb-2">Každé ráno vstanete svěží a odpočatí</h3>
+              <h3 class="text-xl font-semibold text-primary-custom mb-2">Každé ráno vstanete svěží a odpočatí</h3>
               <p class="text-foreground-muted">
                 Už žádné kruhy pod očima, nekonečné zívání nebo pocit, že noc byla krátká. Vaše tělo i mysl budou plné energie, připravené zvládnout jakýkoli den.
                 Přestanete se cítit unavení a podráždění. Místo toho budete klidní, vyrovnaní a budete mít prostor věnovat se svým blízkým i svým snům s radostí a nadšením.
@@ -236,7 +236,7 @@
           <div class="flex items-start gap-4">
             <i class="bi bi-sun w-8 h-8 text-secondary mt-1"></i>
             <div>
-              <h3 class="text-xl font-semibold text-primary mb-2">Budete konečně spát celou noc</h3>
+              <h3 class="text-xl font-semibold text-primary-custom mb-2">Budete konečně spát celou noc</h3>
               <p class="text-foreground-muted">
                 Vaš spánek bude hluboký, regenerační a přinese vám vnitřní klid, po kterém jste vždy toužili.
               </p>
@@ -246,7 +246,7 @@
           <div class="flex items-start gap-4">
             <i class="bi bi-heart w-8 h-8 text-gentle-red mt-1"></i>
             <div>
-              <h3 class="text-xl font-semibold text-primary mb-2">Najdete zpět svou radost ze života</h3>
+              <h3 class="text-xl font-semibold text-primary-custom mb-2">Najdete zpět svou radost ze života</h3>
               <p class="text-foreground-muted">
                 Když zmizí neustálá únava, otevře se vám svět plný nových příležitostí - budete mít sílu zkoušet nové věci,
                 věnovat se svým koníčkům a cítit se dobře ve svém těle i mysli.
@@ -312,7 +312,7 @@
   <section class="py-20 px-4 bg-background" id="order">
     <div class="max-w-4xl mx-auto text-center">
       <div class="final-cta-card">
-        <h2 class="text-4xl font-bold text-primary mb-8">
+        <h2 class="text-4xl font-bold text-primary-custom mb-8">
           <#-- Začněte svou cestu ke kvalitnímu spánku ještě dnes -->
           Připravuji pro Vás nový e-book. Už brzy. Prozatím děkuji za strpení. Máte se na co těšit!
         </h2>
