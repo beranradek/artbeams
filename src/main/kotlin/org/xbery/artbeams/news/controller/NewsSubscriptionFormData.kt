@@ -5,7 +5,7 @@ package org.xbery.artbeams.news.controller
  * @author Radek Beran
  */
 data class NewsSubscriptionFormData(
-    val email: String?
+    val email: String
 ) {
     companion object {
         val Empty = NewsSubscriptionFormData("")

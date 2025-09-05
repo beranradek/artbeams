@@ -71,16 +71,16 @@ class NewsSubscriptionController(
     ): ResponseEntity<String> {
         val filledFormData = subscriptionFormDef.fill(formData)
         val model = createModel(request, TPL_PARAM_SUBSCRIPTION_FORM to filledFormData)
-        return ajaxResponse(ModelAndView("newssubscription/newsSubscriptionFormContent", model))
+        return ajaxResponse(ModelAndView("news/newsSubscriptionFormContent", model))
     }
 
     private fun subscriptionSuccessResponse(request: HttpServletRequest): ResponseEntity<String> {
         val model = createModel(request)
-        return ajaxResponse(ModelAndView("newssubscription/newsSubscriptionSuccess", model))
+        return ajaxResponse(ModelAndView("news/newsSubscriptionSuccess", model))
     }
 
     companion object {
-        const val TPL_PARAM_SUBSCRIPTION_FORM = "subscriptionForm"
+        const val TPL_PARAM_SUBSCRIPTION_FORM = "newsSubscriptionFormMapping"
         val subscriptionFormDef: FormMapping<NewsSubscriptionFormData> = NewsSubscriptionForm.definition
     }
 }

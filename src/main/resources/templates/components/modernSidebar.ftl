@@ -92,7 +92,7 @@
     </div>
   </div>
   
-  <!-- Newsletter Form -->
+  <!-- E-book subscription form -->
   <#if subscriptionFormMapping??>
     <#if xlat['mailer-lite.form.title']??>
     <div class="newsletter-section">

@@ -1,5 +1,8 @@
 package org.xbery.artbeams.common.controller
 
+import net.formio.FormData
+import net.formio.FormMapping
+import net.formio.validation.ValidationResult
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,6 +16,8 @@ import org.xbery.artbeams.common.error.CommonErrorCode
 import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.error.OperationException
+import org.xbery.artbeams.news.controller.NewsSubscriptionForm
+import org.xbery.artbeams.news.controller.NewsSubscriptionFormData
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 import java.util.*
 
@@ -43,6 +48,13 @@ abstract class BaseController(private val common: ControllerComponents) {
             if (second != null) {
                 model[arg.first] = second
             }
+        }
+
+        // Newsletter subscription form
+        if (!model.containsKey("newsSubscriptionFormMapping")) {
+            // Allow override in specific pages handling the form
+            val newsSubscriptionForm = newsSubscriptionFormDef.fill(FormData(NewsSubscriptionFormData.Empty, ValidationResult.empty))
+            model["newsSubscriptionFormMapping"] = newsSubscriptionForm
         }
         return model
     }
@@ -162,5 +174,9 @@ abstract class BaseController(private val common: ControllerComponents) {
 
     private fun processTemplateIntoString(template: freemarker.template.Template, model: Any): String {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model)
+    }
+
+    companion object {
+        val newsSubscriptionFormDef: FormMapping<NewsSubscriptionFormData> = NewsSubscriptionForm.definition
     }
 }

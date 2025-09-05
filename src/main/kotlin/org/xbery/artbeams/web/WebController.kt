@@ -1,7 +1,5 @@
 package org.xbery.artbeams.web
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
@@ -29,6 +27,8 @@ import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * Common web routes.
