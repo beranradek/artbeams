@@ -5,7 +5,7 @@
   <a href="/admin/orders/create" class="btn btn-primary">New Order</a>
 </div>
 
-<table class="table table-sm">
+<table class="table table-sm admin-table">
   <thead>
     <tr>
       <th scope="col">Order number</th>

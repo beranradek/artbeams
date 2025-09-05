@@ -46,3 +46,31 @@ img {
 #markdown-content {
   width: 100%;
 }
+
+/* Admin table styling with alternating row colors */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Target both tr and td elements to ensure background color is applied */
+.table.admin-table tbody tr:nth-child(even),
+.table.admin-table tbody tr:nth-child(even) td {
+  background-color: #f0f8ff !important; /* Lighter blue */
+}
+
+.table.admin-table tbody tr:nth-child(odd),
+.table.admin-table tbody tr:nth-child(odd) td {
+  background-color: white !important;
+}
+
+/* Additional fallback selectors */
+table.table.admin-table tbody tr:nth-child(even),
+table.table.admin-table tbody tr:nth-child(even) td {
+  background-color: #f0f8ff !important;
+}
+
+table.table.admin-table tbody tr:nth-child(odd),
+table.table.admin-table tbody tr:nth-child(odd) td {
+  background-color: white !important;
+}

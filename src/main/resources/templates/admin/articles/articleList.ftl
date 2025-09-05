@@ -6,7 +6,7 @@
 <a class="btn btn-secondary" href="/admin/evernote/import" role="button">Sync with Evernote</a>
 <a class="btn btn-secondary" href="/admin/google-docs/authorization" role="button">Authorize Google Docs</a>
 
-<table class="table table-sm">
+<table class="table table-sm admin-table">
   <thead>
     <tr>
       <th scope="col">Title</th>

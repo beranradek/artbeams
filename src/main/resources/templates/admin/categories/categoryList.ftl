@@ -3,7 +3,7 @@
 
 <a class="btn btn-primary" href="/admin/categories/${emptyId}/edit" role="button">New Category</a>
 
-<table class="table table-sm">
+<table class="table table-sm admin-table">
   <thead>
     <tr>
       <th scope="col">Title</th>

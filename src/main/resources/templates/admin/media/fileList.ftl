@@ -24,7 +24,7 @@
     <button type="submit" class="btn btn-primary">Upload new file</button>
 </form>
 
-<table class="table table-sm">
+<table class="table table-sm admin-table">
   <thead>
     <tr>
       <th scope="col">File name</th>

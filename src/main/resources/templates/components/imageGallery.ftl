@@ -2,7 +2,7 @@
 <!-- Image Gallery Section -->
 <section class="py-0 px-0 bg-background">
   <div class="w-full">
-    <div class="image-gallery-grid gap-1 bg-white">
+    <div class="image-gallery-grid gap-3 bg-white">
       <#list galleryImages as image>
         <div class="relative overflow-hidden group">
           <img 

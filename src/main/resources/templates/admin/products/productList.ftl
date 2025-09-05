@@ -3,7 +3,7 @@
 
 <a class="btn btn-primary" href="/admin/products/${emptyId}/edit" role="button">New Product</a>
 
-<table class="table table-sm">
+<table class="table table-sm admin-table">
   <thead>
     <tr>
       <th scope="col">Title</th>

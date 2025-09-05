@@ -2,7 +2,7 @@
 <#import "/pagination.ftl" as pagination>
 <@layout.page noUp=true>
 
-<table class="table table-sm">
+<table class="table table-sm admin-table">
   <thead>
     <tr>
       <th scope="col">Created</th>
