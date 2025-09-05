@@ -64,10 +64,12 @@
       </div>
       </#if>
 
-      <#-- TBD: We have separate contact page. Fill in short info later.
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
         <h5 class="footer-heading text-uppercase mb-4">Kontakt</h5>
         <ul class="list-unstyled">
+          <li>
+            <a href="/kontakt" class="footer-link">Kontakt</a>
+          </li>
           <#if xlat['contact.address']??>
           <li class="mb-2">
             <i class="bi bi-geo-alt me-2 text-secondary-custom"></i>
@@ -89,7 +91,6 @@
         </ul>
       </div>
     </div>
-    -->
     
     <hr class="my-4 footer-line" />
     
