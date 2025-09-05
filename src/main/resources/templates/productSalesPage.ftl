@@ -309,15 +309,10 @@
   <@author.authorSection />
 
   <!-- Final CTA -->
+  <#--
   <section class="py-20 px-4 bg-background" id="order">
     <div class="max-w-4xl mx-auto text-center">
       <div class="final-cta-card">
-        <h2 class="text-4xl font-bold text-primary-custom mb-8">
-          <#-- Začněte svou cestu ke kvalitnímu spánku ještě dnes -->
-          Připravuji pro Vás nový e-book. Už brzy. Prozatím děkuji za strpení. Máte se na co těšit!
-        </h2>
-
-        <#--
         <div class="text-center mb-8">
           <div class="price-display">${product.priceRegular.price} ${product.priceRegular.currency}</div>
           <p class="text-xl text-foreground-muted">Investice do Vašeho zdraví a pohody</p>
@@ -327,10 +322,20 @@
           <p>30denní záruka vrácení peněz</p>
           <p>Okamžité doručení na email</p>
         </div>
-        -->
       </div>
     </div>
   </section>
+  -->
+
+<section class="bg-background centered">
+  <div class="centered">
+    <p class="text-xl offer-highlight">
+      <#-- Začněte svou cestu ke kvalitnímu spánku ještě dnes -->
+      Připravuji pro Vás nový e-book. Už brzy. Prozatím děkuji za strpení. Máte se na co těšit!
+    </p>
+  </div>
+</section>
+
 </div>
 
 </@layout.page>
