@@ -295,6 +295,9 @@
             registerOnClickHandler('accept-cookie', acceptCookieHandler);
             registerOnClickHandler('close-cookie', closeCookieHandler);
             registerOnClickHandler('unset-cookies', unsetCookiesHandler);
+            
+            <!-- Initialize news subscription form AJAX handling -->
+            ajaxHandleFormWithClass("news-subscription-form", true);
       });
   </script>
  </body>

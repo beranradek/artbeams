@@ -90,6 +90,26 @@
           </#if>
         </ul>
       </div>
+
+      <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+        <h5 class="footer-heading text-uppercase mb-4">${xlat['news.form.title']}</h5>
+        <p class="small mb-3">${xlat['news.form.intro']}</p>
+        
+        <form class="news-subscription-form" action="/news/subscribe" method="post">
+          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+          <div class="news-subscription-form-ajax-content">
+            <div class="input-group">
+              <input type="email" 
+                     class="form-control" 
+                     name="email"
+                     placeholder="${xlat['news.form.placeholder']}"
+                     required>
+              <button type="submit" class="btn btn-primary">${xlat['news.form.button']}</button>
+            </div>
+            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" value="">
+          </div>
+        </form>
+      </div>
     </div>
     
     <hr class="my-4 footer-line" />

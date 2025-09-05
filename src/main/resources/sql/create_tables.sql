@@ -229,3 +229,11 @@ CREATE TABLE sequences (
     sequence_name VARCHAR(20) NOT NULL PRIMARY KEY,
     next_value BIGINT NOT NULL
 );
+
+CREATE TABLE news_subscription (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    email VARCHAR(64) NOT NULL,
+    created timestamp NOT NULL
+);
+
+CREATE INDEX idx_news_subscription_email ON news_subscription (email);

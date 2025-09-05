@@ -100,6 +100,14 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('recaptcha.siteKey', '
 INSERT INTO localisation (entry_key, entry_value) VALUES ('captcha.invalid', 'Nevalidní captcha (ochrana proti robotům). Zkuste prosím hýbat myší více jako člověk :-), nebo mě kontaktujte emailem.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('form-processing.error', 'Chyba při zpracování formuláře. Zkuste to prosím později nebo mě kontaktujte emailem.');
 
+-- News subscription form:
+INSERT INTO localisation (entry_key, entry_value) VALUES ('news.form.intro', 'Určitě nezapomeňte na odběr mých občasných novinek, aby vám neuniklo nic důležitého ze světa zdraví:');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('news.form.title', 'Novinky');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('news.form.placeholder', 'Váš email');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('news.form.button', 'Přihlásit');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('news.success.message', 'Děkujeme za přihlášení!');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('news.error.message', 'Chyba při přihlašování');
+
 -- Form validation messages:
 INSERT INTO localisation (entry_key, entry_value) VALUES ('jakarta.validation.constraints.NotNull.message', 'Zadejte prosím povinný údaj.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Password.tooShort.message', 'Heslo je příliš krátké. Mělo by mít alespoň 8 znaků.');

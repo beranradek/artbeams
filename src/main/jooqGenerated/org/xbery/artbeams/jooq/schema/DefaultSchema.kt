@@ -19,6 +19,7 @@ import org.xbery.artbeams.jooq.schema.tables.Config
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.Localisation
 import org.xbery.artbeams.jooq.schema.tables.Media
+import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
@@ -95,6 +96,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val MEDIA: Media get() = Media.MEDIA
 
     /**
+     * The table <code>news_subscription</code>.
+     */
+    val NEWS_SUBSCRIPTION: NewsSubscription get() = NewsSubscription.NEWS_SUBSCRIPTION
+
+    /**
      * The table <code>order_items</code>.
      */
     val ORDER_ITEMS: OrderItems get() = OrderItems.ORDER_ITEMS
@@ -157,6 +163,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         EntityAccessCount.ENTITY_ACCESS_COUNT,
         Localisation.LOCALISATION,
         Media.MEDIA,
+        NewsSubscription.NEWS_SUBSCRIPTION,
         OrderItems.ORDER_ITEMS,
         Orders.ORDERS,
         Products.PRODUCTS,

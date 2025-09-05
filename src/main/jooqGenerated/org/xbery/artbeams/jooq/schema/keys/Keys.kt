@@ -17,6 +17,7 @@ import org.xbery.artbeams.jooq.schema.tables.Config
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.Localisation
 import org.xbery.artbeams.jooq.schema.tables.Media
+import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
@@ -36,6 +37,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
 import org.xbery.artbeams.jooq.schema.tables.records.EntityAccessCountRecord
 import org.xbery.artbeams.jooq.schema.tables.records.LocalisationRecord
 import org.xbery.artbeams.jooq.schema.tables.records.MediaRecord
+import org.xbery.artbeams.jooq.schema.tables.records.NewsSubscriptionRecord
 import org.xbery.artbeams.jooq.schema.tables.records.OrderItemsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
@@ -62,6 +64,7 @@ val CONSTRAINT_A: UniqueKey<ConfigRecord> = Internal.createUniqueKey(Config.CONF
 val CONSTRAINT_3: UniqueKey<EntityAccessCountRecord> = Internal.createUniqueKey(EntityAccessCount.ENTITY_ACCESS_COUNT, DSL.name("CONSTRAINT_3"), arrayOf(EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_TYPE, EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_ID), true)
 val CONSTRAINT_C3A: UniqueKey<LocalisationRecord> = Internal.createUniqueKey(Localisation.LOCALISATION, DSL.name("CONSTRAINT_C3A"), arrayOf(Localisation.LOCALISATION.ENTRY_KEY), true)
 val CONSTRAINT_62: UniqueKey<MediaRecord> = Internal.createUniqueKey(Media.MEDIA, DSL.name("CONSTRAINT_62"), arrayOf(Media.MEDIA.ID), true)
+val CONSTRAINT_7A: UniqueKey<NewsSubscriptionRecord> = Internal.createUniqueKey(NewsSubscription.NEWS_SUBSCRIPTION, DSL.name("CONSTRAINT_7A"), arrayOf(NewsSubscription.NEWS_SUBSCRIPTION.ID), true)
 val CONSTRAINT_7: UniqueKey<OrderItemsRecord> = Internal.createUniqueKey(OrderItems.ORDER_ITEMS, DSL.name("CONSTRAINT_7"), arrayOf(OrderItems.ORDER_ITEMS.ID), true)
 val CONSTRAINT_C3: UniqueKey<OrdersRecord> = Internal.createUniqueKey(Orders.ORDERS, DSL.name("CONSTRAINT_C3"), arrayOf(Orders.ORDERS.ID), true)
 val CONSTRAINT_C: UniqueKey<ProductsRecord> = Internal.createUniqueKey(Products.PRODUCTS, DSL.name("CONSTRAINT_C"), arrayOf(Products.PRODUCTS.ID), true)

@@ -14,6 +14,7 @@ import org.xbery.artbeams.jooq.schema.tables.Config
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.Localisation
 import org.xbery.artbeams.jooq.schema.tables.Media
+import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
@@ -76,6 +77,11 @@ val LOCALISATION: Localisation = Localisation.LOCALISATION
  * The table <code>media</code>.
  */
 val MEDIA: Media = Media.MEDIA
+
+/**
+ * The table <code>news_subscription</code>.
+ */
+val NEWS_SUBSCRIPTION: NewsSubscription = NewsSubscription.NEWS_SUBSCRIPTION
 
 /**
  * The table <code>order_items</code>.
