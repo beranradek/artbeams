@@ -10,6 +10,7 @@
 <@layout.page pageStyles=pageStyles pageStyles2=pageStyles2>
 
 <div class="min-h-screen bg-background">
+  <h1>${product.title!}</h1>
   
   <!-- Hero Section -->
   <section class="sales-hero-section">
@@ -32,9 +33,6 @@
           E-book pro kvalitní spánek
         </div>
         -->
-        <h1>
-          ${product.title!}
-        </h1>
         <h2>Zbavte se nekvalitního spánku a získejte zpět svou vitalitu!</h2>
         <ul class="space-y-4 text-xl text-primary-muted">
           <li>Proč se každé ráno cítíte unavení, i když spíte celých osm hodin?</p>
@@ -59,8 +57,8 @@
     <div class="parallax-overlay"></div>
     <div class="parallax-content h-full flex items-center justify-center">
       <div class="text-center text-white mt-48">
-        <h2 class="text-4xl font-bold mb-4 text-white">Najděte zpět svůj klidný spánek</h2>
-        <p class="text-xl opacity-90">Každá noc může být regenerující a osvěžující</p>
+        <h2 class="parallax-header text-4xl font-bold text-white">Najděte zpět svůj klidný spánek</h2>
+        <p class="parallax-text text-xl opacity-90">Každá noc může být regenerující a osvěžující</p>
       </div>
     </div>
   </section>
@@ -211,8 +209,8 @@
     <div class="parallax-overlay"></div>
     <div class="parallax-content h-full flex items-center justify-center">
       <div class="text-center text-white mt-48">
-        <h2 class="text-4xl font-bold mb-4 text-white">Každé ráno vstanete svěží</h2>
-        <p class="text-xl opacity-90">Prožijte rozdíl mezi skutečným odpočinkem a pouhým spánkem</p>
+        <h2 class="parallax-header text-4xl font-bold text-white">Každé ráno vstanete svěží</h2>
+        <p class="parallax-text text-xl opacity-90">Prožijte rozdíl mezi skutečným odpočinkem a pouhým spánkem</p>
       </div>
     </div>
   </section>
