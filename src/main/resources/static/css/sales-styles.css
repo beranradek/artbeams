@@ -7,9 +7,10 @@
   --foreground-muted: hsl(215, 20%, 55%);
 
   /* Sleep blue - primary color inspired by night sky */
-  --primary: hsl(220, 85%, 25%);
+  /* --primary: hsl(220, 85%, 25%); /* Light blue */ */
+  --primary: #1a3b5c;     /* Deep blue, like in new-design-styles.css */
   --primary-foreground: #ffffff;
-  --primary-glow: hsl(220, 85%, 45%);
+  /* --primary-glow: hsl(220, 85%, 45%); */
   --primary-muted: hsl(220, 45%, 55%);
 
   /* Soft muted tones for calm feeling */
@@ -150,6 +151,14 @@
 .parallax-content {
   position: relative;
   z-index: 2;
+}
+
+.parallax-header {
+    margin: 2rem 1rem 2rem 1rem;
+}
+
+.parallax-text {
+    margin: 1rem 1rem 1rem 1rem;
 }
 
 /* Section spacing */
