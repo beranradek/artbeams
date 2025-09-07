@@ -6,8 +6,11 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.List
+
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.Name
 import org.jooq.Record
 import org.jooq.Schema
@@ -21,6 +24,7 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_NEWS_SUBSCRIPTION_EMAIL
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_7A
 import org.xbery.artbeams.jooq.schema.tables.records.NewsSubscriptionRecord
 
@@ -73,6 +77,11 @@ open class NewsSubscription(
      */
     val CREATED: TableField<NewsSubscriptionRecord, Instant?> = createField(DSL.name("created"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "", InstantConverter())
 
+    /**
+     * The column <code>news_subscription.confirmed</code>.
+     */
+    val CONFIRMED: TableField<NewsSubscriptionRecord, Instant?> = createField(DSL.name("confirmed"), SQLDataType.LOCALDATETIME(6), this, "", InstantConverter())
+
     private constructor(alias: Name, aliased: Table<NewsSubscriptionRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<NewsSubscriptionRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
 
@@ -93,6 +102,7 @@ open class NewsSubscription(
 
     constructor(child: Table<out Record>, key: ForeignKey<out Record, NewsSubscriptionRecord>): this(Internal.createPathAlias(child, key), child, key, NEWS_SUBSCRIPTION, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_NEWS_SUBSCRIPTION_EMAIL)
     override fun getPrimaryKey(): UniqueKey<NewsSubscriptionRecord> = CONSTRAINT_7A
     override fun `as`(alias: String): NewsSubscription = NewsSubscription(DSL.name(alias), this)
     override fun `as`(alias: Name): NewsSubscription = NewsSubscription(alias, this)

@@ -9,7 +9,8 @@ import java.time.Instant
 data class NewsSubscription(
     val id: String,
     val email: String,
-    val created: Instant
+    val created: Instant,
+    val confirmed: Instant? = null,
 ) {
     companion object {
         val EMPTY = NewsSubscription("", "", Instant.now())

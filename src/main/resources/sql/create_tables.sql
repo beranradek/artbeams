@@ -233,7 +233,8 @@ CREATE TABLE sequences (
 CREATE TABLE news_subscription (
     id VARCHAR(40) NOT NULL PRIMARY KEY,
     email VARCHAR(64) NOT NULL,
-    created timestamp NOT NULL
+    created timestamp NOT NULL,
+    confirmed timestamp
 );
 
 CREATE INDEX idx_news_subscription_email ON news_subscription (email);

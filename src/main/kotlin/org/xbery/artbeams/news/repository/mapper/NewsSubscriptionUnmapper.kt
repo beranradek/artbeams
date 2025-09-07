@@ -17,6 +17,7 @@ class NewsSubscriptionUnmapper : RecordUnmapper<NewsSubscription, NewsSubscripti
         record.id = newsSubscription.id
         record.email = newsSubscription.email
         record.created = newsSubscription.created
+        record.confirmed = newsSubscription.confirmed
         return record
     }
 }

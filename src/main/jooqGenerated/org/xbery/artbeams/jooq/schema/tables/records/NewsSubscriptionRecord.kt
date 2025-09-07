@@ -29,6 +29,10 @@ open class NewsSubscriptionRecord() : UpdatableRecordImpl<NewsSubscriptionRecord
         set(value): Unit = set(2, value)
         get(): Instant? = get(2) as Instant?
 
+    open var confirmed: Instant?
+        set(value): Unit = set(3, value)
+        get(): Instant? = get(3) as Instant?
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -38,10 +42,11 @@ open class NewsSubscriptionRecord() : UpdatableRecordImpl<NewsSubscriptionRecord
     /**
      * Create a detached, initialised NewsSubscriptionRecord
      */
-    constructor(id: String? = null, email: String? = null, created: Instant? = null): this() {
+    constructor(id: String? = null, email: String? = null, created: Instant? = null, confirmed: Instant? = null): this() {
         this.id = id
         this.email = email
         this.created = created
+        this.confirmed = confirmed
         resetChangedOnNotNull()
     }
 }

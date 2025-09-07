@@ -10,6 +10,7 @@ import org.jooq.impl.Internal
 import org.xbery.artbeams.jooq.schema.tables.AuthCode
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Media
+import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
@@ -25,6 +26,7 @@ val IDX_AUTH_CODE_USER_ID: Index = Internal.createIndex(DSL.name("idx_auth_code_
 val IDX_COMMENTS_ENTITY_ID: Index = Internal.createIndex(DSL.name("idx_comments_entity_id"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.ENTITY_ID), false)
 val IDX_COMMENTS_STATE: Index = Internal.createIndex(DSL.name("idx_comments_state"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.STATE), false)
 val IDX_MEDIA_FILENAME: Index = Internal.createIndex(DSL.name("idx_media_filename"), Media.MEDIA, arrayOf(Media.MEDIA.FILENAME), false)
+val IDX_NEWS_SUBSCRIPTION_EMAIL: Index = Internal.createIndex(DSL.name("idx_news_subscription_email"), NewsSubscription.NEWS_SUBSCRIPTION, arrayOf(NewsSubscription.NEWS_SUBSCRIPTION.EMAIL), false)
 val IDX_ORDERS_ORDER_NUMBER: Index = Internal.createIndex(DSL.name("idx_orders_order_number"), Orders.ORDERS, arrayOf(Orders.ORDERS.ORDER_NUMBER), true)
 val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)
 val IDX_QUEUE_NEXT_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_queue_next_action_time"), Queue.QUEUE, arrayOf(Queue.QUEUE.NEXT_ACTION_TIME), false)

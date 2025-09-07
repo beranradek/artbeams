@@ -18,6 +18,8 @@ INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.subje
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.template', 'member.section');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.baseUrl', 'https://connect.mailerlite.com');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.token', 'FILL IN API TOKEN');
+
+INSERT INTO config (entry_key, entry_value) VALUES ('news.subscription.confirmation.groupId', 'FILL IN NEWSLETTER SUBSCRIPTION CONFIRMATION GROUP ID');
 INSERT INTO config (entry_key, entry_value) VALUES ('news.subscription.groupId', 'FILL IN NEWSLETTER SUBSCRIPTION GROUP ID');
 
 INSERT INTO config (entry_key, entry_value) VALUES ('encryptionSecret', 'bWEfiGxkgcYEM0]');

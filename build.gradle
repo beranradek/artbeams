@@ -192,7 +192,7 @@ jooq {
                                 // for which converter is applied in generated code.
                                 // Use the pipe to separate several expressions.
                                 // Must match some used columns!
-                                includeExpression = ".*._time.*|created|modified|completed|finished|valid_from|valid_to|used|consent|downloaded"
+                                includeExpression = ".*._time.*|created|modified|completed|finished|confirmed|valid_from|valid_to|used|consent|downloaded"
                                 includeTypes = ".*"
                             }
                             //forcedType {

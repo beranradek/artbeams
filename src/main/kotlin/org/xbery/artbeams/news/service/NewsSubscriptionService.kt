@@ -3,12 +3,12 @@ package org.xbery.artbeams.news.service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.xbery.artbeams.config.repository.AppConfig
+import org.xbery.artbeams.mailing.api.MailingApi
 import org.xbery.artbeams.news.domain.NewsSubscription
 import org.xbery.artbeams.news.repository.NewsSubscriptionRepository
-import org.xbery.artbeams.mailing.api.MailingApi
-import org.xbery.artbeams.config.repository.AppConfig
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 /**
  * Service for handling news subscription requests.
@@ -24,33 +24,45 @@ class NewsSubscriptionService(
 
     fun subscribeToNewsletter(email: String, ipAddress: String?): NewsSubscription {
         val trimmedEmail = email.trim().lowercase()
-        
-        // Check if already subscribed
-        val existingSubscription = newsSubscriptionRepository.findByEmail(trimmedEmail)
-        if (existingSubscription.isNotEmpty()) {
-            logger.info("User with email $trimmedEmail is already subscribed to newsletter")
-            return existingSubscription[0]
+
+        // Check if already subscribed, but repeat the workflow  as an idempotent operation
+        val subscriptions = newsSubscriptionRepository.findByEmail(trimmedEmail)
+        var subscription = subscriptions.firstOrNull()
+        if (subscription == null) {
+            subscription = NewsSubscription(
+                id = UUID.randomUUID().toString(),
+                email = trimmedEmail,
+                created = Instant.now()
+            )
+            subscription = newsSubscriptionRepository.create(subscription)
         }
 
-        // Create local record
-        val subscription = NewsSubscription(
-            id = UUID.randomUUID().toString(),
-            email = trimmedEmail,
-            created = Instant.now()
-        )
-        
-        val savedSubscription = newsSubscriptionRepository.create(subscription)
-        
-        // Subscribe to MailerLite
-        try {
-            val groupId = appConfig.requireConfig("news.subscription.groupId")
-            mailingApi.subscribeToGroup(trimmedEmail, "", groupId, ipAddress)
-            logger.info("Successfully subscribed $trimmedEmail to MailerLite newsletter group $groupId")
-        } catch (e: Exception) {
-            logger.error("Failed to subscribe $trimmedEmail to MailerLite newsletter: ${e.message}", e)
-            // Continue - we have local record even if MailerLite fails
+        val groupId = appConfig.requireConfig("news.subscription.confirmation.groupId")
+        mailingApi.subscribeToGroup(email, "", requireNotNull(groupId), ipAddress)
+        logger.info("Successfully added $trimmedEmail to MailerLite newsletter subscription approval group $groupId")
+        return subscription
+    }
+
+    fun confirmSubscription(email: String, ipAddress: String?): Boolean {
+        val trimmedEmail = email.trim().lowercase()
+
+        // Check if already subscribed, but repeat the workflow  as an idempotent operation
+        val subscriptions = newsSubscriptionRepository.findByEmail(trimmedEmail)
+        var subscription = subscriptions.firstOrNull()
+        if (subscription == null) {
+            subscription = NewsSubscription(
+                id = UUID.randomUUID().toString(),
+                email = trimmedEmail,
+                created = Instant.now()
+            )
+            subscription = newsSubscriptionRepository.create(subscription)
         }
-        
-        return savedSubscription
+
+        newsSubscriptionRepository.confirm(subscription.id)
+
+        val groupId = appConfig.requireConfig("news.subscription.groupId")
+        mailingApi.subscribeToGroup(email, "", requireNotNull(groupId), ipAddress)
+        logger.info("Successfully added $trimmedEmail to MailerLite newsletter group $groupId as confirmed subscriber")
+        return true
     }
 }

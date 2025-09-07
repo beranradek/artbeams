@@ -9,6 +9,7 @@ import org.xbery.artbeams.news.repository.mapper.NewsSubscriptionUnmapper
 import org.xbery.artbeams.common.repository.AbstractRecordStorage
 import org.xbery.artbeams.jooq.schema.tables.records.NewsSubscriptionRecord
 import org.xbery.artbeams.jooq.schema.tables.references.NEWS_SUBSCRIPTION
+import java.time.Instant
 
 /**
  * Repository for news subscription records.
@@ -31,5 +32,12 @@ class NewsSubscriptionRepository(
     fun create(entity: NewsSubscription): NewsSubscription {
         createWithoutReturn(entity, unmapper)
         return entity
+    }
+
+    fun confirm(id: String): Int {
+        return dsl.update(table)
+            .set(NEWS_SUBSCRIPTION.CONFIRMED, Instant.now())
+            .where(NEWS_SUBSCRIPTION.ID.eq(id))
+            .execute()
     }
 }

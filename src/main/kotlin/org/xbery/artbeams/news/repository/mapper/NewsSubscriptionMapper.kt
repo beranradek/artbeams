@@ -15,7 +15,8 @@ class NewsSubscriptionMapper : RecordMapper<NewsSubscriptionRecord, NewsSubscrip
         return NewsSubscription(
             id = requireNotNull(record.id),
             email = requireNotNull(record.email),
-            created = requireNotNull(record.created)
+            created = requireNotNull(record.created),
+            confirmed = record.confirmed
         )
     }
 }

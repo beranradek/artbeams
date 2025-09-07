@@ -15,4 +15,6 @@ interface MailingApi {
      * This is non-destructive operation, so omitting fields or groups will not remove them from subscriber.
      */
     fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse
+
+    fun isSubscribedToGroup(email: String, subscriberGroupId: String): Boolean
 }
