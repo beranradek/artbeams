@@ -24,10 +24,11 @@ class MailerLiteMailingApi(
     private val mailingApiConfig: MailingApiConfig
 ) : AbstractJsonApi(MailingApiConfig.FEATURE_NAME, restTemplate), MailingApi {
 
-    // TBD RBe: React on Unsubscribe from MailerLite subscription group and update state in internal DB.
-    // For now, MailerLite subscription groups are authoritative source of truth
-    // what subscribers are really confirmed/active. This is sufficient solution,
-    // but data synchronization can be further improved.
+    // NOTE: Reaction on Unsubscribe from MailerLite subscription group
+    // is supported by MailerLiteWebhookController.
+    // MailerLite subscription groups are authoritative source of truth
+    // what subscribers are really confirmed/active, because user can unsubscribe
+    // via their links.
 
     override fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse {
         // TBD RBe: More robust subscription so even if the subscriber already exists in MailerLite,
