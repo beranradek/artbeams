@@ -23,6 +23,19 @@ Evernote API for Evernote integration, Google reCaptcha and more.
 * Evernote integration using simple developer token 
   (real applications authenticate with Evernote using OAuth, but for the purpose of exploring the API, you can get a developer token that allows you to access your own Evernote account. To get a developer token, visit https://www.evernote.com/api/DeveloperToken.action).
 * Mailer for Mailgun transactional emails.
+* MailerLite webhook integration for real-time subscriber status synchronization.
+
+## MailerLite Webhook Configuration
+
+To enable automatic synchronization of subscriber unsubscribe events with your ArtBeams database:
+
+1. **Configure webhook secret**: Add `mailerlite.webhook.secret` to your application configuration
+2. **Register webhook in MailerLite**:
+   - Go to MailerLite dashboard → Integrations → Webhooks
+   - Create new webhook with URL: `https://yourdomain.com/api/webhook/mailerlite/events`
+   - Select events: `subscriber.unsubscribed`, `subscriber.removed_from_group`
+   - Use your configured secret for authentication
+3. The webhook will automatically update user consent status in your database when users unsubscribe
 
 ## Development
 
