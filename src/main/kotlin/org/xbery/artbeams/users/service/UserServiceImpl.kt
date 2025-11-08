@@ -107,6 +107,11 @@ class UserServiceImpl(
         val user = userRepository.requireById(userId)
         return userRepository.update(user.copy(consent = Instant.now()))
     }
+    
+    override fun updateUserConsent(userId: String, consent: Instant?): User {
+        val user = userRepository.requireById(userId)
+        return userRepository.update(user.copy(consent = consent))
+    }
 
     private fun updateRoles(userId: String, roles: List<Role>) {
         roleRepository.updateRolesOfUser(userId, roles)

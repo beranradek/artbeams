@@ -14,7 +14,8 @@
       "Bash(cp:*)",
       "Bash(curl:*)",
       "WebFetch(domain:localhost)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:developers.mailerlite.com)"
     ],
     "deny": []
   }

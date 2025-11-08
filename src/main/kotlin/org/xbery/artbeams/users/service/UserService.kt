@@ -26,4 +26,12 @@ interface UserService {
      * @return user updated
      */
     fun confirmConsent(userId: String): User
+    
+    /**
+     * Updates user's consent with personal data processing and sending of newsletters.
+     * @param userId user ID
+     * @param consent consent timestamp (null = unsubscribed, not null = subscribed)
+     * @return user updated
+     */
+    fun updateUserConsent(userId: String, consent: java.time.Instant?): User
 }
