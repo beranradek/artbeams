@@ -24,7 +24,7 @@ class UserUnmapper : RecordUnmapper<User, UsersRecord> {
         record.firstName = user.firstName
         record.lastName = user.lastName
         record.email = user.email
-        record.consent = user.consent
+        // Note: consent field removed, now managed via ConsentsService
         return record
     }
 }

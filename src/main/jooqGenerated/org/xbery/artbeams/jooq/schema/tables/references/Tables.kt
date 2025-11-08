@@ -11,6 +11,7 @@ import org.xbery.artbeams.jooq.schema.tables.AuthCode
 import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
+import org.xbery.artbeams.jooq.schema.tables.Consents
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.Localisation
 import org.xbery.artbeams.jooq.schema.tables.Media
@@ -62,6 +63,11 @@ val COMMENTS: Comments = Comments.COMMENTS
  * The table <code>config</code>.
  */
 val CONFIG: Config = Config.CONFIG
+
+/**
+ * The table <code>consents</code>.
+ */
+val CONSENTS: Consents = Consents.CONSENTS
 
 /**
  * The table <code>entity_access_count</code>.

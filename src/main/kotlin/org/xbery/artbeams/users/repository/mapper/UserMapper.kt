@@ -26,8 +26,7 @@ class UserMapper : RecordMapper<UsersRecord, User> {
             firstName = requireNotNull(record.firstName),
             lastName = requireNotNull(record.lastName),
             email = requireNotNull(record.email),
-            roles = listOf(),
-            consent = record.consent
+            roles = listOf()
         )
     }
 }

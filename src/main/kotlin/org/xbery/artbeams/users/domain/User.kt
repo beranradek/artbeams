@@ -5,7 +5,6 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash
 import org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash.Companion.PBKDF2_HMAC_SHA512_ITERATIONS
 import java.io.Serializable
-import java.time.Instant
 
 /**
  * User entity.
@@ -19,8 +18,7 @@ data class User(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val roles: List<Role>,
-    val consent: Instant?) : Asset(), Serializable {
+    val roles: List<Role>) : Asset(), Serializable {
 
     val roleNames: List<String> = roles.map { it.name }
     val fullName: String = firstName + if (lastName.isEmpty()) "" else " $lastName"
@@ -62,7 +60,7 @@ data class User(
     }
 
     companion object {
-        val EMPTY = User(AssetAttributes.EMPTY, "", "", "", "", "", emptyList(), null)
+        val EMPTY = User(AssetAttributes.EMPTY, "", "", "", "", "", emptyList())
 
         fun namesFromFullName(fullName: String): Pair<String, String> {
             return if (fullName.isEmpty()) {

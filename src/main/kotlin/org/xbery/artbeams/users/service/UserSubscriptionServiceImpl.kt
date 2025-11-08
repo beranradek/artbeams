@@ -32,7 +32,8 @@ class UserSubscriptionServiceImpl(
         val loginNormalized = login.trim().lowercase()
         val user = findOrRegisterUser(fullName, loginNormalized)
         orderService.createOrderOfProduct(user.id, product, orderNumber, orderState)
-        return userService.confirmConsent(user.id)
+        userService.confirmConsent(user.id, product.id)
+        return user
     }
 
     private fun findOrRegisterUser(fullName: String?, login: String): User {

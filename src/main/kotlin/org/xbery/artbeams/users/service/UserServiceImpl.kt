@@ -7,6 +7,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
+import org.xbery.artbeams.consents.domain.ConsentType
+import org.xbery.artbeams.consents.service.ConsentService
 import org.xbery.artbeams.users.domain.CommonRoles
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.MyProfile
@@ -15,7 +17,6 @@ import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.password.domain.PasswordSetupData
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
-import java.time.Instant
 
 /**
  * @author Radek Beran
@@ -24,6 +25,7 @@ import java.time.Instant
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
+    private val consentService: ConsentService
 ) : UserService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -103,14 +105,21 @@ class UserServiceImpl(
 
     override fun updateUser(user: User): User = userRepository.update(user)
 
-    override fun confirmConsent(userId: String): User {
+    override fun confirmConsent(userId: String, originProductId: String?) {
         val user = userRepository.requireById(userId)
-        return userRepository.update(user.copy(consent = Instant.now()))
+        consentService.giveConsent(user.email, ConsentType.NEWS, originProductId)
+        logger.info("Consent confirmed for user ${user.email}")
     }
-    
-    override fun updateUserConsent(userId: String, consent: Instant?): User {
+
+    override fun updateUserConsent(userId: String, hasConsent: Boolean, originProductId: String?) {
         val user = userRepository.requireById(userId)
-        return userRepository.update(user.copy(consent = consent))
+        if (hasConsent) {
+            consentService.renewConsent(user.email, ConsentType.NEWS, originProductId)
+            logger.info("Consent renewed for user ${user.email}")
+        } else {
+            consentService.revokeConsent(user.email, ConsentType.NEWS)
+            logger.info("Consent revoked for user ${user.email}")
+        }
     }
 
     private fun updateRoles(userId: String, roles: List<Role>) {

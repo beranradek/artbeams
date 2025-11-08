@@ -13,6 +13,8 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.pdf.PdfSigner
+import org.xbery.artbeams.consents.domain.ConsentType
+import org.xbery.artbeams.consents.service.ConsentService
 import org.xbery.artbeams.media.repository.MediaRepository
 import org.xbery.artbeams.members.controller.MemberSectionController.Companion.MEMBER_SECTION_PATH
 import org.xbery.artbeams.products.service.ProductService
@@ -23,11 +25,7 @@ import java.io.ByteArrayOutputStream
 import jakarta.servlet.http.HttpServletRequest
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.orders.service.OrderService
-import org.xbery.artbeams.orders.domain.OrderItem
-import org.xbery.artbeams.users.domain.User
-import org.xbery.artbeams.products.domain.Product
 import java.time.Instant
-import org.xbery.artbeams.orders.domain.OrderState
 
 /**
  * User product detail.
@@ -39,6 +37,7 @@ class UserProductController(
     private val userProductService: UserProductService,
     private val productService: ProductService,
     private val userService: UserService,
+    private val consentService: ConsentService,
     private val orderService: OrderService,
     private val mediaRepository: MediaRepository,
     private val pdfSigner: PdfSigner,
@@ -71,7 +70,9 @@ class UserProductController(
             // User must exist and must confirm the consent before he/she can download the product (free or paid)
             val user = userService.requireByLogin(login)
 
-            if (user.consent == null) throw UnauthorizedException("User with login $login has not confirmed the consent yet, product $productSlug cannot be downloaded")
+            if (!consentService.hasValidConsent(login, ConsentType.NEWS)) {
+                throw UnauthorizedException("User with login $login has not confirmed the consent yet, product $productSlug cannot be downloaded")
+            }
 
             // Check an order (any order) of the product for given user exists
             val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)

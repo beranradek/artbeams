@@ -6,7 +6,6 @@ import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
 import net.formio.validation.ValidationResult
 import org.apache.pdfbox.Loader
-import org.apache.pdfbox.pdmodel.PDDocumentInformation
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -28,12 +27,13 @@ import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.form.FormErrors
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
 import org.xbery.artbeams.common.text.NormalizationHelper
+import org.xbery.artbeams.consents.domain.ConsentType
+import org.xbery.artbeams.consents.service.ConsentService
 import org.xbery.artbeams.mailing.api.MailingApi
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.media.domain.FileData
 import org.xbery.artbeams.media.repository.MediaRepository
-import org.xbery.artbeams.orders.domain.OrderItem
 import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
@@ -56,6 +56,7 @@ class FreeProductController(
     private val productService: ProductService,
     private val userSubscriptionService: UserSubscriptionService,
     private val userService: UserService,
+    private val consentService: ConsentService,
     private val orderService: OrderService,
     private val userProductService: UserProductService,
     private val mediaRepository: MediaRepository,
@@ -180,7 +181,9 @@ class FreeProductController(
 
             // User must exist and must confirm the consent before he/she can download the product
             val user = userService.requireByLogin(email)
-            if (user.consent == null) throw UnauthorizedException("User with email $email has not confirmed the consent")
+            if (!consentService.hasValidConsent(email, ConsentType.NEWS)) {
+                throw UnauthorizedException("User with email $email has not confirmed the consent")
+            }
 
             // Update user with full name from request if it is present (and not set in user entity yet)
             updateUserWithFullName(request, user)

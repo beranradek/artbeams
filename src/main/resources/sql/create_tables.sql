@@ -240,3 +240,16 @@ CREATE TABLE news_subscription (
 );
 
 CREATE INDEX idx_news_subscription_email ON news_subscription (email);
+
+CREATE TABLE consents (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    valid_from timestamp NOT NULL,
+    valid_to timestamp NOT NULL,
+    login VARCHAR(64) NOT NULL,
+    consent_type VARCHAR(20) NOT NULL,
+    origin_product_id VARCHAR(40)
+);
+
+CREATE INDEX idx_consents_login ON consents (login);
+CREATE INDEX idx_consents_validity ON consents (valid_from, valid_to);
+CREATE INDEX idx_consents_login_type_validity ON consents (login, consent_type, valid_from, valid_to);

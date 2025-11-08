@@ -17,7 +17,8 @@
       "Bash(./gradlew bootRun:*)",
       "Bash(curl:*)",
       "Bash(lsof:*)",
-      "Bash(xargs kill -9)"
+      "Bash(xargs kill -9)",
+      "Bash(./gradlew clean:*)"
     ],
     "deny": [],
     "ask": []

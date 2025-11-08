@@ -6,8 +6,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.xbery.artbeams.config.repository.AppConfig
+import org.xbery.artbeams.consents.domain.ConsentType
+import org.xbery.artbeams.consents.service.ConsentService
 import org.xbery.artbeams.mailing.webhook.dto.MailerLiteWebhookPayload
-import org.xbery.artbeams.users.service.UserService
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import javax.crypto.Mac
@@ -21,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest
 @RestController
 @RequestMapping("/api/webhook/mailerlite")
 class MailerLiteWebhookController(
-    private val userService: UserService,
+    private val consentService: ConsentService,
     private val appConfig: AppConfig,
     private val objectMapper: ObjectMapper
 ) {
@@ -133,18 +134,17 @@ class MailerLiteWebhookController(
     private fun handleUnsubscribedEvent(payload: MailerLiteWebhookPayload) {
         val email = payload.data.subscriber.email
         logger.info("Processing unsubscribe event for email: $email")
-        
+
         try {
-            val user = userService.findByLogin(email)
-            if (user != null) {
-                // Remove consent timestamp to indicate unsubscription
-                userService.updateUserConsent(user.id, null)
-                logger.info("Updated user consent status for unsubscribed email: $email")
+            // Revoke NEWS consent for the email (user may or may not exist in the system)
+            val revokedCount = consentService.revokeConsent(email, ConsentType.NEWS)
+            if (revokedCount > 0) {
+                logger.info("Revoked $revokedCount consent(s) for unsubscribed email: $email")
             } else {
-                logger.info("User not found for unsubscribed email: $email - no action needed")
+                logger.info("No active consents found for email: $email - no action needed")
             }
         } catch (e: Exception) {
-            logger.error("Error updating user consent for unsubscribed email: $email", e)
+            logger.error("Error revoking consent for unsubscribed email: $email", e)
             throw e
         }
     }

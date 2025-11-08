@@ -14,6 +14,7 @@ import org.xbery.artbeams.jooq.schema.tables.AuthCode
 import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
+import org.xbery.artbeams.jooq.schema.tables.Consents
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.Localisation
 import org.xbery.artbeams.jooq.schema.tables.Media
@@ -34,6 +35,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.AuthCodeRecord
 import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
+import org.xbery.artbeams.jooq.schema.tables.records.ConsentsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.EntityAccessCountRecord
 import org.xbery.artbeams.jooq.schema.tables.records.LocalisationRecord
 import org.xbery.artbeams.jooq.schema.tables.records.MediaRecord
@@ -61,6 +63,7 @@ val AUTH_CODE_PKEY: UniqueKey<AuthCodeRecord> = Internal.createUniqueKey(AuthCod
 val CONSTRAINT_4: UniqueKey<CategoriesRecord> = Internal.createUniqueKey(Categories.CATEGORIES, DSL.name("CONSTRAINT_4"), arrayOf(Categories.CATEGORIES.ID), true)
 val CONSTRAINT_DC: UniqueKey<CommentsRecord> = Internal.createUniqueKey(Comments.COMMENTS, DSL.name("CONSTRAINT_DC"), arrayOf(Comments.COMMENTS.ID), true)
 val CONSTRAINT_A: UniqueKey<ConfigRecord> = Internal.createUniqueKey(Config.CONFIG, DSL.name("CONSTRAINT_A"), arrayOf(Config.CONFIG.ENTRY_KEY), true)
+val CONSTRAINT_DE: UniqueKey<ConsentsRecord> = Internal.createUniqueKey(Consents.CONSENTS, DSL.name("CONSTRAINT_DE"), arrayOf(Consents.CONSENTS.ID), true)
 val CONSTRAINT_3: UniqueKey<EntityAccessCountRecord> = Internal.createUniqueKey(EntityAccessCount.ENTITY_ACCESS_COUNT, DSL.name("CONSTRAINT_3"), arrayOf(EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_TYPE, EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_ID), true)
 val CONSTRAINT_C3A: UniqueKey<LocalisationRecord> = Internal.createUniqueKey(Localisation.LOCALISATION, DSL.name("CONSTRAINT_C3A"), arrayOf(Localisation.LOCALISATION.ENTRY_KEY), true)
 val CONSTRAINT_62: UniqueKey<MediaRecord> = Internal.createUniqueKey(Media.MEDIA, DSL.name("CONSTRAINT_62"), arrayOf(Media.MEDIA.ID), true)

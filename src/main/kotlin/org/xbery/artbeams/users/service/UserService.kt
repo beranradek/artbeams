@@ -22,16 +22,17 @@ interface UserService {
 
     /**
      * Confirms user's consent with personal data processing and sending of newsletters.
+     * Creates a NEWS consent for the user.
      * @param userId user ID
-     * @return user updated
+     * @param originProductId optional product ID if consent was created by product subscription/download
      */
-    fun confirmConsent(userId: String): User
-    
+    fun confirmConsent(userId: String, originProductId: String? = null)
+
     /**
      * Updates user's consent with personal data processing and sending of newsletters.
      * @param userId user ID
-     * @param consent consent timestamp (null = unsubscribed, not null = subscribed)
-     * @return user updated
+     * @param hasConsent true = give consent, false = revoke consent
+     * @param originProductId optional product ID if consent was created by product subscription/download
      */
-    fun updateUserConsent(userId: String, consent: java.time.Instant?): User
+    fun updateUserConsent(userId: String, hasConsent: Boolean, originProductId: String? = null)
 }

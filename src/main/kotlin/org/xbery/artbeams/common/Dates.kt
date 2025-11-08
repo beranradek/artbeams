@@ -19,4 +19,7 @@ object Dates {
     val FORMAT_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("d.M.yyyy HH:mm")
 
     val DEFAULT_TIME_ZONE = TimeZone.of(APP_ZONE_ID)
+
+    // Far future date used for records that should remain valid indefinitely (year 2999)
+    val FAR_FUTURE: java.time.Instant = java.time.Instant.parse("2999-12-31T23:59:59Z")
 }
