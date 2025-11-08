@@ -1,5 +1,14 @@
 # Database configuration
 # ----------------------
-spring.datasource.url: jdbc:postgresql://localhost:5432/cms
+# DB initialization: Connect as postgres superuser
+# sudo -u postgres psql
+# Inside psql, run:
+# CREATE DATABASE artbeams;
+# CREATE USER artbeams_user WITH PASSWORD 'your_secure_password';
+# GRANT ALL PRIVILEGES ON DATABASE artbeams TO artbeams_user;
+# ALTER USER artbeams_user WITH PASSWORD 'your_secure_password';
+# \q
+# sudo -u postgres psql -d artbeams -f src/main/resources/sql/create_tables.sql
+spring.datasource.url: jdbc:postgresql://localhost:5432/artbeams
 spring.datasource.username: postgres
 spring.datasource.password:

@@ -1,3 +1,5 @@
+-- If needed, initialize your database with the schema
+-- psql -U artbeams_user -d artbeams -f src/main/resources/sql/create_tables.sql
 CREATE TABLE roles (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
 	created timestamp NOT NULL,

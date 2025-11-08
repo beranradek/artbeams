@@ -1,22 +1,25 @@
 {
   "permissions": {
     "allow": [
-      "mcp__fetch__fetch",
-      "mcp__puppeteer__puppeteer_navigate",
-      "mcp__puppeteer__puppeteer_screenshot",
-      "mcp__puppeteer__puppeteer_evaluate",
-      "Bash(./gradlew:*)",
-      "mcp__puppeteer__puppeteer_click",
-      "Bash(pkill:*)",
-      "Bash(taskkill:*)",
-      "Bash(powershell:*)",
-      "Bash(copy \"C:\\dev\\dream-weaver-sales\\src\\assets\\*\" \"C:\\dev\\artbeams\\src\\main\\resources\\static\\images\"\")",
-      "Bash(cp:*)",
+      "Bash(systemctl status:*)",
+      "Bash(sudo -u postgres psql:*)",
+      "Bash(./gradlew generateJooq:*)",
+      "Bash(./gradlew clean build:*)",
+      "WebSearch",
+      "WebFetch(domain:software.opensuse.org)",
+      "Bash(wget:*)",
+      "WebFetch(domain:download.opensuse.org)",
+      "Bash(doublecmd:*)",
+      "Bash(desktop-file-validate:*)",
+      "Bash(mount:*)",
+      "Bash(PGPASSWORD=artbeams_local_dev psql:*)",
+      "Bash(awk:*)",
+      "Bash(./gradlew bootRun:*)",
       "Bash(curl:*)",
-      "WebFetch(domain:localhost)",
-      "Bash(find:*)",
-      "WebFetch(domain:developers.mailerlite.com)"
+      "Bash(lsof:*)",
+      "Bash(xargs kill -9)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   }
 }
