@@ -57,10 +57,6 @@ open class UsersRecord() : UpdatableRecordImpl<UsersRecord>(Users.USERS) {
         set(value): Unit = set(9, value)
         get(): String? = get(9) as String?
 
-    open var consent: Instant?
-        set(value): Unit = set(10, value)
-        get(): Instant? = get(10) as Instant?
-
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -70,7 +66,7 @@ open class UsersRecord() : UpdatableRecordImpl<UsersRecord>(Users.USERS) {
     /**
      * Create a detached, initialised UsersRecord
      */
-    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, login: String? = null, password: String? = null, firstName: String? = null, lastName: String? = null, email: String? = null, consent: Instant? = null): this() {
+    constructor(id: String? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, login: String? = null, password: String? = null, firstName: String? = null, lastName: String? = null, email: String? = null): this() {
         this.id = id
         this.created = created
         this.createdBy = createdBy
@@ -81,7 +77,6 @@ open class UsersRecord() : UpdatableRecordImpl<UsersRecord>(Users.USERS) {
         this.firstName = firstName
         this.lastName = lastName
         this.email = email
-        this.consent = consent
         resetChangedOnNotNull()
     }
 }

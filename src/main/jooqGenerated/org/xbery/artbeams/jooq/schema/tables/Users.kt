@@ -113,11 +113,6 @@ open class Users(
      */
     val EMAIL: TableField<UsersRecord, String?> = createField(DSL.name("email"), SQLDataType.VARCHAR(64).nullable(false), this, "")
 
-    /**
-     * The column <code>users.consent</code>.
-     */
-    val CONSENT: TableField<UsersRecord, Instant?> = createField(DSL.name("consent"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
-
     private constructor(alias: Name, aliased: Table<UsersRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<UsersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
 

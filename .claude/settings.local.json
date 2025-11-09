@@ -18,7 +18,12 @@
       "Bash(curl:*)",
       "Bash(lsof:*)",
       "Bash(xargs kill -9)",
-      "Bash(./gradlew clean:*)"
+      "Bash(./gradlew clean:*)",
+      "Bash(heroku:*)",
+      "WebFetch(domain:docs.gradle.org)",
+      "Bash(./gradlew:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(java -version:*)"
     ],
     "deny": [],
     "ask": []
