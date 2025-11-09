@@ -17,11 +17,11 @@ CREATE INDEX idx_consents_login_type_validity ON consents (login, consent_type, 
 
 -- Migrate existing user consents from users table
 -- Users with non-null consent timestamp get a NEWS consent
--- valid_from is set to 2025-01-01, valid_to is set to far future (2999-12-31)
+-- valid_from is set to user's creation time, valid_to is set to far future (2999-12-31)
 INSERT INTO consents (id, valid_from, valid_to, login, consent_type, origin_product_id)
 SELECT
     gen_random_uuid()::text AS id,
-    TIMESTAMP '2025-01-01 00:00:00' AS valid_from,
+    created AS valid_from,
     TIMESTAMP '2999-12-31 23:59:59' AS valid_to,
     email AS login,
     'NEWS' AS consent_type,
@@ -32,3 +32,4 @@ WHERE consent IS NOT NULL;
 -- Optional: Drop the consent column from users table after verifying migration
 -- Uncomment the following line after confirming successful migration:
 -- ALTER TABLE users DROP COLUMN consent;
+
