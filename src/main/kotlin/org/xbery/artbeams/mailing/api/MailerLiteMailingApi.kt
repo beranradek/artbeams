@@ -1,7 +1,6 @@
 package org.xbery.artbeams.mailing.api
 
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatusCode
@@ -47,7 +46,7 @@ class MailerLiteMailingApi(
         // See https://developers.mailerlite.com/docs/subscribers.html#fetch-a-subscriber
         val url = mailingApiConfig.baseUrl + "/api/subscribers/" + email
         val params = mapOf<String, String>()
-        val response = exchangeEntity(HttpMethod.GET, url, params, HttpEntity.EMPTY)
+        val response = exchangeEntity(HttpMethod.GET, url, params, createRequestEntity(null))
         return response.statusCode == HttpStatusCode.valueOf(200)
     }
 
@@ -56,7 +55,7 @@ class MailerLiteMailingApi(
         val url = mailingApiConfig.baseUrl + "/api/subscribers/" + email + "/groups/" + subscriberGroupId
         val params = mapOf<String, String>()
         return try {
-            val response = exchangeEntity(HttpMethod.DELETE, url, params, HttpEntity.EMPTY)
+            val response = exchangeEntity(HttpMethod.DELETE, url, params, createRequestEntity(null))
             response.statusCode == HttpStatusCode.valueOf(200) || response.statusCode == HttpStatusCode.valueOf(204)
         } catch (e: Exception) {
             logger.warn("Failed to remove subscriber $email from group $subscriberGroupId: ${e.message}")
