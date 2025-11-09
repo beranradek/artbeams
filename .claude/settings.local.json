@@ -23,7 +23,8 @@
       "WebFetch(domain:docs.gradle.org)",
       "Bash(./gradlew:*)",
       "WebFetch(domain:github.com)",
-      "Bash(java -version:*)"
+      "Bash(java -version:*)",
+      "WebFetch(domain:developers.mailerlite.com)"
     ],
     "deny": [],
     "ask": []

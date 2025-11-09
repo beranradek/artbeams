@@ -23,11 +23,11 @@ abstract class AbstractJsonApi(
     protected val logger: Logger = LoggerFactory.getLogger(apiName)
 
     protected open fun createRequestEntity(requestData: Any?): HttpEntity<*> {
-        if (requestData == null) {
-            return HttpEntity.EMPTY
-        }
         val headers = HttpHeaders()
         appendHeaders(headers)
+        if (requestData == null) {
+            return HttpEntity(null, headers)
+        }
         val value = objectMapper.writeValueAsString(requestData)
         return HttpEntity(value, headers)
     }
