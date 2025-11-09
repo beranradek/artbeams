@@ -49,6 +49,34 @@ class MailerLiteMailingApi(
         return response.statusCode == HttpStatusCode.valueOf(200)
     }
 
+    override fun removeFromGroup(email: String, subscriberGroupId: String): Boolean {
+        // See https://developers.mailerlite.com/docs/subscribers.html#unassign-subscriber-from-group
+        val url = mailingApiConfig.baseUrl + "/api/subscribers/" + email + "/groups/" + subscriberGroupId
+        val params = mapOf<String, String>()
+        return try {
+            val response = exchangeEntity(HttpMethod.DELETE, url, params, HttpEntity.EMPTY)
+            response.statusCode == HttpStatusCode.valueOf(200) || response.statusCode == HttpStatusCode.valueOf(204)
+        } catch (e: Exception) {
+            logger.warn("Failed to remove subscriber $email from group $subscriberGroupId: ${e.message}")
+            false
+        }
+    }
+
+    override fun resubscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse {
+        // First, try to remove subscriber from group (if already subscribed)
+        // This ensures automation workflow will be triggered when we re-add them
+        try {
+            removeFromGroup(email, subscriberGroupId)
+            // Small delay to ensure MailerLite processes the removal
+            Thread.sleep(500)
+        } catch (e: Exception) {
+            logger.debug("Subscriber $email was not in group $subscriberGroupId or removal failed, proceeding with subscription")
+        }
+
+        // Now subscribe (or re-subscribe) to the group, which triggers automation workflow
+        return subscribeToGroup(email, name, subscriberGroupId, ipAddress)
+    }
+
     override fun appendHeaders(headers: HttpHeaders) {
         super.appendHeaders(headers)
         headers.setBearerAuth(mailingApiConfig.token)

@@ -148,8 +148,9 @@ class FreeProductController(
             // Add product to user library
             userProductService.addProductToUserLibrary(user.id, product.id)
 
-            // This triggers sending of the product to the user:
-            mailingApi.subscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
+            // Use resubscribeToGroup to ensure automation workflow is triggered even on resubscription
+            // This removes the subscriber from group if already present, then re-adds them
+            mailingApi.resubscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
 
             // TBD: Update order state to SHIPPED
 
