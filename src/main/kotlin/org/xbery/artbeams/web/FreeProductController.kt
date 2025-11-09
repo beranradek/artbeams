@@ -94,7 +94,7 @@ class FreeProductController(
                         // We should not register the user until he confirms the subscription from email,
                         // so he does not occupy registration to real owner of the email address.
                         // This triggers sending of confirmation email:
-                        mailingApi.subscribeToGroup(
+                        mailingApi.resubscribeToGroup(
                             data.email,
                             data.name,
                             requireNotNull(product.confirmationMailingGroupId),

@@ -9,13 +9,6 @@ import org.xbery.artbeams.mailing.api.dto.MailerLiteSubscriptionResponse
  */
 interface MailingApi {
 
-    /**
-     * Subscribes user to given subscription group.
-     * If a subscriber already exists, it will be updated with new values.
-     * This is non-destructive operation, so omitting fields or groups will not remove them from subscriber.
-     */
-    fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse
-
     fun isSubscribedToGroup(email: String, subscriberGroupId: String): Boolean
 
     /**
