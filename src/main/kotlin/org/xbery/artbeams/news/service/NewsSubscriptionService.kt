@@ -4,6 +4,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.config.repository.AppConfig
+import org.xbery.artbeams.consents.domain.ConsentType
+import org.xbery.artbeams.consents.service.ConsentService
 import org.xbery.artbeams.mailing.api.MailingApi
 import org.xbery.artbeams.news.domain.NewsSubscription
 import org.xbery.artbeams.news.repository.NewsSubscriptionRepository
@@ -18,6 +20,7 @@ import java.util.UUID
 class NewsSubscriptionService(
     private val newsSubscriptionRepository: NewsSubscriptionRepository,
     private val mailingApi: MailingApi,
+    private val consentService: ConsentService,
     private val appConfig: AppConfig
 ) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -60,9 +63,17 @@ class NewsSubscriptionService(
 
         newsSubscriptionRepository.confirm(subscription.id)
 
+        // Use resubscribeToGroup to ensure automation workflow is triggered even on resubscription
+        // This removes the subscriber from group if already present, then re-adds them
         val groupId = appConfig.requireConfig("news.subscription.groupId")
-        mailingApi.subscribeToGroup(email, "", requireNotNull(groupId), ipAddress)
-        logger.info("Successfully added $trimmedEmail to MailerLite newsletter group $groupId as confirmed subscriber")
+        mailingApi.resubscribeToGroup(email, "", requireNotNull(groupId), ipAddress)
+        logger.info("Successfully added $trimmedEmail to MailerLite newsletter group $groupId as confirmed subscriber (with workflow trigger)")
+
+        // Renew consent to create fresh consent with current valid_from timestamp
+        // This revokes any existing consent and creates a new one
+        consentService.renewConsent(trimmedEmail, ConsentType.NEWS)
+        logger.info("Renewed NEWS consent for $trimmedEmail")
+
         return true
     }
 }
