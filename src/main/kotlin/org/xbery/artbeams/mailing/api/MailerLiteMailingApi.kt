@@ -50,7 +50,7 @@ class MailerLiteMailingApi(
     }
 
     override fun removeFromGroup(email: String, subscriberGroupId: String): Boolean {
-        // See https://developers.mailerlite.com/docs/subscribers.html#unassign-subscriber-from-group
+        // See developers.mailerlite.com/docs/groups.html#unassign-subscriber-from-a-group
         val url = mailingApiConfig.baseUrl + "/api/subscribers/" + email + "/groups/" + subscriberGroupId
         val params = mapOf<String, String>()
         return try {
@@ -70,7 +70,7 @@ class MailerLiteMailingApi(
             // Small delay to ensure MailerLite processes the removal
             Thread.sleep(500)
         } catch (e: Exception) {
-            logger.debug("Subscriber $email was not in group $subscriberGroupId or removal failed, proceeding with subscription")
+            logger.debug("Subscriber $email was not in group $subscriberGroupId or removal failed, proceeding with subscription: ${e.message}")
         }
 
         // Now subscribe (or re-subscribe) to the group, which triggers automation workflow
