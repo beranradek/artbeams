@@ -109,18 +109,18 @@ class UserServiceImpl(
         val user = userRepository.requireById(userId)
         // Use renewConsent to ensure existing consents are revoked and a fresh consent with current valid_from is created
         // This is important for resubscription scenarios where we want to update the valid_from timestamp
-        consentService.renewConsent(user.email, ConsentType.NEWS, originProductId)
-        logger.info("Consent confirmed (renewed) for user ${user.email}")
+        consentService.renewConsent(user.login, ConsentType.NEWS, originProductId)
+        logger.info("Consent confirmed (renewed) for user ${user.login}")
     }
 
     override fun updateUserConsent(userId: String, hasConsent: Boolean, originProductId: String?) {
         val user = userRepository.requireById(userId)
         if (hasConsent) {
-            consentService.renewConsent(user.email, ConsentType.NEWS, originProductId)
-            logger.info("Consent renewed for user ${user.email}")
+            consentService.renewConsent(user.login, ConsentType.NEWS, originProductId)
+            logger.info("Consent renewed for user ${user.login}")
         } else {
-            consentService.revokeConsent(user.email, ConsentType.NEWS)
-            logger.info("Consent revoked for user ${user.email}")
+            consentService.revokeConsent(user.login, ConsentType.NEWS)
+            logger.info("Consent revoked for user ${user.login}")
         }
     }
 

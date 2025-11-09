@@ -41,7 +41,7 @@ class NewsSubscriptionService(
         }
 
         val groupId = appConfig.requireConfig("news.subscription.confirmation.groupId")
-        mailingApi.resubscribeToGroup(email, "", groupId, ipAddress)
+        mailingApi.resubscribeToGroup(trimmedEmail, "", groupId, ipAddress)
         logger.info("Successfully added $trimmedEmail to MailerLite newsletter subscription approval group $groupId")
         return subscription
     }
@@ -66,7 +66,7 @@ class NewsSubscriptionService(
         // Use resubscribeToGroup to ensure automation workflow is triggered even on resubscription
         // This removes the subscriber from group if already present, then re-adds them
         val groupId = appConfig.requireConfig("news.subscription.groupId")
-        mailingApi.resubscribeToGroup(email, "", groupId, ipAddress)
+        mailingApi.resubscribeToGroup(trimmedEmail, "", groupId, ipAddress)
         logger.info("Successfully added $trimmedEmail to MailerLite newsletter group $groupId as confirmed subscriber (with workflow trigger)")
 
         // Renew consent to create fresh consent with current valid_from timestamp

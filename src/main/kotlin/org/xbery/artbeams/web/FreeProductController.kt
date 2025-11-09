@@ -150,7 +150,7 @@ class FreeProductController(
 
             // Use resubscribeToGroup to ensure automation workflow is triggered even on resubscription
             // This removes the subscriber from group if already present, then re-adds them
-            mailingApi.resubscribeToGroup(user.email, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
+            mailingApi.resubscribeToGroup(user.login, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
 
             // TBD: Update order state to SHIPPED
 
@@ -340,7 +340,7 @@ class FreeProductController(
                         normalizationHelper.removeDiacriticalMarks("User ${user.firstName} ${user.lastName} downloaded ${product.title}")
                     val body =
                         normalizationHelper.removeDiacriticalMarks(
-                            "User ${user.firstName} ${user.lastName}/${user.email} " +
+                            "User ${user.firstName} ${user.lastName}/${user.login} " +
                                     "has downloaded product ${product.title}."
                         )
                     mailSender.sendMailWithText(productAuthor.email, subject, body)

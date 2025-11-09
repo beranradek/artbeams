@@ -17,7 +17,6 @@ import org.xbery.artbeams.common.mailer.service.MailgunMailSender
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.common.text.NormalizationHelper
-import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.users.repository.UserRepository
 
 /**
@@ -29,7 +28,6 @@ class CommentServiceImpl(
     private val articleRepository: ArticleRepository,
     private val userRepository: UserRepository,
     private val mailSender: MailgunMailSender,
-    private val appConfig: AppConfig,
     private val spamDetector: SpamDetector
 ) : CommentService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -100,7 +98,7 @@ class CommentServiceImpl(
                 if (article != null) {
                     val user = userRepository.findById(article.createdBy)
                     if (user != null) {
-                        if (user.email.isNotEmpty()) {
+                        if (user.login.isNotEmpty()) {
                             val subject: String =
                                 normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
                             val body: String =
@@ -108,7 +106,7 @@ class CommentServiceImpl(
                                     "commented:\n\n${comment.comment}\n\n" +
                                     "comment state: ${comment.state}"
                                 )
-                            mailSender.sendMailWithText(user.email, subject, body)
+                            mailSender.sendMailWithText(user.login, subject, body)
                         } else {
                             logger.warn("Author ${user.login}/${user.firstName} ${user.lastName} has no email set.")
                         }
