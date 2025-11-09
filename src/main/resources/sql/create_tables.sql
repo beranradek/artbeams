@@ -19,8 +19,7 @@ CREATE TABLE users (
 	password VARCHAR(500) NOT NULL,
 	first_name VARCHAR(64) DEFAULT NULL,
 	last_name VARCHAR(64) DEFAULT NULL,
-	email VARCHAR(64) NOT NULL,
-	consent timestamp DEFAULT NULL
+	email VARCHAR(64) NOT NULL
 );
 
 CREATE UNIQUE INDEX idx_users_login ON users (login);
@@ -149,7 +148,6 @@ CREATE TABLE order_items (
 ALTER TABLE order_items ADD CONSTRAINT ordered_product_fk FOREIGN KEY (product_id) REFERENCES products (id);
 ALTER TABLE order_items ADD CONSTRAINT order_fk FOREIGN KEY (order_id) REFERENCES orders (id);
 -- ALTER TABLE order_items ADD COLUMN downloaded timestamp DEFAULT NULL;
--- ALTER TABLE users ADD COLUMN consent timestamp DEFAULT NULL;
 
 CREATE TABLE comments (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
