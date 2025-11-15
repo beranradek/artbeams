@@ -123,19 +123,23 @@ class ArticleEditingAgentController(
 
         val emitter = SseEmitter(SSE_TIMEOUT_MS) // 25 seconds - safe for Heroku's 30s timeout
 
+        // Thread-safe flag to track emitter completion (shared between callbacks and executor)
+        val emitterCompleted = java.util.concurrent.atomic.AtomicBoolean(false)
+
         // Handle timeout gracefully
         emitter.onTimeout {
             agentLogger.warn("SSE emitter timed out for session: $sessionId")
+            emitterCompleted.set(true)
         }
 
         emitter.onError { throwable ->
             agentLogger.error("SSE emitter error for session: $sessionId", throwable)
+            emitterCompleted.set(true)
         }
 
         executor.execute {
             val startTime = System.currentTimeMillis()
             var timedOut = false
-            var emitterCompleted = false
 
             try {
                 agentLogger.info("Sending message to AI agent for session: $sessionId")
@@ -151,7 +155,7 @@ class ArticleEditingAgentController(
                 val completeResponse = StringBuilder()
                 val iterator = responseSequence.iterator()
 
-                while (iterator.hasNext()) {
+                while (iterator.hasNext() && !emitterCompleted.get()) {
                     // Check if we're approaching the timeout limit
                     val elapsed = System.currentTimeMillis() - startTime
                     if (elapsed > RESPONSE_TIMEOUT_MS) {
@@ -171,13 +175,13 @@ class ArticleEditingAgentController(
                     } catch (e: IOException) {
                         agentLogger.warn("Client disconnected during streaming", e)
                         emitter.completeWithError(e)
-                        emitterCompleted = true
+                        emitterCompleted.set(true)
                         return@execute
                     }
                 }
 
                 // Only send completion if emitter hasn't already completed/timed out
-                if (!emitterCompleted) {
+                if (!emitterCompleted.get()) {
                     try {
                         // Send completion event with article content if detected
                         val articleContent = articleEditingAgent.extractArticleContent(completeResponse.toString())
@@ -208,7 +212,7 @@ class ArticleEditingAgentController(
                             )
                         }
                         emitter.complete()
-                        emitterCompleted = true
+                        emitterCompleted.set(true)
                         agentLogger.info("Message streaming completed for session: $sessionId (${System.currentTimeMillis() - startTime}ms)")
                     } catch (e: IllegalStateException) {
                         // Emitter already completed (likely timed out), just log
@@ -218,7 +222,7 @@ class ArticleEditingAgentController(
 
             } catch (e: Exception) {
                 agentLogger.error("Error during message streaming: ${e.message}", e)
-                if (!emitterCompleted) {
+                if (!emitterCompleted.get()) {
                     try {
                         emitter.send(
                             SseEmitter.event()
@@ -226,6 +230,7 @@ class ArticleEditingAgentController(
                                 .data(mapOf("error" to (e.message ?: "Neznámá chyba")))
                         )
                         emitter.completeWithError(e)
+                        emitterCompleted.set(true)
                     } catch (sendError: Exception) {
                         agentLogger.error("Failed to send error event (emitter may have timed out)", sendError)
                     }
