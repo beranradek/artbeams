@@ -122,7 +122,8 @@ dependencies {
     implementation("com.nulab-inc:zxcvbn:$zxcvbnVersion")
 
     // OpenAI SDK for article editing agent
-    implementation("com.openai:openai-java-spring-boot-starter:$openaiVersion")
+    // Using core library without Spring Boot starter to avoid @ConstructorBinding compatibility issues with Spring Boot 3
+    implementation("com.openai:openai-java:$openaiVersion")
 
     // Caffeine cache for conversation history with TTL
     implementation("com.github.ben-manes.caffeine:caffeine")

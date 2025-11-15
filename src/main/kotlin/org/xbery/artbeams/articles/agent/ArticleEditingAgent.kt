@@ -4,10 +4,10 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.openai.client.OpenAIClient
 import com.openai.client.okhttp.OpenAIOkHttpClient
+import com.openai.core.http.StreamResponse
+import com.openai.models.ChatModel
+import com.openai.models.chat.completions.ChatCompletionChunk
 import com.openai.models.chat.completions.ChatCompletionCreateParams
-import com.openai.models.chat.completions.ChatCompletionMessageParam
-import com.openai.models.chat.completions.ChatCompletionUserMessageParam
-import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.config.repository.AppConfig
@@ -36,7 +36,7 @@ class ArticleEditingAgent(
     companion object {
         const val MAX_HISTORY_MESSAGES = 20
         const val SYSTEM_PROMPT_CONFIG_KEY = "article.editing.agent.system.prompt"
-        const val DEFAULT_MODEL_STRING = "gpt-5"
+        val DEFAULT_MODEL = ChatModel.GPT_5
 
         // Default system prompt in Czech language
         val DEFAULT_SYSTEM_PROMPT = """
@@ -226,14 +226,17 @@ class ArticleEditingAgent(
 
             // Build params with conversation history
             val builder = ChatCompletionCreateParams.builder()
-                .model(DEFAULT_MODEL_STRING)
+                .model(DEFAULT_MODEL)
 
             // Always add system message first (it's never stored in history)
             builder.addSystemMessage(systemPrompt)
 
             // Add all history messages
             history.forEach { msg ->
-                builder.addMessage(msg)
+                when (msg.role) {
+                    MessageRole.USER -> builder.addUserMessage(msg.content)
+                    MessageRole.ASSISTANT -> builder.addAssistantMessage(msg.content)
+                }
             }
 
             // Add current user message enhanced with actual context
@@ -242,10 +245,7 @@ class ArticleEditingAgent(
             // Store user message in history, but the non-enhanced version of it,
             // so we do not burden each message in the history with the additional context (article data)
             // that should be part of only the last message sent to LLM!
-            val notEnhancedUserMessage = ChatCompletionUserMessageParam.builder()
-                .content(userMessage)
-                .build()
-            history.add(ChatCompletionMessageParam.ofUser(notEnhancedUserMessage))
+            history.add(HistoryMessage(MessageRole.USER, userMessage))
 
             // Trim history if max messages are exceeded for the future use of it
             trimHistory(history)
@@ -255,7 +255,7 @@ class ArticleEditingAgent(
 
         try {
             // Stream the response
-            val streamResponse = client.chat().completions().createStreaming(params)
+            val streamResponse: StreamResponse<ChatCompletionChunk> = client.chat().completions().createStreaming(params)
             val assistantMessageBuilder = StringBuilder()
 
             streamResponse.use { stream ->
@@ -277,10 +277,7 @@ class ArticleEditingAgent(
             val completeResponse = assistantMessageBuilder.toString()
             if (completeResponse.isNotEmpty()) {
                 synchronized(conversationHistory) {
-                    val assistantMsg = ChatCompletionAssistantMessageParam.builder()
-                        .content(completeResponse)
-                        .build()
-                    conversationHistory.messages.add(ChatCompletionMessageParam.ofAssistant(assistantMsg))
+                    conversationHistory.messages.add(HistoryMessage(MessageRole.ASSISTANT, completeResponse))
                 }
             }
         } catch (e: Exception) {
@@ -303,7 +300,7 @@ class ArticleEditingAgent(
      * The system message is not stored in history but is dynamically added when building params.
      * Note: This method should only be called within a synchronized block.
      */
-    private fun trimHistory(history: MutableList<ChatCompletionMessageParam>) {
+    private fun trimHistory(history: MutableList<HistoryMessage>) {
         if (history.size > MAX_HISTORY_MESSAGES) {
             // Keep most recent messages (system message is always re-added when building params)
             val recentMessages = history.takeLast(MAX_HISTORY_MESSAGES - 1)
@@ -326,6 +323,19 @@ class ArticleEditingAgent(
      * Access to messages should be synchronized externally on the ConversationHistory instance.
      */
     private class ConversationHistory {
-        val messages: MutableList<ChatCompletionMessageParam> = mutableListOf()
+        val messages: MutableList<HistoryMessage> = mutableListOf()
+    }
+
+    /**
+     * Represents a single message in the conversation history.
+     */
+    private data class HistoryMessage(
+        val role: MessageRole,
+        val content: String
+    )
+
+    private enum class MessageRole {
+        USER,
+        ASSISTANT
     }
 }

@@ -26,7 +26,8 @@
       "Bash(java -version:*)",
       "WebFetch(domain:developers.mailerlite.com)",
       "mcp__serena__find_file",
-      "mcp__serena__think_about_collected_information"
+      "mcp__serena__think_about_collected_information",
+      "mcp__serena__search_for_pattern"
     ],
     "deny": [],
     "ask": []
