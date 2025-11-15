@@ -28,7 +28,6 @@ This feature implements an AI-powered assistant for article editing in the ArtBe
 
 2. **ArticleEditingAgentController** (`org.xbery.artbeams.articles.agent.ArticleEditingAgentController`)
    - REST endpoints for AJAX communication
-   - Uses Server-Sent Events (SSE) for streaming responses
    - Session management for conversation tracking
    - Endpoints:
      - `POST /admin/articles/agent/message` - Send message and stream response
@@ -132,14 +131,7 @@ The agent maintains the last 20 messages (including system message) per session.
 
 ### Streaming Implementation
 
-The implementation uses Server-Sent Events (SSE) for streaming AI responses:
-
-1. Client sends POST request with message
-2. Server creates SSE connection
-3. AI responses are streamed as they arrive
-4. Each chunk is sent as a `message` event
-5. Completion is signaled with a `complete` event
-6. Errors are sent as `error` events
+The implementation uses AI job initialization and polling of job's already received chunks and status.
 
 ### Session Management
 
@@ -159,14 +151,6 @@ Each browser session gets a unique conversation ID stored in the HTTP session. T
 - OpenAI API errors: Error messages displayed in chat interface
 - Streaming interruptions: Graceful degradation
 
-## Troubleshooting
-
-### Streaming Cuts Off
-
-**Possible cause**: Long responses exceeding timeout
-
-**Solution**: The SSE timeout is set to 5 minutes. For longer responses, adjust the timeout in `ArticleEditingAgentController`
-
 ## Future Enhancements
 
 Potential improvements for future versions:
@@ -175,8 +159,3 @@ Potential improvements for future versions:
 2. **File Upload**: Allow uploading reference documents
 3. **Multi-language Support**: Support for other languages besides Czech
 4. **Custom Tools**: Integrate custom tools like image generation, SEO analysis, etc.
-
-## Dependencies
-
-- OpenAI Java SDK 4.8.0
-- Server-Sent Events (SSE)

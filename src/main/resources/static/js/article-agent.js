@@ -1,6 +1,7 @@
 /**
  * Article Editing AI Agent - JavaScript Client
- * Handles chat interface, streaming responses, and diff viewer.
+ * Handles chat interface with polling-based job status updates.
+ * Works reliably regardless of hosting platform timeout settings.
  *
  * Uses DOMPurify for XSS protection and diff library for proper text comparison.
  */
@@ -13,6 +14,12 @@
     let originalArticleBody = '';
     let csrfToken = null;
     let csrfHeaderName = null;
+    let currentJobId = null;
+    let pollingInterval = null;
+
+    // Configuration
+    const POLL_INTERVAL_MS = 4000; // Poll every 4 seconds
+    const MAX_POLL_ATTEMPTS = 150; // 150 * 4s = 10 minutes max
 
     // Initialize when DOM is ready
     ready(function() {
@@ -133,7 +140,7 @@
             headers[csrfHeaderName] = csrfToken;
         }
 
-        // Use fetch with streaming instead of EventSource for POST support
+        // Send message and get job ID
         fetch('/admin/articles/agent/message', {
             method: 'POST',
             headers: headers,
@@ -143,72 +150,121 @@
             if (!response.ok) {
                 throw new Error('HTTP error ' + response.status);
             }
-            return response.body;
+            return response.json();
         })
-        .then(body => {
-            const reader = body.getReader();
-            const decoder = new TextDecoder();
-            let buffer = '';
-            let assistantResponse = '';
-
-            function processText({ done, value }) {
-                if (done) {
-                    showLoading(false);
-                    return;
-                }
-
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop(); // Keep incomplete line in buffer
-
-                lines.forEach(line => {
-                    if (line.startsWith('event:')) {
-                        // Skip event type lines
-                        return;
-                    }
-                    if (line.startsWith('data:')) {
-                        const data = line.substring(5).trim();
-                        if (data) {
-                            try {
-                                const parsed = JSON.parse(data);
-
-                                if (parsed.chunk) {
-                                    // Message chunk
-                                    assistantResponse += parsed.chunk;
-                                    updateAssistantMessage(currentAssistantMessage, assistantResponse);
-                                    scrollToBottom();
-                                } else if (parsed.hasOwnProperty('hasArticleContent')) {
-                                    // Complete or partial event
-                                    if (parsed.hasArticleContent && parsed.articleContent) {
-                                        currentArticleContent = parsed.articleContent;
-                                        addDiffViewerButton(currentAssistantMessage);
-                                    }
-                                    // Show warning if this is a partial response
-                                    if (parsed.warning) {
-                                        const warningDiv = document.createElement('div');
-                                        warningDiv.className = 'agent-warning-message';
-                                        warningDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + parsed.warning;
-                                        currentAssistantMessage.appendChild(warningDiv);
-                                        scrollToBottom();
-                                    }
-                                } else if (parsed.error) {
-                                    // Error event
-                                    showError(parsed.error);
-                                }
-                            } catch (error) {
-                                console.error('Error parsing SSE data:', error);
-                            }
-                        }
-                    }
-                });
-
-                return reader.read().then(processText);
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+                showLoading(false);
+                return;
             }
 
-            return reader.read().then(processText);
+            if (data.jobId) {
+                currentJobId = data.jobId;
+                startPolling(currentJobId);
+            } else {
+                throw new Error('No job ID received');
+            }
         })
         .catch(error => {
             console.error('Fetch error:', error);
+            showLoading(false);
+            showError('Chyba při komunikaci s AI asistentem.');
+        });
+    }
+
+    let pollAttempts = 0;
+    let lastChunkIndex = 0;
+    let assistantResponse = '';
+
+    function startPolling(jobId) {
+        pollAttempts = 0;
+        lastChunkIndex = 0;
+        assistantResponse = '';
+
+        // Clear any existing polling interval
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+
+        // Poll immediately, then every POLL_INTERVAL_MS
+        pollJobStatus(jobId);
+        pollingInterval = setInterval(() => {
+            pollJobStatus(jobId);
+        }, POLL_INTERVAL_MS);
+    }
+
+    function stopPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    }
+
+    function pollJobStatus(jobId) {
+        pollAttempts++;
+
+        if (pollAttempts > MAX_POLL_ATTEMPTS) {
+            stopPolling();
+            showLoading(false);
+            showError('Časový limit vypršel. Zkuste to prosím znovu s kratším dotazem.');
+            return;
+        }
+
+        fetch(`/admin/articles/agent/job/status/${jobId}?lastChunkIndex=${lastChunkIndex}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP error ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                stopPolling();
+                showLoading(false);
+                showError(data.error);
+                return;
+            }
+
+            // Process new chunks
+            if (data.chunks && data.chunks.length > 0) {
+                data.chunks.forEach(chunk => {
+                    assistantResponse += chunk;
+                });
+                updateAssistantMessage(currentAssistantMessage, assistantResponse);
+                scrollToBottom();
+            }
+
+            // Update chunk index
+            if (data.currentChunkIndex !== undefined) {
+                lastChunkIndex = data.currentChunkIndex;
+            }
+
+            // Check status
+            if (data.status === 'completed') {
+                stopPolling();
+                showLoading(false);
+
+                // Handle article content if detected
+                if (data.hasArticleContent && data.articleContent) {
+                    currentArticleContent = data.articleContent;
+                    addDiffViewerButton(currentAssistantMessage);
+                }
+            } else if (data.status === 'error') {
+                stopPolling();
+                showLoading(false);
+                showError(data.error || 'Neznámá chyba');
+            }
+            // If status is 'processing', continue polling
+        })
+        .catch(error => {
+            console.error('Polling error:', error);
+            stopPolling();
             showLoading(false);
             showError('Chyba při komunikaci s AI asistentem.');
         });

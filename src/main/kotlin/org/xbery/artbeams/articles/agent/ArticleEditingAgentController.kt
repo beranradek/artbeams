@@ -4,21 +4,24 @@ import jakarta.annotation.PreDestroy
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
-import org.springframework.http.MediaType
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
+import org.xbery.artbeams.common.agent.AgentJobManager
+import org.xbery.artbeams.common.agent.AgentJobResponse
+import org.xbery.artbeams.common.agent.JobStatus
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 /**
  * Controller for AI-powered article editing agent.
- * Provides AJAX endpoints for chat interface with streaming responses.
+ * Provides AJAX endpoints for chat interface with polling-based job status tracking.
+ * Works reliably regardless of hosting platform timeout settings.
  *
  * @author Radek Beran
  */
@@ -35,6 +38,9 @@ class ArticleEditingAgentController(
     // Rate limiting: track request times per session
     private val rateLimitMap = ConcurrentHashMap<String, MutableList<Long>>()
 
+    // Job management: track active and completed jobs with automatic cleanup
+    private val jobManager = AgentJobManager(JOB_RETENTION_MS)
+
     companion object {
         private const val SESSION_ID_ATTR = "articleAgentSessionId"
         private const val MAX_MESSAGE_LENGTH = 2000
@@ -43,8 +49,7 @@ class ArticleEditingAgentController(
         private const val MAX_BODY_LENGTH = 100000
         private const val RATE_LIMIT_REQUESTS = 10
         private const val RATE_LIMIT_WINDOW_MS = 60000L // 1 minute
-        private const val SSE_TIMEOUT_MS = 25000L // 25 seconds - safe margin before Heroku's 30s timeout
-        private const val RESPONSE_TIMEOUT_MS = 23000L // Stop processing at 23s to allow graceful completion
+        private const val JOB_RETENTION_MS = 300000L // 5 minutes - how long to keep completed jobs
     }
 
     @PreDestroy
@@ -59,6 +64,9 @@ class ArticleEditingAgentController(
             executor.shutdownNow()
             Thread.currentThread().interrupt()
         }
+
+        // Shutdown job manager
+        jobManager.shutdown()
     }
 
     /**
@@ -71,9 +79,10 @@ class ArticleEditingAgentController(
     }
 
     /**
-     * Sends a message to the AI agent and streams the response using Server-Sent Events.
+     * Initiates a new AI agent job and returns a job ID immediately.
+     * The client should poll /job/status/{jobId} to get updates.
      */
-    @PostMapping("/message", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    @PostMapping("/message")
     @ResponseBody
     fun sendMessage(
         @RequestParam("message") message: String,
@@ -81,68 +90,31 @@ class ArticleEditingAgentController(
         @RequestParam("articlePerex", required = false) articlePerex: String?,
         @RequestParam("articleBody", required = false) articleBody: String?,
         session: HttpSession
-    ): SseEmitter {
+    ): ResponseEntity<Map<String, Any>> {
         val sessionId = getOrCreateSessionId(session)
 
         // Input validation
         val validationError = validateInput(message, articleTitle, articlePerex, articleBody)
         if (validationError != null) {
-            val emitter = SseEmitter(SSE_TIMEOUT_MS)
-            executor.execute {
-                try {
-                    emitter.send(
-                        SseEmitter.event()
-                            .name("error")
-                            .data(mapOf("error" to validationError))
-                    )
-                    emitter.completeWithError(IllegalArgumentException(validationError))
-                } catch (e: IOException) {
-                    agentLogger.error("Failed to send validation error", e)
-                }
-            }
-            return emitter
+            return ResponseEntity
+                .badRequest()
+                .body(mapOf("error" to validationError))
         }
 
         // Rate limiting check
         if (!checkRateLimit(sessionId)) {
-            val emitter = SseEmitter(SSE_TIMEOUT_MS)
-            executor.execute {
-                try {
-                    emitter.send(
-                        SseEmitter.event()
-                            .name("error")
-                            .data(mapOf("error" to "Příliš mnoho požadavků. Počkejte prosím chvíli a zkuste to znovu."))
-                    )
-                    emitter.completeWithError(IllegalStateException("Rate limit exceeded"))
-                } catch (e: IOException) {
-                    agentLogger.error("Failed to send rate limit error", e)
-                }
-            }
-            return emitter
+            return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(AgentJobResponse.buildErrorResponse("Příliš mnoho požadavků. Počkejte prosím chvíli a zkuste to znovu."))
         }
 
-        val emitter = SseEmitter(SSE_TIMEOUT_MS) // 25 seconds - safe for Heroku's 30s timeout
+        // Create new job using job manager
+        val job = jobManager.createJob(sessionId)
 
-        // Thread-safe flag to track emitter completion (shared between callbacks and executor)
-        val emitterCompleted = java.util.concurrent.atomic.AtomicBoolean(false)
-
-        // Handle timeout gracefully
-        emitter.onTimeout {
-            agentLogger.warn("SSE emitter timed out for session: $sessionId")
-            emitterCompleted.set(true)
-        }
-
-        emitter.onError { throwable ->
-            agentLogger.error("SSE emitter error for session: $sessionId", throwable)
-            emitterCompleted.set(true)
-        }
-
+        // Process in background
         executor.execute {
-            val startTime = System.currentTimeMillis()
-            var timedOut = false
-
             try {
-                agentLogger.info("Sending message to AI agent for session: $sessionId")
+                agentLogger.info("Processing AI agent job ${job.id} for session: $sessionId")
 
                 val responseSequence = articleEditingAgent.sendMessage(
                     sessionId = sessionId,
@@ -155,90 +127,79 @@ class ArticleEditingAgentController(
                 val completeResponse = StringBuilder()
                 val iterator = responseSequence.iterator()
 
-                while (iterator.hasNext() && !emitterCompleted.get()) {
-                    // Check if we're approaching the timeout limit
-                    val elapsed = System.currentTimeMillis() - startTime
-                    if (elapsed > RESPONSE_TIMEOUT_MS) {
-                        agentLogger.warn("Response timeout approaching for session: $sessionId (${elapsed}ms elapsed)")
-                        timedOut = true
-                        break // Stop processing further chunks
+                while (iterator.hasNext()) {
+                    if (job.cancelled.get()) {
+                        agentLogger.info("Job ${job.id} was cancelled")
+                        break
                     }
 
                     val chunk = iterator.next()
                     completeResponse.append(chunk)
-                    try {
-                        emitter.send(
-                            SseEmitter.event()
-                                .name("message")
-                                .data(mapOf("chunk" to chunk))
-                        )
-                    } catch (e: IOException) {
-                        agentLogger.warn("Client disconnected during streaming", e)
-                        emitter.completeWithError(e)
-                        emitterCompleted.set(true)
-                        return@execute
+
+                    // Store chunk for polling
+                    synchronized(job.chunks) {
+                        job.chunks.add(chunk)
                     }
                 }
 
-                // Only send completion if emitter hasn't already completed/timed out
-                if (!emitterCompleted.get()) {
-                    try {
-                        // Send completion event with article content if detected
-                        val articleContent = articleEditingAgent.extractArticleContent(completeResponse.toString())
+                // Mark as complete
+                if (!job.cancelled.get()) {
+                    job.status = JobStatus.COMPLETED
 
-                        if (timedOut) {
-                            // Send partial completion with timeout warning
-                            emitter.send(
-                                SseEmitter.event()
-                                    .name("partial")
-                                    .data(
-                                        mapOf(
-                                            "hasArticleContent" to (articleContent != null),
-                                            "articleContent" to (articleContent ?: ""),
-                                            "warning" to "Odpověď byla zkrácena kvůli časovému limitu. Prosím zkuste zadat kratší dotaz nebo rozdělte úkol na menší části."
-                                        )
-                                    )
-                            )
-                        } else {
-                            emitter.send(
-                                SseEmitter.event()
-                                    .name("complete")
-                                    .data(
-                                        mapOf(
-                                            "hasArticleContent" to (articleContent != null),
-                                            "articleContent" to (articleContent ?: "")
-                                        )
-                                    )
-                            )
-                        }
-                        emitter.complete()
-                        emitterCompleted.set(true)
-                        agentLogger.info("Message streaming completed for session: $sessionId (${System.currentTimeMillis() - startTime}ms)")
-                    } catch (e: IllegalStateException) {
-                        // Emitter already completed (likely timed out), just log
-                        agentLogger.warn("Emitter already completed for session: $sessionId", e)
+                    // Extract article content if detected
+                    val articleContent = articleEditingAgent.extractArticleContent(completeResponse.toString())
+                    if (articleContent != null) {
+                        job.articleContent = articleContent
                     }
+
+                    agentLogger.info("Job ${job.id} completed successfully (${System.currentTimeMillis() - job.createdAt}ms)")
                 }
 
             } catch (e: Exception) {
-                agentLogger.error("Error during message streaming: ${e.message}", e)
-                if (!emitterCompleted.get()) {
-                    try {
-                        emitter.send(
-                            SseEmitter.event()
-                                .name("error")
-                                .data(mapOf("error" to (e.message ?: "Neznámá chyba")))
-                        )
-                        emitter.completeWithError(e)
-                        emitterCompleted.set(true)
-                    } catch (sendError: Exception) {
-                        agentLogger.error("Failed to send error event (emitter may have timed out)", sendError)
+                agentLogger.error("Error processing job ${job.id}: ${e.message}", e)
+                job.status = JobStatus.ERROR
+
+                // Provide user-friendly error message
+                val userMessage = when {
+                    e.message?.contains("server had an error") == true ->
+                        "OpenAI server zaznamenal chybu při zpracování. Zkuste to prosím znovu."
+                    e.message?.contains("rate limit") == true ->
+                        "Překročen limit požadavků. Počkejte prosím chvíli a zkuste to znovu."
+                    e.message?.contains("timeout") == true ->
+                        "Časový limit vypršel. Zkuste to prosím znovu s kratším dotazem."
+                    else ->
+                        "Došlo k chybě při komunikaci s AI asistentem: ${e.message ?: "Neznámá chyba"}"
+                }
+
+                job.error = userMessage
+
+                // Also add error message as a chunk so it's visible in the UI
+                synchronized(job.chunks) {
+                    if (job.chunks.isEmpty() || !job.chunks.last().contains("chybě")) {
+                        job.chunks.add("Omlouváme se, $userMessage")
                     }
                 }
             }
         }
 
-        return emitter
+        return ResponseEntity.ok(AgentJobResponse.buildCreationResponse(job.id))
+    }
+
+    /**
+     * Polls the status of a job and returns any new chunks since last poll.
+     */
+    @GetMapping("/job/status/{jobId}")
+    @ResponseBody
+    fun getJobStatus(
+        @PathVariable jobId: String,
+        @RequestParam("lastChunkIndex", required = false, defaultValue = "0") lastChunkIndex: Int
+    ): ResponseEntity<Map<String, Any>> {
+        val job = jobManager.getJob(jobId)
+            ?: return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(AgentJobResponse.buildErrorResponse("Job not found"))
+
+        return ResponseEntity.ok(AgentJobResponse.buildStatusResponse(job, lastChunkIndex))
     }
 
     /**

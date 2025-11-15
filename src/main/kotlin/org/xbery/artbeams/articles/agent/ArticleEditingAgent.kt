@@ -36,7 +36,8 @@ class ArticleEditingAgent(
     companion object {
         const val MAX_HISTORY_MESSAGES = 20
         const val SYSTEM_PROMPT_CONFIG_KEY = "article.editing.agent.system.prompt"
-        val DEFAULT_MODEL = ChatModel.GPT_5
+        const val MODEL_ENV_VAR = "LLM_MODEL"
+        val DEFAULT_MODEL = ChatModel.GPT_5_1
 
         // Default system prompt in Czech language
         val DEFAULT_SYSTEM_PROMPT = """
@@ -224,9 +225,23 @@ class ArticleEditingAgent(
             val history = conversationHistory.messages
             val systemPrompt = appConfig.findConfig(SYSTEM_PROMPT_CONFIG_KEY) ?: DEFAULT_SYSTEM_PROMPT
 
+            // Get model from environment variable or use default
+            val modelName = System.getenv(MODEL_ENV_VAR)
+            val model = if (modelName != null && modelName.isNotBlank()) {
+                try {
+                    ChatModel.of(modelName)
+                } catch (e: Exception) {
+                    logger.warn("Invalid model name '$modelName' from $MODEL_ENV_VAR, " +
+                        "using default: ${DEFAULT_MODEL.value()}. Original message: ${e.message}")
+                    DEFAULT_MODEL
+                }
+            } else {
+                DEFAULT_MODEL
+            }
+
             // Build params with conversation history
             val builder = ChatCompletionCreateParams.builder()
-                .model(DEFAULT_MODEL)
+                .model(model)
                 .maxCompletionTokens(30000)
 
             // Always add system message first (it's never stored in history)
@@ -283,7 +298,9 @@ class ArticleEditingAgent(
             }
         } catch (e: Exception) {
             logger.error("Error streaming chat completion: ${e.message}", e)
-            yield("Omlouváme se, došlo k chybě při komunikaci s AI asistentem: ${e.message}")
+            // Re-throw the exception so the caller can handle it appropriately
+            // (e.g., mark job as ERROR instead of COMPLETED)
+            throw e
         }
     }
 
