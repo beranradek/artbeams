@@ -117,70 +117,93 @@
         // Prepare assistant message container
         currentAssistantMessage = appendAssistantMessage('');
 
-        // Create EventSource for streaming
-        const params = new URLSearchParams({
-            message: message,
-            articleTitle: articleTitle,
-            articlePerex: articlePerex,
-            articleBody: articleBody
-        });
+        // Prepare request body with form data
+        const formData = new URLSearchParams();
+        formData.append('message', message);
+        formData.append('articleTitle', articleTitle);
+        formData.append('articlePerex', articlePerex);
+        formData.append('articleBody', articleBody);
 
-        const eventSource = new EventSource('/admin/articles/agent/message?' + params.toString());
-        let assistantResponse = '';
-
-        eventSource.addEventListener('message', function(e) {
-            try {
-                const data = JSON.parse(e.data);
-                if (data.chunk) {
-                    assistantResponse += data.chunk;
-                    updateAssistantMessage(currentAssistantMessage, assistantResponse);
-                    scrollToBottom();
-                }
-            } catch (error) {
-                console.error('Error parsing message event:', error);
-            }
-        });
-
-        eventSource.addEventListener('complete', function(e) {
-            try {
-                const data = JSON.parse(e.data);
-                showLoading(false);
-                eventSource.close();
-
-                // Check if article content was detected
-                if (data.hasArticleContent && data.articleContent) {
-                    currentArticleContent = data.articleContent;
-                    addDiffViewerButton(currentAssistantMessage);
-                }
-            } catch (error) {
-                console.error('Error parsing complete event:', error);
-                showLoading(false);
-                eventSource.close();
-            }
-        });
-
-        eventSource.addEventListener('error', function(e) {
-            console.error('EventSource error:', e);
-            showLoading(false);
-            eventSource.close();
-
-            try {
-                const data = JSON.parse(e.data);
-                if (data.error) {
-                    showError(data.error);
-                } else {
-                    showError('Chyba při komunikaci s AI asistentem. Zkontrolujte, zda je nastavena proměnná prostředí OPENAI_API_KEY.');
-                }
-            } catch (parseError) {
-                showError('Chyba při komunikaci s AI asistentem. Zkontrolujte, zda je nastavena proměnná prostředí OPENAI_API_KEY.');
-            }
-        });
-
-        eventSource.onerror = function() {
-            showLoading(false);
-            eventSource.close();
-            showError('Chyba při komunikaci s AI asistentem. Zkontrolujte, zda je nastavena proměnná prostředí OPENAI_API_KEY.');
+        const headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
         };
+
+        // Add CSRF token if available
+        if (csrfToken && csrfHeaderName) {
+            headers[csrfHeaderName] = csrfToken;
+        }
+
+        // Use fetch with streaming instead of EventSource for POST support
+        fetch('/admin/articles/agent/message', {
+            method: 'POST',
+            headers: headers,
+            body: formData.toString()
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('HTTP error ' + response.status);
+            }
+            return response.body;
+        })
+        .then(body => {
+            const reader = body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let assistantResponse = '';
+
+            function processText({ done, value }) {
+                if (done) {
+                    showLoading(false);
+                    return;
+                }
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop(); // Keep incomplete line in buffer
+
+                lines.forEach(line => {
+                    if (line.startsWith('event:')) {
+                        // Skip event type lines
+                        return;
+                    }
+                    if (line.startsWith('data:')) {
+                        const data = line.substring(5).trim();
+                        if (data) {
+                            try {
+                                const parsed = JSON.parse(data);
+
+                                if (parsed.chunk) {
+                                    // Message chunk
+                                    assistantResponse += parsed.chunk;
+                                    updateAssistantMessage(currentAssistantMessage, assistantResponse);
+                                    scrollToBottom();
+                                } else if (parsed.hasOwnProperty('hasArticleContent')) {
+                                    // Complete event
+                                    if (parsed.hasArticleContent && parsed.articleContent) {
+                                        currentArticleContent = parsed.articleContent;
+                                        addDiffViewerButton(currentAssistantMessage);
+                                    }
+                                } else if (parsed.error) {
+                                    // Error event
+                                    showError(parsed.error);
+                                }
+                            } catch (error) {
+                                console.error('Error parsing SSE data:', error);
+                            }
+                        }
+                    }
+                });
+
+                return reader.read().then(processText);
+            }
+
+            return reader.read().then(processText);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            showLoading(false);
+            showError('Chyba při komunikaci s AI asistentem.');
+        });
     }
 
     function clearConversation() {

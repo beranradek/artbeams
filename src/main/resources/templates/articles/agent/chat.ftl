@@ -1,5 +1,5 @@
 <#-- Article Editing AI Agent Chat Interface -->
-<div class="modal fade" id="articleAgentModal" tabindex="-1" role="dialog" aria-labelledby="articleAgentModalLabel" aria-hidden="true">
+<div class="modal fade" id="articleAgentModal" tabindex="-1" role="dialog" aria-labelledby="articleAgentModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -52,7 +52,7 @@
 </div>
 
 <#-- Diff Viewer Modal -->
-<div class="modal fade" id="articleDiffModal" tabindex="-1" role="dialog" aria-labelledby="articleDiffModalLabel" aria-hidden="true">
+<div class="modal fade" id="articleDiffModal" tabindex="-1" role="dialog" aria-labelledby="articleDiffModalLabel">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
