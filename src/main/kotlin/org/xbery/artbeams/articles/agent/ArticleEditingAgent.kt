@@ -227,6 +227,7 @@ class ArticleEditingAgent(
             // Build params with conversation history
             val builder = ChatCompletionCreateParams.builder()
                 .model(DEFAULT_MODEL)
+                .maxCompletionTokens(30000)
 
             // Always add system message first (it's never stored in history)
             builder.addSystemMessage(systemPrompt)

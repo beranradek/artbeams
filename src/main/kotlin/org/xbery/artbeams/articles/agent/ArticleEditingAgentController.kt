@@ -126,6 +126,7 @@ class ArticleEditingAgentController(
         executor.execute {
             val startTime = System.currentTimeMillis()
             var timedOut = false
+            var emitterCompleted = false
 
             try {
                 agentLogger.info("Sending message to AI agent for session: $sessionId")
@@ -139,15 +140,18 @@ class ArticleEditingAgentController(
                 )
 
                 val completeResponse = StringBuilder()
-                responseSequence.forEach { chunk ->
+                val iterator = responseSequence.iterator()
+
+                while (iterator.hasNext()) {
                     // Check if we're approaching the timeout limit
                     val elapsed = System.currentTimeMillis() - startTime
                     if (elapsed > RESPONSE_TIMEOUT_MS) {
                         agentLogger.warn("Response timeout approaching for session: $sessionId (${elapsed}ms elapsed)")
                         timedOut = true
-                        return@forEach // Stop processing further chunks
+                        break // Stop processing further chunks
                     }
 
+                    val chunk = iterator.next()
                     completeResponse.append(chunk)
                     try {
                         emitter.send(
@@ -158,53 +162,65 @@ class ArticleEditingAgentController(
                     } catch (e: IOException) {
                         agentLogger.warn("Client disconnected during streaming", e)
                         emitter.completeWithError(e)
+                        emitterCompleted = true
                         return@execute
                     }
                 }
 
-                // Send completion event with article content if detected
-                val articleContent = articleEditingAgent.extractArticleContent(completeResponse.toString())
+                // Only send completion if emitter hasn't already completed/timed out
+                if (!emitterCompleted) {
+                    try {
+                        // Send completion event with article content if detected
+                        val articleContent = articleEditingAgent.extractArticleContent(completeResponse.toString())
 
-                if (timedOut) {
-                    // Send partial completion with timeout warning
-                    emitter.send(
-                        SseEmitter.event()
-                            .name("partial")
-                            .data(
-                                mapOf(
-                                    "hasArticleContent" to (articleContent != null),
-                                    "articleContent" to (articleContent ?: ""),
-                                    "warning" to "Odpověď byla zkrácena kvůli časovému limitu. Prosím zkuste zadat kratší dotaz nebo rozdělte úkol na menší části."
-                                )
+                        if (timedOut) {
+                            // Send partial completion with timeout warning
+                            emitter.send(
+                                SseEmitter.event()
+                                    .name("partial")
+                                    .data(
+                                        mapOf(
+                                            "hasArticleContent" to (articleContent != null),
+                                            "articleContent" to (articleContent ?: ""),
+                                            "warning" to "Odpověď byla zkrácena kvůli časovému limitu. Prosím zkuste zadat kratší dotaz nebo rozdělte úkol na menší části."
+                                        )
+                                    )
                             )
-                    )
-                } else {
-                    emitter.send(
-                        SseEmitter.event()
-                            .name("complete")
-                            .data(
-                                mapOf(
-                                    "hasArticleContent" to (articleContent != null),
-                                    "articleContent" to (articleContent ?: "")
-                                )
+                        } else {
+                            emitter.send(
+                                SseEmitter.event()
+                                    .name("complete")
+                                    .data(
+                                        mapOf(
+                                            "hasArticleContent" to (articleContent != null),
+                                            "articleContent" to (articleContent ?: "")
+                                        )
+                                    )
                             )
-                    )
+                        }
+                        emitter.complete()
+                        emitterCompleted = true
+                        agentLogger.info("Message streaming completed for session: $sessionId (${System.currentTimeMillis() - startTime}ms)")
+                    } catch (e: IllegalStateException) {
+                        // Emitter already completed (likely timed out), just log
+                        agentLogger.warn("Emitter already completed for session: $sessionId", e)
+                    }
                 }
-                emitter.complete()
-                agentLogger.info("Message streaming completed for session: $sessionId (${System.currentTimeMillis() - startTime}ms)")
 
             } catch (e: Exception) {
                 agentLogger.error("Error during message streaming: ${e.message}", e)
-                try {
-                    emitter.send(
-                        SseEmitter.event()
-                            .name("error")
-                            .data(mapOf("error" to (e.message ?: "Neznámá chyba")))
-                    )
-                } catch (sendError: IOException) {
-                    agentLogger.error("Failed to send error event", sendError)
+                if (!emitterCompleted) {
+                    try {
+                        emitter.send(
+                            SseEmitter.event()
+                                .name("error")
+                                .data(mapOf("error" to (e.message ?: "Neznámá chyba")))
+                        )
+                        emitter.completeWithError(e)
+                    } catch (sendError: Exception) {
+                        agentLogger.error("Failed to send error event (emitter may have timed out)", sendError)
+                    }
                 }
-                emitter.completeWithError(e)
             }
         }
 
