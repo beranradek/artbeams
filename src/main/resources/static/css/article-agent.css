@@ -1,0 +1,320 @@
+/**
+ * Article Editing AI Agent - Styles
+ * Responsive and mobile-ready chat interface
+ */
+
+/* Chat Modal */
+#articleAgentModal .modal-dialog {
+    max-width: 800px;
+}
+
+#articleAgentModal .modal-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    max-height: 80vh;
+}
+
+/* Chat Messages Container */
+.agent-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.agent-welcome-message {
+    padding: 15px;
+    background-color: #e7f3ff;
+    border-left: 4px solid #0066cc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    color: #004085;
+}
+
+.agent-welcome-message i {
+    margin-right: 8px;
+    color: #0066cc;
+}
+
+/* Individual Messages */
+.agent-message {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+    animation: messageSlideIn 0.3s ease-out;
+}
+
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.agent-user-message {
+    justify-content: flex-end;
+}
+
+.agent-user-message .agent-message-content {
+    background-color: #0066cc;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 18px 18px 4px 18px;
+    max-width: 70%;
+    word-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.agent-assistant-message {
+    justify-content: flex-start;
+}
+
+.agent-message-icon {
+    width: 32px;
+    height: 32px;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.agent-assistant-message .agent-message-content {
+    background-color: white;
+    color: #212529;
+    padding: 10px 15px;
+    border-radius: 18px 18px 18px 4px;
+    max-width: 70%;
+    word-wrap: break-word;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    white-space: pre-wrap;
+}
+
+.agent-message-actions {
+    margin-top: 8px;
+}
+
+.agent-diff-btn {
+    font-size: 0.875rem;
+}
+
+/* Error Message */
+.agent-error-message {
+    padding: 12px 20px;
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+    margin: 15px 20px;
+    border-radius: 4px;
+}
+
+.agent-error-message i {
+    margin-right: 8px;
+}
+
+/* Loading Indicator */
+.agent-loading {
+    padding: 12px 20px;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.agent-loading i {
+    margin-right: 8px;
+}
+
+/* Input Area */
+.agent-input-area {
+    padding: 20px;
+    background-color: white;
+    border-top: 1px solid #dee2e6;
+}
+
+#agent-message-input {
+    margin-bottom: 10px;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.agent-input-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.agent-input-actions button {
+    min-width: 120px;
+}
+
+/* Diff Viewer Modal */
+#articleDiffModal .modal-dialog {
+    max-width: 1200px;
+}
+
+#articleDiffModal .modal-body {
+    padding: 20px;
+}
+
+.diff-viewer {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.diff-editor {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+    min-height: 500px;
+    max-height: 500px;
+    resize: vertical;
+}
+
+.diff-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Diff line highlighting */
+.diff-viewer {
+    line-height: 1.5;
+}
+
+/* Article Editor Integration */
+.article-agent-trigger {
+    position: relative;
+    display: inline-block;
+}
+
+.article-agent-icon {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    color: white;
+    font-size: 24px;
+}
+
+.article-agent-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.article-agent-icon:active {
+    transform: scale(0.95);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    #articleAgentModal .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    #articleAgentModal .modal-body {
+        height: calc(100vh - 120px);
+    }
+
+    .agent-user-message .agent-message-content,
+    .agent-assistant-message .agent-message-content {
+        max-width: 85%;
+    }
+
+    .agent-input-actions {
+        flex-direction: column;
+    }
+
+    .agent-input-actions button {
+        width: 100%;
+        min-width: auto;
+    }
+
+    #articleDiffModal .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    #articleDiffModal .row {
+        flex-direction: column;
+    }
+
+    #articleDiffModal .col-md-6 {
+        margin-bottom: 20px;
+    }
+
+    .diff-viewer,
+    .diff-editor {
+        max-height: 300px;
+    }
+
+    .article-agent-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        right: 15px;
+        top: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .agent-chat-messages {
+        padding: 15px;
+    }
+
+    .agent-input-area {
+        padding: 15px;
+    }
+
+    #agent-message-input {
+        min-height: 60px;
+    }
+
+    .diff-viewer,
+    .diff-editor {
+        font-size: 0.75rem;
+    }
+}
+
+/* Accessibility */
+.agent-message-content:focus,
+#agent-message-input:focus {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .article-agent-icon,
+    #articleAgentModal,
+    #articleDiffModal {
+        display: none !important;
+    }
+}

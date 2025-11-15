@@ -121,6 +121,9 @@ dependencies {
     // Password strength estimation library https://github.com/nulab/zxcvbn4j
     implementation("com.nulab-inc:zxcvbn:$zxcvbnVersion")
 
+    // OpenAI SDK for article editing agent
+    implementation("com.openai:openai-java-spring-boot-starter:$openaiVersion")
+
     // Mailing
     implementation "com.mailgun:mailgun-java:$mailgunVersion"
 

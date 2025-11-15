@@ -109,6 +109,12 @@
   </div>
 </form>
 
+<#-- AI Agent for article editing -->
+<#include "/articles/agent/chat.ftl">
+<div class="article-agent-icon" onclick="window.ArticleAgent.openChat()" title="AI Asistent pro editaci článků">
+    <i class="fas fa-robot"></i>
+</div>
+
 <script nonce="${_cspNonce}" src="/static/js/markdown-it.js?v190420"></script>
 <#--
 markdown-it-attrs is extension/plugin of markdown-it that allows custom styles using attributes such as {.text-box}
