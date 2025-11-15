@@ -178,10 +178,18 @@
                                     updateAssistantMessage(currentAssistantMessage, assistantResponse);
                                     scrollToBottom();
                                 } else if (parsed.hasOwnProperty('hasArticleContent')) {
-                                    // Complete event
+                                    // Complete or partial event
                                     if (parsed.hasArticleContent && parsed.articleContent) {
                                         currentArticleContent = parsed.articleContent;
                                         addDiffViewerButton(currentAssistantMessage);
+                                    }
+                                    // Show warning if this is a partial response
+                                    if (parsed.warning) {
+                                        const warningDiv = document.createElement('div');
+                                        warningDiv.className = 'agent-warning-message';
+                                        warningDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + parsed.warning;
+                                        currentAssistantMessage.appendChild(warningDiv);
+                                        scrollToBottom();
                                     }
                                 } else if (parsed.error) {
                                     // Error event

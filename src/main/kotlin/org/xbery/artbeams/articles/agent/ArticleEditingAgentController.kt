@@ -43,6 +43,8 @@ class ArticleEditingAgentController(
         private const val MAX_BODY_LENGTH = 100000
         private const val RATE_LIMIT_REQUESTS = 10
         private const val RATE_LIMIT_WINDOW_MS = 60000L // 1 minute
+        private const val SSE_TIMEOUT_MS = 25000L // 25 seconds - safe margin before Heroku's 30s timeout
+        private const val RESPONSE_TIMEOUT_MS = 23000L // Stop processing at 23s to allow graceful completion
     }
 
     @PreDestroy
@@ -85,7 +87,7 @@ class ArticleEditingAgentController(
         // Input validation
         val validationError = validateInput(message, articleTitle, articlePerex, articleBody)
         if (validationError != null) {
-            val emitter = SseEmitter(300000L)
+            val emitter = SseEmitter(SSE_TIMEOUT_MS)
             executor.execute {
                 try {
                     emitter.send(
@@ -103,7 +105,7 @@ class ArticleEditingAgentController(
 
         // Rate limiting check
         if (!checkRateLimit(sessionId)) {
-            val emitter = SseEmitter(300000L)
+            val emitter = SseEmitter(SSE_TIMEOUT_MS)
             executor.execute {
                 try {
                     emitter.send(
@@ -119,9 +121,12 @@ class ArticleEditingAgentController(
             return emitter
         }
 
-        val emitter = SseEmitter(300000L) // 5 minutes timeout
+        val emitter = SseEmitter(SSE_TIMEOUT_MS) // 25 seconds - safe for Heroku's 30s timeout
 
         executor.execute {
+            val startTime = System.currentTimeMillis()
+            var timedOut = false
+
             try {
                 agentLogger.info("Sending message to AI agent for session: $sessionId")
 
@@ -135,6 +140,14 @@ class ArticleEditingAgentController(
 
                 val completeResponse = StringBuilder()
                 responseSequence.forEach { chunk ->
+                    // Check if we're approaching the timeout limit
+                    val elapsed = System.currentTimeMillis() - startTime
+                    if (elapsed > RESPONSE_TIMEOUT_MS) {
+                        agentLogger.warn("Response timeout approaching for session: $sessionId (${elapsed}ms elapsed)")
+                        timedOut = true
+                        return@forEach // Stop processing further chunks
+                    }
+
                     completeResponse.append(chunk)
                     try {
                         emitter.send(
@@ -151,18 +164,34 @@ class ArticleEditingAgentController(
 
                 // Send completion event with article content if detected
                 val articleContent = articleEditingAgent.extractArticleContent(completeResponse.toString())
-                emitter.send(
-                    SseEmitter.event()
-                        .name("complete")
-                        .data(
-                            mapOf(
-                                "hasArticleContent" to (articleContent != null),
-                                "articleContent" to (articleContent ?: "")
+
+                if (timedOut) {
+                    // Send partial completion with timeout warning
+                    emitter.send(
+                        SseEmitter.event()
+                            .name("partial")
+                            .data(
+                                mapOf(
+                                    "hasArticleContent" to (articleContent != null),
+                                    "articleContent" to (articleContent ?: ""),
+                                    "warning" to "Odpověď byla zkrácena kvůli časovému limitu. Prosím zkuste zadat kratší dotaz nebo rozdělte úkol na menší části."
+                                )
                             )
-                        )
-                )
+                    )
+                } else {
+                    emitter.send(
+                        SseEmitter.event()
+                            .name("complete")
+                            .data(
+                                mapOf(
+                                    "hasArticleContent" to (articleContent != null),
+                                    "articleContent" to (articleContent ?: "")
+                                )
+                            )
+                    )
+                }
                 emitter.complete()
-                agentLogger.info("Message streaming completed for session: $sessionId")
+                agentLogger.info("Message streaming completed for session: $sessionId (${System.currentTimeMillis() - startTime}ms)")
 
             } catch (e: Exception) {
                 agentLogger.error("Error during message streaming: ${e.message}", e)

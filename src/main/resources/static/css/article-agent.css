@@ -121,6 +121,20 @@
     margin-right: 8px;
 }
 
+.agent-warning-message {
+    padding: 12px 20px;
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #856404;
+    margin: 10px 0 0 0;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.agent-warning-message i {
+    margin-right: 8px;
+}
+
 /* Loading Indicator */
 .agent-loading {
     padding: 12px 20px;
