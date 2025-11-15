@@ -7,6 +7,11 @@ server.error.path: /error
 
 # Session timeout. Longer for editing articles without saving them "each minute".
 server.servlet.session.timeout: 120m
+
+# MVC async request timeout - must be less than Heroku's 30s timeout
+# Set to 28s to allow SSE emitter (25s) to complete gracefully
+spring.mvc.async.request-timeout: 28000
+
 spring.jackson.serialization.indent-output: true
 spring.messages.fallback-to-system-locale: false
 spring.servlet.multipart.max-file-size: 4MB

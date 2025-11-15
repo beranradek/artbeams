@@ -123,6 +123,15 @@ class ArticleEditingAgentController(
 
         val emitter = SseEmitter(SSE_TIMEOUT_MS) // 25 seconds - safe for Heroku's 30s timeout
 
+        // Handle timeout gracefully
+        emitter.onTimeout {
+            agentLogger.warn("SSE emitter timed out for session: $sessionId")
+        }
+
+        emitter.onError { throwable ->
+            agentLogger.error("SSE emitter error for session: $sessionId", throwable)
+        }
+
         executor.execute {
             val startTime = System.currentTimeMillis()
             var timedOut = false
