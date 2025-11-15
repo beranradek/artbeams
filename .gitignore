@@ -8,12 +8,14 @@ tmp
 dist
 /.ai
 /.idea
+/.serena
 /*.iml
 /out
 /.idea_modules
 /.classpath
 /.project
 .sc
+.mcp.json
 
 # Eclipse
 .cache

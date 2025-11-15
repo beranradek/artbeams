@@ -124,6 +124,9 @@ dependencies {
     // OpenAI SDK for article editing agent
     implementation("com.openai:openai-java-spring-boot-starter:$openaiVersion")
 
+    // Caffeine cache for conversation history with TTL
+    implementation("com.github.ben-manes.caffeine:caffeine")
+
     // Mailing
     implementation "com.mailgun:mailgun-java:$mailgunVersion"
 

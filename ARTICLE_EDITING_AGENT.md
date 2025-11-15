@@ -78,13 +78,6 @@ Set the OpenAI API key as an environment variable:
 export OPENAI_API_KEY="your-openai-api-key-here"
 ```
 
-Alternatively, configure it in `application.yml` or `application-local.yml`:
-
-```yaml
-openai:
-  api-key: your-openai-api-key-here
-```
-
 ### 3. Database Configuration
 
 Run the SQL script to add the system prompt configuration:
@@ -99,13 +92,6 @@ Or manually insert into the `config` table:
 INSERT INTO config (entry_key, entry_value)
 VALUES ('article.editing.agent.system.prompt', 'your-custom-system-prompt-here')
 ON CONFLICT (entry_key) DO UPDATE SET entry_value = EXCLUDED.entry_value;
-```
-
-### 4. Build and Run
-
-```bash
-./gradlew clean build
-./gradlew bootRun --args='--spring.profiles.active=local'
 ```
 
 ## Usage
@@ -133,20 +119,10 @@ ON CONFLICT (entry_key) DO UPDATE SET entry_value = EXCLUDED.entry_value;
 
 ## Configuration
 
-### System Prompt
-
-The system prompt can be customized via the `config` table. The default prompt instructs the agent to:
-- Assist with article editing in Czech language
-- Use CommonMark markdown format
-- Return complete article content in triple backticks
-- Analyze the current article context
-- Follow Czech language rules
-
 ### Model Selection
 
-The agent uses GPT-4o by default (configured in `ArticleEditingAgent.DEFAULT_MODEL`). To change the model, update the constant in the service class.
-
-**Note**: GPT-5 is not yet released by OpenAI. When available, update the model name in the code.
+The agent uses GPT-4o by default (configured in `ArticleEditingAgent.DEFAULT_MODEL`). 
+To change the model, update the constant in the service class.
 
 ### Conversation History
 
@@ -185,30 +161,11 @@ Each browser session gets a unique conversation ID stored in the HTTP session. T
 
 ## Troubleshooting
 
-### "OPENAI_API_KEY not configured" Error
-
-**Solution**: Set the `OPENAI_API_KEY` environment variable or configure it in `application.yml`
-
-### Agent Not Responding
-
-**Possible causes**:
-1. Network connectivity issues
-2. OpenAI API quota exceeded
-3. Invalid API key
-
-**Solution**: Check application logs for detailed error messages
-
 ### Streaming Cuts Off
 
 **Possible cause**: Long responses exceeding timeout
 
 **Solution**: The SSE timeout is set to 5 minutes. For longer responses, adjust the timeout in `ArticleEditingAgentController`
-
-### Modal Not Opening
-
-**Possible cause**: JavaScript not loaded or Bootstrap modal conflict
-
-**Solution**: Check browser console for errors. Ensure Bootstrap 5 is loaded.
 
 ## Future Enhancements
 
@@ -218,22 +175,8 @@ Potential improvements for future versions:
 2. **File Upload**: Allow uploading reference documents
 3. **Multi-language Support**: Support for other languages besides Czech
 4. **Custom Tools**: Integrate custom tools like image generation, SEO analysis, etc.
-5. **Export Formats**: Support for exporting to different formats (PDF, DOCX, etc.)
-6. **Collaboration**: Multiple users editing with AI assistance
-7. **Version History**: Track all AI-generated versions
 
 ## Dependencies
 
-- Spring Boot 3.1.5
 - OpenAI Java SDK 4.8.0
-- Bootstrap 5.3
-- Font Awesome 6.0.0
 - Server-Sent Events (SSE)
-
-## License
-
-Same as the ArtBeams project.
-
-## Support
-
-For issues or questions, please refer to the main CLAUDE.md file or contact the development team.

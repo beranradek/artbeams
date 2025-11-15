@@ -24,13 +24,15 @@
       "Bash(./gradlew:*)",
       "WebFetch(domain:github.com)",
       "Bash(java -version:*)",
-      "WebFetch(domain:developers.mailerlite.com)"
+      "WebFetch(domain:developers.mailerlite.com)",
+      "mcp__serena__find_file",
+      "mcp__serena__think_about_collected_information"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "serena"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

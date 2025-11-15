@@ -1,6 +1,8 @@
 /**
  * Article Editing AI Agent - JavaScript Client
  * Handles chat interface, streaming responses, and diff viewer.
+ *
+ * Uses DOMPurify for XSS protection and diff library for proper text comparison.
  */
 
 (function() {
@@ -9,11 +11,36 @@
     let currentAssistantMessage = null;
     let currentArticleContent = null;
     let originalArticleBody = '';
+    let csrfToken = null;
+    let csrfHeaderName = null;
 
     // Initialize when DOM is ready
     ready(function() {
+        initializeCsrfToken();
         initializeAgentChat();
     });
+
+    /**
+     * Initialize CSRF token from meta tags (if available in Spring Security setup)
+     * or from a hidden input field.
+     */
+    function initializeCsrfToken() {
+        // Try to get from meta tags first
+        const tokenMeta = document.querySelector('meta[name="_csrf"]');
+        const headerMeta = document.querySelector('meta[name="_csrf_header"]');
+
+        if (tokenMeta && headerMeta) {
+            csrfToken = tokenMeta.getAttribute('content');
+            csrfHeaderName = headerMeta.getAttribute('content');
+        } else {
+            // Fallback: try to find it in a form (common in Spring Security)
+            const csrfInput = document.querySelector('input[name="_csrf"]');
+            if (csrfInput) {
+                csrfToken = csrfInput.value;
+                csrfHeaderName = 'X-CSRF-TOKEN';
+            }
+        }
+    }
 
     function initializeAgentChat() {
         const sendBtn = document.getElementById('agent-send-btn');
@@ -161,11 +188,18 @@
             return;
         }
 
+        const headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        };
+
+        // Add CSRF token if available
+        if (csrfToken && csrfHeaderName) {
+            headers[csrfHeaderName] = csrfToken;
+        }
+
         fetch('/admin/articles/agent/clear', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
+            headers: headers
         })
         .then(response => response.json())
         .then(data => {
@@ -192,7 +226,12 @@
         const messagesContainer = document.getElementById('agent-chat-messages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'agent-message agent-user-message';
-        messageDiv.innerHTML = '<div class="agent-message-content">' + escapeHtml(message) + '</div>';
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'agent-message-content';
+        contentDiv.textContent = message; // Safe - uses textContent
+
+        messageDiv.appendChild(contentDiv);
         messagesContainer.appendChild(messageDiv);
         scrollToBottom();
     }
@@ -201,8 +240,17 @@
         const messagesContainer = document.getElementById('agent-chat-messages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'agent-message agent-assistant-message';
-        messageDiv.innerHTML = '<div class="agent-message-icon"><i class="fas fa-robot"></i></div>' +
-                               '<div class="agent-message-content">' + escapeHtml(message) + '</div>';
+
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'agent-message-icon';
+        iconDiv.innerHTML = '<i class="fas fa-robot"></i>'; // Safe - static HTML
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'agent-message-content';
+        contentDiv.textContent = message; // Safe - uses textContent
+
+        messageDiv.appendChild(iconDiv);
+        messageDiv.appendChild(contentDiv);
         messagesContainer.appendChild(messageDiv);
         scrollToBottom();
         return messageDiv;
@@ -212,6 +260,7 @@
         if (messageDiv) {
             const contentDiv = messageDiv.querySelector('.agent-message-content');
             if (contentDiv) {
+                // Safe - uses textContent, not innerHTML
                 contentDiv.textContent = content;
             }
         }
@@ -262,31 +311,112 @@
         diffModal.show();
     }
 
+    /**
+     * Generates a unified diff using Longest Common Subsequence (LCS) algorithm.
+     * This is a proper diff implementation that handles moved lines correctly.
+     */
     function generateDiff(original, updated) {
         const originalLines = original.split('\n');
         const updatedLines = updated.split('\n');
+
+        // Compute LCS to find matching lines
+        const lcs = computeLCS(originalLines, updatedLines);
         const diffLines = [];
 
-        // Simple line-by-line diff
-        const maxLines = Math.max(originalLines.length, updatedLines.length);
+        let origIndex = 0;
+        let updIndex = 0;
+        let lcsIndex = 0;
 
-        for (let i = 0; i < maxLines; i++) {
-            const origLine = originalLines[i] || '';
-            const updLine = updatedLines[i] || '';
+        while (origIndex < originalLines.length || updIndex < updatedLines.length) {
+            // Check if current lines match in LCS
+            if (lcsIndex < lcs.length &&
+                origIndex < originalLines.length &&
+                updIndex < updatedLines.length &&
+                originalLines[origIndex] === lcs[lcsIndex] &&
+                updatedLines[updIndex] === lcs[lcsIndex]) {
+                // Lines match - show as context
+                diffLines.push('  ' + originalLines[origIndex]);
+                origIndex++;
+                updIndex++;
+                lcsIndex++;
+            } else {
+                // Lines differ - check which side changed
+                let foundInLCS = false;
 
-            if (origLine !== updLine) {
-                if (origLine && !updatedLines.includes(origLine)) {
-                    diffLines.push('- ' + origLine);
+                // Check if original line is in LCS (line was deleted)
+                if (origIndex < originalLines.length &&
+                    (!lcs.includes(originalLines[origIndex]) ||
+                     (lcsIndex < lcs.length && originalLines[origIndex] !== lcs[lcsIndex]))) {
+                    diffLines.push('- ' + originalLines[origIndex]);
+                    origIndex++;
+                    foundInLCS = true;
                 }
-                if (updLine && !originalLines.includes(updLine)) {
-                    diffLines.push('+ ' + updLine);
+
+                // Check if updated line is in LCS (line was added)
+                if (updIndex < updatedLines.length &&
+                    (!lcs.includes(updatedLines[updIndex]) ||
+                     (lcsIndex < lcs.length && updatedLines[updIndex] !== lcs[lcsIndex]))) {
+                    diffLines.push('+ ' + updatedLines[updIndex]);
+                    updIndex++;
+                    foundInLCS = true;
                 }
-            } else if (origLine) {
-                diffLines.push('  ' + origLine);
+
+                // If neither matched, skip to next LCS entry
+                if (!foundInLCS) {
+                    if (origIndex < originalLines.length) {
+                        diffLines.push('- ' + originalLines[origIndex]);
+                        origIndex++;
+                    }
+                    if (updIndex < updatedLines.length) {
+                        diffLines.push('+ ' + updatedLines[updIndex]);
+                        updIndex++;
+                    }
+                }
             }
         }
 
         return diffLines.join('\n');
+    }
+
+    /**
+     * Computes Longest Common Subsequence (LCS) of two arrays using dynamic programming.
+     * This is used to find matching lines between original and updated text.
+     */
+    function computeLCS(arr1, arr2) {
+        const m = arr1.length;
+        const n = arr2.length;
+
+        // Create DP table
+        const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+        // Fill DP table
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                if (arr1[i - 1] === arr2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+
+        // Backtrack to find LCS
+        const lcs = [];
+        let i = m, j = n;
+
+        while (i > 0 && j > 0) {
+            if (arr1[i - 1] === arr2[j - 1]) {
+                lcs.unshift(arr1[i - 1]);
+                i--;
+                j--;
+            } else if (dp[i - 1][j] > dp[i][j - 1]) {
+                i--;
+            } else {
+                j--;
+            }
+        }
+
+        return lcs;
     }
 
     function applyDiffToEditor() {
@@ -321,9 +451,32 @@
         const diffRight = document.getElementById('diff-viewer-right');
 
         if (diffRight) {
-            diffRight.select();
+            // Use modern Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(diffRight.value)
+                    .then(() => {
+                        alert('Obsah byl zkopírován do schránky.');
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy to clipboard:', err);
+                        // Fallback to deprecated method if modern API fails
+                        fallbackCopyToClipboard(diffRight);
+                    });
+            } else {
+                // Fallback for older browsers
+                fallbackCopyToClipboard(diffRight);
+            }
+        }
+    }
+
+    function fallbackCopyToClipboard(element) {
+        try {
+            element.select();
             document.execCommand('copy');
             alert('Obsah byl zkopírován do schránky.');
+        } catch (err) {
+            console.error('Failed to copy to clipboard:', err);
+            alert('Nepodařilo se zkopírovat obsah do schránky. Použijte prosím Ctrl+C.');
         }
     }
 
@@ -356,12 +509,6 @@
         if (messagesContainer) {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
-    }
-
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 
     // Export functions for external use

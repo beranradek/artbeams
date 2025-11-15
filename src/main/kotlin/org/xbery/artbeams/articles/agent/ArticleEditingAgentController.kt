@@ -1,5 +1,6 @@
 package org.xbery.artbeams.articles.agent
 
+import jakarta.annotation.PreDestroy
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
@@ -11,7 +12,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Controller for AI-powered article editing agent.
@@ -26,11 +29,34 @@ class ArticleEditingAgentController(
     common: ControllerComponents
 ) : BaseController(common) {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val agentLogger = LoggerFactory.getLogger(javaClass)
     private val executor = Executors.newCachedThreadPool()
+
+    // Rate limiting: track request times per session
+    private val rateLimitMap = ConcurrentHashMap<String, MutableList<Long>>()
 
     companion object {
         private const val SESSION_ID_ATTR = "articleAgentSessionId"
+        private const val MAX_MESSAGE_LENGTH = 2000
+        private const val MAX_TITLE_LENGTH = 500
+        private const val MAX_PEREX_LENGTH = 2000
+        private const val MAX_BODY_LENGTH = 100000
+        private const val RATE_LIMIT_REQUESTS = 10
+        private const val RATE_LIMIT_WINDOW_MS = 60000L // 1 minute
+    }
+
+    @PreDestroy
+    fun cleanup() {
+        agentLogger.info("Shutting down article agent executor")
+        executor.shutdown()
+        try {
+            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                executor.shutdownNow()
+            }
+        } catch (e: InterruptedException) {
+            executor.shutdownNow()
+            Thread.currentThread().interrupt()
+        }
     }
 
     /**
@@ -54,12 +80,50 @@ class ArticleEditingAgentController(
         @RequestParam("articleBody", required = false) articleBody: String?,
         session: HttpSession
     ): SseEmitter {
-        val emitter = SseEmitter(300000L) // 5 minutes timeout
         val sessionId = getOrCreateSessionId(session)
+
+        // Input validation
+        val validationError = validateInput(message, articleTitle, articlePerex, articleBody)
+        if (validationError != null) {
+            val emitter = SseEmitter(300000L)
+            executor.execute {
+                try {
+                    emitter.send(
+                        SseEmitter.event()
+                            .name("error")
+                            .data(mapOf("error" to validationError))
+                    )
+                    emitter.completeWithError(IllegalArgumentException(validationError))
+                } catch (e: IOException) {
+                    agentLogger.error("Failed to send validation error", e)
+                }
+            }
+            return emitter
+        }
+
+        // Rate limiting check
+        if (!checkRateLimit(sessionId)) {
+            val emitter = SseEmitter(300000L)
+            executor.execute {
+                try {
+                    emitter.send(
+                        SseEmitter.event()
+                            .name("error")
+                            .data(mapOf("error" to "Příliš mnoho požadavků. Počkejte prosím chvíli a zkuste to znovu."))
+                    )
+                    emitter.completeWithError(IllegalStateException("Rate limit exceeded"))
+                } catch (e: IOException) {
+                    agentLogger.error("Failed to send rate limit error", e)
+                }
+            }
+            return emitter
+        }
+
+        val emitter = SseEmitter(300000L) // 5 minutes timeout
 
         executor.execute {
             try {
-                logger.info("Sending message to AI agent for session: $sessionId")
+                agentLogger.info("Sending message to AI agent for session: $sessionId")
 
                 val responseSequence = articleEditingAgent.sendMessage(
                     sessionId = sessionId,
@@ -79,7 +143,7 @@ class ArticleEditingAgentController(
                                 .data(mapOf("chunk" to chunk))
                         )
                     } catch (e: IOException) {
-                        logger.warn("Client disconnected during streaming", e)
+                        agentLogger.warn("Client disconnected during streaming", e)
                         emitter.completeWithError(e)
                         return@execute
                     }
@@ -98,10 +162,10 @@ class ArticleEditingAgentController(
                         )
                 )
                 emitter.complete()
-                logger.info("Message streaming completed for session: $sessionId")
+                agentLogger.info("Message streaming completed for session: $sessionId")
 
             } catch (e: Exception) {
-                logger.error("Error during message streaming", e)
+                agentLogger.error("Error during message streaming: ${e.message}", e)
                 try {
                     emitter.send(
                         SseEmitter.event()
@@ -109,7 +173,7 @@ class ArticleEditingAgentController(
                             .data(mapOf("error" to (e.message ?: "Neznámá chyba")))
                     )
                 } catch (sendError: IOException) {
-                    logger.error("Failed to send error event", sendError)
+                    agentLogger.error("Failed to send error event", sendError)
                 }
                 emitter.completeWithError(e)
             }
@@ -143,5 +207,56 @@ class ArticleEditingAgentController(
             session.setAttribute(SESSION_ID_ATTR, sessionId)
         }
         return sessionId
+    }
+
+    /**
+     * Validates input parameters for length limits.
+     * Returns error message if validation fails, null otherwise.
+     */
+    private fun validateInput(
+        message: String,
+        articleTitle: String?,
+        articlePerex: String?,
+        articleBody: String?
+    ): String? {
+        if (message.isBlank()) {
+            return "Zpráva nesmí být prázdná"
+        }
+        if (message.length > MAX_MESSAGE_LENGTH) {
+            return "Zpráva je příliš dlouhá (maximum $MAX_MESSAGE_LENGTH znaků)"
+        }
+        if (articleTitle != null && articleTitle.length > MAX_TITLE_LENGTH) {
+            return "Titulek článku je příliš dlouhý (maximum $MAX_TITLE_LENGTH znaků)"
+        }
+        if (articlePerex != null && articlePerex.length > MAX_PEREX_LENGTH) {
+            return "Perex článku je příliš dlouhý (maximum $MAX_PEREX_LENGTH znaků)"
+        }
+        if (articleBody != null && articleBody.length > MAX_BODY_LENGTH) {
+            return "Tělo článku je příliš dlouhé (maximum $MAX_BODY_LENGTH znaků)"
+        }
+        return null
+    }
+
+    /**
+     * Checks if the session has exceeded rate limit.
+     * Returns true if request is allowed, false if rate limit exceeded.
+     */
+    private fun checkRateLimit(sessionId: String): Boolean {
+        val now = System.currentTimeMillis()
+        val requestTimes = rateLimitMap.getOrPut(sessionId) { mutableListOf() }
+
+        synchronized(requestTimes) {
+            // Remove old entries outside the time window
+            requestTimes.removeIf { it < now - RATE_LIMIT_WINDOW_MS }
+
+            // Check if limit exceeded
+            if (requestTimes.size >= RATE_LIMIT_REQUESTS) {
+                return false
+            }
+
+            // Add current request
+            requestTimes.add(now)
+            return true
+        }
     }
 }

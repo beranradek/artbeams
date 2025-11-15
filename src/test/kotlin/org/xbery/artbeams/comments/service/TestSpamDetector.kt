@@ -30,7 +30,7 @@ class TestSpamDetector(appConfig: AppConfig, private val enableLanguageDetection
     // Expose other protected methods as public for testing
     public override fun containsSuspiciousPatterns(comment: String): Boolean = super.containsSuspiciousPatterns(comment)
     public override fun containsSuspiciousEmail(email: String): Boolean = super.containsSuspiciousEmail(email)
-    public override fun containsSuspiciousUsername(username: String): Boolean = super.containsSuspiciousUsername(username)
+    public override fun containsSuspiciousUsername(userName: String): Boolean = super.containsSuspiciousUsername(userName)
     public override fun containsSuspiciousContent(comment: String): Boolean = super.containsSuspiciousContent(comment)
     public override fun containsSuspiciousLinks(comment: String): Boolean = super.containsSuspiciousLinks(comment)
 } 

@@ -6,9 +6,7 @@
         <h5 class="modal-title" id="articleAgentModalLabel">
           <i class="fas fa-robot"></i> AI Asistent pro editaci článků
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Zavřít">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
       </div>
       <div class="modal-body">
         <#-- Chat messages container -->
@@ -61,9 +59,7 @@
         <h5 class="modal-title" id="articleDiffModalLabel">
           <i class="fas fa-code-compare"></i> Porovnání verzí článku
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Zavřít">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
       </div>
       <div class="modal-body">
         <div class="row">
