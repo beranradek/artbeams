@@ -29,6 +29,7 @@ class ProductUnmapper : RecordUnmapper<Product, ProductsRecord> {
         record.mailingGroupId = product.mailingGroupId
         record.priceRegular = product.priceRegular.price
         record.priceDiscounted = product.priceDiscounted?.price
+        record.simpleShopProductId = product.simpleShopProductId
         return record
     }
 }

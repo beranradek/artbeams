@@ -98,7 +98,8 @@ CREATE TABLE products (
 	confirmation_mailing_group_id VARCHAR(128) DEFAULT NULL,
 	mailing_group_id VARCHAR(128) DEFAULT NULL,
 	price_regular DECIMAL(19, 4) NOT NULL,
-	price_discounted DECIMAL(19, 4)
+	price_discounted DECIMAL(19, 4),
+	simple_shop_product_id VARCHAR(64) DEFAULT NULL
 );
 
 CREATE TABLE user_access (

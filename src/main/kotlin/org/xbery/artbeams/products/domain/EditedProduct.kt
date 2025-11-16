@@ -16,5 +16,6 @@ data class EditedProduct(
     val confirmationMailingGroupId: String?,
     val mailingGroupId: String?,
     val priceRegularAmount: BigDecimal?,
-    val priceDiscountedAmount: BigDecimal?
+    val priceDiscountedAmount: BigDecimal?,
+    val simpleShopProductId: String?
 )

@@ -39,7 +39,8 @@ class ProductMapper : RecordMapper<ProductsRecord, Product> {
                     price = requireNotNull(it),
                     currency = Price.DEFAULT_CURRENCY
                 )
-            }
+            },
+            simpleShopProductId = record.simpleShopProductId
         )
     }
 }

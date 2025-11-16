@@ -27,7 +27,9 @@ data class Product(
     /** Regular price of product. */
     val priceRegular: Price,
     /** Discounted price of product. */
-    val priceDiscounted: Price?
+    val priceDiscounted: Price?,
+    /** SimpleShop.cz product ID for synchronization. */
+    val simpleShopProductId: String?
 ) : Asset() {
     /** Price of product. */
     val price: Price
@@ -55,30 +57,32 @@ data class Product(
             confirmationMailingGroupId = edited.confirmationMailingGroupId,
             mailingGroupId = edited.mailingGroupId,
             priceRegular = updatedPriceRegular,
-            priceDiscounted = updatedPriceDiscounted
+            priceDiscounted = updatedPriceDiscounted,
+            simpleShopProductId = edited.simpleShopProductId
         )
     }
 
     fun toEdited(): EditedProduct {
         return EditedProduct(
-            this.id, 
-            this.slug, 
-            this.title, 
-            this.subtitle, 
-            this.fileName, 
-            this.listingImage, 
-            this.image, 
-            this.confirmationMailingGroupId, 
+            this.id,
+            this.slug,
+            this.title,
+            this.subtitle,
+            this.fileName,
+            this.listingImage,
+            this.image,
+            this.confirmationMailingGroupId,
             this.mailingGroupId,
             this.priceRegular.price,
-            this.priceDiscounted?.price
+            this.priceDiscounted?.price,
+            this.simpleShopProductId
         )
     }
 
     companion object {
         val Empty = Product(
             AssetAttributes.EMPTY, "", "New product",
-            null, null, null, null, null, null, Price.ZERO, null
+            null, null, null, null, null, null, Price.ZERO, null, null
         )
     }
 }

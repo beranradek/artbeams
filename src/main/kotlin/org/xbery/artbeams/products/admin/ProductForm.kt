@@ -26,6 +26,7 @@ open class ProductForm {
                 .field<String?>("mailingGroupId", Field.TEXT)
                 .field<BigDecimal?>("priceRegularAmount", Field.TEXT)
                 .field<BigDecimal?>("priceDiscountedAmount", Field.TEXT)
+                .field<String?>("simpleShopProductId", Field.TEXT)
                 .build(FormUtils.CZ_CONFIG)
     }
 }
