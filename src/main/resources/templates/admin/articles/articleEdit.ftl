@@ -195,8 +195,78 @@ function convertDatetimeLocalToFormio(datetimeLocal) {
     return day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
 }
 
+// Function to generate URL-friendly slug from text
+function generateSlug(text) {
+    if (!text) return '';
+
+    // Mapping of Czech/Slovak characters to ASCII equivalents
+    var charMap = {
+        'á': 'a', 'Á': 'A', 'č': 'c', 'Č': 'C', 'ď': 'd', 'Ď': 'D',
+        'é': 'e', 'É': 'E', 'ě': 'e', 'Ě': 'E', 'í': 'i', 'Í': 'I',
+        'ň': 'n', 'Ň': 'N', 'ó': 'o', 'Ó': 'O', 'ř': 'r', 'Ř': 'R',
+        'š': 's', 'Š': 'S', 'ť': 't', 'Ť': 'T', 'ú': 'u', 'Ú': 'U',
+        'ů': 'u', 'Ů': 'U', 'ý': 'y', 'Ý': 'Y', 'ž': 'z', 'Ž': 'Z',
+        'ä': 'a', 'Ä': 'A', 'ľ': 'l', 'Ľ': 'L', 'ĺ': 'l', 'Ĺ': 'L',
+        'ô': 'o', 'Ô': 'O', 'ŕ': 'r', 'Ŕ': 'R'
+    };
+
+    var slug = text;
+
+    // Replace Czech/Slovak characters with ASCII equivalents
+    for (var char in charMap) {
+        slug = slug.split(char).join(charMap[char]);
+    }
+
+    // Convert to lowercase
+    slug = slug.toLowerCase();
+
+    // Replace spaces and underscores with hyphens
+    slug = slug.replace(/[\s_]+/g, '-');
+
+    // Remove all non-alphanumeric characters except hyphens
+    slug = slug.replace(/[^a-z0-9-]/g, '');
+
+    // Replace multiple consecutive hyphens with single hyphen
+    slug = slug.replace(/-+/g, '-');
+
+    // Remove hyphens from start and end
+    slug = slug.replace(/^-+|-+$/g, '');
+
+    return slug;
+}
+
 // Initialize datetime inputs and checkboxes on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Auto-generate slug from title
+    var titleInput = document.querySelector('input[name="${fields.title.name}"]');
+    var slugInput = document.querySelector('input[name="${fields.slug.name}"]');
+
+    if (titleInput && slugInput) {
+        var isSlugManuallyEdited = false;
+
+        // Track if user manually edited the slug
+        slugInput.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                isSlugManuallyEdited = true;
+            } else {
+                isSlugManuallyEdited = false;
+            }
+        });
+
+        // Auto-generate slug when title changes (only if slug is empty or not manually edited)
+        titleInput.addEventListener('input', function() {
+            if (!isSlugManuallyEdited && slugInput.value.trim() === '') {
+                slugInput.value = generateSlug(this.value);
+            }
+        });
+
+        titleInput.addEventListener('blur', function() {
+            if (!isSlugManuallyEdited && slugInput.value.trim() === '') {
+                slugInput.value = generateSlug(this.value);
+            }
+        });
+    }
+
     // Initialize datetime inputs
     var datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
 
