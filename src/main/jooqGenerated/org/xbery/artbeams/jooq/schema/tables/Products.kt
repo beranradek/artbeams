@@ -134,6 +134,11 @@ open class Products(
      */
     val PRICE_DISCOUNTED: TableField<ProductsRecord, BigDecimal?> = createField(DSL.name("price_discounted"), SQLDataType.DECIMAL(19, 4), this, "")
 
+    /**
+     * The column <code>products.simple_shop_product_id</code>.
+     */
+    val SIMPLE_SHOP_PRODUCT_ID: TableField<ProductsRecord, String?> = createField(DSL.name("simple_shop_product_id"), SQLDataType.VARCHAR(64).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
     private constructor(alias: Name, aliased: Table<ProductsRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<ProductsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
 

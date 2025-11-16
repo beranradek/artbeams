@@ -86,7 +86,7 @@ class ProductAdminController(
 
     @PostMapping("/{id}/sync-from-simpleshop")
     fun syncFromSimpleShop(request: HttpServletRequest, @PathVariable id: String): Any {
-        try {
+        return try {
             val product = productRepository.requireById(id)
             val ctx = requestToOperationCtx(request)
             val result = simpleShopSyncService.syncProduct(product, ctx)
@@ -106,7 +106,7 @@ class ProductAdminController(
 
     @PostMapping("/sync-all-from-simpleshop")
     fun syncAllFromSimpleShop(request: HttpServletRequest): Any {
-        try {
+        return try {
             val ctx = requestToOperationCtx(request)
             val results = simpleShopSyncService.syncAllProducts(ctx)
 

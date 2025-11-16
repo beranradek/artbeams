@@ -94,7 +94,7 @@ class SimpleShopSyncService(
         if (updatedFields.isNotEmpty()) {
             // Update modified timestamp
             updatedProduct = updatedProduct.copy(
-                common = updatedProduct.common.updatedWith(ctx.userId)
+                common = updatedProduct.common.updatedWith(ctx.loggedUser?.id!!)
             )
             productRepository.update(updatedProduct)
             logger.info("Product ${product.id} synchronized successfully. Updated fields: ${updatedFields.joinToString(", ")}")
