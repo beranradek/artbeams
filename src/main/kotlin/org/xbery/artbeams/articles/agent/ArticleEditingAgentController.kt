@@ -107,6 +107,22 @@ class ArticleEditingAgentController(
                 .body(mapOf("error" to validationError))
         }
 
+        // Copy file bytes BEFORE background processing to avoid NoSuchFileException
+        // MultipartFile objects are backed by temporary files that are deleted after the HTTP request completes
+        val uploadedFileData = uploadedFiles.map { file ->
+            try {
+                UploadedFileData(
+                    filename = file.originalFilename ?: "unknown",
+                    contentType = file.contentType ?: "application/octet-stream",
+                    bytes = file.bytes,
+                    size = file.size
+                )
+            } catch (e: Exception) {
+                agentLogger.error("Failed to copy bytes from uploaded file ${file.originalFilename}: ${e.message}", e)
+                throw e
+            }
+        }
+
         // Rate limiting check
         if (!checkRateLimit(sessionId)) {
             return ResponseEntity
@@ -128,7 +144,7 @@ class ArticleEditingAgentController(
                     articleTitle = articleTitle,
                     articlePerex = articlePerex,
                     articleBody = articleBody,
-                    files = uploadedFiles
+                    files = uploadedFileData
                 )
 
                 val completeResponse = StringBuilder()

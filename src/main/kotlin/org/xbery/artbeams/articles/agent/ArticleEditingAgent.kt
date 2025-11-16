@@ -13,10 +13,43 @@ import com.openai.models.chat.completions.ChatCompletionContentPartText
 import com.openai.models.chat.completions.ChatCompletionCreateParams
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import org.xbery.artbeams.config.repository.AppConfig
 import java.util.Base64
 import java.util.concurrent.TimeUnit
+
+/**
+ * Uploaded file data with bytes copied from MultipartFile.
+ * This is necessary because MultipartFile objects are backed by temporary files
+ * that are deleted after the HTTP request completes.
+ */
+data class UploadedFileData(
+    val filename: String,
+    val contentType: String,
+    val bytes: ByteArray,
+    val size: Long
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as UploadedFileData
+
+        if (filename != other.filename) return false
+        if (contentType != other.contentType) return false
+        if (!bytes.contentEquals(other.bytes)) return false
+        if (size != other.size) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = filename.hashCode()
+        result = 31 * result + contentType.hashCode()
+        result = 31 * result + bytes.contentHashCode()
+        result = 31 * result + size.hashCode()
+        return result
+    }
+}
 
 /**
  * Service for AI-powered article editing assistance using OpenAI API.
@@ -191,7 +224,7 @@ class ArticleEditingAgent(
      * @param articleTitle Current article title (optional, for context)
      * @param articlePerex Current article perex (optional, for context)
      * @param articleBody Current article body in markdown (optional, for context)
-     * @param files Uploaded files to include in the message (optional, for multimodal messages)
+     * @param files Uploaded file data to include in the message (optional, for multimodal messages)
      * @return Sequence of response chunks as they arrive from the API
      */
     fun sendMessage(
@@ -200,7 +233,7 @@ class ArticleEditingAgent(
         articleTitle: String? = null,
         articlePerex: String? = null,
         articleBody: String? = null,
-        files: List<MultipartFile> = emptyList()
+        files: List<UploadedFileData> = emptyList()
     ): Sequence<String> = sequence {
         // Get or create conversation history for this session
         val conversationHistory = conversationHistories.get(sessionId) {
@@ -282,8 +315,8 @@ class ArticleEditingAgent(
             // Use the non-enhanced version so we don't burden history with article context
             val fileAttachments = files.map { file ->
                 FileAttachment(
-                    filename = file.originalFilename ?: "unknown",
-                    contentType = file.contentType ?: "application/octet-stream",
+                    filename = file.filename,
+                    contentType = file.contentType,
                     size = file.size
                 )
             }
@@ -347,7 +380,7 @@ class ArticleEditingAgent(
      */
     private fun buildContentParts(
         text: String,
-        files: List<MultipartFile>
+        files: List<UploadedFileData>
     ): List<ChatCompletionContentPart> {
         val parts = mutableListOf<ChatCompletionContentPart>()
 
@@ -362,25 +395,25 @@ class ArticleEditingAgent(
             if (isImageFile(file)) {
                 try {
                     val base64Image = Base64.getEncoder().encodeToString(file.bytes)
-                    val mimeType = file.contentType ?: "image/jpeg"
+                    val mimeType = file.contentType
                     val dataUrl = "data:$mimeType;base64,$base64Image"
 
-                    val imageUrl = ChatCompletionContentPartImage.ImageUrl.builder()
-                        .url(dataUrl)
-                        .detail(ChatCompletionContentPartImage.Detail.AUTO)
-                        .build()
-
                     val imagePart = ChatCompletionContentPartImage.builder()
-                        .imageUrl(imageUrl)
+                        .imageUrl(
+                            ChatCompletionContentPartImage.ImageUrl.builder()
+                                .url(dataUrl)
+                                .detail(ChatCompletionContentPartImage.ImageUrl.Detail.AUTO)
+                                .build()
+                        )
                         .build()
 
                     parts.add(ChatCompletionContentPart.ofImageUrl(imagePart))
-                    logger.info("Added image file to message: ${file.originalFilename} (${file.size} bytes)")
+                    logger.info("Added image file to message: ${file.filename} (${file.size} bytes)")
                 } catch (e: Exception) {
-                    logger.error("Failed to encode image file ${file.originalFilename}: ${e.message}", e)
+                    logger.error("Failed to encode image file ${file.filename}: ${e.message}", e)
                 }
             } else {
-                logger.warn("Skipping non-image file: ${file.originalFilename} (${file.contentType})")
+                logger.warn("Skipping non-image file: ${file.filename} (${file.contentType})")
             }
         }
 
@@ -391,8 +424,8 @@ class ArticleEditingAgent(
      * Checks if the file is an image that can be sent to the LLM.
      * Supports common image formats: JPEG, PNG, GIF, WebP.
      */
-    private fun isImageFile(file: MultipartFile): Boolean {
-        val contentType = file.contentType?.lowercase() ?: return false
+    private fun isImageFile(file: UploadedFileData): Boolean {
+        val contentType = file.contentType.lowercase()
         return contentType.startsWith("image/") &&
                (contentType.contains("jpeg") ||
                 contentType.contains("jpg") ||
