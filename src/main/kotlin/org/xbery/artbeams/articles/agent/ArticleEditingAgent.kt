@@ -7,10 +7,15 @@ import com.openai.client.okhttp.OpenAIOkHttpClient
 import com.openai.core.http.StreamResponse
 import com.openai.models.ChatModel
 import com.openai.models.chat.completions.ChatCompletionChunk
+import com.openai.models.chat.completions.ChatCompletionContentPart
+import com.openai.models.chat.completions.ChatCompletionContentPartImage
+import com.openai.models.chat.completions.ChatCompletionContentPartText
 import com.openai.models.chat.completions.ChatCompletionCreateParams
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 import org.xbery.artbeams.config.repository.AppConfig
+import java.util.Base64
 import java.util.concurrent.TimeUnit
 
 /**
@@ -186,6 +191,7 @@ class ArticleEditingAgent(
      * @param articleTitle Current article title (optional, for context)
      * @param articlePerex Current article perex (optional, for context)
      * @param articleBody Current article body in markdown (optional, for context)
+     * @param files Uploaded files to include in the message (optional, for multimodal messages)
      * @return Sequence of response chunks as they arrive from the API
      */
     fun sendMessage(
@@ -193,7 +199,8 @@ class ArticleEditingAgent(
         userMessage: String,
         articleTitle: String? = null,
         articlePerex: String? = null,
-        articleBody: String? = null
+        articleBody: String? = null,
+        files: List<MultipartFile> = emptyList()
     ): Sequence<String> = sequence {
         // Get or create conversation history for this session
         val conversationHistory = conversationHistories.get(sessionId) {
@@ -250,18 +257,37 @@ class ArticleEditingAgent(
             // Add all history messages
             history.forEach { msg ->
                 when (msg.role) {
-                    MessageRole.USER -> builder.addUserMessage(msg.content)
+                    MessageRole.USER -> {
+                        // Reconstruct multimodal messages for history if they had file attachments
+                        if (msg.fileAttachments.isNotEmpty()) {
+                            val contentParts = buildContentParts(msg.content, emptyList())
+                            builder.addUserMessageOfArrayOfContentParts(contentParts)
+                        } else {
+                            builder.addUserMessage(msg.content)
+                        }
+                    }
                     MessageRole.ASSISTANT -> builder.addAssistantMessage(msg.content)
                 }
             }
 
-            // Add current user message enhanced with actual context
-            builder.addUserMessage(enhancedUserMessage)
+            // Add current user message - multimodal if files are present
+            if (files.isNotEmpty()) {
+                val contentParts = buildContentParts(enhancedUserMessage, files)
+                builder.addUserMessageOfArrayOfContentParts(contentParts)
+            } else {
+                builder.addUserMessage(enhancedUserMessage)
+            }
 
-            // Store user message in history, but the non-enhanced version of it,
-            // so we do not burden each message in the history with the additional context (article data)
-            // that should be part of only the last message sent to LLM!
-            history.add(HistoryMessage(MessageRole.USER, userMessage))
+            // Store user message in history with file metadata (but NOT binary data)
+            // Use the non-enhanced version so we don't burden history with article context
+            val fileAttachments = files.map { file ->
+                FileAttachment(
+                    filename = file.originalFilename ?: "unknown",
+                    contentType = file.contentType ?: "application/octet-stream",
+                    size = file.size
+                )
+            }
+            history.add(HistoryMessage(MessageRole.USER, userMessage, fileAttachments))
 
             // Trim history if max messages are exceeded for the future use of it
             trimHistory(history)
@@ -313,6 +339,69 @@ class ArticleEditingAgent(
     }
 
     /**
+     * Builds content parts for multimodal messages with text and optional images.
+     *
+     * @param text The text content
+     * @param files The uploaded files (will be converted to base64 images)
+     * @return List of content parts for the OpenAI API
+     */
+    private fun buildContentParts(
+        text: String,
+        files: List<MultipartFile>
+    ): List<ChatCompletionContentPart> {
+        val parts = mutableListOf<ChatCompletionContentPart>()
+
+        // Add text part
+        val textPart = ChatCompletionContentPartText.builder()
+            .text(text)
+            .build()
+        parts.add(ChatCompletionContentPart.ofText(textPart))
+
+        // Add image parts for supported image types
+        files.forEach { file ->
+            if (isImageFile(file)) {
+                try {
+                    val base64Image = Base64.getEncoder().encodeToString(file.bytes)
+                    val mimeType = file.contentType ?: "image/jpeg"
+                    val dataUrl = "data:$mimeType;base64,$base64Image"
+
+                    val imageUrl = ChatCompletionContentPartImage.ImageUrl.builder()
+                        .url(dataUrl)
+                        .detail(ChatCompletionContentPartImage.Detail.AUTO)
+                        .build()
+
+                    val imagePart = ChatCompletionContentPartImage.builder()
+                        .imageUrl(imageUrl)
+                        .build()
+
+                    parts.add(ChatCompletionContentPart.ofImageUrl(imagePart))
+                    logger.info("Added image file to message: ${file.originalFilename} (${file.size} bytes)")
+                } catch (e: Exception) {
+                    logger.error("Failed to encode image file ${file.originalFilename}: ${e.message}", e)
+                }
+            } else {
+                logger.warn("Skipping non-image file: ${file.originalFilename} (${file.contentType})")
+            }
+        }
+
+        return parts
+    }
+
+    /**
+     * Checks if the file is an image that can be sent to the LLM.
+     * Supports common image formats: JPEG, PNG, GIF, WebP.
+     */
+    private fun isImageFile(file: MultipartFile): Boolean {
+        val contentType = file.contentType?.lowercase() ?: return false
+        return contentType.startsWith("image/") &&
+               (contentType.contains("jpeg") ||
+                contentType.contains("jpg") ||
+                contentType.contains("png") ||
+                contentType.contains("gif") ||
+                contentType.contains("webp"))
+    }
+
+    /**
      * Trims the conversation history to keep only the most recent messages.
      * Keeps the last MAX_HISTORY_MESSAGES - 1 messages.
      * The system message is not stored in history but is dynamically added when building params.
@@ -346,10 +435,21 @@ class ArticleEditingAgent(
 
     /**
      * Represents a single message in the conversation history.
+     * Binary file data is NOT stored in history, only metadata.
      */
     private data class HistoryMessage(
         val role: MessageRole,
-        val content: String
+        val content: String,
+        val fileAttachments: List<FileAttachment> = emptyList()
+    )
+
+    /**
+     * Metadata for file attachments. Binary data is not stored in history.
+     */
+    private data class FileAttachment(
+        val filename: String,
+        val contentType: String,
+        val size: Long
     )
 
     private enum class MessageRole {

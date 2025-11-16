@@ -37,7 +37,23 @@
             rows="3"
             placeholder="Napište svou zprávu..."
             aria-label="Zpráva pro AI asistenta"></textarea>
+
+          <#-- File upload area -->
+          <div class="agent-file-upload-area">
+            <input
+              type="file"
+              id="agent-file-input"
+              multiple
+              accept="image/*"
+              style="display: none;"
+              aria-label="Nahrát soubory">
+            <div id="agent-file-list" class="agent-file-list" style="display: none;"></div>
+          </div>
+
           <div class="agent-input-actions">
+            <button type="button" id="agent-attach-btn" class="btn btn-outline-secondary" title="Připojit obrázky">
+              <i class="fas fa-paperclip"></i> Připojit obrázky
+            </button>
             <button type="button" id="agent-send-btn" class="btn btn-primary">
               <i class="fas fa-paper-plane"></i> Odeslat
             </button>
