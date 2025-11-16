@@ -16,10 +16,13 @@
     let csrfHeaderName = null;
     let currentJobId = null;
     let pollingInterval = null;
+    let selectedFiles = [];
 
     // Configuration
     const POLL_INTERVAL_MS = 4000; // Poll every 4 seconds
     const MAX_POLL_ATTEMPTS = 150; // 150 * 4s = 10 minutes max
+    const MAX_FILES = 5;
+    const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
 
     // Initialize when DOM is ready
     ready(function() {
@@ -52,6 +55,8 @@
     function initializeAgentChat() {
         const sendBtn = document.getElementById('agent-send-btn');
         const clearBtn = document.getElementById('agent-clear-btn');
+        const attachBtn = document.getElementById('agent-attach-btn');
+        const fileInput = document.getElementById('agent-file-input');
         const messageInput = document.getElementById('agent-message-input');
         const diffApplyBtn = document.getElementById('diff-apply-btn');
         const diffCopyBtn = document.getElementById('diff-copy-clipboard-btn');
@@ -62,6 +67,16 @@
 
         if (clearBtn) {
             clearBtn.addEventListener('click', clearConversation);
+        }
+
+        if (attachBtn) {
+            attachBtn.addEventListener('click', function() {
+                fileInput.click();
+            });
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', handleFileSelection);
         }
 
         if (messageInput) {
@@ -94,6 +109,90 @@
         }
     }
 
+    function handleFileSelection(event) {
+        const files = Array.from(event.target.files);
+
+        // Validate file count
+        if (files.length + selectedFiles.length > MAX_FILES) {
+            alert(`Můžete nahrát maximálně ${MAX_FILES} souborů najednou.`);
+            return;
+        }
+
+        // Validate file sizes and types
+        for (const file of files) {
+            if (file.size > MAX_FILE_SIZE) {
+                const maxSizeMB = MAX_FILE_SIZE / (1024 * 1024);
+                alert(`Soubor "${file.name}" je příliš velký (maximum ${maxSizeMB}MB).`);
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                alert(`Soubor "${file.name}" není obrázek. Podporovány jsou pouze obrázky.`);
+                return;
+            }
+        }
+
+        // Add files to selection
+        selectedFiles = selectedFiles.concat(files);
+        updateFileList();
+
+        // Clear the input so the same file can be selected again if needed
+        event.target.value = '';
+    }
+
+    function updateFileList() {
+        const fileListDiv = document.getElementById('agent-file-list');
+
+        if (selectedFiles.length === 0) {
+            fileListDiv.style.display = 'none';
+            fileListDiv.innerHTML = '';
+            return;
+        }
+
+        fileListDiv.style.display = 'block';
+        fileListDiv.innerHTML = '';
+
+        selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'agent-file-item';
+
+            const fileName = document.createElement('span');
+            fileName.className = 'agent-file-name';
+            fileName.textContent = file.name;
+
+            const fileSize = document.createElement('span');
+            fileSize.className = 'agent-file-size';
+            fileSize.textContent = formatFileSize(file.size);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'agent-file-remove';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.title = 'Odstranit';
+            removeBtn.addEventListener('click', function() {
+                removeFile(index);
+            });
+
+            fileItem.appendChild(fileName);
+            fileItem.appendChild(fileSize);
+            fileItem.appendChild(removeBtn);
+            fileListDiv.appendChild(fileItem);
+        });
+    }
+
+    function removeFile(index) {
+        selectedFiles.splice(index, 1);
+        updateFileList();
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
     function sendMessage() {
         const messageInput = document.getElementById('agent-message-input');
         const message = messageInput.value.trim();
@@ -111,11 +210,14 @@
         const articlePerex = perexElement ? perexElement.value : '';
         const articleBody = bodyElement ? bodyElement.value : '';
 
-        // Display user message
-        appendUserMessage(message);
+        // Display user message with file attachments
+        appendUserMessage(message, selectedFiles);
 
-        // Clear input
+        // Clear input and selected files
         messageInput.value = '';
+        const filesToSend = [...selectedFiles];
+        selectedFiles = [];
+        updateFileList();
 
         // Show loading indicator
         showLoading(true);
@@ -124,27 +226,32 @@
         // Prepare assistant message container
         currentAssistantMessage = appendAssistantMessage('');
 
-        // Prepare request body with form data
-        const formData = new URLSearchParams();
+        // Prepare request body with FormData (required for file upload)
+        const formData = new FormData();
         formData.append('message', message);
         formData.append('articleTitle', articleTitle);
         formData.append('articlePerex', articlePerex);
         formData.append('articleBody', articleBody);
 
-        const headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        };
+        // Add files if any
+        filesToSend.forEach(file => {
+            formData.append('files', file);
+        });
+
+        const headers = {};
 
         // Add CSRF token if available
         if (csrfToken && csrfHeaderName) {
             headers[csrfHeaderName] = csrfToken;
         }
 
+        // NOTE: Don't set Content-Type header - browser will set it automatically with boundary for multipart/form-data
+
         // Send message and get job ID
         fetch('/admin/articles/agent/message', {
             method: 'POST',
             headers: headers,
-            body: formData.toString()
+            body: formData
         })
         .then(response => {
             if (!response.ok) {
@@ -309,7 +416,7 @@
         });
     }
 
-    function appendUserMessage(message) {
+    function appendUserMessage(message, files) {
         const messagesContainer = document.getElementById('agent-chat-messages');
         const messageDiv = document.createElement('div');
         messageDiv.className = 'agent-message agent-user-message';
@@ -319,6 +426,36 @@
         contentDiv.textContent = message; // Safe - uses textContent
 
         messageDiv.appendChild(contentDiv);
+
+        // Add file attachments if any
+        if (files && files.length > 0) {
+            const attachmentsDiv = document.createElement('div');
+            attachmentsDiv.className = 'agent-message-attachments';
+
+            files.forEach(file => {
+                const attachmentItem = document.createElement('div');
+                attachmentItem.className = 'agent-attachment-item';
+
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-image';
+
+                const fileName = document.createElement('span');
+                fileName.className = 'agent-attachment-name';
+                fileName.textContent = file.name;
+
+                const fileSize = document.createElement('span');
+                fileSize.className = 'agent-attachment-size';
+                fileSize.textContent = formatFileSize(file.size);
+
+                attachmentItem.appendChild(icon);
+                attachmentItem.appendChild(fileName);
+                attachmentItem.appendChild(fileSize);
+                attachmentsDiv.appendChild(attachmentItem);
+            });
+
+            messageDiv.appendChild(attachmentsDiv);
+        }
+
         messagesContainer.appendChild(messageDiv);
         scrollToBottom();
     }

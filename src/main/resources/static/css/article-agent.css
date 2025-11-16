@@ -160,6 +160,112 @@
     min-height: 80px;
 }
 
+/* File Upload Area */
+.agent-file-upload-area {
+    margin-bottom: 10px;
+}
+
+.agent-file-list {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.agent-file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.agent-file-item:last-child {
+    margin-bottom: 0;
+}
+
+.agent-file-name {
+    flex: 1;
+    font-size: 0.875rem;
+    color: #212529;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.agent-file-size {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-left: auto;
+}
+
+.agent-file-remove {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.agent-file-remove:hover {
+    background-color: #f8d7da;
+}
+
+.agent-file-remove i {
+    font-size: 0.875rem;
+}
+
+/* File Attachments in Messages */
+.agent-message-attachments {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.agent-attachment-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.agent-user-message .agent-attachment-item {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.agent-assistant-message .agent-attachment-item {
+    background-color: #f8f9fa;
+    color: #6c757d;
+}
+
+.agent-attachment-item i {
+    font-size: 0.875rem;
+}
+
+.agent-attachment-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.agent-attachment-size {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
 .agent-input-actions {
     display: flex;
     gap: 10px;
@@ -168,6 +274,11 @@
 
 .agent-input-actions button {
     min-width: 120px;
+}
+
+#agent-attach-btn {
+    margin-right: auto;
+    min-width: auto;
 }
 
 /* Diff Viewer Modal */

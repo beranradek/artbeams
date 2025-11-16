@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.agent.AgentJobManager
 import org.xbery.artbeams.common.agent.AgentJobResponse
@@ -47,6 +48,8 @@ class ArticleEditingAgentController(
         private const val MAX_TITLE_LENGTH = 500
         private const val MAX_PEREX_LENGTH = 2000
         private const val MAX_BODY_LENGTH = 100000
+        private const val MAX_FILES = 5
+        private const val MAX_FILE_SIZE = 4 * 1024 * 1024L // 4MB per file
         private const val RATE_LIMIT_REQUESTS = 10
         private const val RATE_LIMIT_WINDOW_MS = 60000L // 1 minute
         private const val JOB_RETENTION_MS = 300000L // 5 minutes - how long to keep completed jobs
@@ -89,12 +92,15 @@ class ArticleEditingAgentController(
         @RequestParam("articleTitle", required = false) articleTitle: String?,
         @RequestParam("articlePerex", required = false) articlePerex: String?,
         @RequestParam("articleBody", required = false) articleBody: String?,
+        @RequestParam("files", required = false) files: Array<MultipartFile>?,
         session: HttpSession
     ): ResponseEntity<Map<String, Any>> {
         val sessionId = getOrCreateSessionId(session)
 
+        val uploadedFiles = files?.toList()?.filter { !it.isEmpty } ?: emptyList()
+
         // Input validation
-        val validationError = validateInput(message, articleTitle, articlePerex, articleBody)
+        val validationError = validateInput(message, articleTitle, articlePerex, articleBody, uploadedFiles)
         if (validationError != null) {
             return ResponseEntity
                 .badRequest()
@@ -121,7 +127,8 @@ class ArticleEditingAgentController(
                     userMessage = message,
                     articleTitle = articleTitle,
                     articlePerex = articlePerex,
-                    articleBody = articleBody
+                    articleBody = articleBody,
+                    files = uploadedFiles
                 )
 
                 val completeResponse = StringBuilder()
@@ -230,14 +237,15 @@ class ArticleEditingAgentController(
     }
 
     /**
-     * Validates input parameters for length limits.
+     * Validates input parameters for length limits and file constraints.
      * Returns error message if validation fails, null otherwise.
      */
     private fun validateInput(
         message: String,
         articleTitle: String?,
         articlePerex: String?,
-        articleBody: String?
+        articleBody: String?,
+        files: List<MultipartFile>
     ): String? {
         if (message.isBlank()) {
             return "Zpráva nesmí být prázdná"
@@ -253,6 +261,15 @@ class ArticleEditingAgentController(
         }
         if (articleBody != null && articleBody.length > MAX_BODY_LENGTH) {
             return "Tělo článku je příliš dlouhé (maximum $MAX_BODY_LENGTH znaků)"
+        }
+        if (files.size > MAX_FILES) {
+            return "Příliš mnoho souborů (maximum $MAX_FILES souborů)"
+        }
+        files.forEach { file ->
+            if (file.size > MAX_FILE_SIZE) {
+                val maxSizeMB = MAX_FILE_SIZE / (1024 * 1024)
+                return "Soubor ${file.originalFilename} je příliš velký (maximum ${maxSizeMB}MB)"
+            }
         }
         return null
     }
