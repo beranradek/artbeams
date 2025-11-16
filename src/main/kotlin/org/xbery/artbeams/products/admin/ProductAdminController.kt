@@ -19,6 +19,7 @@ import org.xbery.artbeams.products.domain.EditedProduct
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.repository.ProductRepository
 import org.xbery.artbeams.products.service.ProductService
+import org.xbery.artbeams.simpleshop.service.SimpleShopSyncService
 
 /**
  * Product administration routes.
@@ -29,6 +30,7 @@ import org.xbery.artbeams.products.service.ProductService
 class ProductAdminController(
     private val productRepository: ProductRepository,
     private val productService: ProductService,
+    private val simpleShopSyncService: SimpleShopSyncService,
     private val common: ControllerComponents
 ) : BaseController(common) {
     private val tplBasePath = "admin/products"
@@ -79,6 +81,43 @@ class ProductAdminController(
             } catch (ex: Exception) {
                 renderEditForm(request, formData.data, formData.validationResult, ex.toString())
             }
+        }
+    }
+
+    @PostMapping("/{id}/sync-from-simpleshop")
+    fun syncFromSimpleShop(request: HttpServletRequest, @PathVariable id: String): Any {
+        try {
+            val product = productRepository.requireById(id)
+            val ctx = requestToOperationCtx(request)
+            val result = simpleShopSyncService.syncProduct(product, ctx)
+
+            if (result.success) {
+                logger.info("Product synced successfully: ${result.message}")
+                redirect("/admin/products/$id/edit?syncSuccess=true&message=${result.message}&fields=${result.updatedFields.joinToString(",")}")
+            } else {
+                logger.warn("Product sync failed: ${result.message}")
+                redirect("/admin/products/$id/edit?syncError=true&message=${result.message}")
+            }
+        } catch (ex: Exception) {
+            logger.error("Error syncing product: ${ex.message}", ex)
+            redirect("/admin/products/$id/edit?syncError=true&message=${ex.message}")
+        }
+    }
+
+    @PostMapping("/sync-all-from-simpleshop")
+    fun syncAllFromSimpleShop(request: HttpServletRequest): Any {
+        try {
+            val ctx = requestToOperationCtx(request)
+            val results = simpleShopSyncService.syncAllProducts(ctx)
+
+            val successCount = results.count { it.success }
+            val updatedCount = results.count { it.updatedFields.isNotEmpty() }
+
+            logger.info("Bulk sync completed: $successCount/${results.size} successful, $updatedCount updated")
+            redirect("/admin/products?syncSuccess=true&total=${results.size}&success=$successCount&updated=$updatedCount")
+        } catch (ex: Exception) {
+            logger.error("Error during bulk sync: ${ex.message}", ex)
+            redirect("/admin/products?syncError=true&message=${ex.message}")
         }
     }
 

@@ -33,3 +33,8 @@ INSERT INTO config (entry_key, entry_value) VALUES ('bankTransfer.bankCode', 'FI
 INSERT INTO sequences (sequence_name, next_value) VALUES ('orderNumber', 1);
 
 INSERT INTO config (entry_key, entry_value) VALUES ('contact.email', '???');
+
+-- SimpleShop.cz API integration
+INSERT INTO config (entry_key, entry_value) VALUES ('simpleshop.api.baseUrl', 'https://api.simpleshop.cz/v2');
+INSERT INTO config (entry_key, entry_value) VALUES ('simpleshop.api.email', 'FILL IN YOUR SIMPLESHOP EMAIL');
+INSERT INTO config (entry_key, entry_value) VALUES ('simpleshop.api.key', 'FILL IN YOUR SIMPLESHOP API KEY');

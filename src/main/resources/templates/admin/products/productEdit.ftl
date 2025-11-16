@@ -3,6 +3,21 @@
 <#if errorMessage??>
   <div class="alert alert-danger" role="alert">${errorMessage}</div>
 </#if>
+<#if RequestParameters.syncSuccess??>
+  <div class="alert alert-success" role="alert">
+    SimpleShop synchronization successful!
+    <#if RequestParameters.message??><br>${RequestParameters.message}</#if>
+    <#if RequestParameters.fields?? && RequestParameters.fields != "">
+      <br>Updated fields: ${RequestParameters.fields}
+    </#if>
+  </div>
+</#if>
+<#if RequestParameters.syncError??>
+  <div class="alert alert-danger" role="alert">
+    SimpleShop synchronization failed!
+    <#if RequestParameters.message??><br>${RequestParameters.message}</#if>
+  </div>
+</#if>
 
 <#assign fields = editForm.fields>
 <h1>${fields.title.value!}</h1>
@@ -51,8 +66,26 @@
     <div class="col-sm-3"><input type="text" name="${fields.priceDiscountedAmount.name}" value="${fields.priceDiscountedAmount.value!}" id="${fields.priceDiscountedAmount.elementId}" size="10" class="form-control"/></div>
   </div>
   <div class="form-group row">
+    <label for="${fields.simpleShopProductId.elementId}" class="col-sm-2 col-form-label">SimpleShop Product ID</label>
+    <div class="col-sm-3">
+      <input type="text" name="${fields.simpleShopProductId.name}" value="${fields.simpleShopProductId.value!}" id="${fields.simpleShopProductId.elementId}" size="20" class="form-control" placeholder="Optional: For sync from SimpleShop"/>
+      <small class="form-text text-muted">Enter SimpleShop product ID to enable synchronization</small>
+    </div>
+  </div>
+  <div class="form-group row">
     <div class="col-sm-2 col-form-label"></div>
     <div class="col-sm-3"><button type="submit" class="btn btn-primary">Submit</button></div>
   </div>
 </form>
+
+<#if fields.id.value?? && fields.id.value != "" && fields.simpleShopProductId.value?? && fields.simpleShopProductId.value != "">
+<hr class="my-4">
+<h3>SimpleShop Synchronization</h3>
+<p>This product is linked to SimpleShop product ID: <strong>${fields.simpleShopProductId.value}</strong></p>
+<form action="/admin/products/${fields.id.value}/sync-from-simpleshop" method="post" style="display: inline;">
+  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+  <button type="submit" class="btn btn-info">Sync from SimpleShop</button>
+</form>
+<p class="text-muted mt-2">This will update the product name and price from SimpleShop.</p>
+</#if>
 </@layout.page>
