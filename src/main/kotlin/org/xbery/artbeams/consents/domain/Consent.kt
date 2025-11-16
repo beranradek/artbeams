@@ -1,5 +1,6 @@
 package org.xbery.artbeams.consents.domain
 
+import org.xbery.artbeams.common.repository.IdentifiedEntity
 import java.io.Serializable
 import java.time.Instant
 
@@ -10,13 +11,13 @@ import java.time.Instant
  * @author Radek Beran
  */
 data class Consent(
-    val id: String,
+    override val id: String,
     val validFrom: Instant,
     val validTo: Instant,
     val login: String, // Email address
     val consentType: ConsentType,
     val originProductId: String? // Product ID if consent was created by product subscription/download
-) : Serializable {
+) : IdentifiedEntity, Serializable {
 
     /**
      * Checks if this consent is currently valid.
