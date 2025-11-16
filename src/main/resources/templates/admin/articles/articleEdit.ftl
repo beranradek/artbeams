@@ -1,4 +1,5 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/forms.ftl" as forms>
 <@layout.page>
 <#if errorMessage??>
   <div class="alert alert-danger" role="alert">${errorMessage}</div>
@@ -66,30 +67,15 @@
         <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value!}" id="${fields.externalId.elementId}" class="form-control"/>
     </div>
   </div>
-  <div class="form-group row">
-    <label for="${fields.validFrom.elementId}" class="col-form-label col-sm-2 label-fix">Valid from</label>
-    <div class="col-sm-3">
-        <input type="text" name="${fields.validFrom.name}" value="${fields.validFrom.value}" id="${fields.validFrom.elementId}" class="form-control"/>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label for="${fields.validTo.elementId}" class="col-form-label col-sm-2 label-fix">Valid to</label>
-    <div class="col-sm-3">
-        <input type="text" name="${fields.validTo.name}" value="${fields.validTo.value!}" id="${fields.validTo.elementId}" class="form-control"/>
-    </div>
-  </div>
+  <@forms.inputDateTime field=fields.validFrom label="Valid from" required=true inputDivClass="col-sm-3" />
+  <@forms.inputDateTime field=fields.validTo label="Valid to" required=false inputDivClass="col-sm-3" />
   <div class="form-group row">
     <label for="${fields.keywords.elementId}" class="col-form-label col-sm-2 label-fix">Keywords</label>
     <div class="col-sm-3">
         <input type="text" name="${fields.keywords.name}" value="${fields.keywords.value!}" id="${fields.keywords.elementId}" class="form-control"/>
     </div>
   </div>
-  <div class="form-group row">
-    <label for="${fields.showOnBlog.elementId}" class="col-form-label col-sm-2 label-fix">Show on blog</label>
-    <div class="col-sm-2">
-        <input type="text" name="${fields.showOnBlog.name}" value="${fields.showOnBlog.value!}" id="${fields.showOnBlog.elementId}" class="form-control"/>
-    </div>
-  </div>
+  <@forms.inputCheckbox field=fields.showOnBlog label="Show on blog" inputDivClass="col-sm-10" />
   <div class="form-group row">
     <label for="${fields.categories.elementId}" class="col-form-label col-sm-2 label-fix">Categories</label>
     <div class="col-sm-2">
@@ -177,5 +163,90 @@ if (editedContentElement) {
     editedContentElement.addEventListener('keyup', onMarkdownChange, false);
     editedContentElement.addEventListener('paste', onMarkdownChange, false);
 }
+
+// DateTime format conversion between formio (d.M.yyyy HH:mm) and HTML5 (yyyy-MM-ddTHH:mm)
+function convertFormioToDatetimeLocal(formioDate) {
+    if (!formioDate) return '';
+    // Parse "d.M.yyyy HH:mm" format (e.g., "1.1.2024 14:30")
+    var parts = formioDate.match(/(\d+)\.(\d+)\.(\d+)\s+(\d+):(\d+)/);
+    if (!parts) return '';
+
+    var day = parts[1].padStart(2, '0');
+    var month = parts[2].padStart(2, '0');
+    var year = parts[3];
+    var hour = parts[4].padStart(2, '0');
+    var minute = parts[5].padStart(2, '0');
+
+    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute;
+}
+
+function convertDatetimeLocalToFormio(datetimeLocal) {
+    if (!datetimeLocal) return '';
+    // Parse "yyyy-MM-ddTHH:mm" format
+    var parts = datetimeLocal.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (!parts) return '';
+
+    var year = parts[1];
+    var month = parseInt(parts[2], 10); // Remove leading zero
+    var day = parseInt(parts[3], 10);   // Remove leading zero
+    var hour = parts[4];
+    var minute = parts[5];
+
+    return day + '.' + month + '.' + year + ' ' + hour + ':' + minute;
+}
+
+// Initialize datetime inputs and checkboxes on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize datetime inputs
+    var datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+
+    datetimeInputs.forEach(function(input) {
+        var originalValue = input.getAttribute('data-original-value');
+        if (originalValue) {
+            input.value = convertFormioToDatetimeLocal(originalValue);
+        }
+
+        // Update hidden field when datetime changes
+        input.addEventListener('change', function() {
+            var hiddenField = document.getElementById(input.id + '_hidden');
+            if (hiddenField) {
+                hiddenField.value = convertDatetimeLocalToFormio(input.value);
+            }
+        });
+    });
+
+    // Before form submit, ensure all datetime values are converted
+    var form = document.querySelector('.form-article-edit');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            datetimeInputs.forEach(function(input) {
+                var hiddenField = document.getElementById(input.id + '_hidden');
+                if (hiddenField && input.value) {
+                    hiddenField.value = convertDatetimeLocalToFormio(input.value);
+                }
+            });
+        });
+    }
+
+    // Initialize checkbox switches with badge updates
+    var checkboxSwitches = document.querySelectorAll('.form-check-input[type="checkbox"]');
+    checkboxSwitches.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var label = this.nextElementSibling;
+            if (label && label.classList.contains('form-check-label')) {
+                var badge = label.querySelector('.badge');
+                if (badge) {
+                    if (this.checked) {
+                        badge.className = 'badge bg-success';
+                        badge.textContent = 'Enabled';
+                    } else {
+                        badge.className = 'badge bg-secondary';
+                        badge.textContent = 'Disabled';
+                    }
+                }
+            }
+        });
+    });
+});
 </script>
 </@layout.page>
