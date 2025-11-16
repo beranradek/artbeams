@@ -16,7 +16,15 @@ class SpringHttpServletRequestParams(val request: HttpServletRequest) : Abstract
 
     override fun getParamValues(paramName: String?): Array<String> {
         val values = request.getParameterValues(paramName)
-        return values ?: arrayOf()
+        if (values == null) {
+            return arrayOf()
+        }
+        // For checkboxes with hidden fallback fields, take the last value
+        // (hidden field sends "false", checkbox sends "true" when checked)
+        if (values.size > 1 && values.all { it == "true" || it == "false" }) {
+            return arrayOf(values.last())
+        }
+        return values
     }
 
     override fun getUploadedFiles(paramName: String?): Array<UploadedFile> {

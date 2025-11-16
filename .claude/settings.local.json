@@ -31,7 +31,9 @@
       "mcp__serena__find_symbol",
       "mcp__serena__get_symbols_overview",
       "mcp__serena__replace_symbol_body",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "mcp__serena__insert_before_symbol"
     ],
     "deny": [],
     "ask": []

@@ -91,6 +91,7 @@
         <label class="col-form-label<#if vertical> col-sm-12<#else> col-sm-2<#if labelFix> label-fix</#if></#if><#if field.validationMessages?has_content> text-danger</#if>">${label}</label>
         <div class="<#if inputDivClass?has_content>${inputDivClass}<#else><#if vertical>col-sm-12<#else>col-sm-10</#if></#if>">
             <div class="form-check form-switch">
+                <input type="hidden" name="${field.name}" value="false"/>
                 <input type="checkbox"
                        class="form-check-input<#if field.validationMessages?has_content> is-invalid</#if>"
                        id="${field.elementId}"

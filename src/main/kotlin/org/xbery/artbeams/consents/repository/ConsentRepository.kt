@@ -76,14 +76,6 @@ class ConsentRepository(
     }
 
     /**
-     * Creates a new consent record.
-     */
-    fun create(consent: Consent): Consent {
-        createWithoutReturn(consent, unmapper)
-        return consent
-    }
-
-    /**
      * Updates valid_to timestamp to revoke a consent.
      */
     fun revoke(id: String, validTo: Instant): Int {
