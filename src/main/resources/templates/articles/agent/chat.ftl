@@ -54,6 +54,9 @@
             <button type="button" id="agent-attach-btn" class="btn btn-outline-secondary" title="Připojit obrázky">
               <i class="fas fa-paperclip"></i> Připojit obrázky
             </button>
+            <button type="button" id="agent-generate-image-btn" class="btn btn-info" title="Vygenerovat obrázek pomocí AI">
+              <i class="fas fa-palette"></i> Vygenerovat obrázek
+            </button>
             <button type="button" id="agent-send-btn" class="btn btn-primary">
               <i class="fas fa-paper-plane"></i> Odeslat
             </button>
@@ -103,4 +106,6 @@
 
 <#-- Load CSS and JavaScript -->
 <link rel="stylesheet" href="/static/css/article-agent.css?v=${.now?long}">
+<link rel="stylesheet" href="/static/css/image-agent.css?v=${.now?long}">
 <script nonce="${_cspNonce}" src="/static/js/article-agent.js?v=${.now?long}"></script>
+<script nonce="${_cspNonce}" src="/static/js/image-agent.js?v=${.now?long}"></script>
