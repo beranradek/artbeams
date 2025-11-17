@@ -38,7 +38,9 @@
       "Bash(then grep -A 5 \"datasource:\" application-local.yml)",
       "Bash(else echo \"application-local.yml not found\")",
       "Bash(fi:*)",
-      "mcp__serena__list_dir"
+      "mcp__serena__list_dir",
+      "WebFetch(domain:platform.openai.com)",
+      "mcp__serena__find_referencing_symbols"
     ],
     "deny": [],
     "ask": []

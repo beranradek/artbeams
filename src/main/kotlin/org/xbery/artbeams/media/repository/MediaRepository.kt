@@ -191,13 +191,14 @@ class MediaRepository(
         var result: Boolean
         dataSource.connection.use { conn ->
             val ps: PreparedStatement =
-                conn.prepareStatement("INSERT INTO media (filename, content_type, size, data, private_access, width, height) VALUES (?, ?, ?, ?, ?, ?, ?)")
+                conn.prepareStatement("INSERT INTO media (id, filename, content_type, size, data, private_access, width, height) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
             try {
-                ps.setString(1, filename)
-                ps.setString(2, contentType)
-                ps.setLong(3, size)
+                ps.setString(1, java.util.UUID.randomUUID().toString())
+                ps.setString(2, filename)
+                ps.setString(3, contentType)
+                ps.setLong(4, size)
                 val isImg = contentType != null && isImage(contentType)
-                ps.setBoolean(5, privateAccess)
+                ps.setBoolean(6, privateAccess)
                 var width: Int? = null
                 var height: Int? = null
                 if (isImg) {
@@ -209,12 +210,12 @@ class MediaRepository(
                         )
                     width = dimensions.first
                     height = dimensions.second
-                    ps.setBinaryStream(4, ByteArrayInputStream(imgBytes), size)
+                    ps.setBinaryStream(5, ByteArrayInputStream(imgBytes), size)
                 } else {
-                    ps.setBinaryStream(4, inputStream, size)
+                    ps.setBinaryStream(5, inputStream, size)
                 }
-                width?.let { ps.setInt(6, it) } ?: ps.setNull(6, Types.INTEGER)
-                height?.let { ps.setInt(7, it) } ?: ps.setNull(7, Types.INTEGER)
+                width?.let { ps.setInt(7, it) } ?: ps.setNull(7, Types.INTEGER)
+                height?.let { ps.setInt(8, it) } ?: ps.setNull(8, Types.INTEGER)
                 val updatedCount: Int = ps.executeUpdate()
                 result = updatedCount == 1
             } finally {

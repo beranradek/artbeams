@@ -10,13 +10,8 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.file.TempFiles
 import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.repository.MediaRepository
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 /**
@@ -43,8 +38,7 @@ data class TempGeneratedImage(
 @Service
 class ImageGeneratingAgent(
     private val mediaRepository: MediaRepository,
-    private val client: OpenAIClient,
-    private val httpClient: HttpClient
+    private val client: OpenAIClient
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -63,7 +57,7 @@ class ImageGeneratingAgent(
         const val DEFAULT_MODEL = "gpt-image-1" // OpenAI's latest image generation model
         const val IMAGE_WIDTH = 1024
         const val IMAGE_HEIGHT = 1024
-        const val IMAGE_SIZE = "${IMAGE_WIDTH}x{$IMAGE_HEIGHT}"
+        const val IMAGE_SIZE = "${IMAGE_WIDTH}x${IMAGE_HEIGHT}"
         const val IMAGE_FORMAT = "webp"
         const val DEFAULT_PROMPT_PREFIX = "Create a high-quality, detailed image: "
     }
@@ -82,30 +76,35 @@ class ImageGeneratingAgent(
             val modelName = System.getenv(MODEL_ENV_VAR)?.takeIf { it.isNotBlank() } ?: DEFAULT_MODEL
 
             // Build image generation params
+            // Note: gpt-image-1 does not support responseFormat parameter - it always returns base64-encoded images
             val params = ImageGenerateParams.builder()
                 .model(ImageModel.of(modelName))
                 .prompt(DEFAULT_PROMPT_PREFIX + prompt)
                 .n(1) // Generate 1 image
                 .size(ImageGenerateParams.Size.of(IMAGE_SIZE))
-                .responseFormat(ImageGenerateParams.ResponseFormat.URL) // Get URL to download
-                .quality(ImageGenerateParams.Quality.STANDARD) // standard quality
+                .quality(ImageGenerateParams.Quality.MEDIUM)
                 .build()
 
             // Generate image
             val response = client.images().generate(params)
 
-            // Get the first (and only) generated image URL
+            // Get the first (and only) generated image data
             val imageData = response.data()
             if (imageData.isEmpty) {
-                throw IllegalStateException("No image URL returned from OpenAI API")
+                throw IllegalStateException("No image data returned from OpenAI API")
             }
-            val imageUrl = imageData.get().firstOrNull()?.url()?.orElse(null)
-                ?: throw IllegalStateException("No image URL returned from OpenAI API")
+            
+            val firstImage = imageData.get().firstOrNull()
+                ?: throw IllegalStateException("No image data returned from OpenAI API")
 
-            logger.info("Image generated successfully, downloading from: $imageUrl")
+            // gpt-image-1 returns base64-encoded images
+            val base64Data = firstImage.b64Json().orElse(null)
+                ?: throw IllegalStateException("No base64 image data returned from OpenAI API")
 
-            // Download the image
-            val imageBytes = downloadImage(imageUrl)
+            logger.info("Image generated successfully, decoding base64 data")
+
+            // Decode base64 to bytes
+            val imageBytes = java.util.Base64.getDecoder().decode(base64Data)
 
             // Store temporarily
             val tempImageId = storeTempImage(imageBytes, prompt)
@@ -117,25 +116,6 @@ class ImageGeneratingAgent(
             logger.error("Error generating image: ${e.message}", e)
             throw e
         }
-    }
-
-    /**
-     * Downloads image from the given URL.
-     */
-    private fun downloadImage(url: String): ByteArray {
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .GET()
-            .timeout(Duration.ofSeconds(60))
-            .build()
-
-        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray())
-
-        if (response.statusCode() != 200) {
-            throw IllegalStateException("Failed to download image: HTTP ${response.statusCode()}")
-        }
-
-        return response.body()
     }
 
     /**
