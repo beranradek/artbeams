@@ -1,0 +1,199 @@
+/**
+ * Image Generation Agent - Styles
+ * Styles for image generation UI integrated with article editing chat
+ */
+
+/* Image Generation Preview Container */
+.image-preview-container {
+    margin: 15px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.image-preview-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.image-preview-container img:hover {
+    transform: scale(1.02);
+}
+
+.image-preview-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-preview-thumbnail {
+    max-height: 400px;
+    object-fit: contain;
+}
+
+/* Image Generation Button */
+#agent-generate-image-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+#agent-generate-image-btn:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+#agent-generate-image-btn:active {
+    transform: translateY(0);
+}
+
+#agent-generate-image-btn i {
+    margin-right: 5px;
+}
+
+/* Image generation mode indicator */
+.image-generation-mode {
+    padding: 10px 15px;
+    background-color: #e7f3ff;
+    border-left: 4px solid #667eea;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    color: #004085;
+    font-size: 0.9rem;
+}
+
+.image-generation-mode i {
+    margin-right: 8px;
+    color: #667eea;
+}
+
+.image-generation-mode button {
+    margin-left: 10px;
+    font-size: 0.85rem;
+    padding: 2px 8px;
+}
+
+/* Image viewing modal (full size) */
+#imageViewModal .modal-dialog {
+    max-width: 90vw;
+    margin: 30px auto;
+}
+
+#imageViewModal .modal-body {
+    padding: 20px;
+    text-align: center;
+    background-color: #000;
+}
+
+#imageViewModal img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+/* Loading state for image generation */
+.image-generating {
+    padding: 20px;
+    text-align: center;
+    color: #667eea;
+}
+
+.image-generating i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    animation: imageGenerateSpin 2s linear infinite;
+}
+
+@keyframes imageGenerateSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.image-generating-text {
+    font-style: italic;
+    color: #6c757d;
+}
+
+/* Image info badge */
+.image-info-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: #667eea;
+    color: white;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin: 5px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .image-preview-actions {
+        flex-direction: column;
+    }
+
+    .image-preview-actions button {
+        width: 100%;
+    }
+
+    .image-preview-thumbnail {
+        max-height: 300px;
+    }
+
+    #imageViewModal .modal-dialog {
+        max-width: 95vw;
+        margin: 10px auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .image-preview-container {
+        padding: 10px;
+    }
+
+    .image-preview-thumbnail {
+        max-height: 250px;
+    }
+
+    .image-generating i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Button group styling for chat actions */
+.agent-input-actions {
+    flex-wrap: wrap;
+}
+
+.agent-input-actions .btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+/* Ensure image generation button fits well */
+@media (max-width: 992px) {
+    .agent-input-actions {
+        flex-direction: column;
+    }
+
+    .agent-input-actions > * {
+        width: 100%;
+    }
+
+    .agent-input-actions .btn-group {
+        width: 100%;
+    }
+
+    .agent-input-actions .btn-group button {
+        flex: 1;
+    }
+}
