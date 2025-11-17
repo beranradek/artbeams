@@ -3,7 +3,7 @@
 <#if errorMessage??>
   <div class="alert alert-danger" role="alert">${errorMessage}</div>
 </#if>
-<#if RequestParameters.syncSuccess??>
+<#if RequestParameters?? && RequestParameters.syncSuccess??>
   <div class="alert alert-success" role="alert">
     SimpleShop synchronization successful!
     <#if RequestParameters.message??><br>${RequestParameters.message}</#if>
@@ -12,7 +12,7 @@
     </#if>
   </div>
 </#if>
-<#if RequestParameters.syncError??>
+<#if RequestParameters?? && RequestParameters.syncError??>
   <div class="alert alert-danger" role="alert">
     SimpleShop synchronization failed!
     <#if RequestParameters.message??><br>${RequestParameters.message}</#if>

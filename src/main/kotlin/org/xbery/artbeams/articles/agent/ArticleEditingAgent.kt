@@ -3,7 +3,6 @@ package org.xbery.artbeams.articles.agent
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.openai.client.OpenAIClient
-import com.openai.client.okhttp.OpenAIOkHttpClient
 import com.openai.core.http.StreamResponse
 import com.openai.models.ChatModel
 import com.openai.models.chat.completions.ChatCompletionChunk
@@ -60,7 +59,8 @@ data class UploadedFileData(
  */
 @Service
 class ArticleEditingAgent(
-    private val appConfig: AppConfig
+    private val appConfig: AppConfig,
+    private val client: OpenAIClient
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -203,17 +203,6 @@ class ArticleEditingAgent(
 
             Vždy se snaž být nápomocný, konkrétní a dodržuj pravidla českého jazyka.
         """.trimIndent()
-    }
-
-    private val client: OpenAIClient by lazy {
-        try {
-            // The Spring Boot starter automatically configures the client from environment variables
-            // OPENAI_API_KEY or application properties (openai.api-key)
-            OpenAIOkHttpClient.fromEnv()
-        } catch (e: Exception) {
-            logger.error("Failed to initialize OpenAI client. Make sure OPENAI_API_KEY environment variable is set.", e)
-            throw IllegalStateException("OpenAI client initialization failed. Please configure OPENAI_API_KEY environment variable.", e)
-        }
     }
 
     /**

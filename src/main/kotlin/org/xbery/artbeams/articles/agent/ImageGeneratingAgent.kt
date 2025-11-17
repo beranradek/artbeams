@@ -3,7 +3,6 @@ package org.xbery.artbeams.articles.agent
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.openai.client.OpenAIClient
-import com.openai.client.okhttp.OpenAIOkHttpClient
 import com.openai.models.images.ImageGenerateParams
 import com.openai.models.images.ImageModel
 import org.slf4j.LoggerFactory
@@ -11,14 +10,12 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.file.TempFiles
 import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.repository.MediaRepository
-import java.io.ByteArrayInputStream
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -45,13 +42,15 @@ data class TempGeneratedImage(
  */
 @Service
 class ImageGeneratingAgent(
-    private val mediaRepository: MediaRepository
+    private val mediaRepository: MediaRepository,
+    private val client: OpenAIClient,
+    private val httpClient: HttpClient
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    // Temporary image storage with TTL - images are auto-cleaned after 30 minutes of inactivity
+    // Temporary image storage with TTL - images are auto-cleaned after X minutes of inactivity
     private val tempImages: Cache<String, TempGeneratedImage> = Caffeine.newBuilder()
-        .expireAfterAccess(30, TimeUnit.MINUTES)
+        .expireAfterAccess(20, TimeUnit.MINUTES)
         .maximumSize(100)
         .removalListener<String, TempGeneratedImage> { _, image, _ ->
             // Delete temp file when evicted from cache
@@ -62,26 +61,12 @@ class ImageGeneratingAgent(
     companion object {
         const val MODEL_ENV_VAR = "OPENAI_IMAGE_MODEL"
         const val DEFAULT_MODEL = "gpt-image-1" // OpenAI's latest image generation model
-        const val IMAGE_SIZE = "1024x1024"
+        const val IMAGE_WIDTH = 1024
+        const val IMAGE_HEIGHT = 1024
+        const val IMAGE_SIZE = "${IMAGE_WIDTH}x{$IMAGE_HEIGHT}"
         const val IMAGE_FORMAT = "webp"
-        const val IMAGE_QUALITY = "standard" // OpenAI supports "standard" or "hd"
         const val DEFAULT_PROMPT_PREFIX = "Create a high-quality, detailed image: "
     }
-
-    private val client: OpenAIClient by lazy {
-        try {
-            // The Spring Boot starter automatically configures the client from environment variables
-            // OPENAI_API_KEY or application properties (openai.api-key)
-            OpenAIOkHttpClient.fromEnv()
-        } catch (e: Exception) {
-            logger.error("Failed to initialize OpenAI client. Make sure OPENAI_API_KEY environment variable is set.", e)
-            throw IllegalStateException("OpenAI client initialization failed. Please configure OPENAI_API_KEY environment variable.", e)
-        }
-    }
-
-    private val httpClient: HttpClient = HttpClient.newBuilder()
-        .connectTimeout(Duration.ofSeconds(30))
-        .build()
 
     /**
      * Generates an image from a text prompt and stores it temporarily.
@@ -110,7 +95,11 @@ class ImageGeneratingAgent(
             val response = client.images().generate(params)
 
             // Get the first (and only) generated image URL
-            val imageUrl = response.data().firstOrNull()?.url()?.orElse(null)
+            val imageData = response.data()
+            if (imageData.isEmpty) {
+                throw IllegalStateException("No image URL returned from OpenAI API")
+            }
+            val imageUrl = imageData.get().firstOrNull()?.url()?.orElse(null)
                 ?: throw IllegalStateException("No image URL returned from OpenAI API")
 
             logger.info("Image generated successfully, downloading from: $imageUrl")
@@ -154,7 +143,7 @@ class ImageGeneratingAgent(
      */
     private fun storeTempImage(imageBytes: ByteArray, prompt: String): String {
         val tempImageId = "img-${System.currentTimeMillis()}-${generateRandomString(8)}"
-        val filename = "generated-${sanitizeForFilename(prompt.take(50))}-${System.currentTimeMillis()}.webp"
+        val filename = "generated-${sanitizeForFilename(prompt.take(50))}-${System.currentTimeMillis()}.$IMAGE_FORMAT"
 
         // Create temp file (don't auto-delete, we'll manage it manually via cache)
         val tempPath = TempFiles.createTempFilePath("gen-image-", "-$filename", deleteOnClose = false).path
@@ -162,9 +151,9 @@ class ImageGeneratingAgent(
         // Write image bytes to temp file
         Files.write(tempPath, imageBytes)
 
-        // Get image dimensions (for webp, we'll use the standard size we requested)
-        val width = 1024
-        val height = 1024
+        // Get image dimensions
+        val width = IMAGE_WIDTH
+        val height = IMAGE_HEIGHT
 
         val tempImage = TempGeneratedImage(
             filename = filename,

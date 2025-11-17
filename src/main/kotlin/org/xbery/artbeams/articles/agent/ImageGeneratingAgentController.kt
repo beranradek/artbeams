@@ -8,14 +8,13 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.xbery.artbeams.common.agent.AgentJobExecutor
 import org.xbery.artbeams.common.agent.AgentJobManager
 import org.xbery.artbeams.common.agent.AgentJobResponse
 import org.xbery.artbeams.common.agent.JobStatus
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 /**
  * Controller for AI-powered image generation agent.
@@ -27,11 +26,11 @@ import java.util.concurrent.TimeUnit
 @RequestMapping("/admin/articles/agent/image")
 class ImageGeneratingAgentController(
     private val imageGeneratingAgent: ImageGeneratingAgent,
+    private val jobExecutor: AgentJobExecutor,
     common: ControllerComponents
 ) : BaseController(common) {
 
     private val agentLogger = LoggerFactory.getLogger(javaClass)
-    private val executor = Executors.newCachedThreadPool()
 
     // Rate limiting: track request times per session
     private val rateLimitMap = ConcurrentHashMap<String, MutableList<Long>>()
@@ -48,17 +47,6 @@ class ImageGeneratingAgentController(
 
     @PreDestroy
     fun cleanup() {
-        agentLogger.info("Shutting down image generation agent executor")
-        executor.shutdown()
-        try {
-            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                executor.shutdownNow()
-            }
-        } catch (e: InterruptedException) {
-            executor.shutdownNow()
-            Thread.currentThread().interrupt()
-        }
-
         // Shutdown job manager
         jobManager.shutdown()
     }
@@ -94,7 +82,7 @@ class ImageGeneratingAgentController(
         val job = jobManager.createJob(sessionId)
 
         // Process in background
-        executor.execute {
+        jobExecutor.executor.execute {
             try {
                 agentLogger.info("Processing image generation job ${job.id} for session: $sessionId")
 

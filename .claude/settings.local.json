@@ -33,7 +33,12 @@
       "mcp__serena__replace_symbol_body",
       "Bash(find:*)",
       "Bash(cat:*)",
-      "mcp__serena__insert_before_symbol"
+      "mcp__serena__insert_before_symbol",
+      "Bash(if [ -f application-local.yml ])",
+      "Bash(then grep -A 5 \"datasource:\" application-local.yml)",
+      "Bash(else echo \"application-local.yml not found\")",
+      "Bash(fi:*)",
+      "mcp__serena__list_dir"
     ],
     "deny": [],
     "ask": []

@@ -1,7 +1,7 @@
 <#import "/adminLayout.ftl" as layout>
 <@layout.page>
 
-<#if RequestParameters.syncSuccess??>
+<#if RequestParameters?? && RequestParameters.syncSuccess??>
   <div class="alert alert-success" role="alert">
     Bulk synchronization completed!
     <#if RequestParameters.total??>
@@ -15,7 +15,7 @@
     </#if>
   </div>
 </#if>
-<#if RequestParameters.syncError??>
+<#if RequestParameters?? && RequestParameters.syncError??>
   <div class="alert alert-danger" role="alert">
     Bulk synchronization failed!
     <#if RequestParameters.message??><br>${RequestParameters.message}</#if>

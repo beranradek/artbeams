@@ -10,14 +10,13 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.ModelAndView
+import org.xbery.artbeams.common.agent.AgentJobExecutor
 import org.xbery.artbeams.common.agent.AgentJobManager
 import org.xbery.artbeams.common.agent.AgentJobResponse
 import org.xbery.artbeams.common.agent.JobStatus
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 /**
  * Controller for AI-powered article editing agent.
@@ -30,11 +29,11 @@ import java.util.concurrent.TimeUnit
 @RequestMapping("/admin/articles/agent")
 class ArticleEditingAgentController(
     private val articleEditingAgent: ArticleEditingAgent,
+    private val jobExecutor: AgentJobExecutor,
     common: ControllerComponents
 ) : BaseController(common) {
 
     private val agentLogger = LoggerFactory.getLogger(javaClass)
-    private val executor = Executors.newCachedThreadPool()
 
     // Rate limiting: track request times per session
     private val rateLimitMap = ConcurrentHashMap<String, MutableList<Long>>()
@@ -57,17 +56,6 @@ class ArticleEditingAgentController(
 
     @PreDestroy
     fun cleanup() {
-        agentLogger.info("Shutting down article agent executor")
-        executor.shutdown()
-        try {
-            if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                executor.shutdownNow()
-            }
-        } catch (e: InterruptedException) {
-            executor.shutdownNow()
-            Thread.currentThread().interrupt()
-        }
-
         // Shutdown job manager
         jobManager.shutdown()
     }
@@ -134,7 +122,7 @@ class ArticleEditingAgentController(
         val job = jobManager.createJob(sessionId)
 
         // Process in background
-        executor.execute {
+        jobExecutor.executor.execute {
             try {
                 agentLogger.info("Processing AI agent job ${job.id} for session: $sessionId")
 
