@@ -240,6 +240,12 @@ sourceSets {
     }
 }
 
+// Fix for Gradle 9 compatibility - remove redundant setCanBeResolved call
+configurations.jooqGeneratedRuntimeClasspath {
+    canBeConsumed = false
+    // canBeResolved is already true by default for resolvable configurations
+}
+
 def cssDir = file("$projectDir/src/main/resources/static/css")
 def outputCss = file("$cssDir/styles.css")
 

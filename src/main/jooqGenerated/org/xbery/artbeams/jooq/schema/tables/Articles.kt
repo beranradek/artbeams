@@ -6,17 +6,25 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.Collection
+
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
@@ -31,19 +39,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.ArticlesRecord
 @Suppress("UNCHECKED_CAST")
 open class Articles(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, ArticlesRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, ArticlesRecord>?,
+    parentPath: InverseForeignKey<out Record, ArticlesRecord>?,
     aliased: Table<ArticlesRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<ArticlesRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -143,8 +155,9 @@ open class Articles(
      */
     val SHOW_ON_BLOG: TableField<ArticlesRecord, Boolean?> = createField(DSL.name("show_on_blog"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("TRUE"), SQLDataType.BOOLEAN)), this, "")
 
-    private constructor(alias: Name, aliased: Table<ArticlesRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<ArticlesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<ArticlesRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<ArticlesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<ArticlesRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>articles</code> table reference
@@ -160,13 +173,11 @@ open class Articles(
      * Create a <code>articles</code> table reference
      */
     constructor(): this(DSL.name("articles"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, ArticlesRecord>): this(Internal.createPathAlias(child, key), child, key, ARTICLES, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<ArticlesRecord> = CONSTRAINT_B
     override fun `as`(alias: String): Articles = Articles(DSL.name(alias), this)
     override fun `as`(alias: Name): Articles = Articles(alias, this)
-    override fun `as`(alias: Table<*>): Articles = Articles(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Articles = Articles(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -181,5 +192,55 @@ open class Articles(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Articles = Articles(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Articles = Articles(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Articles = Articles(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Articles = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Articles = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Articles = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Articles = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Articles = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Articles = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Articles = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Articles = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Articles = where(DSL.notExists(select))
 }

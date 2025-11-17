@@ -6,14 +6,23 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Index
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
@@ -28,6 +37,7 @@ import org.xbery.artbeams.jooq.schema.indexes.IDX_COMMENTS_ENTITY_ID
 import org.xbery.artbeams.jooq.schema.indexes.IDX_COMMENTS_STATE
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_DC
 import org.xbery.artbeams.jooq.schema.keys.PARENT_ID_FK
+import org.xbery.artbeams.jooq.schema.tables.Comments.CommentsPath
 import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
 
 
@@ -37,19 +47,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
 @Suppress("UNCHECKED_CAST")
 open class Comments(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, CommentsRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, CommentsRecord>?,
+    parentPath: InverseForeignKey<out Record, CommentsRecord>?,
     aliased: Table<CommentsRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<CommentsRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -134,8 +148,9 @@ open class Comments(
      */
     val USER_AGENT: TableField<CommentsRecord, String?> = createField(DSL.name("user_agent"), SQLDataType.VARCHAR(200).nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<CommentsRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<CommentsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<CommentsRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<CommentsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<CommentsRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>comments</code> table reference
@@ -152,29 +167,40 @@ open class Comments(
      */
     constructor(): this(DSL.name("comments"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, CommentsRecord>): this(Internal.createPathAlias(child, key), child, key, COMMENTS, null)
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, CommentsRecord>?, parentPath: InverseForeignKey<out Record, CommentsRecord>?): this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, COMMENTS, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class CommentsPath : Comments, Path<CommentsRecord> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, CommentsRecord>?, parentPath: InverseForeignKey<out Record, CommentsRecord>?): super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<CommentsRecord>): super(alias, aliased)
+        override fun `as`(alias: String): CommentsPath = CommentsPath(DSL.name(alias), this)
+        override fun `as`(alias: Name): CommentsPath = CommentsPath(alias, this)
+        override fun `as`(alias: Table<*>): CommentsPath = CommentsPath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_COMMENTS_ENTITY_ID, IDX_COMMENTS_STATE)
     override fun getPrimaryKey(): UniqueKey<CommentsRecord> = CONSTRAINT_DC
     override fun getReferences(): List<ForeignKey<CommentsRecord, *>> = listOf(PARENT_ID_FK)
 
-    private lateinit var _comments: Comments
+    private lateinit var _comments: CommentsPath
 
     /**
      * Get the implicit join path to the <code>PUBLIC.comments</code> table.
      */
-    fun comments(): Comments {
+    fun comments(): CommentsPath {
         if (!this::_comments.isInitialized)
-            _comments = Comments(this, PARENT_ID_FK)
+            _comments = CommentsPath(this, PARENT_ID_FK, null)
 
         return _comments;
     }
 
-    val comments: Comments
-        get(): Comments = comments()
+    val comments: CommentsPath
+        get(): CommentsPath = comments()
     override fun `as`(alias: String): Comments = Comments(DSL.name(alias), this)
     override fun `as`(alias: Name): Comments = Comments(alias, this)
-    override fun `as`(alias: Table<*>): Comments = Comments(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Comments = Comments(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -189,5 +215,55 @@ open class Comments(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Comments = Comments(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Comments = Comments(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Comments = Comments(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Comments = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Comments = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Comments = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Comments = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Comments = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Comments = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Comments = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Comments = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Comments = where(DSL.notExists(select))
 }

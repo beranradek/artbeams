@@ -6,14 +6,23 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Index
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
@@ -26,6 +35,8 @@ import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_ORDER_NUMBER
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3
+import org.xbery.artbeams.jooq.schema.keys.ORDER_FK
+import org.xbery.artbeams.jooq.schema.tables.OrderItems.OrderItemsPath
 import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 
 
@@ -35,19 +46,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 @Suppress("UNCHECKED_CAST")
 open class Orders(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, OrdersRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, OrdersRecord>?,
+    parentPath: InverseForeignKey<out Record, OrdersRecord>?,
     aliased: Table<OrdersRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<OrdersRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -97,8 +112,9 @@ open class Orders(
      */
     val STATE: TableField<OrdersRecord, String?> = createField(DSL.name("state"), SQLDataType.VARCHAR(16).nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<OrdersRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<OrdersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<OrdersRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<OrdersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<OrdersRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>orders</code> table reference
@@ -115,13 +131,40 @@ open class Orders(
      */
     constructor(): this(DSL.name("orders"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, OrdersRecord>): this(Internal.createPathAlias(child, key), child, key, ORDERS, null)
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, OrdersRecord>?, parentPath: InverseForeignKey<out Record, OrdersRecord>?): this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, ORDERS, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class OrdersPath : Orders, Path<OrdersRecord> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, OrdersRecord>?, parentPath: InverseForeignKey<out Record, OrdersRecord>?): super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<OrdersRecord>): super(alias, aliased)
+        override fun `as`(alias: String): OrdersPath = OrdersPath(DSL.name(alias), this)
+        override fun `as`(alias: Name): OrdersPath = OrdersPath(alias, this)
+        override fun `as`(alias: Table<*>): OrdersPath = OrdersPath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_ORDERS_ORDER_NUMBER)
     override fun getPrimaryKey(): UniqueKey<OrdersRecord> = CONSTRAINT_C3
+
+    private lateinit var _orderItems: OrderItemsPath
+
+    /**
+     * Get the implicit to-many join path to the <code>PUBLIC.order_items</code>
+     * table
+     */
+    fun orderItems(): OrderItemsPath {
+        if (!this::_orderItems.isInitialized)
+            _orderItems = OrderItemsPath(this, null, ORDER_FK.inverseKey)
+
+        return _orderItems;
+    }
+
+    val orderItems: OrderItemsPath
+        get(): OrderItemsPath = orderItems()
     override fun `as`(alias: String): Orders = Orders(DSL.name(alias), this)
     override fun `as`(alias: Name): Orders = Orders(alias, this)
-    override fun `as`(alias: Table<*>): Orders = Orders(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Orders = Orders(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -136,5 +179,55 @@ open class Orders(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Orders = Orders(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Orders = Orders(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Orders = Orders(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Orders = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Orders = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Orders = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Orders = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Orders = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Orders = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Orders = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Orders = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Orders = where(DSL.notExists(select))
 }

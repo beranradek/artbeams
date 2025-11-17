@@ -6,20 +6,27 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Index
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
@@ -36,19 +43,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.QueueRecord
 @Suppress("UNCHECKED_CAST")
 open class Queue(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, QueueRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, QueueRecord>?,
+    parentPath: InverseForeignKey<out Record, QueueRecord>?,
     aliased: Table<QueueRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<QueueRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -118,8 +129,9 @@ open class Queue(
      */
     val EXPIRATION_TIME: TableField<QueueRecord, Instant?> = createField(DSL.name("expiration_time"), SQLDataType.LOCALDATETIME(6), this, "", InstantConverter())
 
-    private constructor(alias: Name, aliased: Table<QueueRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<QueueRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<QueueRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<QueueRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<QueueRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>queue</code> table reference
@@ -135,14 +147,12 @@ open class Queue(
      * Create a <code>queue</code> table reference
      */
     constructor(): this(DSL.name("queue"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, QueueRecord>): this(Internal.createPathAlias(child, key), child, key, QUEUE, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_QUEUE_EXPIRATION, IDX_QUEUE_NEXT_ACTION_TIME)
     override fun getPrimaryKey(): UniqueKey<QueueRecord> = CONSTRAINT_66
     override fun `as`(alias: String): Queue = Queue(DSL.name(alias), this)
     override fun `as`(alias: Name): Queue = Queue(alias, this)
-    override fun `as`(alias: Table<*>): Queue = Queue(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Queue = Queue(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -157,5 +167,55 @@ open class Queue(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Queue = Queue(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Queue = Queue(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Queue = Queue(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Queue = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Queue = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Queue = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Queue = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Queue = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Queue = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Queue = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Queue = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Queue = where(DSL.notExists(select))
 }

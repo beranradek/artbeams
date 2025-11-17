@@ -32,7 +32,7 @@ open class RecaptchaConfig(
     @Bean
     @Qualifier(FEATURE_NAME)
     open fun restTemplate(builder: RestTemplateBuilder): RestTemplate = builder
-        .setConnectTimeout(Duration.ofSeconds(10))
-        .setReadTimeout(Duration.ofSeconds(10))
+        .connectTimeout(Duration.ofSeconds(10))
+        .readTimeout(Duration.ofSeconds(10))
         .build()
 }

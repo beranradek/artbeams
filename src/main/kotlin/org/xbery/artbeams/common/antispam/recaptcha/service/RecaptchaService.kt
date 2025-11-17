@@ -38,7 +38,7 @@ class RecaptchaService(
     }
 
     private fun verify(token: String, ipAddress: String): RecaptchaResult {
-        val uri = UriComponentsBuilder.fromHttpUrl("https://www.google.com/recaptcha/api/siteverify")
+        val uri = UriComponentsBuilder.fromUriString("https://www.google.com/recaptcha/api/siteverify")
             // The shared key between your site and reCAPTCHA.
             .queryParam("secret", recaptchaConfig.getSecretKey())
             // The user response token provided by the reCAPTCHA client-side integration on your site.

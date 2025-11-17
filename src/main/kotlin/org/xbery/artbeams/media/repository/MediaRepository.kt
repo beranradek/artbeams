@@ -203,11 +203,7 @@ class MediaRepository(
                 var height: Int? = null
                 if (isImg) {
                     val imgBytes = streamToBytes(inputStream)
-                    val dimensions =
-                        if (contentType != null) getImageDimensions(imgBytes, contentType) else Pair<Int?, Int?>(
-                            null,
-                            null
-                        )
+                    val dimensions = getImageDimensions(imgBytes, contentType)
                     width = dimensions.first
                     height = dimensions.second
                     ps.setBinaryStream(5, ByteArrayInputStream(imgBytes), size)

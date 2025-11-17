@@ -6,14 +6,23 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Index
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
@@ -27,6 +36,10 @@ import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_EMAIL
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_LOGIN
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A
+import org.xbery.artbeams.jooq.schema.keys.FK_USER_ID
+import org.xbery.artbeams.jooq.schema.keys.USER_FK
+import org.xbery.artbeams.jooq.schema.tables.UserProduct.UserProductPath
+import org.xbery.artbeams.jooq.schema.tables.UserRole.UserRolePath
 import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
 
 
@@ -36,19 +49,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
 @Suppress("UNCHECKED_CAST")
 open class Users(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, UsersRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, UsersRecord>?,
+    parentPath: InverseForeignKey<out Record, UsersRecord>?,
     aliased: Table<UsersRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<UsersRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -113,8 +130,9 @@ open class Users(
      */
     val EMAIL: TableField<UsersRecord, String?> = createField(DSL.name("email"), SQLDataType.VARCHAR(64).nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<UsersRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<UsersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<UsersRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<UsersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<UsersRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>users</code> table reference
@@ -131,13 +149,56 @@ open class Users(
      */
     constructor(): this(DSL.name("users"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, UsersRecord>): this(Internal.createPathAlias(child, key), child, key, USERS, null)
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, UsersRecord>?, parentPath: InverseForeignKey<out Record, UsersRecord>?): this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, USERS, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class UsersPath : Users, Path<UsersRecord> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, UsersRecord>?, parentPath: InverseForeignKey<out Record, UsersRecord>?): super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<UsersRecord>): super(alias, aliased)
+        override fun `as`(alias: String): UsersPath = UsersPath(DSL.name(alias), this)
+        override fun `as`(alias: Name): UsersPath = UsersPath(alias, this)
+        override fun `as`(alias: Table<*>): UsersPath = UsersPath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_USERS_EMAIL, IDX_USERS_LOGIN)
     override fun getPrimaryKey(): UniqueKey<UsersRecord> = CONSTRAINT_6A
+
+    private lateinit var _userRole: UserRolePath
+
+    /**
+     * Get the implicit to-many join path to the <code>PUBLIC.user_role</code>
+     * table
+     */
+    fun userRole(): UserRolePath {
+        if (!this::_userRole.isInitialized)
+            _userRole = UserRolePath(this, null, FK_USER_ID.inverseKey)
+
+        return _userRole;
+    }
+
+    val userRole: UserRolePath
+        get(): UserRolePath = userRole()
+
+    private lateinit var _userProduct: UserProductPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>PUBLIC.user_product</code> table
+     */
+    fun userProduct(): UserProductPath {
+        if (!this::_userProduct.isInitialized)
+            _userProduct = UserProductPath(this, null, USER_FK.inverseKey)
+
+        return _userProduct;
+    }
+
+    val userProduct: UserProductPath
+        get(): UserProductPath = userProduct()
     override fun `as`(alias: String): Users = Users(DSL.name(alias), this)
     override fun `as`(alias: Name): Users = Users(alias, this)
-    override fun `as`(alias: Table<*>): Users = Users(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Users = Users(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -152,5 +213,55 @@ open class Users(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Users = Users(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Users = Users(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Users = Users(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Users = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Users = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Users = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Users = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Users = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Users = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Users = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Users = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Users = where(DSL.notExists(select))
 }

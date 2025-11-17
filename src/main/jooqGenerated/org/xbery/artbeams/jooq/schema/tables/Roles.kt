@@ -6,11 +6,21 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.Collection
+
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
@@ -22,6 +32,8 @@ import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6
+import org.xbery.artbeams.jooq.schema.keys.FK_ROLE_ID
+import org.xbery.artbeams.jooq.schema.tables.UserRole.UserRolePath
 import org.xbery.artbeams.jooq.schema.tables.records.RolesRecord
 
 
@@ -31,19 +43,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.RolesRecord
 @Suppress("UNCHECKED_CAST")
 open class Roles(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, RolesRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, RolesRecord>?,
+    parentPath: InverseForeignKey<out Record, RolesRecord>?,
     aliased: Table<RolesRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<RolesRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -88,8 +104,9 @@ open class Roles(
      */
     val NAME: TableField<RolesRecord, String?> = createField(DSL.name("name"), SQLDataType.VARCHAR(32).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
 
-    private constructor(alias: Name, aliased: Table<RolesRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<RolesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<RolesRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<RolesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<RolesRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>roles</code> table reference
@@ -106,12 +123,39 @@ open class Roles(
      */
     constructor(): this(DSL.name("roles"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, RolesRecord>): this(Internal.createPathAlias(child, key), child, key, ROLES, null)
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, RolesRecord>?, parentPath: InverseForeignKey<out Record, RolesRecord>?): this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, ROLES, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class RolesPath : Roles, Path<RolesRecord> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, RolesRecord>?, parentPath: InverseForeignKey<out Record, RolesRecord>?): super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<RolesRecord>): super(alias, aliased)
+        override fun `as`(alias: String): RolesPath = RolesPath(DSL.name(alias), this)
+        override fun `as`(alias: Name): RolesPath = RolesPath(alias, this)
+        override fun `as`(alias: Table<*>): RolesPath = RolesPath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<RolesRecord> = CONSTRAINT_6
+
+    private lateinit var _userRole: UserRolePath
+
+    /**
+     * Get the implicit to-many join path to the <code>PUBLIC.user_role</code>
+     * table
+     */
+    fun userRole(): UserRolePath {
+        if (!this::_userRole.isInitialized)
+            _userRole = UserRolePath(this, null, FK_ROLE_ID.inverseKey)
+
+        return _userRole;
+    }
+
+    val userRole: UserRolePath
+        get(): UserRolePath = userRole()
     override fun `as`(alias: String): Roles = Roles(DSL.name(alias), this)
     override fun `as`(alias: Name): Roles = Roles(alias, this)
-    override fun `as`(alias: Table<*>): Roles = Roles(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Roles = Roles(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -126,5 +170,55 @@ open class Roles(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Roles = Roles(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Roles = Roles(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Roles = Roles(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Roles = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Roles = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Roles = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Roles = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Roles = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Roles = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Roles = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Roles = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Roles = where(DSL.notExists(select))
 }

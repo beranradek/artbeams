@@ -4,17 +4,25 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
+import kotlin.collections.Collection
+
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
@@ -28,19 +36,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.SequencesRecord
 @Suppress("UNCHECKED_CAST")
 open class Sequences(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, SequencesRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, SequencesRecord>?,
+    parentPath: InverseForeignKey<out Record, SequencesRecord>?,
     aliased: Table<SequencesRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<SequencesRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -65,8 +77,9 @@ open class Sequences(
      */
     val NEXT_VALUE: TableField<SequencesRecord, Long?> = createField(DSL.name("next_value"), SQLDataType.BIGINT.nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<SequencesRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<SequencesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<SequencesRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<SequencesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<SequencesRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>sequences</code> table reference
@@ -82,13 +95,11 @@ open class Sequences(
      * Create a <code>sequences</code> table reference
      */
     constructor(): this(DSL.name("sequences"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, SequencesRecord>): this(Internal.createPathAlias(child, key), child, key, SEQUENCES, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<SequencesRecord> = CONSTRAINT_BD
     override fun `as`(alias: String): Sequences = Sequences(DSL.name(alias), this)
     override fun `as`(alias: Name): Sequences = Sequences(alias, this)
-    override fun `as`(alias: Table<*>): Sequences = Sequences(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Sequences = Sequences(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -103,5 +114,55 @@ open class Sequences(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Sequences = Sequences(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Sequences = Sequences(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Sequences = Sequences(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Sequences = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Sequences = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Sequences = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Sequences = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Sequences = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Sequences = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Sequences = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Sequences = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Sequences = where(DSL.notExists(select))
 }

@@ -7,11 +7,21 @@ package org.xbery.artbeams.jooq.schema.tables
 import java.math.BigDecimal
 import java.time.Instant
 
+import kotlin.collections.Collection
+
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
@@ -23,6 +33,10 @@ import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C
+import org.xbery.artbeams.jooq.schema.keys.ORDERED_PRODUCT_FK
+import org.xbery.artbeams.jooq.schema.keys.PRODUCT_FK
+import org.xbery.artbeams.jooq.schema.tables.OrderItems.OrderItemsPath
+import org.xbery.artbeams.jooq.schema.tables.UserProduct.UserProductPath
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
 
 
@@ -32,19 +46,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
 @Suppress("UNCHECKED_CAST")
 open class Products(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, ProductsRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, ProductsRecord>?,
+    parentPath: InverseForeignKey<out Record, ProductsRecord>?,
     aliased: Table<ProductsRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<ProductsRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -139,8 +157,9 @@ open class Products(
      */
     val SIMPLE_SHOP_PRODUCT_ID: TableField<ProductsRecord, String?> = createField(DSL.name("simple_shop_product_id"), SQLDataType.VARCHAR(64).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
 
-    private constructor(alias: Name, aliased: Table<ProductsRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<ProductsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<ProductsRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<ProductsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<ProductsRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>products</code> table reference
@@ -157,12 +176,55 @@ open class Products(
      */
     constructor(): this(DSL.name("products"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, ProductsRecord>): this(Internal.createPathAlias(child, key), child, key, PRODUCTS, null)
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, ProductsRecord>?, parentPath: InverseForeignKey<out Record, ProductsRecord>?): this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, PRODUCTS, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class ProductsPath : Products, Path<ProductsRecord> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, ProductsRecord>?, parentPath: InverseForeignKey<out Record, ProductsRecord>?): super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<ProductsRecord>): super(alias, aliased)
+        override fun `as`(alias: String): ProductsPath = ProductsPath(DSL.name(alias), this)
+        override fun `as`(alias: Name): ProductsPath = ProductsPath(alias, this)
+        override fun `as`(alias: Table<*>): ProductsPath = ProductsPath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<ProductsRecord> = CONSTRAINT_C
+
+    private lateinit var _orderItems: OrderItemsPath
+
+    /**
+     * Get the implicit to-many join path to the <code>PUBLIC.order_items</code>
+     * table
+     */
+    fun orderItems(): OrderItemsPath {
+        if (!this::_orderItems.isInitialized)
+            _orderItems = OrderItemsPath(this, null, ORDERED_PRODUCT_FK.inverseKey)
+
+        return _orderItems;
+    }
+
+    val orderItems: OrderItemsPath
+        get(): OrderItemsPath = orderItems()
+
+    private lateinit var _userProduct: UserProductPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>PUBLIC.user_product</code> table
+     */
+    fun userProduct(): UserProductPath {
+        if (!this::_userProduct.isInitialized)
+            _userProduct = UserProductPath(this, null, PRODUCT_FK.inverseKey)
+
+        return _userProduct;
+    }
+
+    val userProduct: UserProductPath
+        get(): UserProductPath = userProduct()
     override fun `as`(alias: String): Products = Products(DSL.name(alias), this)
     override fun `as`(alias: Name): Products = Products(alias, this)
-    override fun `as`(alias: Table<*>): Products = Products(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Products = Products(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -177,5 +239,55 @@ open class Products(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Products = Products(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Products = Products(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Products = Products(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Products = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Products = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Products = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Products = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Products = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Products = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Products = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Products = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Products = where(DSL.notExists(select))
 }

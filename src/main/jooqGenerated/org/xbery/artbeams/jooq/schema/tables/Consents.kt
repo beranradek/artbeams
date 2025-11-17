@@ -6,20 +6,27 @@ package org.xbery.artbeams.jooq.schema.tables
 
 import java.time.Instant
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Index
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
@@ -37,19 +44,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.ConsentsRecord
 @Suppress("UNCHECKED_CAST")
 open class Consents(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, ConsentsRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, ConsentsRecord>?,
+    parentPath: InverseForeignKey<out Record, ConsentsRecord>?,
     aliased: Table<ConsentsRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<ConsentsRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -94,8 +105,9 @@ open class Consents(
      */
     val ORIGIN_PRODUCT_ID: TableField<ConsentsRecord, String?> = createField(DSL.name("origin_product_id"), SQLDataType.VARCHAR(40), this, "")
 
-    private constructor(alias: Name, aliased: Table<ConsentsRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<ConsentsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<ConsentsRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<ConsentsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<ConsentsRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>consents</code> table reference
@@ -111,14 +123,12 @@ open class Consents(
      * Create a <code>consents</code> table reference
      */
     constructor(): this(DSL.name("consents"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, ConsentsRecord>): this(Internal.createPathAlias(child, key), child, key, CONSENTS, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_CONSENTS_LOGIN, IDX_CONSENTS_LOGIN_TYPE_VALIDITY, IDX_CONSENTS_VALIDITY)
     override fun getPrimaryKey(): UniqueKey<ConsentsRecord> = CONSTRAINT_DE
     override fun `as`(alias: String): Consents = Consents(DSL.name(alias), this)
     override fun `as`(alias: Name): Consents = Consents(alias, this)
-    override fun `as`(alias: Table<*>): Consents = Consents(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Consents = Consents(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -133,5 +143,55 @@ open class Consents(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Consents = Consents(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Consents = Consents(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Consents = Consents(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Consents = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Consents = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Consents = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Consents = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Consents = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Consents = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Consents = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Consents = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Consents = where(DSL.notExists(select))
 }

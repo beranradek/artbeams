@@ -4,17 +4,25 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
+import kotlin.collections.Collection
+
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
@@ -28,19 +36,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
 @Suppress("UNCHECKED_CAST")
 open class Config(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, ConfigRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, ConfigRecord>?,
+    parentPath: InverseForeignKey<out Record, ConfigRecord>?,
     aliased: Table<ConfigRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<ConfigRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -65,8 +77,9 @@ open class Config(
      */
     val ENTRY_VALUE: TableField<ConfigRecord, String?> = createField(DSL.name("entry_value"), SQLDataType.VARCHAR(1024).nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<ConfigRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<ConfigRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<ConfigRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<ConfigRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<ConfigRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>config</code> table reference
@@ -82,13 +95,11 @@ open class Config(
      * Create a <code>config</code> table reference
      */
     constructor(): this(DSL.name("config"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, ConfigRecord>): this(Internal.createPathAlias(child, key), child, key, CONFIG, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<ConfigRecord> = CONSTRAINT_A
     override fun `as`(alias: String): Config = Config(DSL.name(alias), this)
     override fun `as`(alias: Name): Config = Config(alias, this)
-    override fun `as`(alias: Table<*>): Config = Config(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Config = Config(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -103,5 +114,55 @@ open class Config(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Config = Config(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Config = Config(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Config = Config(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Config = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Config = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Config = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Config = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Config = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Config = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Config = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Config = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Config = where(DSL.notExists(select))
 }

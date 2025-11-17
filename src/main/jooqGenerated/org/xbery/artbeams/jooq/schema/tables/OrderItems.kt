@@ -7,13 +7,22 @@ package org.xbery.artbeams.jooq.schema.tables
 import java.math.BigDecimal
 import java.time.Instant
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
@@ -27,6 +36,8 @@ import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_7
 import org.xbery.artbeams.jooq.schema.keys.ORDERED_PRODUCT_FK
 import org.xbery.artbeams.jooq.schema.keys.ORDER_FK
+import org.xbery.artbeams.jooq.schema.tables.Orders.OrdersPath
+import org.xbery.artbeams.jooq.schema.tables.Products.ProductsPath
 import org.xbery.artbeams.jooq.schema.tables.records.OrderItemsRecord
 
 
@@ -36,19 +47,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.OrderItemsRecord
 @Suppress("UNCHECKED_CAST")
 open class OrderItems(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, OrderItemsRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, OrderItemsRecord>?,
+    parentPath: InverseForeignKey<out Record, OrderItemsRecord>?,
     aliased: Table<OrderItemsRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<OrderItemsRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -113,8 +128,9 @@ open class OrderItems(
      */
     val DOWNLOADED: TableField<OrderItemsRecord, Instant?> = createField(DSL.name("downloaded"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
 
-    private constructor(alias: Name, aliased: Table<OrderItemsRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<OrderItemsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<OrderItemsRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<OrderItemsRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<OrderItemsRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>order_items</code> table reference
@@ -131,42 +147,54 @@ open class OrderItems(
      */
     constructor(): this(DSL.name("order_items"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, OrderItemsRecord>): this(Internal.createPathAlias(child, key), child, key, ORDER_ITEMS, null)
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, OrderItemsRecord>?, parentPath: InverseForeignKey<out Record, OrderItemsRecord>?): this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, ORDER_ITEMS, null, null)
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    open class OrderItemsPath : OrderItems, Path<OrderItemsRecord> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, OrderItemsRecord>?, parentPath: InverseForeignKey<out Record, OrderItemsRecord>?): super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<OrderItemsRecord>): super(alias, aliased)
+        override fun `as`(alias: String): OrderItemsPath = OrderItemsPath(DSL.name(alias), this)
+        override fun `as`(alias: Name): OrderItemsPath = OrderItemsPath(alias, this)
+        override fun `as`(alias: Table<*>): OrderItemsPath = OrderItemsPath(alias.qualifiedName, this)
+    }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<OrderItemsRecord> = CONSTRAINT_7
     override fun getReferences(): List<ForeignKey<OrderItemsRecord, *>> = listOf(ORDER_FK, ORDERED_PRODUCT_FK)
 
-    private lateinit var _orders: Orders
-    private lateinit var _products: Products
+    private lateinit var _orders: OrdersPath
 
     /**
      * Get the implicit join path to the <code>PUBLIC.orders</code> table.
      */
-    fun orders(): Orders {
+    fun orders(): OrdersPath {
         if (!this::_orders.isInitialized)
-            _orders = Orders(this, ORDER_FK)
+            _orders = OrdersPath(this, ORDER_FK, null)
 
         return _orders;
     }
 
-    val orders: Orders
-        get(): Orders = orders()
+    val orders: OrdersPath
+        get(): OrdersPath = orders()
+
+    private lateinit var _products: ProductsPath
 
     /**
      * Get the implicit join path to the <code>PUBLIC.products</code> table.
      */
-    fun products(): Products {
+    fun products(): ProductsPath {
         if (!this::_products.isInitialized)
-            _products = Products(this, ORDERED_PRODUCT_FK)
+            _products = ProductsPath(this, ORDERED_PRODUCT_FK, null)
 
         return _products;
     }
 
-    val products: Products
-        get(): Products = products()
+    val products: ProductsPath
+        get(): ProductsPath = products()
     override fun `as`(alias: String): OrderItems = OrderItems(DSL.name(alias), this)
     override fun `as`(alias: Name): OrderItems = OrderItems(alias, this)
-    override fun `as`(alias: Table<*>): OrderItems = OrderItems(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): OrderItems = OrderItems(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -181,5 +209,55 @@ open class OrderItems(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): OrderItems = OrderItems(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): OrderItems = OrderItems(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): OrderItems = OrderItems(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): OrderItems = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): OrderItems = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): OrderItems = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): OrderItems = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): OrderItems = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): OrderItems = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): OrderItems = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): OrderItems = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): OrderItems = where(DSL.notExists(select))
 }

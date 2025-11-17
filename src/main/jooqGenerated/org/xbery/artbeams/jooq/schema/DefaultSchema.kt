@@ -38,7 +38,7 @@ import org.xbery.artbeams.jooq.schema.tables.Users
  */
 @Suppress("UNCHECKED_CAST")
 open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
-    public companion object {
+    companion object {
 
         /**
          * The reference instance of <code>DEFAULT_SCHEMA</code>

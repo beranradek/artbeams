@@ -7,20 +7,27 @@ package org.xbery.artbeams.jooq.schema.tables
 import java.time.Instant
 import java.time.LocalDate
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Index
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
@@ -36,19 +43,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.UserAccessRecord
 @Suppress("UNCHECKED_CAST")
 open class UserAccess(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, UserAccessRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, UserAccessRecord>?,
+    parentPath: InverseForeignKey<out Record, UserAccessRecord>?,
     aliased: Table<UserAccessRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<UserAccessRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -98,8 +109,9 @@ open class UserAccess(
      */
     val ENTITY_ID: TableField<UserAccessRecord, String?> = createField(DSL.name("entity_id"), SQLDataType.VARCHAR(40).nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<UserAccessRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<UserAccessRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<UserAccessRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<UserAccessRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<UserAccessRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>user_access</code> table reference
@@ -115,14 +127,12 @@ open class UserAccess(
      * Create a <code>user_access</code> table reference
      */
     constructor(): this(DSL.name("user_access"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, UserAccessRecord>): this(Internal.createPathAlias(child, key), child, key, USER_ACCESS, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_USER_ACCESS_UNIQUE)
     override fun getPrimaryKey(): UniqueKey<UserAccessRecord> = CONSTRAINT_D
     override fun `as`(alias: String): UserAccess = UserAccess(DSL.name(alias), this)
     override fun `as`(alias: Name): UserAccess = UserAccess(alias, this)
-    override fun `as`(alias: Table<*>): UserAccess = UserAccess(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): UserAccess = UserAccess(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -137,5 +147,55 @@ open class UserAccess(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): UserAccess = UserAccess(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): UserAccess = UserAccess(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): UserAccess = UserAccess(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): UserAccess = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): UserAccess = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): UserAccess = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): UserAccess = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): UserAccess = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): UserAccess = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): UserAccess = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): UserAccess = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): UserAccess = where(DSL.notExists(select))
 }

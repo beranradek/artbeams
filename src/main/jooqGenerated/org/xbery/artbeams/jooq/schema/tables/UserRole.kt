@@ -4,13 +4,22 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.Path
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
@@ -21,6 +30,8 @@ import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.keys.FK_ROLE_ID
 import org.xbery.artbeams.jooq.schema.keys.FK_USER_ID
+import org.xbery.artbeams.jooq.schema.tables.Roles.RolesPath
+import org.xbery.artbeams.jooq.schema.tables.Users.UsersPath
 import org.xbery.artbeams.jooq.schema.tables.records.UserRoleRecord
 
 
@@ -30,19 +41,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.UserRoleRecord
 @Suppress("UNCHECKED_CAST")
 open class UserRole(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, UserRoleRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, UserRoleRecord>?,
+    parentPath: InverseForeignKey<out Record, UserRoleRecord>?,
     aliased: Table<UserRoleRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<UserRoleRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -67,8 +82,9 @@ open class UserRole(
      */
     val ROLE_ID: TableField<UserRoleRecord, String?> = createField(DSL.name("role_id"), SQLDataType.VARCHAR(40).nullable(false), this, "")
 
-    private constructor(alias: Name, aliased: Table<UserRoleRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<UserRoleRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<UserRoleRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<UserRoleRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<UserRoleRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>user_role</code> table reference
@@ -85,41 +101,53 @@ open class UserRole(
      */
     constructor(): this(DSL.name("user_role"), null)
 
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, UserRoleRecord>): this(Internal.createPathAlias(child, key), child, key, USER_ROLE, null)
-    override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getReferences(): List<ForeignKey<UserRoleRecord, *>> = listOf(FK_USER_ID, FK_ROLE_ID)
-
-    private lateinit var _users: Users
-    private lateinit var _roles: Roles
+    constructor(path: Table<out Record>, childPath: ForeignKey<out Record, UserRoleRecord>?, parentPath: InverseForeignKey<out Record, UserRoleRecord>?): this(Internal.createPathAlias(path, childPath, parentPath), path, childPath, parentPath, USER_ROLE, null, null)
 
     /**
-     * Get the implicit join path to the <code>PUBLIC.users</code> table.
+     * A subtype implementing {@link Path} for simplified path-based joins.
      */
-    fun users(): Users {
-        if (!this::_users.isInitialized)
-            _users = Users(this, FK_USER_ID)
-
-        return _users;
+    open class UserRolePath : UserRole, Path<UserRoleRecord> {
+        constructor(path: Table<out Record>, childPath: ForeignKey<out Record, UserRoleRecord>?, parentPath: InverseForeignKey<out Record, UserRoleRecord>?): super(path, childPath, parentPath)
+        private constructor(alias: Name, aliased: Table<UserRoleRecord>): super(alias, aliased)
+        override fun `as`(alias: String): UserRolePath = UserRolePath(DSL.name(alias), this)
+        override fun `as`(alias: Name): UserRolePath = UserRolePath(alias, this)
+        override fun `as`(alias: Table<*>): UserRolePath = UserRolePath(alias.qualifiedName, this)
     }
+    override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getReferences(): List<ForeignKey<UserRoleRecord, *>> = listOf(FK_ROLE_ID, FK_USER_ID)
 
-    val users: Users
-        get(): Users = users()
+    private lateinit var _roles: RolesPath
 
     /**
      * Get the implicit join path to the <code>PUBLIC.roles</code> table.
      */
-    fun roles(): Roles {
+    fun roles(): RolesPath {
         if (!this::_roles.isInitialized)
-            _roles = Roles(this, FK_ROLE_ID)
+            _roles = RolesPath(this, FK_ROLE_ID, null)
 
         return _roles;
     }
 
-    val roles: Roles
-        get(): Roles = roles()
+    val roles: RolesPath
+        get(): RolesPath = roles()
+
+    private lateinit var _users: UsersPath
+
+    /**
+     * Get the implicit join path to the <code>PUBLIC.users</code> table.
+     */
+    fun users(): UsersPath {
+        if (!this::_users.isInitialized)
+            _users = UsersPath(this, FK_USER_ID, null)
+
+        return _users;
+    }
+
+    val users: UsersPath
+        get(): UsersPath = users()
     override fun `as`(alias: String): UserRole = UserRole(DSL.name(alias), this)
     override fun `as`(alias: Name): UserRole = UserRole(alias, this)
-    override fun `as`(alias: Table<*>): UserRole = UserRole(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): UserRole = UserRole(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -134,5 +162,55 @@ open class UserRole(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): UserRole = UserRole(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): UserRole = UserRole(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): UserRole = UserRole(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): UserRole = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): UserRole = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): UserRole = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): UserRole = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): UserRole = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): UserRole = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): UserRole = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): UserRole = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): UserRole = where(DSL.notExists(select))
 }

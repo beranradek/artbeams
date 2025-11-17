@@ -4,17 +4,25 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
+import kotlin.collections.Collection
+
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
@@ -28,19 +36,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.EntityAccessCountRecord
 @Suppress("UNCHECKED_CAST")
 open class EntityAccessCount(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, EntityAccessCountRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, EntityAccessCountRecord>?,
+    parentPath: InverseForeignKey<out Record, EntityAccessCountRecord>?,
     aliased: Table<EntityAccessCountRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<EntityAccessCountRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -70,8 +82,9 @@ open class EntityAccessCount(
      */
     val ACCESS_COUNT: TableField<EntityAccessCountRecord, Int?> = createField(DSL.name("access_count"), SQLDataType.INTEGER.defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.INTEGER)), this, "")
 
-    private constructor(alias: Name, aliased: Table<EntityAccessCountRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<EntityAccessCountRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<EntityAccessCountRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<EntityAccessCountRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<EntityAccessCountRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>entity_access_count</code> table reference
@@ -87,13 +100,11 @@ open class EntityAccessCount(
      * Create a <code>entity_access_count</code> table reference
      */
     constructor(): this(DSL.name("entity_access_count"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, EntityAccessCountRecord>): this(Internal.createPathAlias(child, key), child, key, ENTITY_ACCESS_COUNT, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<EntityAccessCountRecord> = CONSTRAINT_3
     override fun `as`(alias: String): EntityAccessCount = EntityAccessCount(DSL.name(alias), this)
     override fun `as`(alias: Name): EntityAccessCount = EntityAccessCount(alias, this)
-    override fun `as`(alias: Table<*>): EntityAccessCount = EntityAccessCount(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): EntityAccessCount = EntityAccessCount(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -108,5 +119,55 @@ open class EntityAccessCount(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): EntityAccessCount = EntityAccessCount(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): EntityAccessCount = EntityAccessCount(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): EntityAccessCount = EntityAccessCount(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): EntityAccessCount = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): EntityAccessCount = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): EntityAccessCount = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): EntityAccessCount = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): EntityAccessCount = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): EntityAccessCount = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): EntityAccessCount = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): EntityAccessCount = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): EntityAccessCount = where(DSL.notExists(select))
 }

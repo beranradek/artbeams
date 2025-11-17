@@ -4,20 +4,27 @@
 package org.xbery.artbeams.jooq.schema.tables
 
 
+import kotlin.collections.Collection
 import kotlin.collections.List
 
+import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Index
+import org.jooq.InverseForeignKey
 import org.jooq.Name
+import org.jooq.PlainSQL
+import org.jooq.QueryPart
 import org.jooq.Record
+import org.jooq.SQL
 import org.jooq.Schema
+import org.jooq.Select
+import org.jooq.Stringly
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
-import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
@@ -32,19 +39,23 @@ import org.xbery.artbeams.jooq.schema.tables.records.MediaRecord
 @Suppress("UNCHECKED_CAST")
 open class Media(
     alias: Name,
-    child: Table<out Record>?,
-    path: ForeignKey<out Record, MediaRecord>?,
+    path: Table<out Record>?,
+    childPath: ForeignKey<out Record, MediaRecord>?,
+    parentPath: InverseForeignKey<out Record, MediaRecord>?,
     aliased: Table<MediaRecord>?,
-    parameters: Array<Field<*>?>?
+    parameters: Array<Field<*>?>?,
+    where: Condition?
 ): TableImpl<MediaRecord>(
     alias,
     DefaultSchema.DEFAULT_SCHEMA,
-    child,
     path,
+    childPath,
+    parentPath,
     aliased,
     parameters,
     DSL.comment(""),
-    TableOptions.table()
+    TableOptions.table(),
+    where,
 ) {
     companion object {
 
@@ -99,8 +110,9 @@ open class Media(
      */
     val HEIGHT: TableField<MediaRecord, Int?> = createField(DSL.name("height"), SQLDataType.INTEGER.defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.INTEGER)), this, "")
 
-    private constructor(alias: Name, aliased: Table<MediaRecord>?): this(alias, null, null, aliased, null)
-    private constructor(alias: Name, aliased: Table<MediaRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
+    private constructor(alias: Name, aliased: Table<MediaRecord>?): this(alias, null, null, null, aliased, null, null)
+    private constructor(alias: Name, aliased: Table<MediaRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
+    private constructor(alias: Name, aliased: Table<MediaRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
 
     /**
      * Create an aliased <code>media</code> table reference
@@ -116,14 +128,12 @@ open class Media(
      * Create a <code>media</code> table reference
      */
     constructor(): this(DSL.name("media"), null)
-
-    constructor(child: Table<out Record>, key: ForeignKey<out Record, MediaRecord>): this(Internal.createPathAlias(child, key), child, key, MEDIA, null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_MEDIA_FILENAME)
     override fun getPrimaryKey(): UniqueKey<MediaRecord> = CONSTRAINT_62
     override fun `as`(alias: String): Media = Media(DSL.name(alias), this)
     override fun `as`(alias: Name): Media = Media(alias, this)
-    override fun `as`(alias: Table<*>): Media = Media(alias.getQualifiedName(), this)
+    override fun `as`(alias: Table<*>): Media = Media(alias.qualifiedName, this)
 
     /**
      * Rename this table
@@ -138,5 +148,55 @@ open class Media(
     /**
      * Rename this table
      */
-    override fun rename(name: Table<*>): Media = Media(name.getQualifiedName(), null)
+    override fun rename(name: Table<*>): Media = Media(name.qualifiedName, null)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Condition?): Media = Media(qualifiedName, if (aliased()) this else null, condition)
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(conditions: Collection<Condition>): Media = where(DSL.and(conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(vararg conditions: Condition?): Media = where(DSL.and(*conditions))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun where(condition: Field<Boolean?>?): Media = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(condition: SQL): Media = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String): Media = where(DSL.condition(condition))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg binds: Any?): Media = where(DSL.condition(condition, *binds))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    @PlainSQL override fun where(@Stringly.SQL condition: String, vararg parts: QueryPart): Media = where(DSL.condition(condition, *parts))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereExists(select: Select<*>): Media = where(DSL.exists(select))
+
+    /**
+     * Create an inline derived table from this table
+     */
+    override fun whereNotExists(select: Select<*>): Media = where(DSL.notExists(select))
 }

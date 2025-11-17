@@ -13,7 +13,7 @@ import java.time.Duration
  * @author Radek Beran
  */
 @Component
-open class MailingApiConfig(
+class MailingApiConfig(
     appConfig: AppConfig
 ) {
     companion object {
@@ -33,7 +33,7 @@ open class MailingApiConfig(
     @Bean
     @Qualifier(FEATURE_NAME)
     open fun mailerLiteApiRestTemplate(builder: RestTemplateBuilder): RestTemplate = builder
-        .setConnectTimeout(Duration.ofSeconds(20))
-        .setReadTimeout(Duration.ofSeconds(10))
+        .connectTimeout(Duration.ofSeconds(20))
+        .readTimeout(Duration.ofSeconds(10))
         .build()
 }
