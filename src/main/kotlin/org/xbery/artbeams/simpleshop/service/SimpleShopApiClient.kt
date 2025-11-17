@@ -21,13 +21,10 @@ import java.util.*
 @Service
 class SimpleShopApiClient(
     private val config: SimpleShopConfig,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val httpClient: HttpClient
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
-
-    private val httpClient: HttpClient = HttpClient.newBuilder()
-        .connectTimeout(Duration.ofSeconds(10))
-        .build()
 
     /**
      * Fetch product data from SimpleShop API.
