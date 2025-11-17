@@ -100,10 +100,17 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
 
     @PostMapping("/admin/media/{filename}/delete")
     fun deleteFile(request: HttpServletRequest, @PathVariable filename: String, @RequestParam(value = "size", required = false) size: String?): Any {
-        val success: Boolean = mediaRepository.deleteFile(filename, size)
-        return if (success) {
-            redirect("/admin/media")
-        } else {
+        return try {
+            val success: Boolean = mediaRepository.deleteFile(filename, size)
+            if (success) {
+                logger.info("Media file: $filename (size: $size) was successfully deleted.")
+                redirect("/admin/media")
+            } else {
+                logger.error("Media file: $filename (size: $size) was not deleted by DB query.")
+                internalServerError(request)
+            }
+        } catch (ex: Exception) {
+            logger.error("Failed to delete media file: $filename (size: $size)", ex)
             internalServerError(request)
         }
     }

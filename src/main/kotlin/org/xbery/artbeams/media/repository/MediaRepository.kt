@@ -233,13 +233,13 @@ class MediaRepository(
      */
     fun deleteFile(filename: String, size: String?): Boolean {
         val widthOpt = size?.let { s -> Parsers.parseIntOpt(s) }
+        val width = widthOpt ?: 0
         var result: Boolean
         dataSource.connection.use { conn ->
-            conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (widthOpt?.let { _ -> " AND width = ?" }
-                ?: "")).use { ps ->
+            conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (if (width > 0) { " AND width = ?" } else { "" })).use { ps ->
                 ps.setString(1, filename)
-                if (widthOpt != null) {
-                    ps.setInt(2, widthOpt)
+                if (width > 0) {
+                    ps.setInt(2, width)
                 }
                 val updatedCount: Int = ps.executeUpdate()
                 result = updatedCount == 1
