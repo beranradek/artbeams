@@ -192,10 +192,15 @@ class ImageGeneratingAgent(
      * Saves the temporary image to the media gallery and removes it from temp storage.
      *
      * @param tempImageId The temporary image ID
+     * @param customFilename Optional custom filename (without extension), e.g. "sunset-over-river"
      * @param privateAccess Whether the image should have private access
      * @return The filename in the media gallery if successful, null otherwise
      */
-    fun saveTempImageToGallery(tempImageId: String, privateAccess: Boolean = false): String? {
+    fun saveTempImageToGallery(
+        tempImageId: String,
+        customFilename: String? = null,
+        privateAccess: Boolean = false
+    ): String? {
         val tempImage = tempImages.getIfPresent(tempImageId) ?: run {
             logger.warn("Temp image not found: $tempImageId")
             return null
@@ -208,22 +213,32 @@ class ImageGeneratingAgent(
         }
 
         try {
+            // Build final filename
+            val finalFilename = if (!customFilename.isNullOrBlank()) {
+                // Sanitize custom filename and add extension
+                val sanitizedName = sanitizeForFilename(customFilename)
+                "$sanitizedName.$IMAGE_FORMAT"
+            } else {
+                // Use original generated filename
+                tempImage.filename
+            }
+
             // Store in media repository
             val success = mediaRepository.storeFile(
                 Files.newInputStream(tempImage.path),
-                tempImage.filename,
+                finalFilename,
                 tempImage.size,
                 tempImage.contentType,
                 privateAccess
             )
 
             if (success) {
-                logger.info("Saved generated image to gallery: ${tempImage.filename}")
+                logger.info("Saved generated image to gallery: $finalFilename")
                 // Clean up temp image
                 tempImages.invalidate(tempImageId)
-                return tempImage.filename
+                return finalFilename
             } else {
-                logger.error("Failed to save image to gallery: ${tempImage.filename}")
+                logger.error("Failed to save image to gallery: $finalFilename")
                 return null
             }
         } catch (e: Exception) {

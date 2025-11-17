@@ -296,21 +296,115 @@
     }
 
     function saveImageToGallery(tempImageId, button) {
+        // Show filename input modal
+        showFilenameInputModal(tempImageId, button);
+    }
+
+    function showFilenameInputModal(tempImageId, button) {
+        // Create modal if it doesn't exist
+        let modal = document.getElementById('filenameInputModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'filenameInputModal';
+            modal.className = 'modal fade';
+            modal.setAttribute('tabindex', '-1');
+            modal.setAttribute('role', 'dialog');
+            modal.innerHTML = `
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Název souboru</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="customFilenameInput" class="form-label">
+                                    Zadejte název souboru (bez přípony):
+                                </label>
+                                <div class="input-group">
+                                    <input type="text"
+                                           class="form-control"
+                                           id="customFilenameInput"
+                                           placeholder="např. sunset-over-river"
+                                           aria-label="Název souboru">
+                                    <span class="input-group-text">.webp</span>
+                                </div>
+                                <div class="form-text">
+                                    Ponechte prázdné pro automatické pojmenování. Povolené znaky: a-z, 0-9, pomlčka, podtržítko.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                            <button type="button" class="btn btn-success" id="confirmSaveBtn">
+                                <i class="fas fa-save"></i> Uložit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Reset input field
+        const filenameInput = document.getElementById('customFilenameInput');
+        filenameInput.value = '';
+
+        // Set up confirm button handler
+        const confirmBtn = document.getElementById('confirmSaveBtn');
+        confirmBtn.onclick = function() {
+            const customFilename = filenameInput.value.trim();
+            saveImageToGalleryWithFilename(tempImageId, customFilename, button);
+
+            // Close modal
+            const bsModal = bootstrap.Modal.getInstance(modal);
+            if (bsModal) {
+                bsModal.hide();
+            }
+        };
+
+        // Handle Enter key in input field
+        filenameInput.onkeypress = function(e) {
+            if (e.key === 'Enter') {
+                confirmBtn.click();
+            }
+        };
+
+        // Show modal
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+
+        // Focus on input when modal is shown
+        modal.addEventListener('shown.bs.modal', function() {
+            filenameInput.focus();
+        });
+    }
+
+    function saveImageToGalleryWithFilename(tempImageId, customFilename, button) {
         // Disable button and show loading state
         button.disabled = true;
         const originalHtml = button.innerHTML;
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ukládám...';
 
-        const headers = {};
+        const headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
 
         // Add CSRF token if available
         if (csrfToken && csrfHeaderName) {
             headers[csrfHeaderName] = csrfToken;
         }
 
+        // Build request body with optional filename parameter
+        const bodyParams = new URLSearchParams();
+        if (customFilename) {
+            bodyParams.append('filename', customFilename);
+        }
+
         fetch(`/admin/articles/agent/image/save/${tempImageId}`, {
             method: 'POST',
-            headers: headers
+            headers: headers,
+            body: bodyParams
         })
         .then(response => response.json())
         .then(data => {

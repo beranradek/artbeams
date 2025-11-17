@@ -186,12 +186,19 @@ class ImageGeneratingAgentController(
     }
 
     /**
-     * Saves the temporary image to the media gallery.
+     * Saves the temporary image to the media gallery with optional custom filename.
      */
     @PostMapping("/save/{tempImageId}")
     @ResponseBody
-    fun saveTempImage(@PathVariable tempImageId: String): ResponseEntity<Map<String, Any>> {
-        val filename = imageGeneratingAgent.saveTempImageToGallery(tempImageId, privateAccess = false)
+    fun saveTempImage(
+        @PathVariable tempImageId: String,
+        @RequestParam(value = "filename", required = false) customFilename: String?
+    ): ResponseEntity<Map<String, Any>> {
+        val filename = imageGeneratingAgent.saveTempImageToGallery(
+            tempImageId,
+            customFilename = customFilename,
+            privateAccess = false
+        )
 
         return if (filename != null) {
             ResponseEntity.ok(mapOf(
