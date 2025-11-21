@@ -36,9 +36,9 @@ spring.datasource.removeAbandoned: true
 spring.freemarker.cache: false
 # Spring Boot recently changed the default extension from .ftl to .ftlh:
 spring.freemarker.suffix: .ftl
-# Expose request attributes to FreeMarker templates
-spring.freemarker.expose-request-attributes: true
-spring.freemarker.request-context-attribute: request
+
+spring.freemarker.request-context-attribute: requestContext
+spring.freemarker.expose-request-attributes: false
 
 # Resources configuration
 # -----------------------

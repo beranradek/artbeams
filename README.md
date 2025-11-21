@@ -91,6 +91,17 @@ This involves also changes in templates (but change in a template does not invok
 * Run application with local config: `./gradlew :bootRun --args='--spring.profiles.active=local'`, or:
 * Run Application main class with VM options: `-DJDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/<db-name> -DJDBC_DATABASE_USERNAME=... -DJDBC_DATABASE_PASSWORD=...`
 
+* **Default Admin User**: A default admin user is created on the first application run. Change the password of admin user!
+  * **Login**: `admin`
+  * **Password**: `adminadmin`
+
+### Troubleshooting
+
+* **Localization Encoding**: If you encounter missing localization keys (e.g., `InvalidReferenceException: ... xlat['news.form.intro']`), it might be due to encoding issues when running `insert_localisation.sql`. On Windows, ensure you run the script with UTF-8 encoding:
+  ```powershell
+  $env:PGCLIENTENCODING='UTF8'; psql -U postgres -d artbeams -f src/main/resources/sql/insert_localisation.sql
+  ```
+
 ### Running on Heroku
 
 * Add Heroku Procfile (provided)
