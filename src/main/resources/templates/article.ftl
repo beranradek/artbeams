@@ -32,7 +32,7 @@
                   <time class="article-date" itemprop="datePublished" datetime="${article.validFrom?datetime?iso_utc}">
                     ${article.validFrom?string["d.M.yyyy, HH:mm"]}
                   </time>
-                  <#if article.modified != article.validFrom>
+                  <#if article.modified?long != article.validFrom?long>
                     <time itemprop="dateModified" datetime="${article.modified?datetime?iso_utc}" style="display:none;">
                       ${article.modified?string["d.M.yyyy, HH:mm"]}
                     </time>
