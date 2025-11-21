@@ -63,9 +63,11 @@
         <span itemprop="publisher" itemscope itemtype="https://schema.org/Organization" style="display:none;">
           <span itemprop="name">${xlat['website.title']}</span>
           <link itemprop="url" href="${_urlBase}" />
+          <#if xlat['logo.img.src']?? || xlat['favicon.img.src']??>
           <span itemprop="logo" itemscope itemtype="https://schema.org/ImageObject">
-            <link itemprop="url" href="${_urlBase}${xlat['logo.img.src']}" />
+            <link itemprop="url" href="${_urlBase}<#if xlat['logo.img.src']??>${xlat['logo.img.src']}<#else>${xlat['favicon.img.src']}</#if>" />
           </span>
+          </#if>
         </span>
 
         <#if article.showOnBlog>
