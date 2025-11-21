@@ -167,7 +167,7 @@
 }
 
 /* Footer styling */
-footer {
+.page-footer {
   background-color: var(--dark);
   color: var(--footer-text);
   padding: 3rem 0 2rem;
@@ -245,15 +245,15 @@ footer {
   .sidebar {
     margin-bottom: 1rem;
   }
-  
+
   .article-card {
     margin-bottom: 1.5rem;
   }
-  
-  footer {
+
+  .page-footer {
     padding: 2rem 0 1rem;
   }
-  
+
   .footer-heading {
     font-size: 1rem;
     margin-bottom: 1rem;

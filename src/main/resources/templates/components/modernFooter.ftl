@@ -1,7 +1,7 @@
 <#macro modernFooter>
 <#import "/forms.ftl" as forms />
 <!-- Footer -->
-<footer class="pt-5 pb-4">
+<footer class="page-footer pt-5 pb-4">
   <div class="container">
     <div class="row">
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
