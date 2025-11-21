@@ -12,6 +12,7 @@ dist
 /*.iml
 /out
 /.idea_modules
+/.vscode
 /.classpath
 /.project
 .sc
