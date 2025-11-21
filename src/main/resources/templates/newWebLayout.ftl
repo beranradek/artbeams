@@ -61,7 +61,7 @@
     <#if article.image??>
       <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
       <meta property="og:image:width" content="${xlat['article.img.tablet.width']}" />
-      <meta property="og:image:height" content="${xlat['article.img.tablet.height']}" />
+      <meta property="og:image:height" content="${xlat['article.img.tablet.height']!xlat['article.img.tablet.width']}" />
     </#if>
     <#-- Complete Article OpenGraph metadata -->
     <meta property="article:published_time" content="${article.validFrom?datetime?iso_utc}" />
@@ -80,9 +80,11 @@
   <#elseif category??>
     <meta property="og:title" content="${category.title!}" />
     <meta property="og:type" content="article:section" />
+    <meta property="og:image" content="${_urlBase}/static/images/header.jpg" />
   <#else>
     <meta property="og:title" content="${xlat['website.title']}" />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content="${_urlBase}/static/images/header.jpg" />
   </#if>
   <meta property="og:url" content="${_url}" />
   <meta property="og:locale" content="${xlat['website.locale']}" />
