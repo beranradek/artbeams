@@ -113,8 +113,8 @@ cite {
   text-align: right;
 }
 
-.display-none {
-  display: none;
+.invisible {
+  display: none !important;
 }
 
 /** Blog-nested styles are used in public web and for preview of article in administration */

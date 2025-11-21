@@ -33,7 +33,7 @@
                     ${article.validFrom?string["d.M.yyyy, HH:mm"]}
                   </time>
                   <#if article.modified?long != article.validFrom?long>
-                    <time itemprop="dateModified" datetime="${article.modified?datetime?iso_utc}" class="display-none">
+                    <time itemprop="dateModified" datetime="${article.modified?datetime?iso_utc}" class="invisible">
                       ${article.modified?string["d.M.yyyy, HH:mm"]}
                     </time>
                   </#if>
@@ -45,7 +45,7 @@
         </header>
 
         <#if article.perex??>
-          <div itemprop="description" class="article-perex display-none">
+          <div itemprop="description" class="article-perex invisible">
             ${article.perex}
           </div>
         </#if>
@@ -60,7 +60,7 @@
           <meta itemprop="articleSection" content="${articleCategories[0].title}" />
         </#if>
         <link itemprop="mainEntityOfPage" href="${_urlBase}/${article.slug}" />
-        <span itemprop="publisher" itemscope itemtype="https://schema.org/Organization" class="display-none">
+        <span itemprop="publisher" itemscope itemtype="https://schema.org/Organization" class="invisible">
           <span itemprop="name">${xlat['website.title']}</span>
           <link itemprop="url" href="${_urlBase}" />
           <#if xlat['logo.img.src']?? || xlat['favicon.img.src']??>
