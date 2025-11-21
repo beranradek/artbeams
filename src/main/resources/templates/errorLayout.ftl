@@ -7,12 +7,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="${xlat['author.name']}" />
   <#assign description = "${xlat['website.description']}">
-  <meta name="description" content="${description!}" />
+  <meta name="description" content="${description?html!}" />
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
 
   <meta property="og:url" content="${_url}" />
   <meta property="og:locale" content="${xlat['website.locale']}" />
-  <meta property="og:description" content="${description!}" />
+  <meta property="og:description" content="${description?html!}" />
 
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 

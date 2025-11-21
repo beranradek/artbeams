@@ -27,7 +27,7 @@
       <#assign description = "${(category.description)[0..*350]}">
     </#if>
   </#if>
-  <meta name="description" content="${description!}" />
+  <meta name="description" content="${description?html!}" />
   <#-- Note: keywords meta tag is outdated for SEO, but kept for legacy compatibility -->
   <#if article?? && article.keywords??>
     <meta name="keywords" content="${article.keywords!}"/>
@@ -88,12 +88,12 @@
   </#if>
   <meta property="og:url" content="${_url}" />
   <meta property="og:locale" content="${xlat['website.locale']}" />
-  <meta property="og:description" content="${description!}" />
+  <meta property="og:description" content="${description?html!}" />
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="<#if title??>${title}<#else>${xlat['website.title']}</#if>" />
-  <meta name="twitter:description" content="${description?truncate(200)!}" />
+  <meta name="twitter:description" content="${description?truncate(200)?html!}" />
   <#if article?? && article.image??>
     <meta name="twitter:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
     <meta name="twitter:image:alt" content="${article.title!}" />
