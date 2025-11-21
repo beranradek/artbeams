@@ -1,6 +1,7 @@
 /** Styles common for both administration and public web */
 :root {
-  --primary: #1a3b5c; /* Deep blue */
+  --primary: #1a3b5c;
+  /* Deep blue */
 }
 
 code {
@@ -80,88 +81,110 @@ cite {
 }
 
 .clear {
-    clear: both;
+  clear: both;
 }
 
 /** The following inlined styles were rewritten to CSS classes due to strict Content Security Policy */
 .color-orange {
-    color: #d2691e;
+  color: #d2691e;
 }
 
 .cursor-help {
-    cursor:help;
+  cursor: help;
 }
 
 .max-width-30-percent {
-    max-width: 30%;
+  max-width: 30%;
 }
 
 .max-width-70-percent {
-    max-width: 70%;
+  max-width: 70%;
 }
 
 .max-width-100-percent {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .padding-2-2-1-rem {
-    padding: 2rem 2rem 1rem;
+  padding: 2rem 2rem 1rem;
 }
 
 .text-align-right {
-    text-align: right;
+  text-align: right;
+}
+
+.display-none {
+  display: none;
 }
 
 /** Blog-nested styles are used in public web and for preview of article in administration */
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--primary);
 }
 
-.blog-main h1, .blog-sidebar h1,
-.blog-main h2, .blog-sidebar h2,
-.blog-main h3, .blog-sidebar h3,
-.blog-main h4, .blog-sidebar h4,
-.blog-main h5, .blog-sidebar h5,
-.blog-main h6, .blog-sidebar h6 {
+.blog-main h1,
+.blog-sidebar h1,
+.blog-main h2,
+.blog-sidebar h2,
+.blog-main h3,
+.blog-sidebar h3,
+.blog-main h4,
+.blog-sidebar h4,
+.blog-main h5,
+.blog-sidebar h5,
+.blog-main h6,
+.blog-sidebar h6 {
   margin-top: 0;
   font-weight: 500;
 }
 
-.blog-main h1, .blog-sidebar h1 {
-    font-size: 2.1rem;
-    line-height: 3rem;
-    text-align: center;
+.blog-main h1,
+.blog-sidebar h1 {
+  font-size: 2.1rem;
+  line-height: 3rem;
+  text-align: center;
 }
 
-.blog-main h2, .blog-sidebar h2 {
+.blog-main h2,
+.blog-sidebar h2 {
   font-size: 1.8rem;
   line-height: 2.6rem;
 }
 
-.blog-main h3, .blog-sidebar h3 {
+.blog-main h3,
+.blog-sidebar h3 {
   font-size: 1.5rem;
   line-height: 2rem;
 }
 
-.blog-main h4, .blog-sidebar h4 {
+.blog-main h4,
+.blog-sidebar h4 {
   font-size: 1.2rem;
   line-height: 2rem;
 }
 
-.blog-main h5, .blog-sidebar h5 {
+.blog-main h5,
+.blog-sidebar h5 {
   font-size: 0.9rem;
   line-height: 2rem;
 }
 
-.blog-main div[style="--text-box"], .text-box {
+.blog-main div[style="--text-box"],
+.text-box {
   padding: 2rem 2rem 2rem;
   margin-bottom: 2rem;
   margin-top: 1.3rem;
   background-color: #ffe5cc;
 }
 
-.blog-main div[style="--text-box-bordered"], .text-box-bordered {
+.blog-main div[style="--text-box-bordered"],
+.text-box-bordered {
   padding: 2rem 2rem 2rem;
   margin-bottom: 2rem;
   margin-top: 1.3rem;
@@ -169,7 +192,8 @@ h1, h2, h3, h4, h5, h6 {
   border: 0.3rem solid #f06d3b;
 }
 
-.blog-main div[style="--text-box-bordered-only"], .text-box-bordered-only {
+.blog-main div[style="--text-box-bordered-only"],
+.text-box-bordered-only {
   padding: 2rem 2rem 2rem;
   margin-bottom: 2rem;
   margin-top: 1.3rem;
@@ -186,7 +210,8 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #ffe5cc;
 }
 
-.blog-main table th, .blog-main table td {
+.blog-main table th,
+.blog-main table td {
   padding: 0.5rem;
 }
 
@@ -195,64 +220,64 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .blog-main img[src*="#left"] {
-   float: left;
-   margin-right: 2rem;
-   margin-top: 0.5rem;
-   margin-bottom: 0.5rem;
+  float: left;
+  margin-right: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .blog-main img[src*="#left-big-margin"] {
-   float: left;
-   margin-right: 4rem;
-   margin-top: 0.5rem;
-   margin-bottom: 0.5rem;
+  float: left;
+  margin-right: 4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .blog-main img[src*="#right"] {
-   float: right;
-   margin-left: 2rem;
-   margin-top: 0.5rem;
-   margin-bottom: 0.5rem;
+  float: right;
+  margin-left: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .blog-main img[src*="#right-big-margin"] {
-   float: right;
-   margin-left: 4rem;
-   margin-top: 0.5rem;
-   margin-bottom: 0.5rem;
+  float: right;
+  margin-left: 4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .blog-main img[src*="#center"] {
-   display: block;
-   margin: 0 auto;
+  display: block;
+  margin: 0 auto;
 }
 
 .color-dark {
-   color: Chocolate;
+  color: Chocolate;
 }
 
 .color-red {
-   color: Red;
+  color: Red;
 }
 
 .open-lightbox {
-    background: #219ed1;
-    color: #ffffff;
-    font-weight: 500;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    -khtml-border-radius: 8px;
-    border-radius: 8px;
-    padding: 0.7rem 1.2rem 0.7rem 1.2rem;
-    margin-top: 0px;
-    margin-right: auto;
-    margin-bottom: 0px;
-    margin-left: auto;
+  background: #219ed1;
+  color: #ffffff;
+  font-weight: 500;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -khtml-border-radius: 8px;
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem 0.7rem 1.2rem;
+  margin-top: 0px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
 }
 
 .label-fix {
   /* Otherwise label does not start right bellow above inputs */
-  padding-left:0;
+  padding-left: 0;
 }
 
 .no-bullets {
@@ -260,113 +285,117 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .checklist {
-    list-style: none;
-    padding-left: 0;
+  list-style: none;
+  padding-left: 0;
 }
 
 .checklist li {
-    position: relative;
-    padding-left: 2em; /* Space from the bullet symbol. */
+  position: relative;
+  padding-left: 2em;
+  /* Space from the bullet symbol. */
 }
 
 .checklist li::before {
-    content: "✅";
-    position: absolute;
-    left: 0;
-    top: 0;
+  content: "✅";
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 /* Font awesome icons indentation. */
 .fas {
-    padding-bottom: 3px;
+  padding-bottom: 3px;
 }
 
 /* Font Awesome Icons */
 .check-icon {
-    color: #28a745;
-    /* Green checkmark */
+  color: #28a745;
+  /* Green checkmark */
 }
 
 .clock-icon {
-    color: #007bff;
-    /* Blue clock */
+  color: #007bff;
+  /* Blue clock */
 }
 
 .fire-icon {
-    color: #dc3545;
-    /* Red fire */
+  color: #dc3545;
+  /* Red fire */
 }
 
 /* Graphic elements */
 .rounded-box {
-    background-color: #ffe5cc;
-    /* Light orange */
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
+  background-color: #ffe5cc;
+  /* Light orange */
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .rounded-box-shadow {
-    background-color: #f8f0e3; /* Light background */
-    border-radius: 1rem;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  background-color: #f8f0e3;
+  /* Light background */
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow */
 }
 
 .shadow-box {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Light shadow */
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Light shadow */
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .info-box {
-    background-color: #f7feff;
-    /* Light blue */
-    border-left: 5px solid #00bcd4;
-    /* Blue accent */
-    padding: 30px 15px;
-    margin-bottom: 15px;
+  background-color: #f7feff;
+  /* Light blue */
+  border-left: 5px solid #00bcd4;
+  /* Blue accent */
+  padding: 30px 15px;
+  margin-bottom: 15px;
 }
 
 .guarantee-box {
-    background-color: #e9f5f1;
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    border: 2px solid #b0e0d3;
+  background-color: #e9f5f1;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 2px solid #b0e0d3;
 }
+
 .guarantee-box-title {
-    color: #2b5989;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+  color: #2b5989;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
 .features {
-    padding: 4rem 0;
+  padding: 4rem 0;
 }
 
 .feature {
-    text-align: center;
-    margin-bottom: 3rem;
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
 .feature-icon {
-    font-size: 2rem;
-    /* color: #007bff; */
-    color: #d2691e;
-    margin-bottom: 1rem;
+  font-size: 2rem;
+  /* color: #007bff; */
+  color: #d2691e;
+  margin-bottom: 1rem;
 }
 
 .feature-title {
-    font-size: 1.5rem;
-    color: #343a40;
+  font-size: 1.5rem;
+  color: #343a40;
 }
 
 .feature-text {
-    /* color: #6c757d; */
-    color: #2b5989;
+  /* color: #6c757d; */
+  color: #2b5989;
 }

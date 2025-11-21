@@ -10,150 +10,160 @@
 }
 
 /* More decent (smaller) text in footer */
-.footer {
+.page-footer {
   font-size: 0.95rem;
 }
 
-.footer > .container {
+.page-footer>.container {
   padding-right: 15px;
   padding-left: 15px;
 }
 
 /* Layout customization */
 .bg-dark {
-    background-color: #f5f5f5!important;
+  background-color: #f5f5f5 !important;
 }
 
 .btn-search-blue {
-    background-color:#2b5989!important;
+  background-color: #2b5989 !important;
 }
 
 /* Bolder first navbar item */
 a.navbar-brand {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 /* More space and light lines between navbar items */
 .nav-item {
-    border-left: 1px dotted #68adf7;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+  border-left: 1px dotted #68adf7;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 /* Custom styles */
-.item-title a, .item-title a:active, .item-title a:hover, .item-title a:visited {
-    color: #d2691e; /* Orange-chocolate-like */
+.item-title a,
+.item-title a:active,
+.item-title a:hover,
+.item-title a:visited {
+  color: #d2691e;
+  /* Orange-chocolate-like */
 }
 
-a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
-    color: #2b5989;
+a.navbar-brand,
+a:active.navbar-brand,
+a:visited.navbar-brand {
+  color: #2b5989;
 }
 
 .btn {
-    color: white;
-    background-color: #d2691e !important; /* Orange-chocolate-like */
+  color: white;
+  background-color: #d2691e !important;
+  /* Orange-chocolate-like */
 }
 
-/* For main search button and similar buttons */ 
+/* For main search button and similar buttons */
 .btn-outline-success {
-    background-color: #2b5989 !important;
+  background-color: #2b5989 !important;
 }
 
 .headline-mobile {
-    /* See also preload of this image in webLayout's head. */
-    background-image: url('/media/headline-mobile.webp');
+  /* See also preload of this image in webLayout's head. */
+  background-image: url('/media/headline-mobile.webp');
 }
 
 .headline-desktop {
-    /* See also preload of this image in webLayout's head. */
-    background-image: url('/media/headline.webp')
+  /* See also preload of this image in webLayout's head. */
+  background-image: url('/media/headline.webp')
 }
 
 .headline-offer-modal-button-holder {
-    margin-top: 1.6rem;
-    margin-bottom: 1.3rem;
-    text-align: center;
+  margin-top: 1.6rem;
+  margin-bottom: 1.3rem;
+  text-align: center;
 }
 
 #headline {
-    background-position: center center;
-    background-repeat: no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    /* height: auto; */
-    /* background-attachment: fixed: Stays in fixed position when scrolling (quite nice effect). */
-    height: 880px;
-    width: 100%;
-    border-bottom: 0px solid;
-    border-top: 0px solid;
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  /* height: auto; */
+  /* background-attachment: fixed: Stays in fixed position when scrolling (quite nice effect). */
+  height: 880px;
+  width: 100%;
+  border-bottom: 0px solid;
+  border-top: 0px solid;
 }
 
 #headline-offer {
-    background-color: rgba(0, 0, 0, 0.23);
-    color: white;
-    border-radius: 1rem;
-    padding: 2rem;
-    margin: 1rem 0rem 0rem 0rem;
-    min-width: 360px; /* min-width so the column does not become too narrow on tablets  */
+  background-color: rgba(0, 0, 0, 0.23);
+  color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 1rem 0rem 0rem 0rem;
+  min-width: 360px;
+  /* min-width so the column does not become too narrow on tablets  */
 }
 
 #headline-offer1 {
-    margin-top:1.3rem;
-    text-align:center;
+  margin-top: 1.3rem;
+  text-align: center;
 }
 
 .headline-offer1-button {
-    font-weight:500;
-    font-size:18px;
-    padding:0.7rem 1.2rem 0.7rem 1.2rem;
+  font-weight: 500;
+  font-size: 18px;
+  padding: 0.7rem 1.2rem 0.7rem 1.2rem;
 }
 
 .headline-offer-header {
-    font-size: 1.1rem;
-    line-height: 1.6rem;
+  font-size: 1.1rem;
+  line-height: 1.6rem;
 }
 
 .headline-offer-img-holder {
-    margin-bottom:0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .headline-offer-img-holder img {
-    min-width:275px;
+  min-width: 275px;
 }
 
 #headline-portrait {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    vertical-align: middle;
-    text-align: center;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+  text-align: center;
 }
 
 #headline-portrait-holder {
-    display: inline-block;
-    margin-top: 30%;
-    border: solid 3px #0f283d;
-    background-color: #192d3d;
-    border-radius: 0.8rem;
+  display: inline-block;
+  margin-top: 30%;
+  border: solid 3px #0f283d;
+  background-color: #192d3d;
+  border-radius: 0.8rem;
 }
 
 #headline-portrait-holder img {
-    min-width: 235px;
+  min-width: 235px;
 }
 
 .modal-dialog .no-title {
-    /* Smaller header for only close button */
-    --bs-modal-header-padding: 0.4rem 0.4rem;
+  /* Smaller header for only close button */
+  --bs-modal-header-padding: 0.4rem 0.4rem;
 }
 
 .category-header {
-    text-align: center;
-    background-color: #d2691e; /* Orange-chocolate-like */
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
+  text-align: center;
+  background-color: #d2691e;
+  /* Orange-chocolate-like */
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
 }
+
 .category-header h1 {
   color: white;
   font-size: 1.8rem;
@@ -170,6 +180,7 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
   height: 74px;
   position: fixed;
 }
+
 .cookie-disclaimer .container {
   text-align: center;
   padding-top: 20px;
@@ -183,53 +194,53 @@ a.navbar-brand, a:active.navbar-brand, a:visited.navbar-brand {
 }
 
 .author {
-    border-top: 1px solid lightgrey;
-    border-bottom: none;
-    border-left: none;
-    border-right: none;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+  border-top: 1px solid lightgrey;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .avatar {
-    margin-right: 1rem;
+  margin-right: 1rem;
 }
 
 .comments {
-    border-top: 1px solid lightgrey;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
+  border-top: 1px solid lightgrey;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .comments .comment {
-    border-bottom: 1px solid lightgrey;
-    padding: 0.5rem 0 0 0;
-    margin: 1rem 0 0 0;
+  border-bottom: 1px solid lightgrey;
+  padding: 0.5rem 0 0 0;
+  margin: 1rem 0 0 0;
 }
 
 .comments .comment .comment-author {
-    float: left;
-    font-size: smaller;
+  float: left;
+  font-size: smaller;
 }
 
 .comments .comment .comment-meta {
-    float: right;
-    font-size: smaller;
+  float: right;
+  font-size: smaller;
 }
 
 .comments .comment .comment-body {
-    clear: both;
+  clear: both;
 }
 
 .comment-info {
-    font-size: 0.95rem;
+  font-size: 0.95rem;
 }
 
 body {
   /* Navbar fixed to the top */
   min-height: 75rem;
-  
+
   font-size: 1rem;
   line-height: 1.5rem;
 }
@@ -243,7 +254,7 @@ body {
   --bs-navbar-brand-color: #2b5989;
   --bs-navbar-brand-hover-color: #2b5989;
 }
- 
+
 /* Little bigger text for articles and blog items */
 .blog-main {
   font-size: 1.05rem;
@@ -279,8 +290,8 @@ body {
 }
 
 .article-date {
-    margin-left:0.5rem;
-    white-space:nowrap;
+  margin-left: 0.5rem;
+  white-space: nowrap;
 }
 
 .article-image-detail {
@@ -300,10 +311,10 @@ body {
 }
 
 .ml-form-embedPermissions {
-    margin-bottom: 0px;
-    padding-bottom: 5px;
+  margin-bottom: 0px;
+  padding-bottom: 5px;
 }
 
 .sidebar-offer-form-holder {
-    max-width:360px;
+  max-width: 360px;
 }
