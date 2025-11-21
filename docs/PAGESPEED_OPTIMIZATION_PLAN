@@ -1,0 +1,81 @@
+# PageSpeed Optimization Implementation Plan
+
+## Problem Summary
+Based on the PageSpeed Insights report for mobile, the site has a performance score of 55/100. The main issues identified are:
+
+Eliminate render-blocking resources - CSS files (styles.css, Font Awesome, Bootstrap Icons, Google Fonts) are blocking initial page render
+Properly size images - Images like header.jpg and article images are larger than needed
+Eliminate unused JavaScript and CSS - Unused code in Bootstrap and CSS files
+Avoid long main-thread tasks and non-composited animations
+Serve static assets with efficient cache policy - Current cache is 1-2 days
+User Review Required
+IMPORTANT
+
+Server Configuration Changes Some optimizations (like caching headers and server-side image optimization) require server configuration changes that are beyond the scope of template/CSS modifications. These will be documented but may need deployment configuration updates.
+
+WARNING
+
+External Resources Font Awesome and Bootstrap Icons are loaded from CDNs. We can optimize their loading but cannot reduce their file size directly.
+
+Proposed Changes
+Template Optimization
+[MODIFY] 
+newWebLayout.ftl
+Changes:
+
+Add font-display: swap to Google Fonts - Modify line 2 to include &display=swap parameter
+Preconnect to external domains - Add preconnect hints for cdnjs.cloudflare.com and cdn.jsdelivr.net to establish early connections
+Defer non-critical CSS - Add media="print" onload="this.media='all'" to Font Awesome and Bootstrap Icons to defer their loading
+Optimize LCP image preload - The existing preload on line 54 is good, but ensure it matches the actual hero image used
+CSS Optimization
+[MODIFY] 
+styles.css
+Note: This file is auto-generated during build. We should identify the source files and optimize those instead. The file imports Google Fonts at line 2 which could be moved to the HTML <head> with proper attributes.
+
+Recommendation: Move the @import url('https://fonts.googleapis.com/css2?...') from CSS to HTML <link> tag with font-display=swap.
+
+Build Process
+[INVESTIGATE] CSS/JS Minification
+The project appears to concatenate multiple CSS files into 
+styles.css
+. We should:
+
+Verify the build process removes unused CSS
+Consider using PurgeCSS or similar tools to remove unused Bootstrap/Font Awesome styles
+Ensure JavaScript is minified
+Verification Plan
+Automated Tests
+# Build the project to generate optimized CSS
+./gradlew build
+# Run local server
+./gradlew bootRun
+Manual Verification
+Visual Regression Testing
+
+Open homepage at http://localhost:8080
+Verify fonts load correctly
+Check that icons (Font Awesome, Bootstrap Icons) display properly
+Verify hero image loads with high priority
+Performance Testing
+
+Use Chrome DevTools Lighthouse to test local performance
+Verify render-blocking resources are reduced
+Check font loading doesn't cause layout shift
+Cross-browser Testing
+
+Test in Chrome, Firefox, and Safari
+Verify font fallbacks work correctly during font loading
+Deployment Verification
+After deployment to Heroku:
+
+Re-run PageSpeed Insights
+Verify performance score improvement
+Check for any console errors or visual issues
+Out of Scope (Documented for Future)
+The following optimizations require server/infrastructure changes:
+
+Image Optimization - Implement responsive images with srcset or use a CDN with automatic image optimization
+Extended Cache Headers - Configure Heroku/server to cache static assets for longer periods (e.g., 1 year with cache busting)
+Remove Unused CSS/JS - Requires build tooling changes to analyze and remove unused Bootstrap/Font Awesome code
+HTTP/2 Server Push - Server configuration to push critical resources
+Compress Images - Use tools like ImageOptim or Squoosh to compress header.jpg and article images before upload
