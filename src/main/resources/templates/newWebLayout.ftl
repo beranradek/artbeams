@@ -21,11 +21,6 @@
     <#if article.perex??>
       <#assign description = "${(article.perex)[0..*350]}">
     </#if>
-    <#-- TODO: Add additional metas:
-    <meta property="article:tag" content="Some tag/keyword" />
-    <meta property="article:published_time" content="2017-05-09T12:39:34+00:00" />
-    article:modified_time, article:author, ...
-    -->
   <#elseif category??>
     <#assign title = "${(category.title)[0..*200]}">
     <#if category.description??>
@@ -33,22 +28,54 @@
     </#if>
   </#if>
   <meta name="description" content="${description!}" />
+  <#-- Note: keywords meta tag is outdated for SEO, but kept for legacy compatibility -->
   <#if article?? && article.keywords??>
     <meta name="keywords" content="${article.keywords!}"/>
   <#else>
     <meta name="keywords" content="${xlat['website.keywords']}"/>
   </#if>
+
+  <#-- Canonical URL to prevent duplicate content issues -->
+  <#if article??>
+    <link rel="canonical" href="${_urlBase}/${article.slug}" />
+  <#elseif category??>
+    <link rel="canonical" href="${_urlBase}/kategorie/${category.slug}" />
+  <#else>
+    <link rel="canonical" href="${_urlBase}" />
+  </#if>
+
+  <#-- Author link for articles -->
+  <#if article??>
+    <link rel="author" href="${_urlBase}/muj-pribeh" />
+  </#if>
+
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
   <#-- Preload of Largest Contentful Paint (LCP) image with a high fetch priority so it starts loading with the stylesheet. -->
   <link rel="preload" fetchpriority="high" as="image" href="/static/images/header.jpg" type="image/jpeg">
 
-  <!-- Open Graph data -->
+  <!-- Open Graph data (Facebook, LinkedIn) -->
   <#if article??>
     <meta property="og:title" content="${article.title!}" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="${xlat['website.title']}" />
     <#if article.image??>
       <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
+      <meta property="og:image:width" content="${xlat['article.img.tablet.width']}" />
+      <meta property="og:image:height" content="${xlat['article.img.tablet.height']}" />
+    </#if>
+    <#-- Complete Article OpenGraph metadata -->
+    <meta property="article:published_time" content="${article.validFrom?datetime?iso_utc}" />
+    <meta property="article:modified_time" content="${article.modified?datetime?iso_utc}" />
+    <meta property="article:author" content="${_urlBase}/muj-pribeh" />
+    <#if articleCategories?? && articleCategories?size gt 0>
+      <meta property="article:section" content="${articleCategories[0].title}" />
+    </#if>
+    <#if article.keywords??>
+      <#list article.keywords?split(",") as keyword>
+        <#if keyword?trim != "">
+    <meta property="article:tag" content="${keyword?trim}" />
+        </#if>
+      </#list>
     </#if>
   <#elseif category??>
     <meta property="og:title" content="${category.title!}" />
@@ -61,7 +88,40 @@
   <meta property="og:locale" content="${xlat['website.locale']}" />
   <meta property="og:description" content="${description!}" />
 
+  <!-- Twitter Card data -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<#if title??>${title}<#else>${xlat['website.title']}</#if>" />
+  <meta name="twitter:description" content="${description?truncate(200)!}" />
+  <#if article?? && article.image??>
+    <meta name="twitter:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
+    <meta name="twitter:image:alt" content="${article.title!}" />
+  <#else>
+    <#-- Use default social image for non-article pages -->
+    <meta name="twitter:image" content="${_urlBase}/static/images/header.jpg" />
+  </#if>
+  <#-- Add your Twitter handle if you have one
+  <meta name="twitter:site" content="@YourTwitterHandle" />
+  <meta name="twitter:creator" content="@YourTwitterHandle" />
+  -->
+
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
+
+  <#-- JSON-LD Structured Data for GEO/SEO -->
+  <#if articleJsonLd??>
+  <script type="application/ld+json" nonce="${_cspNonce}">
+${articleJsonLd}
+  </script>
+  </#if>
+  <#if breadcrumbJsonLd??>
+  <script type="application/ld+json" nonce="${_cspNonce}">
+${breadcrumbJsonLd}
+  </script>
+  </#if>
+  <#if websiteJsonLd??>
+  <script type="application/ld+json" nonce="${_cspNonce}">
+${websiteJsonLd}
+  </script>
+  </#if>
 
   <#-- CSS files merged and minified into styles.css
   <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.articles.domain.Article
+import org.xbery.artbeams.articles.repository.ArticleCategoryRepository
 import org.xbery.artbeams.articles.service.ArticleService
 import org.xbery.artbeams.categories.service.CategoryService
 import org.xbery.artbeams.comments.controller.CommentController
@@ -22,6 +23,7 @@ import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.access.domain.EntityKey
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.seo.StructuredDataGenerator
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
@@ -38,6 +40,7 @@ import jakarta.servlet.http.HttpServletResponse
 class WebController(
     val articleService: ArticleService,
     private val categoryService: CategoryService,
+    private val articleCategoryRepository: ArticleCategoryRepository,
     val productService: ProductService,
     val commentService: CommentService,
     val controllerComponents: ControllerComponents,
@@ -63,12 +66,29 @@ class WebController(
 
         val articles = articleService.findLatest(ArticlesPerPageLimit)
         val userAccessReport = controllerComponents.userAccessService.getUserAccessReport(request)
+
+        // Generate website structured data for homepage
+        val siteUrl = getUrlBase(request)
+        val xlat = controllerComponents.localisationRepository.getEntries()
+        val siteName = xlat["website.title"] ?: "ArtBeams"
+        val siteDescription = xlat["website.description"] ?: ""
+        val logoUrl = "$siteUrl${xlat["logo.img.src"] ?: "/static/images/logo.png"}"
+
+        val websiteJsonLd = StructuredDataGenerator.generateWebsiteJsonLd(
+            siteName = siteName,
+            siteUrl = siteUrl,
+            description = siteDescription,
+            logoUrl = logoUrl,
+            searchUrl = "/search?query={search_term_string}"
+        )
+
         val model = createBlogModel(
             request,
             FormData(SubscriptionFormData.Empty, ValidationResult.empty),
             "articles" to articles,
             "showHeadline" to true,
-            "userAccessReport" to userAccessReport
+            "userAccessReport" to userAccessReport,
+            "websiteJsonLd" to websiteJsonLd
         )
         return ModelAndView("homepage", model)
     }
@@ -145,16 +165,50 @@ class WebController(
                         Pair<List<Comment>, FormMapping<EditedComment>?>(listOf(), null)
                     }
                 }
-                CompletableFuture.allOf(fUserAccessReport, fCountOfVisits, fCommentsWithForm).join()
+                val fArticleCategories = CompletableFuture.supplyAsync {
+                    val categoryIds = articleCategoryRepository.findArticleCategoryIdsByArticleId(article.id)
+                    val allCategories = categoryService.findCategories()
+                    allCategories.filter { categoryIds.contains(it.id) }
+                }
+                CompletableFuture.allOf(fUserAccessReport, fCountOfVisits, fCommentsWithForm, fArticleCategories).join()
                 val commentsWithForm = fCommentsWithForm.get()
+                val articleCategories = fArticleCategories.get()
+
+                // Generate structured data for GEO/SEO
+                val siteUrl = getUrlBase(request)
+                val siteName = controllerComponents.localisationRepository.getEntries()["website.title"] ?: "ArtBeams"
+                val logoUrl = "$siteUrl${controllerComponents.localisationRepository.getEntries()["logo.img.src"] ?: "/static/images/logo.png"}"
+
+                val articleJsonLd = StructuredDataGenerator.generateArticleJsonLd(
+                    article = article,
+                    author = null, // Author information from translations for now
+                    categories = articleCategories,
+                    siteUrl = siteUrl,
+                    siteName = siteName,
+                    logoUrl = logoUrl
+                )
+
+                // Generate breadcrumb structured data
+                val breadcrumbItems = mutableListOf<Pair<String, String>>()
+                breadcrumbItems.add(Pair(siteName, siteUrl))
+                if (articleCategories.isNotEmpty()) {
+                    val primaryCategory = articleCategories.first()
+                    breadcrumbItems.add(Pair(primaryCategory.title, "$siteUrl/kategorie/${primaryCategory.slug}"))
+                }
+                breadcrumbItems.add(Pair(article.title, "$siteUrl/${article.slug}"))
+                val breadcrumbJsonLd = StructuredDataGenerator.generateBreadcrumbJsonLd(breadcrumbItems)
+
                 val model = createBlogModel(
                     request,
                     FormData(SubscriptionFormData.Empty, ValidationResult.empty),
                     "article" to article,
+                    "articleCategories" to articleCategories,
                     "comments" to commentsWithForm.first,
                     CommentController.TPL_PARAM_COMMENT_FORM to commentsWithForm.second,
                     "userAccessReport" to fUserAccessReport.get(),
-                    "countOfVisits" to fCountOfVisits.get()
+                    "countOfVisits" to fCountOfVisits.get(),
+                    "articleJsonLd" to articleJsonLd,
+                    "breadcrumbJsonLd" to breadcrumbJsonLd
                 )
                 ModelAndView("article", model)
             } else {
