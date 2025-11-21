@@ -74,7 +74,7 @@ class WebController(
         val xlat = controllerComponents.localisationRepository.getEntries()
         val siteName = xlat["website.title"] ?: "ArtBeams"
         val siteDescription = xlat["website.description"] ?: ""
-        val logoUrl = "$siteUrl${xlat["logo.img.src"] ?: "/static/images/logo.png"}"
+        val logoUrl = "$siteUrl${xlat["logo.img.src"] ?: "/media/favicon.ico"}"
 
         val websiteJsonLd =
                 StructuredDataGenerator.generateWebsiteJsonLd(
@@ -202,7 +202,7 @@ class WebController(
                         controllerComponents.localisationRepository.getEntries()["website.title"]
                                 ?: "ArtBeams"
                 val logoUrl =
-                        "$siteUrl${controllerComponents.localisationRepository.getEntries()["logo.img.src"] ?: "/static/images/logo.png"}"
+                        "$siteUrl${controllerComponents.localisationRepository.getEntries()["logo.img.src"] ?: "/media/favicon.ico"}"
 
                 val articleJsonLd =
                         StructuredDataGenerator.generateArticleJsonLd(

@@ -47,8 +47,8 @@ object StructuredDataGenerator {
   "dateModified": "${isoFormatter.format(article.common.modified)}",
   "author": {
     "@type": "Person",
-    "name": "${escapeJson(author?.fullName ?: author?.login ?: "Anonymous")}",
-    "url": "$siteUrl/autor/${author?.id ?: ""}"
+    "name": "${escapeJson(author?.fullName ?: author?.login ?: "Radek Beran")}",
+    "url": "$siteUrl/muj-pribeh"
   },
   "publisher": {
     "@type": "Organization",
