@@ -42,7 +42,7 @@ object StructuredDataGenerator {
   "@type": "BlogPosting",
   "headline": "${escapeJson(article.title)}",
   "description": "${escapeJson(article.perex)}",
-  ${if (article.image != null) "\"image\": \"$siteUrl/image/${article.image}?w=1200&h=630\"," else ""}
+  ${if (article.image != null) "\"image\": \"$siteUrl/media/${article.image}?size=1200\"," else ""}
   "datePublished": "${isoFormatter.format(article.validity.validFrom)}",
   "dateModified": "${isoFormatter.format(article.common.modified)}",
   "author": {
