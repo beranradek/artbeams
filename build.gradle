@@ -268,7 +268,7 @@ task minifyCss {
             writer << '@charset "UTF-8";\n'
             // Google Fonts - Inter and Playfair Display (much nicer for design)
             // (are not in CSS files and import must be first in the file)
-            writer << '@import url(\'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap\');\n'
+
             writer << """/*
  File automatically generated during the build composed from more sources.
 */

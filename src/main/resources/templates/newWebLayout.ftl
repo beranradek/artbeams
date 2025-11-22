@@ -17,10 +17,15 @@
   <meta name="author" content="${xlat['author.name']}" />
 
   <#-- Preconnect to external domains for faster resource loading -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://www.google.com" crossorigin>
+  <link id="google-fonts-css" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  </noscript>
   <#assign description = "${xlat['website.description']}">
   <#if article??>
     <#assign title = "${(article.title)[0..*200]}">
@@ -245,7 +250,7 @@ ${websiteJsonLd}
   <!-- Responsive Images JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/responsive-images.js"></script>
   <!-- reCaptcha -->
-  <script  nonce="${_cspNonce}" src="https://www.recaptcha.net/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
+  <script async defer nonce="${_cspNonce}" src="https://www.recaptcha.net/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 
   <script nonce="${_cspNonce}">
       <#-- Lazy loading of data-type='lazy' scripts and iframes -->
@@ -293,7 +298,7 @@ ${websiteJsonLd}
       <!-- Function registered on document ready -->
       ready(function() {
             <!-- Enable deferred CSS -->
-            var deferredCssIds = ['font-awesome-css', 'bootstrap-icons-css'];
+            var deferredCssIds = ['font-awesome-css', 'bootstrap-icons-css', 'google-fonts-css'];
             deferredCssIds.forEach(function(id) {
                 var link = document.getElementById(id);
                 if (link) link.media = 'all';

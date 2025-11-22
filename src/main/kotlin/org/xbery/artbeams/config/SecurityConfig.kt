@@ -75,8 +75,9 @@ class SecurityConfig {
                         // sha256 is included for style element added additionally by Facebook's sdk.js
                         response.setHeader(
                             CSP_HEADER_NAME,
-                                    "style-src 'self' connect.facebook.net www.facebook.com www.google.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
+                                    "style-src 'self' connect.facebook.net www.facebook.com www.google.com fonts.googleapis.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
                                     "script-src 'self' connect.facebook.net www.facebook.com www.google.com www.recaptcha.net staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
+                                    "font-src 'self' fonts.gstatic.com cdnjs.cloudflare.com cdn.jsdelivr.net data:; " +
                                     "object-src 'none'; " +
                                     "form-action 'self'; " +
                                     "base-uri 'self'; " +
