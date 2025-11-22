@@ -42,6 +42,11 @@ h6 {
   font-family: 'Playfair Display', serif;
 }
 
+/* Hide icon sprite SVG (must be in critical CSS to prevent layout shifts) */
+.icon-sprite {
+  display: none;
+}
+
 /* Custom utility classes */
 .page-content {
   margin-top: 2rem;
