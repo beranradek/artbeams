@@ -1,0 +1,57 @@
+/* Custom Icon System */
+
+/* Hide the icon sprite SVG (CSP-compliant, no inline styles) */
+.icon-sprite-hidden {
+    display: none;
+}
+
+.icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+    vertical-align: middle;
+}
+
+/* Icon sizes - only apply when explicitly using these classes */
+.icon.icon-sm {
+    width: 0.875em;
+    height: 0.875em;
+}
+
+.icon.icon-md {
+    width: 1.25em;
+    height: 1.25em;
+}
+
+.icon.icon-lg {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.icon.icon-xl {
+    width: 2em;
+    height: 2em;
+}
+
+/* Spinning animation for loading icons */
+.icon-spin {
+    animation: icon-spin 1s linear infinite;
+}
+
+@keyframes icon-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Social icon styling */
+.footer-social-icon .icon,
+.social-icon .icon {
+    width: 1.5em;
+    height: 1.5em;
+}

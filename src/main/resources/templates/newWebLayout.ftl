@@ -148,15 +148,12 @@ ${websiteJsonLd}
   <#-- Critical CSS loaded synchronously -->
   <link href="/static/css/styles.css" type="text/css" rel="stylesheet">
 
-  <#-- Non-critical CSS (Font Awesome, Bootstrap Icons) loaded with defer technique -->
-  <#-- Load as print media first, then switch to all media on load for non-blocking rendering -->
-  <link id="font-awesome-css" rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" />
-  <link id="bootstrap-icons-css" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" media="print" />
+  <#-- Custom icon system CSS (deferred for better performance) -->
+  <link id="custom-icons-css" href="/static/css/custom-icons.css" type="text/css" rel="stylesheet" media="print" />
 
   <#-- Fallback for browsers without JavaScript -->
   <noscript>
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link href="/static/css/custom-icons.css" type="text/css" rel="stylesheet" />
   </noscript>
 
   <#if pageStyles?has_content>
@@ -171,6 +168,9 @@ ${websiteJsonLd}
 
   </head>
   <body class="d-flex flex-column h-100" id="body-element">
+    <#-- Custom icon sprite (inline for immediate availability, hidden via CSS class) -->
+    <#include "/icons/iconSprite.ftl">
+    
     <@navbar.modernNavbar />
 
     <#-- Show hero section only on homepage -->
@@ -297,8 +297,8 @@ ${websiteJsonLd}
 
       <!-- Function registered on document ready -->
       ready(function() {
-            <!-- Enable deferred CSS -->
-            var deferredCssIds = ['font-awesome-css', 'bootstrap-icons-css', 'google-fonts-css'];
+            <#-- Enable deferred CSS -->
+            var deferredCssIds = ['custom-icons-css', 'google-fonts-css'];
             deferredCssIds.forEach(function(id) {
                 var link = document.getElementById(id);
                 if (link) link.media = 'all';

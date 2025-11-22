@@ -11,7 +11,7 @@
                   data-faq-toggle="${item?index}">
             <div class="flex justify-between items-center">
               <span class="text-lg font-semibold text-primary-custom">"${item.question}"</span>
-              &nbsp;<i class="bi bi-chevron-down faq-chevron text-primary-custom transition-transform duration-200"></i>
+              &nbsp;<svg class="icon faq-chevron text-primary-custom transition-transform duration-200"><use href="#icon-chevron-down"></use></svg>
             </div>
           </button>
           <div class="faq-answer px-6 py-0 max-h-0 overflow-hidden transition-all duration-300" 

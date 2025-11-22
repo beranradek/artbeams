@@ -179,17 +179,17 @@
 
   <@benefits.benefitsGrid benefits=[
     {
-      "icon": "bi bi-clock",
+      "icon": "clock",
       "title": "Rychlé usínání",
       "description": "Už žádné převalování se a počítání oveček. Usnete snadno a rychle."
     },
     {
-      "icon": "bi bi-sun",
+      "icon": "sun",
       "title": "Energie po celý den",
       "description": "Probudíte se svěží a plní energie, která vám vydrží až do večera."
     },
     {
-      "icon": "bi bi-heart",
+      "icon": "heart",
       "title": "Lepší zdraví",
       "description": "Kvalitní spánek posiluje imunitu a zlepšuje celkové zdraví."
     }
@@ -223,7 +223,7 @@
       <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
         <div class="space-y-6">
           <div class="flex items-start gap-4">
-            <i class="bi bi-moon w-8 h-8 text-primary-custom mt-1"></i>
+            <svg class="icon w-8 h-8 text-primary-custom mt-1"><use href="#icon-moon"></use></svg>
             <div>
               <h3 class="text-xl font-semibold text-primary-custom mb-2">Každé ráno vstanete svěží a odpočatí</h3>
               <p class="text-foreground-muted">
@@ -234,7 +234,7 @@
           </div>
           
           <div class="flex items-start gap-4">
-            <i class="bi bi-sun w-8 h-8 text-secondary mt-1"></i>
+            <svg class="icon w-8 h-8 text-secondary mt-1"><use href="#icon-sun"></use></svg>
             <div>
               <h3 class="text-xl font-semibold text-primary-custom mb-2">Budete konečně spát celou noc</h3>
               <p class="text-foreground-muted">
@@ -244,7 +244,7 @@
           </div>
           
           <div class="flex items-start gap-4">
-            <i class="bi bi-heart w-8 h-8 text-gentle-red mt-1"></i>
+            <svg class="icon w-8 h-8 text-gentle-red mt-1"><use href="#icon-heart"></use></svg>
             <div>
               <h3 class="text-xl font-semibold text-primary-custom mb-2">Najdete zpět svou radost ze života</h3>
               <p class="text-foreground-muted">

@@ -69,23 +69,23 @@
           </a>
           <#-- Facebook Icon:
           <a href="${xlat['fb.page.url']}" class="social-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Facebook">
-            <i class="bi bi-facebook"></i>
+            <svg class="icon"><use href="#icon-facebook"></use></svg>
           </a>
           -->
         </#if>
         <#if xlat['twitter.url']??>
           <a href="${xlat['twitter.url']}" class="social-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Twitter">
-            <i class="bi bi-twitter"></i>
+            <svg class="icon"><use href="#icon-twitter"></use></svg>
           </a>
         </#if>
         <#if xlat['instagram.url']??>
           <a href="${xlat['instagram.url']}" class="social-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Instagram">
-            <i class="bi bi-instagram"></i>
+            <svg class="icon"><use href="#icon-instagram"></use></svg>
           </a>
         </#if>
         <#if xlat['whatsapp.url']??>
           <a href="${xlat['whatsapp.url']}" class="social-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="WhatsApp">
-            <i class="bi bi-whatsapp"></i>
+            <svg class="icon"><use href="#icon-whatsapp"></use></svg>
           </a>
         </#if>
       </div>

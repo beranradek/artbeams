@@ -9,16 +9,16 @@
         <p>${xlat['website.purpose']}</p>
         <div class="mt-4">
           <#if xlat['fb.page.url']??>
-            <a href="${xlat['fb.page.url']}" class="footer-social-icon"><i class="bi bi-facebook"></i></a>
+            <a href="${xlat['fb.page.url']}" class="footer-social-icon"><svg class="icon"><use href="#icon-facebook"></use></svg></a>
           </#if>
           <#if xlat['instagram.url']??>
-            <a href="${xlat['instagram.url']}" class="footer-social-icon"><i class="bi bi-instagram"></i></a>
+            <a href="${xlat['instagram.url']}" class="footer-social-icon"><svg class="icon"><use href="#icon-instagram"></use></svg></a>
           </#if>
           <#if xlat['twitter.url']??>
-            <a href="${xlat['twitter.url']}" class="footer-social-icon"><i class="bi bi-twitter"></i></a>
+            <a href="${xlat['twitter.url']}" class="footer-social-icon"><svg class="icon"><use href="#icon-twitter"></use></svg></a>
           </#if>
           <#if xlat['youtube.url']??>
-            <a href="${xlat['youtube.url']}" class="footer-social-icon"><i class="bi bi-youtube"></i></a>
+            <a href="${xlat['youtube.url']}" class="footer-social-icon"><svg class="icon"><use href="#icon-youtube"></use></svg></a>
           </#if>
         </div>
       </div>
@@ -73,19 +73,19 @@
           </li>
           <#if xlat['contact.address']??>
           <li class="mb-2">
-            <i class="bi bi-geo-alt me-2 text-secondary-custom"></i>
+            <svg class="icon me-2 text-secondary-custom"><use href="#icon-geo-alt"></use></svg>
             <span>${xlat['contact.address']}</span>
           </li>
           </#if>
           <#if xlat['contact.email']??>
           <li class="mb-2">
-            <i class="bi bi-envelope me-2 text-secondary-custom"></i>
+            <svg class="icon me-2 text-secondary-custom"><use href="#icon-envelope"></use></svg>
             <a href="mailto:${xlat['contact.email']}" class="footer-link">${xlat['contact.email']}</a>
           </li>
           </#if>
           <#if xlat['contact.phone']??>
           <li>
-            <i class="bi bi-telephone me-2 text-secondary-custom"></i>
+            <svg class="icon me-2 text-secondary-custom"><use href="#icon-telephone"></use></svg>
             <a href="tel:${xlat['contact.phone']}" class="footer-link">${xlat['contact.phone']}</a>
           </li>
           </#if>
@@ -142,7 +142,7 @@
             </li>
           </#if>
           <li class="list-inline-item">
-            <a href="#body-element" class="footer-link small"><i class="fa-solid fa-arrow-up"></i> ${xlat['goto.up']}</a>
+            <a href="#body-element" class="footer-link small"><svg class="icon"><use href="#icon-arrow-up"></use></svg> ${xlat['goto.up']}</a>
           </li>
         </ul>
       </div>

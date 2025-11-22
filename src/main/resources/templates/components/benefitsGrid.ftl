@@ -13,7 +13,9 @@
       <#list benefits as benefit>
         <div class="benefit-card p-8 text-center hover:shadow-peaceful transition-shadow duration-300">
           <div class="benefit-icon-wrapper flex justify-center mb-4">
-            <i class="${benefit.icon} text-4xl text-primary-custom"></i>
+            <svg class="icon text-4xl text-primary-custom">
+              <use href="#icon-${benefit.icon}"></use>
+            </svg>
           </div>
           <h3 class="text-2xl font-semibold text-primary-custom mb-4">${benefit.title}</h3>
           <p class="text-foreground-muted">${benefit.description}</p>
@@ -26,7 +28,7 @@
       <div class="grid md:grid-cols-2 gap-2">
         <#list features as feature>
           <div class="flex items-start gap-3">
-            <i class="bi bi-check-circle text-2xl text-calm-green mt-1"></i>
+            <svg class="icon text-2xl text-calm-green mt-1"><use href="#icon-check-circle"></use></svg>
             <p class="text-foreground-muted">${feature}</p>
           </div>
         </#list>
