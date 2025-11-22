@@ -15,6 +15,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="${xlat['author.name']}" />
+
+  <#-- Preconnect to external domains for faster resource loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://www.google.com" crossorigin>
   <#assign description = "${xlat['website.description']}">
   <#if article??>
     <#assign title = "${(article.title)[0..*200]}">
@@ -132,11 +138,19 @@ ${websiteJsonLd}
   <link href="/static/css/new-components.css" type="text/css" rel="stylesheet">
   <link href="/static/css/responsive-images.css" type="text/css" rel="stylesheet">
   -->
+  <#-- Critical CSS loaded synchronously -->
   <link href="/static/css/styles.css" type="text/css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <#-- Non-critical CSS (Font Awesome, Bootstrap Icons) loaded with defer technique -->
+  <#-- Load as print media first, then switch to all media on load for non-blocking rendering -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" media="print" onload="this.media='all'" />
+
+  <#-- Fallback for browsers without JavaScript -->
+  <noscript>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" />
+  </noscript>
 
   <#if pageStyles?has_content>
     <link href="${pageStyles}" type="text/css" rel="stylesheet">
