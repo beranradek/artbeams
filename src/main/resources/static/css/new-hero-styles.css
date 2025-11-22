@@ -16,16 +16,6 @@
   font-size: 1.5rem;
 }
 
-.hero-section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-}
-
 .hero-section .container {
   position: relative;
   z-index: 2;
