@@ -22,7 +22,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://www.google.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=optional" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <#assign description = "${xlat['website.description']}">
   <#if article??>
     <#assign title = "${(article.title)[0..*200]}">
@@ -165,8 +165,6 @@ ${websiteJsonLd}
 
   </head>
   <body class="d-flex flex-column h-100" id="body-element">
-    <#-- Custom icon sprite (inline for immediate availability, hidden via CSS class) -->
-    <#include "/icons/iconSprite.ftl">
     
     <@navbar.modernNavbar />
 
@@ -206,6 +204,10 @@ ${websiteJsonLd}
   </#if>
 
   <!-- Page content -->
+  <#-- Custom icon sprite (inline for immediate availability, 
+  hidden via CSS class). Bellow the initial hero section to avoid unnecessary layout shifts. -->
+  <#include "/icons/iconSprite.ftl">
+
   <#if !showSidebar??>
   <#assign showSidebar = !article?? || article.showOnBlog>
   </#if>

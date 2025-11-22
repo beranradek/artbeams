@@ -1,7 +1,7 @@
 /* Custom Icon System */
 
 /* Hide the icon sprite SVG (CSP-compliant, no inline styles) */
-.icon-sprite-hidden {
+.icon-sprite {
     display: none;
 }
 
