@@ -10,7 +10,7 @@
   padding: 8rem 0;
   position: relative;
   overflow: hidden;
-  min-height: 600px;
+  min-height: 700px;
   /* Reserve space to prevent CLS (cumulative layout shift) during background image load */
 }
 
