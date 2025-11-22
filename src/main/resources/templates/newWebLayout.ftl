@@ -57,7 +57,9 @@
 
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
   <#-- Preload of Largest Contentful Paint (LCP) image with a high fetch priority so it starts loading with the stylesheet. -->
+  <#if showHeadline??>
   <link rel="preload" fetchpriority="high" as="image" href="/static/images/header.jpg" type="image/jpeg">
+  </#if>
 
   <!-- Open Graph data (Facebook, LinkedIn) -->
   <#if article??>
@@ -243,7 +245,7 @@ ${websiteJsonLd}
   <!-- Responsive Images JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/responsive-images.js"></script>
   <!-- reCaptcha -->
-  <script  nonce="${_cspNonce}" src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
+  <script  nonce="${_cspNonce}" src="https://www.recaptcha.net/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 
   <script nonce="${_cspNonce}">
       <#-- Lazy loading of data-type='lazy' scripts and iframes -->
