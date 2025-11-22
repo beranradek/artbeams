@@ -1,13 +1,20 @@
 # PageSpeed Optimization Implementation Plan
 
+**Last Updated**: 2025-11-22
+
 ## Problem Summary
 Based on the PageSpeed Insights report for mobile, the site has a performance score of 55/100. The main issues identified are:
 
-Eliminate render-blocking resources - CSS files (styles.css, Font Awesome, Bootstrap Icons, Google Fonts) are blocking initial page render
-Properly size images - Images like header.jpg and article images are larger than needed
-Eliminate unused JavaScript and CSS - Unused code in Bootstrap and CSS files
-Avoid long main-thread tasks and non-composited animations
-Serve static assets with efficient cache policy - Current cache is 1-2 days
+1. **Eliminate render-blocking resources** - CSS files (styles.css, Font Awesome, Bootstrap Icons, Google Fonts) are blocking initial page render
+2. **Properly size images** - Images like header.jpg and article images are larger than needed
+3. **Eliminate unused JavaScript and CSS** - Unused code in Bootstrap and CSS files
+4. **Avoid long main-thread tasks and non-composited animations**
+5. **Serve static assets with efficient cache policy** - Current cache is 1-2 days (now: static=24h, media=48h)
+
+## Current Cache Configuration (As of 2025-11-22)
+- **Static resources** (/static/**): 24 hours - `MvcConfig.kt:21`
+- **Media files** (/media/**): 48 hours - `MediaController.kt:132`
+- **Recommendation**: Increase to 30 days for images (they rarely change)
 User Review Required
 IMPORTANT
 
@@ -17,16 +24,44 @@ WARNING
 
 External Resources Font Awesome and Bootstrap Icons are loaded from CDNs. We can optimize their loading but cannot reduce their file size directly.
 
-Proposed Changes
-Template Optimization
-[MODIFY] 
-newWebLayout.ftl
-Changes:
+## Proposed Changes
 
-Add font-display: swap to Google Fonts - Modify line 2 to include &display=swap parameter
-Preconnect to external domains - Add preconnect hints for cdnjs.cloudflare.com and cdn.jsdelivr.net to establish early connections
-Defer non-critical CSS - Add media="print" onload="this.media='all'" to Font Awesome and Bootstrap Icons to defer their loading
-Optimize LCP image preload - The existing preload on line 54 is good, but ensure it matches the actual hero image used
+### 1. Cache Policy Optimization
+
+**[MODIFY] MvcConfig.kt**
+- **Change**: Line 21 - Increase static resource cache from 24 hours to 30 days
+- **Rationale**: Images, CSS, and JS files rarely change; use cache busting via versioning if needed
+- **Current**: `.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS).cachePublic())`
+- **Updated**: `.setCacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())`
+
+**[MODIFY] MediaController.kt**
+- **Change**: Line 132 - Increase media file cache from 48 hours to 30 days
+- **Rationale**: Media gallery images are static content that rarely changes
+- **Current**: `.cacheControl(CacheControl.maxAge(48, TimeUnit.HOURS).cachePublic())`
+- **Updated**: `.cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())`
+
+### 2. Template Optimization
+
+**[MODIFY] newWebLayout.ftl**
+
+**Changes**:
+1. **Add preconnect hints** (after line 16):
+   - Add `<link rel="preconnect" href="https://cdnjs.cloudflare.com">` for Font Awesome
+   - Add `<link rel="preconnect" href="https://cdn.jsdelivr.net">` for Bootstrap Icons
+   - Add `<link rel="preconnect" href="https://fonts.googleapis.com">` for Google Fonts
+   - Add `<link rel="preconnect" href="https://www.google.com">` for reCAPTCHA
+
+2. **Defer non-critical CSS** (lines 136-139):
+   - Add `media="print" onload="this.media='all'"` to Font Awesome (line 136)
+   - Add `media="print" onload="this.media='all'"` to Bootstrap Icons (line 139)
+   - Add fallback `<noscript>` tags for users without JavaScript
+
+3. **Optimize Google Fonts** (if loaded in CSS):
+   - Add `&display=swap` parameter to Google Fonts URL
+   - Move from CSS import to HTML `<link>` tag with proper attributes
+
+4. **LCP image preload** (line 54):
+   - ✅ Already implemented correctly with `fetchpriority="high"`
 CSS Optimization
 [MODIFY] 
 styles.css
@@ -71,6 +106,51 @@ After deployment to Heroku:
 Re-run PageSpeed Insights
 Verify performance score improvement
 Check for any console errors or visual issues
+
+## Implementation Status (2025-11-22)
+
+### ✅ Completed
+- [x] Responsive images implementation (see `docs/responsive_images.md`)
+- [x] LCP image preload with `fetchpriority="high"`
+- [x] Lazy loading for images with `loading="lazy"`
+- [x] Image srcset and sizes attributes
+- [x] Extended cache headers for static assets (24h → 30 days) - `MvcConfig.kt:22`
+- [x] Extended cache headers for media files (48h → 30 days) - `MediaController.kt:132`
+- [x] Preconnect hints for external CDNs - `newWebLayout.ftl:20-23`
+- [x] Deferred loading of non-critical CSS (Font Awesome, Bootstrap Icons) - `newWebLayout.ftl:146-153`
+- [x] Google Fonts optimization with font-display:swap - Already implemented in `build.gradle:271`
+
+### Changes Summary
+
+**Backend Changes**:
+1. **MvcConfig.kt** (line 19-22): Increased static resource cache from 24h to 30 days
+2. **MediaController.kt** (line 128-132): Increased media file cache from 48h to 30 days
+
+**Template Changes** (newWebLayout.ftl):
+1. **Lines 20-23**: Added preconnect hints for:
+   - Google Fonts (https://fonts.googleapis.com)
+   - Font Awesome CDN (https://cdnjs.cloudflare.com)
+   - Bootstrap Icons CDN (https://cdn.jsdelivr.net)
+   - Google reCAPTCHA (https://www.google.com)
+
+2. **Lines 146-153**: Deferred non-critical CSS loading using `media="print" onload="this.media='all'"` technique:
+   - Font Awesome icons
+   - Bootstrap Icons
+   - Added `<noscript>` fallback for users without JavaScript
+
+### Expected Performance Impact
+- **Cache improvements**: 5-10 point score increase (reduced network requests on repeat visits)
+- **Preconnect hints**: 2-5 point increase (faster external resource loading)
+- **Deferred CSS**: 5-15 point increase (reduced render-blocking resources)
+- **Total expected**: 55/100 → 67-80/100 (estimated)
+
+### Testing & Verification
+After deployment, verify:
+1. CSS and icons still display correctly (especially Font Awesome and Bootstrap Icons)
+2. No console errors related to deferred CSS loading
+3. Re-run PageSpeed Insights mobile test to measure improvements
+4. Check browser Network tab to verify Cache-Control headers show max-age=2592000 (30 days)
+
 Out of Scope (Documented for Future)
 The following optimizations require server/infrastructure changes:
 

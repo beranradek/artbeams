@@ -16,9 +16,10 @@ import java.util.concurrent.TimeUnit
 open class MvcConfig() : WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         // See https://www.baeldung.com/spring-mvc-static-resources
+        // Static resources cached for 30 days (images, CSS, JS rarely change)
         registry.addResourceHandler("/webjars/**", "/static/**")
                 .addResourceLocations("/webjars/", "classpath:/static/")
-                .setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS).cachePublic())
+                .setCacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())
                 .resourceChain(true)
                 .addResolver(EncodedResourceResolver())
                 // .addResolver(WebJarsResourceResolver()) // if webjars are used

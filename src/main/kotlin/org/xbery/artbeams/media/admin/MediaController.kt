@@ -125,11 +125,11 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
                     unauthorized(request)
                 } else {
                     val mediaType = fileData.getMediaType()
-                    // Caching file on the client
+                    // Caching file on the client for 30 days (images rarely change)
                     ResponseEntity.ok()
                         .contentType(mediaType)
                         .contentLength(fileData.size)
-                        .cacheControl(CacheControl.maxAge(48, TimeUnit.HOURS).cachePublic())
+                        .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())
                         .body(fileData.data)
                 }
             } else {
