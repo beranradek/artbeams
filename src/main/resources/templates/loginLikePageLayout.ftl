@@ -14,7 +14,7 @@
     <!-- Based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
     <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">
     <!-- reCaptcha -->
-    <script  nonce="${_cspNonce}" src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
+    <script async defer nonce="${_cspNonce}" src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 
     <style nonce="${_cspNonce}">
       .bd-placeholder-img {

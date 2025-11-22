@@ -25,7 +25,7 @@
                  alt="Autor ${xlat['author.name']}" 
                  width="200" 
                  height="200" />
-            <h4 class="card-title text-secondary-custom mb-2">${xlat['author.name']}</h4>
+            <div class="h4 card-title text-secondary-custom mb-2">${xlat['author.name']}</div>
             <p class="card-text text-light">${xlat['author.description']!'Pomohu Vám zaléčit chronické potíže a dosáhnout kvalitní regenerace skvělými spánkovými návyky.'}</p>
           </div>
         </div>
