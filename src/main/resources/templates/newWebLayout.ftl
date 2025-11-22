@@ -22,10 +22,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://www.google.com" crossorigin>
-  <link id="google-fonts-css" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" media="print">
-  <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  </noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <#assign description = "${xlat['website.description']}">
   <#if article??>
     <#assign title = "${(article.title)[0..*200]}">
@@ -298,7 +295,7 @@ ${websiteJsonLd}
       <!-- Function registered on document ready -->
       ready(function() {
             <#-- Enable deferred CSS -->
-            var deferredCssIds = ['custom-icons-css', 'google-fonts-css'];
+            var deferredCssIds = ['custom-icons-css'];
             deferredCssIds.forEach(function(id) {
                 var link = document.getElementById(id);
                 if (link) link.media = 'all';
