@@ -250,7 +250,7 @@ ${websiteJsonLd}
   <!-- Responsive Images JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/responsive-images.js"></script>
   <!-- reCaptcha -->
-  <script async defer nonce="${_cspNonce}" src="https://www.recaptcha.net/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
+  <script async defer nonce="${_cspNonce}" src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 
   <script nonce="${_cspNonce}">
       <#-- Lazy loading of data-type='lazy' scripts and iframes -->
