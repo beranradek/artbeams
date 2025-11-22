@@ -2,14 +2,18 @@
 
 /* Hero section styling */
 .hero-section {
-  background: linear-gradient(rgba(10, 22, 34, 0.7), rgba(10, 22, 34, 0.7)), 
-              url("/static/images/header.jpg");
+  background: linear-gradient(rgba(10, 22, 34, 0.7), rgba(10, 22, 34, 0.7)),
+    url("/static/images/header.jpg");
   background-size: cover;
   background-position: center;
   color: var(--text-light);
   padding: 8rem 0;
   position: relative;
   overflow: hidden;
+}
+
+.hero-section .author-name {
+  font-size: 1.5rem;
 }
 
 .hero-section::before {
@@ -29,9 +33,17 @@
 
 /* Animation for stars/lights in hero section */
 @keyframes twinkle {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
+  0% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
 }
 
 .star {
@@ -106,12 +118,12 @@
   .hero-section {
     padding: 4rem 0;
   }
-  
+
   .author-profile-image {
     width: 150px;
     height: 150px;
   }
-  
+
   .hero-cta-buttons {
     flex-direction: column;
     gap: 0.5rem;
