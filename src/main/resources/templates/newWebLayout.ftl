@@ -143,8 +143,8 @@ ${websiteJsonLd}
 
   <#-- Non-critical CSS (Font Awesome, Bootstrap Icons) loaded with defer technique -->
   <#-- Load as print media first, then switch to all media on load for non-blocking rendering -->
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" media="print" onload="this.media='all'" />
+  <link id="font-awesome-css" rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" />
+  <link id="bootstrap-icons-css" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.min.css" rel="stylesheet" media="print" />
 
   <#-- Fallback for browsers without JavaScript -->
   <noscript>
@@ -290,6 +290,13 @@ ${websiteJsonLd}
 
       <!-- Function registered on document ready -->
       ready(function() {
+            <!-- Enable deferred CSS -->
+            var deferredCssIds = ['font-awesome-css', 'bootstrap-icons-css'];
+            deferredCssIds.forEach(function(id) {
+                var link = document.getElementById(id);
+                if (link) link.media = 'all';
+            });
+
             <!-- Initialize Bootstrap tooltips -->
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             tooltipTriggerList.forEach(tooltipTriggerEl => {
