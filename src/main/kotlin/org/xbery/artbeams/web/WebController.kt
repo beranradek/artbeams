@@ -45,7 +45,7 @@ class WebController(
         val commentService: CommentService,
         val controllerComponents: ControllerComponents,
         val resourceLoader: ResourceLoader
-) : BaseController(controllerComponents), SitemapWriter {
+) : BaseController(controllerComponents), SitemapWriter, LlmsTxtWriter {
 
     override fun articleService(): ArticleService = articleService
     override fun categoryService(): CategoryService = categoryService
@@ -138,6 +138,15 @@ class WebController(
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=sitemap.xml")
         response.contentType = "application/xml"
         response.writer.use { writer -> writeSitemap(this.getUrlBase(request), writer) }
+    }
+
+    @GetMapping(value = ["/llms.txt", "/llms-txt"])
+    fun llmsTxt(request: HttpServletRequest, response: HttpServletResponse) {
+        val cacheControl: CacheControl = CacheControl.maxAge(6, TimeUnit.HOURS).cachePublic()
+        response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=llms.txt")
+        response.contentType = "text/plain; charset=UTF-8"
+        response.writer.use { writer -> writeLlmsTxt(this.getUrlBase(request), writer) }
     }
 
     /** GET article detail. */
