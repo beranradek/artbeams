@@ -2,8 +2,13 @@ package org.xbery.artbeams.localisation.repository
 
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.common.repository.keyvalue.CachedKeyValueRepository
 import org.xbery.artbeams.jooq.schema.tables.references.LOCALISATION
+import org.xbery.artbeams.localisation.domain.Localisation
+import org.xbery.artbeams.localisation.repository.mapper.LocalisationMapper
+import org.xbery.artbeams.localisation.repository.mapper.LocalisationUnmapper
 
 /**
  * Stores key-value pairs for application localisation.
@@ -11,10 +16,66 @@ import org.xbery.artbeams.jooq.schema.tables.references.LOCALISATION
  * @author Radek Beran
  */
 @Repository
-class LocalisationRepository(val dsl: DSLContext) : CachedKeyValueRepository() {
+class LocalisationRepository(
+    val dsl: DSLContext,
+    private val mapper: LocalisationMapper,
+    private val unmapper: LocalisationUnmapper
+) : CachedKeyValueRepository() {
+
     override fun findAllEntries(): Map<String, String> {
         return dsl.selectFrom(LOCALISATION).fetch { c ->
             requireNotNull(c.entryKey) to requireNotNull(c.entryValue)
         }.toMap()
+    }
+
+    fun findLocalisations(pagination: Pagination): ResultPage<Localisation> {
+        val totalCount = dsl.selectCount()
+            .from(LOCALISATION)
+            .fetchOne(0, Int::class.java) ?: 0
+
+        val records = dsl.selectFrom(LOCALISATION)
+            .orderBy(LOCALISATION.ENTRY_KEY)
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .fetch(mapper)
+
+        return ResultPage(records, pagination.withTotalCount(totalCount))
+    }
+
+    fun findByKey(entryKey: String): Localisation? {
+        return dsl.selectFrom(LOCALISATION)
+            .where(LOCALISATION.ENTRY_KEY.eq(entryKey))
+            .fetchOne(mapper)
+    }
+
+    fun create(localisation: Localisation): Localisation {
+        val record = unmapper.unmap(localisation)
+        dsl.insertInto(LOCALISATION)
+            .set(record)
+            .execute()
+        return requireByKey(localisation.entryKey)
+    }
+
+    fun update(originalKey: String, localisation: Localisation): Localisation {
+        val record = unmapper.unmap(localisation)
+        val updatedCount = dsl.update(LOCALISATION)
+            .set(record)
+            .where(LOCALISATION.ENTRY_KEY.eq(originalKey))
+            .execute()
+        when {
+            updatedCount == 0 -> error("Localisation not updated")
+            updatedCount > 1 -> error("More than one localisation was updated")
+        }
+        return requireByKey(localisation.entryKey)
+    }
+
+    fun deleteByKey(entryKey: String): Boolean {
+        return dsl.deleteFrom(LOCALISATION)
+            .where(LOCALISATION.ENTRY_KEY.eq(entryKey))
+            .execute() > 0
+    }
+
+    fun requireByKey(entryKey: String): Localisation {
+        return findByKey(entryKey) ?: error("Localisation with key $entryKey not found")
     }
 }
