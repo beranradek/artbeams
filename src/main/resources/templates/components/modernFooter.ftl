@@ -5,8 +5,8 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-        <h5 class="footer-heading text-uppercase mb-4">${xlat['website.title']}</h5>
-        <p>${xlat['website.purpose']}</p>
+        <h5 class="footer-heading text-uppercase mb-4"><span data-i18n-key="website.title">${xlat['website.title']}</span></h5>
+        <p><span data-i18n-key="website.purpose">${xlat['website.purpose']}</span></p>
         <div class="mt-4">
           <#if xlat['fb.page.url']??>
             <a href="${xlat['fb.page.url']}" class="footer-social-icon"><svg class="icon"><use href="#icon-facebook"></use></svg></a>
@@ -51,7 +51,7 @@
 
       <#if articleCategories??>
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-        <h5 class="footer-heading text-uppercase mb-4">Rubriky</h5>
+        <h5 class="footer-heading text-uppercase mb-4"><span data-i18n-key="footer.categories.heading">Rubriky</span></h5>
         <ul class="list-unstyled">
           <#-- TBD: Fill in article categories for contact page and product pages. -->
           <#list articleCategories as category>
@@ -66,10 +66,10 @@
       </#if>
 
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-        <h5 class="footer-heading text-uppercase mb-4">Kontakt</h5>
+        <h5 class="footer-heading text-uppercase mb-4"><span data-i18n-key="footer.contact.heading">Kontakt</span></h5>
         <ul class="list-unstyled">
           <li>
-            <a href="/kontakt" class="footer-link">Kontakt</a>
+            <a href="/kontakt" class="footer-link"><span data-i18n-key="footer.contact.link">Kontakt</span></a>
           </li>
           <#if xlat['contact.address']??>
           <li class="mb-2">
@@ -94,8 +94,8 @@
 
       <#if newsSubscriptionFormMapping??>
       <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-        <h5 class="footer-heading text-uppercase mb-4">${xlat['news.form.title']}</h5>
-        <p class="small mb-3">${xlat['news.form.intro']}</p>
+        <h5 class="footer-heading text-uppercase mb-4"><span data-i18n-key="news.form.title">${xlat['news.form.title']}</span></h5>
+        <p class="small mb-3"><span data-i18n-key="news.form.intro">${xlat['news.form.intro']}</span></p>
 
         <form class="news-subscription-form" action="/news/subscribe" method="post">
           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -112,14 +112,14 @@
     <div class="row align-items-center">
       <div class="col-md-7 text-center text-md-start">
         <p class="small mb-0">
-          &copy; ${.now?string('yyyy')} ${xlat['website.title']}. ${xlat['website.disclaimer']}
+          &copy; ${.now?string('yyyy')} <span data-i18n-key="website.title">${xlat['website.title']}</span>. <span data-i18n-key="website.disclaimer">${xlat['website.disclaimer']}</span>
         </p>
       </div>
       <div class="col-md-5 text-center text-md-end">
         <ul class="list-inline mb-0">
           <#if xlat['terms-and-conditions.url']??>
           <li class="list-inline-item">
-            <a href="${xlat['terms-and-conditions.url']}" class="footer-link small">${xlat['terms-and-conditions.title']}</a>
+            <a href="${xlat['terms-and-conditions.url']}" class="footer-link small"><span data-i18n-key="terms-and-conditions.title">${xlat['terms-and-conditions.title']}</span></a>
           </li>
           <li class="list-inline-item">
             <span class="text-secondary-custom mx-2">•</span>
@@ -127,7 +127,7 @@
           </#if>
           <#if xlat['personal-data.protection.url']??>
           <li class="list-inline-item">
-            <a href="${xlat['personal-data.protection.url']}" class="footer-link small">${xlat['personal-data.protection.title']}</a>
+            <a href="${xlat['personal-data.protection.url']}" class="footer-link small"><span data-i18n-key="personal-data.protection.title">${xlat['personal-data.protection.title']}</span></a>
           </li>
           <li class="list-inline-item">
             <span class="text-secondary-custom mx-2">•</span>
@@ -135,14 +135,14 @@
           </#if>
           <#if xlat['cookies.url']??>
             <li class="list-inline-item">
-              <a href="${xlat['cookies.url']}" class="footer-link small">${xlat['cookies.title']}</a>
+              <a href="${xlat['cookies.url']}" class="footer-link small"><span data-i18n-key="cookies.title">${xlat['cookies.title']}</span></a>
             </li>
             <li class="list-inline-item">
               <span class="text-secondary-custom mx-2">•</span>
             </li>
           </#if>
           <li class="list-inline-item">
-            <a href="#body-element" class="footer-link small"><svg class="icon"><use href="#icon-arrow-up"></use></svg> ${xlat['goto.up']}</a>
+            <a href="#body-element" class="footer-link small"><svg class="icon"><use href="#icon-arrow-up"></use></svg> <span data-i18n-key="goto.up">${xlat['goto.up']}</span></a>
           </li>
         </ul>
       </div>

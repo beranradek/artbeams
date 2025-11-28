@@ -26,8 +26,8 @@
                 <p><strong>E-mail:</strong> <a href="mailto:${contactEmail}">${contactEmail}</a></p>
               </#if>
               <#if contactPhone??>
-                <p><strong>Telefon:</strong> <a href="tel:${contactPhone}</a></p>
-                <p class="text-muted">Prosím respektujte soukromí a volejte jen v nejnutnějších případech.</p>
+                <p><strong><span data-i18n-key="contact.phone.label">Telefon:</span></strong> <a href="tel:${contactPhone}">${contactPhone}</a></p>
+                <p class="text-muted"><span data-i18n-key="contact.phone.privacy">Prosím respektujte soukromí a volejte jen v nejnutnějších případech.</span></p>
               </#if>
               <#if facebookFunPageUrl??>
                 <p><a href="${facebookFunPageUrl}" target="_blank"><strong>${facebookFunPageName}</strong></a></p>

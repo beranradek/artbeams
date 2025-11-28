@@ -6,8 +6,8 @@
     </div>
     <div class="col-md-11">
       <div class="card-body">
-        <strong class="card-title text-gray-dark">${xlat['author.name']}</strong>
-        <p class="card-text"><small class="text-body-secondary">${xlat['author.about']}</small></p>
+        <strong class="card-title text-gray-dark"><span data-i18n-key="author.name">${xlat['author.name']}</span></strong>
+        <p class="card-text"><small class="text-body-secondary"><span data-i18n-key="author.about">${xlat['author.about']}</span></small></p>
       </div>
     </div>
   </div>

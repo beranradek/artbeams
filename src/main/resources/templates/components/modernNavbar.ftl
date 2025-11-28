@@ -12,38 +12,38 @@
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <#if xlat['menu.item1.title']??>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" href="${xlat['menu.item1.url']}">${xlat['menu.item1.title']}</a>
+              <a class="nav-link nav-link-custom" href="${xlat['menu.item1.url']}"><span data-i18n-key="menu.item1.title">${xlat['menu.item1.title']}</span></a>
             </li>
           </#if>
           <#if xlat['menu.item2.title']??>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" href="${xlat['menu.item2.url']}">${xlat['menu.item2.title']}</a>
+              <a class="nav-link nav-link-custom" href="${xlat['menu.item2.url']}"><span data-i18n-key="menu.item2.title">${xlat['menu.item2.title']}</span></a>
             </li>
           </#if>
           <#if xlat['menu.item3.title']??>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" href="${xlat['menu.item3.url']}">${xlat['menu.item3.title']}</a>
+              <a class="nav-link nav-link-custom" href="${xlat['menu.item3.url']}"><span data-i18n-key="menu.item3.title">${xlat['menu.item3.title']}</span></a>
             </li>
           </#if>
           <#if xlat['menu.item4.title']??>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" href="${xlat['menu.item4.url']}">${xlat['menu.item4.title']}</a>
+              <a class="nav-link nav-link-custom" href="${xlat['menu.item4.url']}"><span data-i18n-key="menu.item4.title">${xlat['menu.item4.title']}</span></a>
             </li>
           </#if>
           <#if xlat['menu.item5.title']??>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" href="${xlat['menu.item5.url']}">${xlat['menu.item5.title']}</a>
+              <a class="nav-link nav-link-custom" href="${xlat['menu.item5.url']}"><span data-i18n-key="menu.item5.title">${xlat['menu.item5.title']}</span></a>
             </li>
           </#if>
           <#if xlat['menu.item6.title']??>
             <li class="nav-item">
-              <a class="nav-link nav-link-custom" href="${xlat['menu.item6.url']}">${xlat['menu.item6.title']}</a>
+              <a class="nav-link nav-link-custom" href="${xlat['menu.item6.url']}"><span data-i18n-key="menu.item6.title">${xlat['menu.item6.title']}</span></a>
             </li>
           </#if>
         </ul>
         <form method="get" action="/search" class="d-flex" role="search">
           <input type="search" name="query" class="form-control search-box me-2" placeholder="Hledat" aria-label="${xlat['search']}">
-          <button class="btn btn-primary-custom" type="submit">${xlat['search']}</button>
+          <button class="btn btn-primary-custom" type="submit"><span data-i18n-key="search">${xlat['search']}</span></button>
         </form>
    </div>
  </div>
