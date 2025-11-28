@@ -18,9 +18,9 @@ open class LocalisationServiceImpl(
 ) : LocalisationService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun findLocalisations(pagination: Pagination): ResultPage<Localisation> {
-        logger.info("Finding localisations with pagination: offset=${pagination.offset}, limit=${pagination.limit}")
-        return localisationRepository.findLocalisations(pagination)
+    override fun findLocalisations(pagination: Pagination, search: String?): ResultPage<Localisation> {
+        logger.info("Finding localisations with pagination: offset=${pagination.offset}, limit=${pagination.limit}, search=$search")
+        return localisationRepository.findLocalisations(pagination, search)
     }
 
     override fun findByKey(entryKey: String): Localisation? {

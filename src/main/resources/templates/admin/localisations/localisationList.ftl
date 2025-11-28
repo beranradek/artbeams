@@ -2,6 +2,22 @@
 <#import "/pagination.ftl" as pagination>
 <@layout.page noUp=true>
 
+<form method="GET" action="/admin/localisations" class="mb-3">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search in keys and values..." value="${search!}" />
+        <div class="input-group-append">
+          <button class="btn btn-primary" type="submit">Search</button>
+          <#if search?? && search?has_content>
+            <a href="/admin/localisations" class="btn btn-secondary">Clear</a>
+          </#if>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
 <a class="btn btn-primary" href="/admin/localisations/new/edit" role="button">New Localisation</a>
 
 <table class="table table-sm admin-table">
@@ -31,6 +47,7 @@
   </tbody>
 </table>
 
-<@pagination.pagination pagination=resultPage.pagination />
+<#assign searchParam = (search?? && search?has_content)?then("&search=" + search?url, "") />
+<@pagination.pagination pagination=resultPage.pagination additionalParams=searchParam />
 
 </@layout.page>

@@ -9,7 +9,7 @@ import org.xbery.artbeams.config.domain.EditedConfig
  * @author Radek Beran
  */
 interface ConfigService {
-    fun findConfigs(pagination: Pagination): ResultPage<Config>
+    fun findConfigs(pagination: Pagination, search: String? = null): ResultPage<Config>
     fun findByKey(entryKey: String): Config?
     fun saveConfig(edited: EditedConfig): Config
     fun deleteConfig(entryKey: String): Boolean

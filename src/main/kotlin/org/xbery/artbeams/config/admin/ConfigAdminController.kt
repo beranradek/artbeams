@@ -36,13 +36,15 @@ open class ConfigAdminController(
     fun list(
         @RequestParam("offset", defaultValue = "0") offset: Int,
         @RequestParam("limit", defaultValue = "20") limit: Int,
+        @RequestParam("search", required = false) search: String?,
         request: HttpServletRequest
     ): Any {
         val pagination = Pagination(offset, limit)
-        val resultPage = configService.findConfigs(pagination)
+        val resultPage = configService.findConfigs(pagination, search)
         val model = createModel(
             request,
-            "resultPage" to resultPage
+            "resultPage" to resultPage,
+            "search" to (search ?: "")
         )
         return ModelAndView("$TplBasePath/configList", model)
     }
