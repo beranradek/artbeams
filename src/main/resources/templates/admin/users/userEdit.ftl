@@ -13,7 +13,6 @@
   <@forms.inputText field=fields.login label="Login" size=30 inputDivClass="col-sm-3" labelFix=false />
   <@forms.inputText field=fields.firstName label="First name" required=false size=100 inputDivClass="col-sm-3" labelFix=false />
   <@forms.inputText field=fields.lastName label="Last name" required=false size=100 inputDivClass="col-sm-3" labelFix=false />
-  <@forms.inputText type="email" field=fields.email label="E-mail" required=false size=100 inputDivClass="col-sm-3" labelFix=false />
 
   <h3>New password</h3>
 

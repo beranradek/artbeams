@@ -21,7 +21,6 @@ open class UserForm {
                 .field<String>("password2", Field.PASSWORD)
                 .field<String>("firstName", Field.TEXT)
                 .field<String>("lastName", Field.TEXT)
-                .field<String>("email", Field.TEXT)
                 .field<List<String>>("roleIds")
                 .validator(PasswordValidator<EditedUser>())
                 .build(FormUtils.CZ_CONFIG)
