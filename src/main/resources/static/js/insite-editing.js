@@ -165,7 +165,7 @@
             element.appendChild(icon);
         }
 
-        icon.style.display = 'block';
+        icon.classList.add('insite-show');
     }
 
     /**
@@ -176,7 +176,7 @@
 
         const icon = element.querySelector('.' + CONFIG.iconClass);
         if (icon) {
-            icon.style.display = 'none';
+            icon.classList.remove('insite-show');
         }
     }
 
@@ -203,12 +203,27 @@
         currentlyEditing = { element, key };
         element.classList.add(CONFIG.editingClass);
 
+        // Disable parent link if element is inside one
+        const parentLink = element.closest('a');
+        if (parentLink) {
+            parentLink.classList.add('insite-link-disabled');
+            // Store original href to restore later
+            element._parentLink = parentLink;
+            element._originalHref = parentLink.getAttribute('href');
+        }
+
         // Get current text
         const currentText = element.textContent.trim();
 
         // Create editor
         const editor = document.createElement('div');
         editor.className = CONFIG.editorClass;
+
+        // Prevent clicks inside editor from bubbling to parent link
+        editor.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        });
 
         const textarea = document.createElement('textarea');
         textarea.value = currentText;
@@ -221,13 +236,23 @@
         saveButton.className = 'insite-btn insite-btn-success';
         saveButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
         saveButton.title = 'Save';
-        saveButton.addEventListener('click', () => saveLocalization(key, textarea.value));
+        saveButton.type = 'button'; // Explicitly set type to prevent form submission
+        saveButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            saveLocalization(key, textarea.value);
+        });
 
         const cancelButton = document.createElement('button');
         cancelButton.className = 'insite-btn insite-btn-secondary';
         cancelButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
         cancelButton.title = 'Cancel';
-        cancelButton.addEventListener('click', cancelEditing);
+        cancelButton.type = 'button'; // Explicitly set type to prevent form submission
+        cancelButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            cancelEditing();
+        });
 
         buttonContainer.appendChild(saveButton);
         buttonContainer.appendChild(cancelButton);
@@ -236,13 +261,22 @@
         editor.appendChild(buttonContainer);
 
         // Hide original content and show editor
-        element.style.position = 'relative';
+        element.classList.add('insite-positioned');
+
+        // Remove the icon before storing original content to avoid duplicates
+        const icon = element.querySelector('.' + CONFIG.iconClass);
+        const hadIcon = !!icon;
+        if (icon) {
+            icon.remove();
+        }
+
         const originalContent = element.innerHTML;
         element.innerHTML = '';
         element.appendChild(editor);
 
-        // Store original content for restoration
+        // Store original content and icon state for restoration
         element._originalContent = originalContent;
+        element._hadIcon = hadIcon;
 
         // Focus textarea
         textarea.focus();
@@ -268,7 +302,11 @@
         // Get CSRF token
         const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content') ||
                          document.querySelector('input[name="_csrf"]')?.value;
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content') || '_csrf';
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content') || 'X-CSRF-TOKEN';
+
+        // Debug: Log CSRF token info
+        console.log('CSRF Token:', csrfToken);
+        console.log('CSRF Header:', csrfHeader);
 
         // Send update to server
         const headers = {
@@ -302,6 +340,20 @@
             } else {
                 element.textContent = newValue;
             }
+
+            // Remove positioning class
+            element.classList.remove('insite-positioned');
+
+            // Re-enable parent link if it was disabled
+            if (element._parentLink) {
+                element._parentLink.classList.remove('insite-link-disabled');
+                delete element._parentLink;
+                delete element._originalHref;
+            }
+
+            // Clean up stored content
+            delete element._originalContent;
+            delete element._hadIcon;
 
             // Show success feedback
             element.classList.add('insite-save-success');
@@ -347,6 +399,19 @@
             delete element._originalContent;
         }
 
+        // Remove positioning class
+        element.classList.remove('insite-positioned');
+
+        // Re-enable parent link if it was disabled
+        if (element._parentLink) {
+            element._parentLink.classList.remove('insite-link-disabled');
+            delete element._parentLink;
+            delete element._originalHref;
+        }
+
+        // Clean up stored state
+        delete element._hadIcon;
+
         closeEditor();
     }
 
@@ -369,7 +434,7 @@
         if (!articleId) return;
 
         // Navigate to article editor
-        window.location.href = `/admin/articles/${articleId}`;
+        window.location.href = `/admin/articles/${articleId}/edit`;
     }
 
     // Initialize when DOM is ready

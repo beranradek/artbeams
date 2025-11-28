@@ -163,6 +163,9 @@ ${websiteJsonLd}
   <#-- In-site editing for admin users -->
   <#if _loggedUser?? && _loggedUser.roleNames?seq_contains("admin")>
     <link href="/static/css/insite-editing.css?v1" type="text/css" rel="stylesheet">
+    <#-- CSRF token for in-site editing AJAX requests -->
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
   </#if>
 
   <#include "/commonScripts.ftl">

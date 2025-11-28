@@ -34,9 +34,13 @@
     z-index: 1000;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease;
-    display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Show edit icon */
+.insite-edit-icon.insite-show {
+    display: flex;
 }
 
 .insite-edit-icon:hover {
@@ -202,4 +206,15 @@
 /* Special handling for elements that might have existing positioning */
 .insite-editable:not([style*="position"]) {
     position: relative;
+}
+
+/* Force relative positioning when needed */
+.insite-positioned {
+    position: relative !important;
+}
+
+/* Disable link clicks when editing content inside */
+a.insite-link-disabled {
+    pointer-events: none !important;
+    cursor: default !important;
 }
