@@ -51,7 +51,7 @@ open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
             user
         } else {
             val defaultPass = "adminadmin"
-            val adminUser = EditedUser(AssetAttributes.EMPTY_ID, adminUserLogin, defaultPass, defaultPass, "Admin", "Admin", "", listOf(adminRole.id))
+            val adminUser = EditedUser(AssetAttributes.EMPTY_ID, adminUserLogin, defaultPass, defaultPass, "Admin", "Admin", listOf(adminRole.id))
             val operationCtx = OperationCtx(null, OriginStamp(Instant.now(), "ApplicationStartup", null))
             val savedUser = requireNotNull(userService.saveUser(adminUser, operationCtx))
             logger.info("Default admin user created")

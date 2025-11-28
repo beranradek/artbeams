@@ -13,7 +13,6 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.localisation.domain.EditedLocalisation
-import org.xbery.artbeams.localisation.domain.Localisation
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.localisation.service.LocalisationService
 

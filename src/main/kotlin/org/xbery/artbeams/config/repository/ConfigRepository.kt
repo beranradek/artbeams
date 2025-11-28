@@ -24,7 +24,7 @@ class ConfigRepository(
     fun findConfigs(pagination: Pagination): ResultPage<Config> {
         val totalCount = dsl.selectCount()
             .from(CONFIG)
-            .fetchOne(0, Int::class.java) ?: 0
+            .fetchOne(0, Long::class.java) ?: 0L
 
         val records = dsl.selectFrom(CONFIG)
             .orderBy(CONFIG.ENTRY_KEY)

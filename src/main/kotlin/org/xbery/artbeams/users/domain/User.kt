@@ -17,7 +17,7 @@ data class User(
     val password: String,
     val firstName: String,
     val lastName: String,
-    val email: String,
+    val email: String?,
     val roles: List<Role>) : Asset(), Serializable {
 
     val roleNames: List<String> = roles.map { it.name }
@@ -36,7 +36,6 @@ data class User(
             password = updatedPassword,
             firstName = edited.firstName,
             lastName = edited.lastName,
-            email = edited.email.lowercase(),
             roles = roles
         )
     }
@@ -56,7 +55,7 @@ data class User(
     }
 
     fun toEdited(): EditedUser {
-        return EditedUser(this.id, this.login, "", "", this.firstName, this.lastName, this.email, this.roles.map { it.id })
+        return EditedUser(this.id, this.login, "", "", this.firstName, this.lastName, this.roles.map { it.id })
     }
 
     companion object {

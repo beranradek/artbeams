@@ -44,12 +44,6 @@
             </#if>
         </header>
 
-        <#if article.perex??>
-          <div itemprop="description" class="article-perex invisible">
-            ${article.perex}
-          </div>
-        </#if>
-
         <div itemprop="articleBody" class="article-body">
             ${article.body!}
         </div>

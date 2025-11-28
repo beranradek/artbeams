@@ -16,7 +16,7 @@ open class UserForm {
         val definition: FormMapping<EditedUser> =
             Forms.basic(EditedUser::class.java, "user")
                 .field<String>("id", Field.HIDDEN)
-                .field<String>("login", Field.TEXT)
+                .field<String>("login", Field.EMAIL)
                 .field<String>("password", Field.PASSWORD)
                 .field<String>("password2", Field.PASSWORD)
                 .field<String>("firstName", Field.TEXT)

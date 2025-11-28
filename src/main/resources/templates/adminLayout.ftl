@@ -128,6 +128,12 @@
             <li class="nav-item">
               <a class="nav-link" href="/admin/consents">Consents</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/localisations">Localisations</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/config">Config</a>
+            </li>
           </ul>
   
           <form class="form-inline my-2 my-lg-0 form-config-reload" action="/admin/config/reload" method="POST">

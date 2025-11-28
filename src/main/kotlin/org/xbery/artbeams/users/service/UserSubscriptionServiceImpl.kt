@@ -59,7 +59,7 @@ class UserSubscriptionServiceImpl(
         // Generate/store random password that can be re-set later by the user
         val password = UUID.randomUUID().toString() + "_" + UUID.randomUUID().toString()
         val user = EditedUser(
-          AssetAttributes.EMPTY_ID, login, password, password, names.first, names.second, login, listOf()
+          AssetAttributes.EMPTY_ID, login, password, password, names.first, names.second, listOf()
         )
         val ctx = OperationCtx(null, OriginStamp(Instant.now(), "RegisterUser", null))
         val registeredUser = userService.saveUser(user, ctx)

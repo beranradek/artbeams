@@ -20,8 +20,6 @@ data class EditedUser(
     val firstName: String,
     @ArgumentName("lastName")
     val lastName: String,
-    @ArgumentName("email")
-    val email: String,
     @ArgumentName("roleIds")
     val roleIds: List<String>
 ) : ValidatedPasswordData

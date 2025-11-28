@@ -31,7 +31,7 @@ class LocalisationRepository(
     fun findLocalisations(pagination: Pagination): ResultPage<Localisation> {
         val totalCount = dsl.selectCount()
             .from(LOCALISATION)
-            .fetchOne(0, Int::class.java) ?: 0
+            .fetchOne(0, Long::class.java) ?: 0L
 
         val records = dsl.selectFrom(LOCALISATION)
             .orderBy(LOCALISATION.ENTRY_KEY)

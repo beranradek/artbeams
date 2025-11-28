@@ -1,5 +1,13 @@
 # Changelog
 
+1.8.0 (28.11.2025)
+
+* User email as informative optional field only:
+```sql
+ALTER TABLE users ALTER COLUMN email TYPE VARCHAR(64), ALTER COLUMN email SET DEFAULT NULL;
+DROP INDEX idx_users_email;
+```
+
 1.7.1 (3.5.2025)
 
 * Member section mailer for order payment confirmations:

@@ -12,18 +12,17 @@ CREATE TABLE roles (
 CREATE TABLE users (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
 	created timestamp NOT NULL,
-	created_by VARCHAR(40) NULL DEFAULT NULL,
+	created_by VARCHAR(40) DEFAULT NULL,
 	modified timestamp NOT NULL,
 	modified_by VARCHAR(40) DEFAULT NULL,
 	login VARCHAR(32) NOT NULL,
 	password VARCHAR(500) NOT NULL,
 	first_name VARCHAR(64) DEFAULT NULL,
 	last_name VARCHAR(64) DEFAULT NULL,
-	email VARCHAR(64) NOT NULL
+	email VARCHAR(64) DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX idx_users_login ON users (login);
-CREATE UNIQUE INDEX idx_users_email ON users (email);
 
 CREATE TABLE user_role (
 	user_id VARCHAR(40) NOT NULL,
@@ -38,7 +37,7 @@ CREATE TABLE categories (
 	valid_from timestamp DEFAULT NULL,
 	valid_to timestamp DEFAULT NULL,
 	created timestamp DEFAULT NULL,
-	created_by VARCHAR(40) NULL DEFAULT NULL,
+	created_by VARCHAR(40) DEFAULT NULL,
 	modified timestamp DEFAULT NULL,
 	modified_by VARCHAR(40) DEFAULT NULL,
 	slug VARCHAR(128) DEFAULT NULL,
@@ -52,7 +51,7 @@ CREATE TABLE articles (
 	valid_from timestamp DEFAULT NULL,
 	valid_to timestamp DEFAULT NULL,
 	created timestamp DEFAULT NULL,
-	created_by VARCHAR(40) NULL DEFAULT NULL,
+	created_by VARCHAR(40) DEFAULT NULL,
 	modified timestamp DEFAULT NULL,
 	modified_by VARCHAR(40) DEFAULT NULL,
 	slug VARCHAR(128) DEFAULT NULL,
@@ -86,7 +85,7 @@ CREATE INDEX idx_media_filename ON media (filename);
 CREATE TABLE products (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
 	created timestamp DEFAULT NULL,
-	created_by VARCHAR(40) NULL DEFAULT NULL,
+	created_by VARCHAR(40) DEFAULT NULL,
 	modified timestamp DEFAULT NULL,
 	modified_by VARCHAR(40) DEFAULT NULL,
 	slug VARCHAR(128) DEFAULT NULL,
@@ -154,7 +153,7 @@ CREATE TABLE comments (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
 	parent_id VARCHAR(40) DEFAULT NULL,
 	created timestamp NOT NULL,
-	created_by VARCHAR(40) NULL DEFAULT NULL,
+	created_by VARCHAR(40) DEFAULT NULL,
 	modified timestamp NOT NULL,
 	modified_by VARCHAR(40) DEFAULT NULL,
 	state VARCHAR(20) NOT NULL DEFAULT 'WAITING_FOR_APPROVAL',
