@@ -9,16 +9,16 @@
   <!-- About Section -->
   <div class="card sidebar border-0 shadow-sm">
     <div class="card-body">
-      <h4>O stránkách</h4>
-      <p><em>${xlat['website.title']}</em> ${xlat['website.purpose']}</p>
+      <h4><span data-i18n-key="sidebar.about.heading">O stránkách</span></h4>
+      <p><em><span data-i18n-key="website.title">${xlat['website.title']}</span></em> <span data-i18n-key="website.purpose">${xlat['website.purpose']}</span></p>
     </div>
   </div>
-  
+
   <!-- Latest Posts -->
   <#if latestArticles??>
   <div class="card sidebar border-0 shadow-sm">
     <div class="card-body">
-      <h4>Nejnovější příspěvky</h4>
+      <h4><span data-i18n-key="sidebar.latest.heading">Nejnovější příspěvky</span></h4>
       <ul class="list-unstyled">
         <#list latestArticles as article>
         <li>
@@ -42,7 +42,7 @@
   <#if articleCategories??>
   <div class="card sidebar border-0 shadow-sm">
     <div class="card-body">
-      <h4>Rubriky</h4>
+      <h4><span data-i18n-key="sidebar.categories.heading">Rubriky</span></h4>
       <div class="d-flex flex-wrap gap-2">
         <#list articleCategories as category>
         <a href="${xlat['categories.url.base']}/${category.slug}" class="btn btn-sm btn-outline-secondary mb-2">${category.title}</a>
@@ -55,7 +55,7 @@
   <!-- Social Networks -->
   <div class="card sidebar border-0 shadow-sm">
     <div class="card-body">
-      <h4>Sociální sítě</h4>
+      <h4><span data-i18n-key="sidebar.social.heading">Sociální sítě</span></h4>
       <div class="d-flex">
         <#if xlat['fb.page.url']??>
           <a href="${xlat['fb.page.url']}?ref=embed_page">
@@ -96,7 +96,7 @@
   <#if subscriptionFormMapping??>
     <#if xlat['mailer-lite.form.title']??>
     <div class="newsletter-section">
-      <h4>Stáhněte si zdarma e-book</h4>
+      <h4><span data-i18n-key="sidebar.ebook.heading">Stáhněte si zdarma e-book</span></h4>
       <@subscriptionForm.subscriptionForm productSlug=xlat['offer1.productSlug'] subscriptionFormMapping=subscriptionFormMapping formClass='offer1-sidebar-subscription-form' textColor='white'></@subscriptionForm.subscriptionForm>
     </div>
     </#if>

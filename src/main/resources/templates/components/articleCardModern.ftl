@@ -17,9 +17,9 @@
             <@badge.categoryBadge article=article featured=true />
             <small class="text-muted ms-2">${article.validFrom?string["d. MMMM yyyy"]}</small>
           </div>
-          <h2 class="card-title h3 mb-3"><a href="/${article.slug}" class="text-decoration-none">${article.title}</a></h2>
-          <p class="card-text">${(article.perex!"")?truncate(350, "...")}</p>
-          <a href="/${article.slug}" class="btn btn-primary-custom">Přečíst článek</a>
+          <h2 class="card-title h3 mb-3"><a href="/${article.slug}" class="text-decoration-none"><span data-article-title data-article-id="${article.id}">${article.title}</span></a></h2>
+          <p class="card-text"><span data-article-perex data-article-id="${article.id}">${(article.perex!"")?truncate(350, "...")}</span></p>
+          <a href="/${article.slug}" class="btn btn-primary-custom"><span data-i18n-key="article.read.button">Přečíst článek</span></a>
         </div>
       </div>
     </div>
@@ -37,9 +37,9 @@
             <@badge.categoryBadge article=article />
             <small class="text-muted ms-2">${article.validFrom?string["d. MMMM yyyy"]}</small>
           </div>
-          <h3 class="card-title"><a href="/${article.slug}" class="text-decoration-none">${article.title}</a></h3>
-          <p class="card-text">${(article.perex!"")?truncate(350, "...")}</p>
-          <a href="/${article.slug}" class="btn btn-sm btn-outline-primary">Přečíst článek</a>
+          <h3 class="card-title"><a href="/${article.slug}" class="text-decoration-none"><span data-article-title data-article-id="${article.id}">${article.title}</span></a></h3>
+          <p class="card-text"><span data-article-perex data-article-id="${article.id}">${(article.perex!"")?truncate(350, "...")}</span></p>
+          <a href="/${article.slug}" class="btn btn-sm btn-outline-primary"><span data-i18n-key="article.read.button">Přečíst článek</span></a>
         </div>
       </div>
     </div>

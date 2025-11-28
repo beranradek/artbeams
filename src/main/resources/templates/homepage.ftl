@@ -18,11 +18,11 @@
         <ul class="pagination justify-content-center">
           <#if pagination.hasPrevious>
             <li class="page-item">
-              <a class="page-link" href="?page=${pagination.previousPage}">Předchozí</a>
+              <a class="page-link" href="?page=${pagination.previousPage}"><span data-i18n-key="pagination.previous">Předchozí</span></a>
             </li>
           <#else>
             <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Předchozí</a>
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true"><span data-i18n-key="pagination.previous">Předchozí</span></a>
             </li>
           </#if>
           
@@ -36,11 +36,11 @@
           
           <#if pagination.hasNext>
             <li class="page-item">
-              <a class="page-link" href="?page=${pagination.nextPage}">Další</a>
+              <a class="page-link" href="?page=${pagination.nextPage}"><span data-i18n-key="pagination.next">Další</span></a>
             </li>
           <#else>
             <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Další</a>
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true"><span data-i18n-key="pagination.next">Další</span></a>
             </li>
           </#if>
         </ul>
@@ -48,8 +48,8 @@
     </#if>
   <#else>
     <div class="text-center py-5">
-      <h3>Žádné články zatím nejsou k dispozici.</h3>
-      <p class="text-muted">Brzy zde najdete zajímavý obsah!</p>
+      <h3><span data-i18n-key="homepage.no.articles.heading">Žádné články zatím nejsou k dispozici.</span></h3>
+      <p class="text-muted"><span data-i18n-key="homepage.no.articles.text">Brzy zde najdete zajímavý obsah!</span></p>
     </div>
   </#if>
 </@layout.page>

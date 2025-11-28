@@ -1,0 +1,205 @@
+/**
+ * In-site editing styles for ArtBeams CMS
+ * Styles for the inline editing interface
+ * @author ArtBeams
+ */
+
+/* Editable element with highlight */
+.insite-editable {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+/* Highlighted state on hover */
+.insite-highlight {
+    outline: 2px solid rgba(74, 144, 226, 0.5);
+    outline-offset: 2px;
+    border-radius: 4px;
+    background-color: rgba(74, 144, 226, 0.05);
+    cursor: pointer;
+}
+
+/* Edit icon */
+.insite-edit-icon {
+    display: none;
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: #4a90e2;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.insite-edit-icon:hover {
+    background: #357abd;
+    transform: scale(1.1);
+}
+
+.insite-edit-icon svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Editor container */
+.insite-editor {
+    position: relative;
+    z-index: 999;
+    background: white;
+    padding: 12px;
+    border: 2px solid #4a90e2;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin: -4px;
+}
+
+.insite-editor textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 8px;
+}
+
+.insite-editor textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Editor buttons */
+.insite-editor-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.insite-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 36px;
+    height: 32px;
+}
+
+.insite-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.insite-btn:active {
+    transform: translateY(0);
+}
+
+.insite-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.insite-btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.insite-btn-success:hover {
+    background: #218838;
+}
+
+.insite-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.insite-btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Loading spinner */
+.insite-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: insite-spin 0.6s linear infinite;
+}
+
+@keyframes insite-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success feedback */
+.insite-save-success {
+    animation: insite-success-pulse 0.6s ease;
+}
+
+@keyframes insite-success-pulse {
+    0%, 100% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: rgba(40, 167, 69, 0.2);
+    }
+}
+
+/* Editing state */
+.insite-editing {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .insite-editor {
+        margin: -8px;
+    }
+
+    .insite-edit-icon {
+        top: -8px;
+        left: -8px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .insite-edit-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Ensure proper z-index layering */
+.insite-editable.insite-highlight,
+.insite-editable.insite-editing {
+    z-index: 998;
+}
+
+.insite-editable.insite-editing {
+    z-index: 999;
+}
+
+/* Special handling for elements that might have existing positioning */
+.insite-editable:not([style*="position"]) {
+    position: relative;
+}

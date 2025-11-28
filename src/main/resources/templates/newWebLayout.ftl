@@ -160,6 +160,11 @@ ${websiteJsonLd}
     <link href="${pageStyles2}" type="text/css" rel="stylesheet">
   </#if>
 
+  <#-- In-site editing for admin users -->
+  <#if _loggedUser?? && _loggedUser.roleNames?seq_contains("admin")>
+    <link href="/static/css/insite-editing.css?v1" type="text/css" rel="stylesheet">
+  </#if>
+
   <#include "/commonScripts.ftl">
 
   </head>
@@ -236,9 +241,9 @@ ${websiteJsonLd}
   <!-- Cookie disclaimer -->
   <div id="cookie-disclaimer" class="cookie-disclaimer">
     <div class="container">
-      <p>${xlat['cookies.info']} <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}">${xlat['cookies.info.more']}</a>.
+      <p><span data-i18n-key="cookies.info">${xlat['cookies.info']}</span> <a class="cookie_info_more" target="_blank" href="${xlat['cookies.url']}"><span data-i18n-key="cookies.info.more">${xlat['cookies.info.more']}</span></a>.
 
-      <#if xlat['cookies.acceptAll']??>&nbsp;<button type="button" id="accept-cookie" class="btn btn-success">${xlat['cookies.acceptAll']}</button></#if>
+      <#if xlat['cookies.acceptAll']??>&nbsp;<button type="button" id="accept-cookie" class="btn btn-success"><span data-i18n-key="cookies.acceptAll">${xlat['cookies.acceptAll']}</span></button></#if>
       <button type="button" id="close-cookie" class="btn btn-secondary">X</button></p>
     </div>
   </div>
@@ -249,6 +254,11 @@ ${websiteJsonLd}
   <script nonce="${_cspNonce}" src="/static/js/responsive-images.js"></script>
   <!-- reCaptcha -->
   <script async defer nonce="${_cspNonce}" data-type="lazy" data-src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
+
+  <#-- In-site editing for admin users -->
+  <#if _loggedUser?? && _loggedUser.roleNames?seq_contains("admin")>
+  <script nonce="${_cspNonce}" src="/static/js/insite-editing.js?v1"></script>
+  </#if>
 
   <script nonce="${_cspNonce}">
       <#-- Lazy loading of data-type='lazy' scripts and iframes -->

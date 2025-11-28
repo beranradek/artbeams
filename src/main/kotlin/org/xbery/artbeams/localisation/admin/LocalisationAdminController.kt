@@ -5,7 +5,9 @@ import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
 import net.formio.validation.ValidationResult
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
@@ -85,6 +87,64 @@ open class LocalisationAdminController(
         localisationRepository.reloadEntries()
         return redirectToReferrerWitParam(request, "localisationsReloaded", "1")
     }
+
+    /**
+     * Update localization value inline (for in-site editing feature)
+     */
+    @PostMapping(path = ["/update-inline"], consumes = [MediaType.APPLICATION_JSON_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @ResponseBody
+    fun updateInline(@RequestBody updateRequest: InlineUpdateRequest, request: HttpServletRequest): ResponseEntity<Map<String, Any>> {
+        return try {
+            // Validate input
+            if (updateRequest.key.isBlank()) {
+                return ResponseEntity.badRequest().body(mapOf(
+                    "success" to false,
+                    "message" to "Localization key is required"
+                ))
+            }
+
+            // Find existing localization
+            val existing = localisationRepository.findByKey(updateRequest.key)
+                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf(
+                    "success" to false,
+                    "message" to "Localization with key '${updateRequest.key}' not found"
+                ))
+
+            // Create edited localization with new value
+            val edited = EditedLocalisation(
+                originalKey = updateRequest.key,
+                entryKey = updateRequest.key,
+                entryValue = updateRequest.value
+            )
+
+            // Save the localization
+            localisationService.saveLocalisation(edited)
+
+            // Reload localization entries to refresh the cache
+            localisationRepository.reloadEntries()
+
+            ResponseEntity.ok(mapOf(
+                "success" to true,
+                "message" to "Localization updated successfully",
+                "key" to updateRequest.key,
+                "value" to updateRequest.value
+            ))
+        } catch (ex: Exception) {
+            logger.error("Error updating localization inline", ex)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapOf(
+                "success" to false,
+                "message" to "Failed to update localization: ${ex.message}"
+            ))
+        }
+    }
+
+    /**
+     * Request body for inline update
+     */
+    data class InlineUpdateRequest(
+        val key: String,
+        val value: String
+    )
 
     private fun renderEditForm(
         request: HttpServletRequest,

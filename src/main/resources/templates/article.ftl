@@ -7,7 +7,7 @@
 <#import "/comments/commentAdd.ftl" as commentAdd>
 <#import "/comments/commentList.ftl" as commentList>
 <@layout.page pageStyles="/static/css/articles.css">
-    <article itemscope itemtype="https://schema.org/BlogPosting">
+    <article itemscope itemtype="https://schema.org/BlogPosting" data-article-id="${article.id}">
         <header>
             <h1 class="blog-post-title" itemprop="headline">${article.title!}</h1>
 
