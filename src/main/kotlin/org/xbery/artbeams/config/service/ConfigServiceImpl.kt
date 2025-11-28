@@ -20,9 +20,9 @@ open class ConfigServiceImpl(
 ) : ConfigService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun findConfigs(pagination: Pagination): ResultPage<Config> {
-        logger.info("Finding configs with pagination: offset=${pagination.offset}, limit=${pagination.limit}")
-        return configRepository.findConfigs(pagination)
+    override fun findConfigs(pagination: Pagination, search: String?): ResultPage<Config> {
+        logger.info("Finding configs with pagination: offset=${pagination.offset}, limit=${pagination.limit}, search=$search")
+        return configRepository.findConfigs(pagination, search)
     }
 
     override fun findByKey(entryKey: String): Config? {

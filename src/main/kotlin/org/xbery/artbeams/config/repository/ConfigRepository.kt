@@ -21,12 +21,31 @@ class ConfigRepository(
     private val unmapper: ConfigUnmapper
 ) {
 
-    fun findConfigs(pagination: Pagination): ResultPage<Config> {
-        val totalCount = dsl.selectCount()
-            .from(CONFIG)
-            .fetchOne(0, Long::class.java) ?: 0L
+    fun findConfigs(pagination: Pagination, search: String? = null): ResultPage<Config> {
+        val searchPattern = if (!search.isNullOrBlank()) "%${search.trim()}%" else null
 
-        val records = dsl.selectFrom(CONFIG)
+        val countQuery = dsl.selectCount()
+            .from(CONFIG)
+
+        if (searchPattern != null) {
+            countQuery.where(
+                CONFIG.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                    .or(CONFIG.ENTRY_VALUE.likeIgnoreCase(searchPattern))
+            )
+        }
+
+        val totalCount = countQuery.fetchOne(0, Long::class.java) ?: 0L
+
+        val recordsQuery = dsl.selectFrom(CONFIG)
+
+        if (searchPattern != null) {
+            recordsQuery.where(
+                CONFIG.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                    .or(CONFIG.ENTRY_VALUE.likeIgnoreCase(searchPattern))
+            )
+        }
+
+        val records = recordsQuery
             .orderBy(CONFIG.ENTRY_KEY)
             .limit(pagination.limit)
             .offset(pagination.offset)

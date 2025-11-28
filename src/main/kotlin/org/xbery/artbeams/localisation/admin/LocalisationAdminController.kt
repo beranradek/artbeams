@@ -34,13 +34,15 @@ open class LocalisationAdminController(
     fun list(
         @RequestParam("offset", defaultValue = "0") offset: Int,
         @RequestParam("limit", defaultValue = "20") limit: Int,
+        @RequestParam("search", required = false) search: String?,
         request: HttpServletRequest
     ): Any {
         val pagination = Pagination(offset, limit)
-        val resultPage = localisationService.findLocalisations(pagination)
+        val resultPage = localisationService.findLocalisations(pagination, search)
         val model = createModel(
             request,
-            "resultPage" to resultPage
+            "resultPage" to resultPage,
+            "search" to (search ?: "")
         )
         return ModelAndView("$TplBasePath/localisationList", model)
     }

@@ -28,12 +28,31 @@ class LocalisationRepository(
         }.toMap()
     }
 
-    fun findLocalisations(pagination: Pagination): ResultPage<Localisation> {
-        val totalCount = dsl.selectCount()
-            .from(LOCALISATION)
-            .fetchOne(0, Long::class.java) ?: 0L
+    fun findLocalisations(pagination: Pagination, search: String? = null): ResultPage<Localisation> {
+        val searchPattern = if (!search.isNullOrBlank()) "%${search.trim()}%" else null
 
-        val records = dsl.selectFrom(LOCALISATION)
+        val countQuery = dsl.selectCount()
+            .from(LOCALISATION)
+
+        if (searchPattern != null) {
+            countQuery.where(
+                LOCALISATION.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                    .or(LOCALISATION.ENTRY_VALUE.likeIgnoreCase(searchPattern))
+            )
+        }
+
+        val totalCount = countQuery.fetchOne(0, Long::class.java) ?: 0L
+
+        val recordsQuery = dsl.selectFrom(LOCALISATION)
+
+        if (searchPattern != null) {
+            recordsQuery.where(
+                LOCALISATION.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                    .or(LOCALISATION.ENTRY_VALUE.likeIgnoreCase(searchPattern))
+            )
+        }
+
+        val records = recordsQuery
             .orderBy(LOCALISATION.ENTRY_KEY)
             .limit(pagination.limit)
             .offset(pagination.offset)
