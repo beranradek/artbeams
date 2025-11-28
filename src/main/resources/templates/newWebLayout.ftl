@@ -135,21 +135,21 @@ ${websiteJsonLd}
   </#if>
 
   <#-- CSS files merged and minified into styles.css
-  <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet">
-  <link href="/static/css/new-design-styles.css" type="text/css" rel="stylesheet">
-  <link href="/static/css/new-hero-styles.css" type="text/css" rel="stylesheet">
-  <link href="/static/css/new-components.css" type="text/css" rel="stylesheet">
-  <link href="/static/css/responsive-images.css" type="text/css" rel="stylesheet">
+  <link href="/static/css/bootstrap.min.css?v1" type="text/css" rel="stylesheet">
+  <link href="/static/css/new-design-styles.css?v1" type="text/css" rel="stylesheet">
+  <link href="/static/css/new-hero-styles.css?v1" type="text/css" rel="stylesheet">
+  <link href="/static/css/new-components.css?v1" type="text/css" rel="stylesheet">
+  <link href="/static/css/responsive-images.css?v1" type="text/css" rel="stylesheet">
   -->
   <#-- Critical CSS loaded synchronously -->
-  <link href="/static/css/styles.css" type="text/css" rel="stylesheet">
+  <link href="/static/css/styles.css?v1" type="text/css" rel="stylesheet">
 
   <#-- Custom icon system CSS (deferred for better performance) -->
-  <link id="custom-icons-css" href="/static/css/custom-icons.css" type="text/css" rel="stylesheet" media="print" />
+  <link id="custom-icons-css" href="/static/css/custom-icons.css?v1" type="text/css" rel="stylesheet" media="print" />
 
   <#-- Fallback for browsers without JavaScript -->
   <noscript>
-    <link href="/static/css/custom-icons.css" type="text/css" rel="stylesheet" />
+    <link href="/static/css/custom-icons.css?v1" type="text/css" rel="stylesheet" />
   </noscript>
 
   <#if pageStyles?has_content>
