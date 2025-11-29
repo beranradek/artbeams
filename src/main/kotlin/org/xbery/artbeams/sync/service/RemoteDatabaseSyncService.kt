@@ -42,6 +42,9 @@ class RemoteDatabaseSyncService(
 
     /**
      * Syncs articles, localizations, and media from remote database to local database.
+     * - Articles are matched by slug (not by ID)
+     * - Localizations are matched by key (not by ID)
+     * - Media are matched by filename, content type, and size (not by ID)
      * After sync, removes external IDs from all synced articles to prevent unintentional updates to Google Docs.
      */
     @CacheEvict(value = [Article.CacheName], allEntries = true)
@@ -97,38 +100,59 @@ class RemoteDatabaseSyncService(
                 val syncedArticleIds = mutableListOf<String>()
 
                 remoteArticles.forEach { remoteRecord ->
-                    val articleId = remoteRecord.id ?: return@forEach
+                    val slug = remoteRecord.slug ?: return@forEach
 
-                    val existingArticle = articleRepository.findById(articleId)
+                    // Find existing local article by slug (not by ID)
+                    val existingLocalArticle = localDsl.selectFrom(ARTICLES)
+                        .where(ARTICLES.SLUG.eq(slug))
+                        .fetchOne()
 
-                    if (existingArticle == null) {
-                        // Create new article
+                    val localArticleId: String
+                    if (existingLocalArticle == null) {
+                        // Create new article with remote data (including remote ID)
                         localDsl.insertInto(ARTICLES)
                             .set(remoteRecord)
                             .execute()
+                        localArticleId = remoteRecord.id!!
                         articlesCreated++
-                        logger.debug("Created article: $articleId - ${remoteRecord.title}")
+                        logger.debug("Created article: $slug (ID: $localArticleId) - ${remoteRecord.title}")
                     } else {
-                        // Update existing article
+                        // Update existing local article (keep local ID, update with remote data)
+                        localArticleId = existingLocalArticle.id!!
                         localDsl.update(ARTICLES)
-                            .set(remoteRecord)
-                            .where(ARTICLES.ID.eq(articleId))
+                            .set(ARTICLES.EXTERNAL_ID, remoteRecord.externalId)
+                            .set(ARTICLES.VALID_FROM, remoteRecord.validFrom)
+                            .set(ARTICLES.VALID_TO, remoteRecord.validTo)
+                            .set(ARTICLES.CREATED, remoteRecord.created)
+                            .set(ARTICLES.CREATED_BY, remoteRecord.createdBy)
+                            .set(ARTICLES.MODIFIED, remoteRecord.modified)
+                            .set(ARTICLES.MODIFIED_BY, remoteRecord.modifiedBy)
+                            .set(ARTICLES.SLUG, remoteRecord.slug)
+                            .set(ARTICLES.TITLE, remoteRecord.title)
+                            .set(ARTICLES.IMAGE, remoteRecord.image)
+                            .set(ARTICLES.PEREX, remoteRecord.perex)
+                            .set(ARTICLES.BODY, remoteRecord.body)
+                            .set(ARTICLES.BODY_EDITED, remoteRecord.bodyEdited)
+                            .set(ARTICLES.EDITOR, remoteRecord.editor)
+                            .set(ARTICLES.KEYWORDS, remoteRecord.keywords)
+                            .set(ARTICLES.SHOW_ON_BLOG, remoteRecord.showOnBlog)
+                            .where(ARTICLES.ID.eq(localArticleId))
                             .execute()
                         articlesUpdated++
-                        logger.debug("Updated article: $articleId - ${remoteRecord.title}")
+                        logger.debug("Updated article: $slug (local ID: $localArticleId) - ${remoteRecord.title}")
                     }
 
-                    syncedArticleIds.add(articleId)
+                    syncedArticleIds.add(localArticleId)
 
-                    // Sync article categories
+                    // Sync article categories (using local article ID)
                     val remoteCategories = remoteDsl.select(ARTICLE_CATEGORY.CATEGORY_ID)
                         .from(ARTICLE_CATEGORY)
-                        .where(ARTICLE_CATEGORY.ARTICLE_ID.eq(articleId))
+                        .where(ARTICLE_CATEGORY.ARTICLE_ID.eq(remoteRecord.id))
                         .fetch()
                         .map { it.value1() }
                         .filterNotNull()
 
-                    articleCategoryRepository.updateArticleCategories(articleId, remoteCategories)
+                    articleCategoryRepository.updateArticleCategories(localArticleId, remoteCategories)
                 }
 
                 // Remove external IDs from all synced articles to prevent accidental Google Docs updates
