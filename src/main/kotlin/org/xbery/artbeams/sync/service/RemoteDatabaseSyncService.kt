@@ -12,8 +12,10 @@ import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLES
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLE_CATEGORY
+import org.xbery.artbeams.jooq.schema.tables.references.CATEGORIES
 import org.xbery.artbeams.jooq.schema.tables.references.LOCALISATION
 import org.xbery.artbeams.jooq.schema.tables.references.MEDIA
+import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.localisation.domain.Localisation
 import java.sql.DriverManager
@@ -41,7 +43,9 @@ class RemoteDatabaseSyncService(
     }
 
     /**
-     * Syncs articles, localizations, and media from remote database to local database.
+     * Syncs categories, products, articles, localizations, and media from remote database to local database.
+     * - Categories are matched by slug (not by ID)
+     * - Products are matched by slug (not by ID)
      * - Articles are matched by slug (not by ID)
      * - Localizations are matched by key (not by ID)
      * - Media are matched by filename, content type, and size (not by ID)
@@ -53,6 +57,10 @@ class RemoteDatabaseSyncService(
         require(!connectionString.isNullOrBlank()) { "Remote database connection is not configured (remote.db.connection)" }
 
         logger.info("Starting sync from remote database")
+        var categoriesCreated = 0
+        var categoriesUpdated = 0
+        var productsCreated = 0
+        var productsUpdated = 0
         var articlesCreated = 0
         var articlesUpdated = 0
         var localisationsCreated = 0
@@ -67,6 +75,89 @@ class RemoteDatabaseSyncService(
 
             connection.use { conn ->
                 val remoteDsl = DSL.using(conn, localDsl.dialect())
+
+                // Sync categories
+                logger.info("Syncing categories from remote database")
+                val remoteCategories = remoteDsl.selectFrom(CATEGORIES).fetch()
+
+                remoteCategories.forEach { remoteRecord ->
+                    val slug = remoteRecord.slug ?: return@forEach
+
+                    // Find existing local category by slug (not by ID)
+                    val existingLocalCategory = localDsl.selectFrom(CATEGORIES)
+                        .where(CATEGORIES.SLUG.eq(slug))
+                        .fetchOne()
+
+                    if (existingLocalCategory == null) {
+                        // Create new category with remote data (including remote ID)
+                        localDsl.insertInto(CATEGORIES)
+                            .set(remoteRecord)
+                            .execute()
+                        categoriesCreated++
+                        logger.debug("Created category: $slug - ${remoteRecord.title}")
+                    } else {
+                        // Update existing local category (keep local ID, update with remote data)
+                        localDsl.update(CATEGORIES)
+                            .set(CATEGORIES.VALID_FROM, remoteRecord.validFrom)
+                            .set(CATEGORIES.VALID_TO, remoteRecord.validTo)
+                            .set(CATEGORIES.CREATED, remoteRecord.created)
+                            .set(CATEGORIES.CREATED_BY, remoteRecord.createdBy)
+                            .set(CATEGORIES.MODIFIED, remoteRecord.modified)
+                            .set(CATEGORIES.MODIFIED_BY, remoteRecord.modifiedBy)
+                            .set(CATEGORIES.SLUG, remoteRecord.slug)
+                            .set(CATEGORIES.TITLE, remoteRecord.title)
+                            .set(CATEGORIES.DESCRIPTION, remoteRecord.description)
+                            .where(CATEGORIES.ID.eq(existingLocalCategory.id))
+                            .execute()
+                        categoriesUpdated++
+                        logger.debug("Updated category: $slug - ${remoteRecord.title}")
+                    }
+                }
+
+                // Sync products
+                logger.info("Syncing products from remote database")
+                val remoteProducts = remoteDsl.selectFrom(PRODUCTS).fetch()
+
+                remoteProducts.forEach { remoteRecord ->
+                    val slug = remoteRecord.slug ?: return@forEach
+
+                    // Find existing local product by slug (not by ID)
+                    val existingLocalProduct = localDsl.selectFrom(PRODUCTS)
+                        .where(PRODUCTS.SLUG.eq(slug))
+                        .fetchOne()
+
+                    if (existingLocalProduct == null) {
+                        // Create new product with remote data (including remote ID)
+                        localDsl.insertInto(PRODUCTS)
+                            .set(remoteRecord)
+                            .execute()
+                        productsCreated++
+                        logger.debug("Created product: $slug - ${remoteRecord.title}")
+                    } else {
+                        // Update existing local product (keep local ID, update with remote data)
+                        localDsl.update(PRODUCTS)
+                            .set(PRODUCTS.CREATED, remoteRecord.created)
+                            .set(PRODUCTS.CREATED_BY, remoteRecord.createdBy)
+                            .set(PRODUCTS.MODIFIED, remoteRecord.modified)
+                            .set(PRODUCTS.MODIFIED_BY, remoteRecord.modifiedBy)
+                            .set(PRODUCTS.SLUG, remoteRecord.slug)
+                            .set(PRODUCTS.TITLE, remoteRecord.title)
+                            .set(PRODUCTS.SUBTITLE, remoteRecord.subtitle)
+                            .set(PRODUCTS.FILENAME, remoteRecord.filename)
+                            .set(PRODUCTS.LISTING_IMAGE, remoteRecord.listingImage)
+                            .set(PRODUCTS.IMAGE, remoteRecord.image)
+                            .set(PRODUCTS.CONFIRMATION_MAILING_GROUP_ID, remoteRecord.confirmationMailingGroupId)
+                            .set(PRODUCTS.MAILING_GROUP_ID, remoteRecord.mailingGroupId)
+                            .set(PRODUCTS.PRICE_REGULAR, remoteRecord.priceRegular)
+                            .set(PRODUCTS.PRICE_DISCOUNTED, remoteRecord.priceDiscounted)
+                            .set(PRODUCTS.DESCRIPTION, remoteRecord.description)
+                            .set(PRODUCTS.CONTENT, remoteRecord.content)
+                            .where(PRODUCTS.ID.eq(existingLocalProduct.id))
+                            .execute()
+                        productsUpdated++
+                        logger.debug("Updated product: $slug - ${remoteRecord.title}")
+                    }
+                }
 
                 // Sync localizations
                 logger.info("Syncing localizations from remote database")
@@ -206,6 +297,10 @@ class RemoteDatabaseSyncService(
 
             val result = SyncResult(
                 success = true,
+                categoriesCreated = categoriesCreated,
+                categoriesUpdated = categoriesUpdated,
+                productsCreated = productsCreated,
+                productsUpdated = productsUpdated,
                 articlesCreated = articlesCreated,
                 articlesUpdated = articlesUpdated,
                 localisationsCreated = localisationsCreated,
@@ -222,6 +317,10 @@ class RemoteDatabaseSyncService(
             logger.error("Error syncing from remote database", ex)
             return SyncResult(
                 success = false,
+                categoriesCreated = categoriesCreated,
+                categoriesUpdated = categoriesUpdated,
+                productsCreated = productsCreated,
+                productsUpdated = productsUpdated,
                 articlesCreated = articlesCreated,
                 articlesUpdated = articlesUpdated,
                 localisationsCreated = localisationsCreated,
@@ -235,6 +334,10 @@ class RemoteDatabaseSyncService(
 
     data class SyncResult(
         val success: Boolean,
+        val categoriesCreated: Int,
+        val categoriesUpdated: Int,
+        val productsCreated: Int,
+        val productsUpdated: Int,
         val articlesCreated: Int,
         val articlesUpdated: Int,
         val localisationsCreated: Int,

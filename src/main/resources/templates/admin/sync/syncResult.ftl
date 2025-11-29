@@ -11,6 +11,10 @@
                 <hr>
                 <h5>Summary:</h5>
                 <ul>
+                    <li><strong>Categories Created:</strong> ${result.categoriesCreated}</li>
+                    <li><strong>Categories Updated:</strong> ${result.categoriesUpdated}</li>
+                    <li><strong>Products Created:</strong> ${result.productsCreated}</li>
+                    <li><strong>Products Updated:</strong> ${result.productsUpdated}</li>
                     <li><strong>Articles Created:</strong> ${result.articlesCreated}</li>
                     <li><strong>Articles Updated:</strong> ${result.articlesUpdated}</li>
                     <li><strong>Localizations Created:</strong> ${result.localisationsCreated}</li>
@@ -30,6 +34,10 @@
                 <hr>
                 <h5>Partial Results:</h5>
                 <ul>
+                    <li><strong>Categories Created:</strong> ${result.categoriesCreated}</li>
+                    <li><strong>Categories Updated:</strong> ${result.categoriesUpdated}</li>
+                    <li><strong>Products Created:</strong> ${result.productsCreated}</li>
+                    <li><strong>Products Updated:</strong> ${result.productsUpdated}</li>
                     <li><strong>Articles Created:</strong> ${result.articlesCreated}</li>
                     <li><strong>Articles Updated:</strong> ${result.articlesUpdated}</li>
                     <li><strong>Localizations Created:</strong> ${result.localisationsCreated}</li>
@@ -48,6 +56,12 @@
         <div class="mt-3">
             <a href="/admin" class="btn btn-primary">
                 <i class="fas fa-home"></i> Back to Admin
+            </a>
+            <a href="/admin/categories" class="btn btn-secondary">
+                <i class="fas fa-folder"></i> View Categories
+            </a>
+            <a href="/admin/products" class="btn btn-secondary">
+                <i class="fas fa-shopping-cart"></i> View Products
             </a>
             <a href="/admin/articles" class="btn btn-secondary">
                 <i class="fas fa-newspaper"></i> View Articles
