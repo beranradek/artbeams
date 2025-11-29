@@ -13,6 +13,7 @@ import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLES
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLE_CATEGORY
 import org.xbery.artbeams.jooq.schema.tables.references.LOCALISATION
+import org.xbery.artbeams.jooq.schema.tables.references.MEDIA
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.localisation.domain.Localisation
 import java.sql.DriverManager
@@ -40,7 +41,7 @@ class RemoteDatabaseSyncService(
     }
 
     /**
-     * Syncs articles and localizations from remote database to local database.
+     * Syncs articles, localizations, and media from remote database to local database.
      * After sync, removes external IDs from all synced articles to prevent unintentional updates to Google Docs.
      */
     @CacheEvict(value = [Article.CacheName], allEntries = true)
@@ -53,6 +54,8 @@ class RemoteDatabaseSyncService(
         var articlesUpdated = 0
         var localisationsCreated = 0
         var localisationsUpdated = 0
+        var mediaCreated = 0
+        var mediaUpdated = 0
 
         try {
             // Parse connection string to extract JDBC URL, username, and password
@@ -136,6 +139,45 @@ class RemoteDatabaseSyncService(
                         .where(ARTICLES.ID.`in`(syncedArticleIds))
                         .execute()
                 }
+
+                // Sync media
+                logger.info("Syncing media from remote database")
+                val remoteMedia = remoteDsl.selectFrom(MEDIA).fetch()
+
+                remoteMedia.forEach { remoteRecord ->
+                    val filename = remoteRecord.filename ?: return@forEach
+                    val contentType = remoteRecord.contentType
+                    val size = remoteRecord.size
+
+                    // Check if media exists with the same filename, content_type, and size
+                    val existingMedia = localDsl.selectFrom(MEDIA)
+                        .where(
+                            MEDIA.FILENAME.eq(filename)
+                                .and(MEDIA.CONTENT_TYPE.eq(contentType))
+                                .and(MEDIA.SIZE.eq(size))
+                        )
+                        .fetchOne()
+
+                    if (existingMedia == null) {
+                        // Create new media record
+                        localDsl.insertInto(MEDIA)
+                            .set(remoteRecord)
+                            .execute()
+                        mediaCreated++
+                        logger.debug("Created media: $filename (${contentType ?: "unknown"}, $size bytes)")
+                    } else {
+                        // Update existing media record (keep the existing id)
+                        localDsl.update(MEDIA)
+                            .set(MEDIA.DATA, remoteRecord.data)
+                            .set(MEDIA.PRIVATE_ACCESS, remoteRecord.privateAccess)
+                            .set(MEDIA.WIDTH, remoteRecord.width)
+                            .set(MEDIA.HEIGHT, remoteRecord.height)
+                            .where(MEDIA.ID.eq(existingMedia.id))
+                            .execute()
+                        mediaUpdated++
+                        logger.debug("Updated media: $filename (${contentType ?: "unknown"}, $size bytes)")
+                    }
+                }
             }
 
             val result = SyncResult(
@@ -144,6 +186,8 @@ class RemoteDatabaseSyncService(
                 articlesUpdated = articlesUpdated,
                 localisationsCreated = localisationsCreated,
                 localisationsUpdated = localisationsUpdated,
+                mediaCreated = mediaCreated,
+                mediaUpdated = mediaUpdated,
                 errorMessage = null
             )
 
@@ -158,6 +202,8 @@ class RemoteDatabaseSyncService(
                 articlesUpdated = articlesUpdated,
                 localisationsCreated = localisationsCreated,
                 localisationsUpdated = localisationsUpdated,
+                mediaCreated = mediaCreated,
+                mediaUpdated = mediaUpdated,
                 errorMessage = ex.message ?: "Unknown error occurred"
             )
         }
@@ -169,6 +215,8 @@ class RemoteDatabaseSyncService(
         val articlesUpdated: Int,
         val localisationsCreated: Int,
         val localisationsUpdated: Int,
+        val mediaCreated: Int,
+        val mediaUpdated: Int,
         val errorMessage: String?
     )
 }

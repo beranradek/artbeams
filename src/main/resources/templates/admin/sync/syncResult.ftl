@@ -15,6 +15,8 @@
                     <li><strong>Articles Updated:</strong> ${result.articlesUpdated}</li>
                     <li><strong>Localizations Created:</strong> ${result.localisationsCreated}</li>
                     <li><strong>Localizations Updated:</strong> ${result.localisationsUpdated}</li>
+                    <li><strong>Media Created:</strong> ${result.mediaCreated}</li>
+                    <li><strong>Media Updated:</strong> ${result.mediaUpdated}</li>
                 </ul>
                 <p class="mb-0">
                     <strong>Note:</strong> All external IDs have been removed from synced articles to prevent accidental updates to paired Google Documents.
@@ -32,6 +34,8 @@
                     <li><strong>Articles Updated:</strong> ${result.articlesUpdated}</li>
                     <li><strong>Localizations Created:</strong> ${result.localisationsCreated}</li>
                     <li><strong>Localizations Updated:</strong> ${result.localisationsUpdated}</li>
+                    <li><strong>Media Created:</strong> ${result.mediaCreated}</li>
+                    <li><strong>Media Updated:</strong> ${result.mediaUpdated}</li>
                 </ul>
                 <#if result.errorMessage??>
                     <p class="mb-0">
@@ -50,6 +54,9 @@
             </a>
             <a href="/admin/localisations" class="btn btn-secondary">
                 <i class="fas fa-language"></i> View Localizations
+            </a>
+            <a href="/admin/media" class="btn btn-secondary">
+                <i class="fas fa-images"></i> View Media
             </a>
         </div>
     </div>
