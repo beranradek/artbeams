@@ -152,7 +152,15 @@ class FreeProductController(
             // This removes the subscriber from group if already present, then re-adds them
             mailingApi.resubscribeToGroup(user.login, fullNameOpt ?: "", requireNotNull(product.mailingGroupId), request.remoteAddr)
 
-            // TBD: Update order state to SHIPPED
+            // Update order state to SHIPPED since product has been sent to user
+            val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
+            if (orderItems.isNotEmpty()) {
+                val latestOrderItem = orderItems.maxByOrNull { it.common.created }
+                latestOrderItem?.orderId?.let { orderId ->
+                    orderService.updateOrderState(orderId, OrderState.SHIPPED)
+                    logger.info("Order $orderId state updated to SHIPPED after confirming and sending free product ${product.slug}")
+                }
+            }
 
             // Redirect to this page without email and name parameters shown in URL
             // TBD: Create separate /odeslano route for rendering -odeslano product article
@@ -207,6 +215,11 @@ class FreeProductController(
             }
 
             orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
+
+            // Update order state to SHIPPED since product has been downloaded by user
+            orderService.updateOrderState(orderItem.orderId, OrderState.SHIPPED)
+            logger.info("Order ${orderItem.orderId} state updated to SHIPPED after user downloaded free product ${product.slug}")
+
             sendProductDownloadedNotification(product, user)
 
             ResponseEntity.ok()

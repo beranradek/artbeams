@@ -92,10 +92,11 @@ class OrderRepository(
     }
 
     fun updateOrderPaid(orderId: String): Boolean {
+        val now = Instant.now()
         return dsl.update(ORDERS)
             .set(ORDERS.STATE, OrderState.PAID.name)
-            .set(ORDERS.MODIFIED, Instant.now())
-            // TBD: Update paid time (Instant)
+            .set(ORDERS.MODIFIED, now)
+            .set(ORDERS.PAID_TIME, now)
             .where(ORDERS.ID.eq(orderId))
             .execute() > 0
     }
