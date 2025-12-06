@@ -1,0 +1,312 @@
+<project_specification>
+  <project_name>ArtBeams CMS Enhancement Plan</project_name>
+
+  <overview>
+    This specification defines enhancements and improvements to add to the existing ArtBeams CMS - an open-source
+    content management system for blogs with administration interface, built with Kotlin and Spring Boot.
+    ArtBeams currently features article management, user authentication, e-commerce capabilities,
+    and integrations with Google Docs and email services.
+
+    This enhancement plan addresses identified gaps and technical debt documented in TODO and TBD comments throughout the codebase.
+    The focus is on completing partially implemented features, improving existing functionality,
+    and adding missing capabilities that will enhance the system's robustness, security, and user experience.
+
+    The enhancements span multiple domains including e-commerce improvements, security hardening,
+    user experience refinements, API integrations, and administrative features.
+    This specification targets approximately 25-30 essential features and improvements to be implemented incrementally.
+  </overview>
+
+  <technology_stack>
+    <backend>
+      <language>Kotlin 1.9.22 with Java 21</language>
+      <framework>Spring Boot 3.1.5</framework>
+      <mvc>Spring MVC with Spring Security</mvc>
+      <database>PostgreSQL with JOOQ 3.18.7 for type-safe SQL</database>
+      <templates>FreeMarker with Bootstrap CSS</templates>
+      <forms>Formio 1.7.0 for validation and form binding</forms>
+      <markdown>Flexmark 0.50.28</markdown>
+      <http_client>Apache HttpComponents 4.5.14</http_client>
+      <json>Jackson 2.x with Kotlin module</json>
+      <caching>Spring Cache with Caffeine</caching>
+      <testing>Kotest, MockK</testing>
+    </backend>
+
+    <integrations>
+      <google_api>Google API Client 2.7.0 for OAuth2 and Docs</google_api>
+      <evernote>Evernote API 1.25.1</evernote>
+      <mailing>Mailgun Java SDK</mailing>
+      <mailerlite>MailerLite API for newsletter management</mailerlite>
+      <openai>OpenAI Java SDK for article editing agent</openai>
+      <recaptcha>Google reCAPTCHA for anti-spam</recaptcha>
+      <simpleshop>SimpleShop API for payment processing</simpleshop>
+    </integrations>
+
+    <security>
+      <password_hashing>PBKDF2 with secure configuration</password_hashing>
+      <authentication>Spring Security with role-based access control</authentication>
+      <password_strength>zxcvbn library for password strength estimation</password_strength>
+    </security>
+
+    <infrastructure>
+      <build_tool>Gradle with Kotlin DSL</build_tool>
+      <deployment>Heroku-ready with stage task</deployment>
+      <css_processing>YUI Compressor for CSS minification</css_processing>
+    </infrastructure>
+  </technology_stack>
+
+  <prerequisites>
+    <existing_system>
+      The ArtBeams CMS is fully operational with the following existing modules:
+      - Article management with Markdown/WYSIWYG editing
+      - Category-based content organization
+      - User authentication and role management (ADMIN, MEMBER roles)
+      - Comment system with spam detection
+      - Product catalog and order management
+      - Media file management with image transformation
+      - Google Docs integration for content import
+      - Evernote note import functionality
+      - Email delivery via Mailgun
+      - Configuration and localization management
+      - User product access library
+      - Contact forms with anti-spam
+    </existing_system>
+
+    <database_schema>
+      PostgreSQL database is fully configured with tables for:
+      users, roles, user_role, articles, categories, article_category,
+      comments, products, orders, order_items, media, config, localisation,
+      antispam_quiz, queue templates, user_access, entity_access_count
+    </database_schema>
+
+    <environment_configuration>
+      - Local development with application-local.yml configuration
+      - Production environment variables for JDBC, API keys, credentials
+      - JOOQ code generation from SQL schema
+      - CSS build pipeline with automatic minification
+    </environment_configuration>
+  </prerequisites>
+
+  <core_features>
+    <e_commerce_enhancements>
+      - Implement variable symbol generation for orders based on order number (currently hardcoded as "123456", for orders initiated in SimpleShop, order number should be taken from SimpleShop - read https://simpleshopcz.docs.apiary.io/ for API reference)
+      - Add validation of order data against SimpleShop API (read https://simpleshopcz.docs.apiary.io/) before order confirmation
+      - Implement order state update to SHIPPED when product is downloaded/sent
+      - Add paid time tracking (Instant) to order records when payment is confirmed
+      - Create automatic subscription to final mailing group when product is paid (if not implemented already)
+      - Add order history view for users to see their past purchases in their member section
+    </e_commerce_enhancements>
+
+    <user_management_improvements>
+      - Add pagination to user administration list (currently loads all users). Some other administrations already implement this.
+      - Implement password strength validation using zxcvbn library (if not done already)
+      - Add password match validation in password setup form
+      - Add user profile editing capability for members (but this should already exist - check it first)
+      - Add product ordering and member section actions activity log for tracking operations during free product downloads and paid product ordering and payments and downloads and member logins and active actions in member section (create new DB table for this)
+      - Implement account deletion with GDPR compliance
+      - Add email verification flow for new user registrations (but this should already exist - check it first)
+    </user_management_improvements>
+
+    <administrative_enhancements>
+      - Add pagination to order administration list (currently loads all orders)
+      - Implement pagination for product administration list
+      - Add pagination to category administration list
+      - Add advanced search and filtering in admin lists
+      - Implement admin text email notifications for important events (new orders, spam detection)
+    </administrative_enhancements>
+
+    <content_management_refinements>
+      - Implement category caching by articles for performance optimization (see TBD RBe: Cache categories by articles?)
+    </content_management_refinements>
+
+    <google_integration_improvements>
+      - Move Google API constants (consumer key, secret) to application configuration if this would be really useful enhancement
+      - Add proper validation for Google OAuth authorization code input
+      - Implement token refresh mechanism for expired Google credentials
+      - Add Google Analytics integration for tracking
+      - Create Google Search Console integration for SEO monitoring
+    </google_integration_improvements>
+
+    <ui_ux_improvements>
+      - Implement keyboard shortcuts for power users
+      - Add accessibility improvements (ARIA labels, screen reader support)
+    </ui_ux_improvements>
+
+    <comment_system_improvements>
+      - Implement comment notifications for article authors
+      - Add comment search functionality to administration
+    </comment_system_improvements>
+
+    <media_management_enhancements>
+      - Enhance media library with search and filtering
+    </media_management_enhancements>
+
+    <localization_improvements>
+      - Add localization administration search functionality if not done already
+    </localization_improvements>
+
+    <performance_optimizations>
+      - Review indexes needed for performant DB queries (add them to create_tables.sql and to new migration scripts if some new indexes are needed)
+    </performance_optimizations>
+  </core_features>
+
+  <database_schema_additions>
+    <new_tables>
+    - Table for logging orders / product purchase / download and member section active operations and logins to member section
+    </new_tables>
+
+    <schema_modifications>
+      <orders_table>
+        - Add paid_time timestamp column
+        - Add payment_method varchar(32) column
+        - Add optional notes text column for admin notes
+      </orders_table>
+    </schema_modifications>
+  </database_schema_additions>
+
+  <implementation_steps>
+    <step number="1">
+      <title>E-commerce Order Processing Improvements</title>
+      <tasks>
+        - Implement order variable symbol generation based on order number (SimpleShop integration) (read related SimpleShop API https://simpleshopcz.docs.apiary.io/)
+        - Add SimpleShop API validation service
+        - Create order state management for SHIPPED status
+        - Add paid_time, payment_method, and notes columns to orders table
+        - Update order repository and mappers for new columns
+        - Implement automatic mailing group subscription on payment
+        - Add order history view for users in their member section
+        - Add integration tests for order processing flow
+      </tasks>
+    </step>
+
+    <step number="2">
+      <title>Administrative Interface Enhancements</title>
+      <tasks>
+        - Implement pagination component for admin lists
+        - Add pagination to user, order, product, and category lists
+        - Add advanced search and filtering in admin lists
+        - Implement admin notifications for important events (new orders, spam detection)
+      </tasks>
+    </step>
+
+    <step number="3">
+      <title>User Management and Security</title>
+      <tasks>
+        - Implement password strength validation using zxcvbn library if not already done
+        - Add password match validation in password setup form
+        - Check if user profile editing already exists, implement if missing
+        - Check if email verification flow already exists, implement if missing
+        - Add user activity log for product downloads / purchases / orders / members section logins and actions
+        - Implement account deletion with GDPR compliance
+      </tasks>
+    </step>
+
+    <step number="4">
+      <title>Content Management Improvements</title>
+      <tasks>
+        - Implement category caching by articles for performance optimization
+      </tasks>
+    </step>
+
+    <step number="5">
+      <title>Google Integration Improvements</title>
+      <tasks>
+        - Move Google API constants (consumer key, secret) to application configuration if needed
+        - Add proper validation for Google OAuth authorization code input
+        - Implement token refresh mechanism for expired Google credentials
+        - Add Google Analytics integration for tracking
+        - Create Google Search Console integration for SEO monitoring
+      </tasks>
+    </step>
+
+    <step number="6">
+      <title>UI/UX and Accessibility Improvements</title>
+      <tasks>
+        - Implement keyboard shortcuts for power users
+        - Add accessibility improvements (ARIA labels, screen reader support)
+      </tasks>
+    </step>
+
+    <step number="7">
+      <title>Comment System Improvements</title>
+      <tasks>
+        - Implement comment notifications for article authors (if not already implemented)
+        - Add comment search functionality in administration
+      </tasks>
+    </step>
+
+    <step number="8">
+      <title>Media and Localization Improvements</title>
+      <tasks>
+        - Enhance media library with search and filtering
+        - Add localization administration search functionality if not done already
+      </tasks>
+    </step>
+
+    <step number="9">
+      <title>Performance Optimizations</title>
+      <tasks>
+        - Conduct database query performance audit
+        - Review and add missing database indexes based on query patterns
+        - Add tests for performance-critical paths
+      </tasks>
+    </step>
+  </implementation_steps>
+
+  <success_criteria>
+    <functionality>
+      - All TODO and TBD items from codebase are addressed and implemented
+      - Order processing is fully automated with proper state management
+      - All administrative lists include pagination
+      - Password validation provides clear feedback on strength requirements
+      - User profile management and email verification work correctly
+      - Category caching improves performance without stale data issues
+      - Google API integration uses externalized configuration
+      - All new features have appropriate test coverage
+    </functionality>
+
+    <user_experience>
+      - Admin interface provides efficient workflows for managing entities
+      - Loading times for list views are under 2 seconds even with large datasets
+      - Error messages are clear and actionable
+      - Users can manage their own data and see their orders
+      - Keyboard shortcuts improve productivity for power users
+      - Mobile responsive design works on all device sizes
+    </user_experience>
+
+    <technical_quality>
+      - Code follows existing Kotlin and Spring Boot patterns
+      - All database changes use JOOQ type-safe queries
+      - Repository/Mapper/Unmapper pattern is maintained
+      - No N+1 query problems in new code
+      - Proper error handling with OperationException hierarchy
+      - Security best practices followed (no SQL injection, XSS, etc.)
+      - No hardcoded credentials
+      - Configuration externalized to application.yml
+      - Logging follows existing patterns with appropriate levels
+      - Test coverage for critical business logic paths
+    </technical_quality>
+
+    <design_polish>
+      - UI follows existing Bootstrap-based design system
+      - Consistent spacing and typography
+      - Forms include proper validation feedback
+      - Loading states and progress indicators where appropriate
+      - Mobile-friendly responsive layouts
+      - Accessibility improvements for keyboard navigation and screen readers
+    </design_polish>
+
+    <performance>
+      - All list views load in under 2 seconds with pagination
+      - Database queries optimized with proper indexes
+      - Category caching reduces repeated database access
+      - Page load times remain acceptable on 3G connections
+      - No memory leaks in long-running processes
+    </performance>
+
+    <security>
+      - No critical or high severity vulnerabilities
+      - Password strength validation prevents weak passwords
+      - User data can be exported and deleted (GDPR)
+    </security>
+  </success_criteria>
+</project_specification>
