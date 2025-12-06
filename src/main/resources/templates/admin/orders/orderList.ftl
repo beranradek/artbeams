@@ -53,10 +53,11 @@
             </form>
         </td>
         <td>
-            <form action="/admin/orders/${order.id}" method="POST" onsubmit="return window.confirm('Are you sure you want to delete this order?');">
+            <a href="/admin/orders/${order.id}" class="btn btn-sm">Edit</a>
+            <form action="/admin/orders/${order.id}" method="POST" onsubmit="return window.confirm('Are you sure you want to delete this order?');" style="display:inline;">
                 <input type="hidden" name="_method" value="DELETE"/>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit" class="btn">Delete</button>
+                <button type="submit" class="btn btn-sm">Delete</button>
             </form>
         </td>
     </tr>

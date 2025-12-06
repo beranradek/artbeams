@@ -21,6 +21,8 @@ interface OrderService {
 
     fun findOrders(): List<OrderInfo>
 
+    fun findOrder(orderId: String): OrderInfo
+
     fun requireByOrderNumber(orderNumber: String): Order
 
     fun requireByOrderId(orderId: String): Order
@@ -28,6 +30,8 @@ interface OrderService {
     fun updateOrderPaid(orderId: String): Boolean
 
     fun updateOrderState(orderId: String, state: OrderState): Boolean
+
+    fun updateOrderNotes(orderId: String, notes: String): Boolean
 
     fun deleteOrder(orderId: String): Boolean
 

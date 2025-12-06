@@ -60,7 +60,7 @@
       "Step 5: Reload order and verify notes are persisted",
       "Step 6: Verify payment_method displays correct value (e.g., 'card', 'transfer')"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",

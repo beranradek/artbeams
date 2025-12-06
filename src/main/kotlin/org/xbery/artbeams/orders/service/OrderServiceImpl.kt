@@ -71,6 +71,12 @@ class OrderServiceImpl(
     override fun findOrders(): List<OrderInfo> =
         orderRepository.findOrders()
 
+    override fun findOrder(orderId: String): OrderInfo {
+        return requireFound(
+            orderRepository.findOrders().find { it.id == orderId }
+        ) { "Order with ID $orderId not found" }
+    }
+
     override fun requireByOrderNumber(orderNumber: String): Order {
         val order = orderRepository.requireByOrderNumber(orderNumber)
         val orderItems = orderItemRepository.findByOrderId(order.id)
@@ -118,6 +124,11 @@ class OrderServiceImpl(
             return updateOrderPaid(orderId)
         }
         return orderRepository.updateOrderState(orderId, state)
+    }
+
+    override fun updateOrderNotes(orderId: String, notes: String): Boolean {
+        logger.info("Updating notes of order $orderId")
+        return orderRepository.updateOrderNotes(orderId, notes)
     }
 
     override fun deleteOrder(orderId: String): Boolean {

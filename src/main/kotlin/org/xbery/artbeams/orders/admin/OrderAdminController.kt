@@ -97,6 +97,27 @@ class OrderAdminController(
         return redirect("/admin/orders")
     }
 
+    @GetMapping("/{id}")
+    fun detail(@PathVariable("id") id: String, request: HttpServletRequest): Any {
+        val order = orderService.findOrder(id)
+        val model = createModel(
+            request,
+            "order" to order,
+            "orderStates" to OrderState.entries.map { it.name }
+        )
+        return ModelAndView("$TplBasePath/orderDetail", model)
+    }
+
+    @PostMapping("/{id}/notes")
+    fun updateNotes(
+        @PathVariable("id") id: String,
+        @RequestParam("notes") notes: String,
+        request: HttpServletRequest
+    ): Any {
+        orderService.updateOrderNotes(id, notes)
+        return redirect("/admin/orders/${id}")
+    }
+
     @DeleteMapping("/{id}")
     fun delete(@PathVariable("id") id: String, request: HttpServletRequest): Any {
         orderService.deleteOrder(id)

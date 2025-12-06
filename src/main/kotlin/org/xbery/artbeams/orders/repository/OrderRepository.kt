@@ -45,6 +45,9 @@ class OrderRepository(
             ORDERS.ORDER_NUMBER,
             ORDERS.CREATED,
             ORDERS.STATE,
+            ORDERS.PAID_TIME,
+            ORDERS.PAYMENT_METHOD,
+            ORDERS.NOTES,
             USERS.ID,
             USERS.FIRST_NAME,
             USERS.LAST_NAME,
@@ -86,7 +89,10 @@ class OrderRepository(
                 orderTime = requireNotNull(groupedRecords.first()[ORDERS.CREATED]),
                 items = items,
                 state = OrderState.valueOf(requireNotNull(groupedRecords.first()[ORDERS.STATE])),
-                price = items.fold(Price.ZERO) { acc, item -> acc + item.price }
+                price = items.fold(Price.ZERO) { acc, item -> acc + item.price },
+                paidTime = groupedRecords.first()[ORDERS.PAID_TIME],
+                paymentMethod = groupedRecords.first()[ORDERS.PAYMENT_METHOD],
+                notes = groupedRecords.first()[ORDERS.NOTES]
             )
         }
     }
@@ -104,6 +110,14 @@ class OrderRepository(
     fun updateOrderState(orderId: String, state: OrderState): Boolean {
         return dsl.update(ORDERS)
             .set(ORDERS.STATE, state.name)
+            .set(ORDERS.MODIFIED, Instant.now())
+            .where(ORDERS.ID.eq(orderId))
+            .execute() > 0
+    }
+
+    fun updateOrderNotes(orderId: String, notes: String): Boolean {
+        return dsl.update(ORDERS)
+            .set(ORDERS.NOTES, notes)
             .set(ORDERS.MODIFIED, Instant.now())
             .where(ORDERS.ID.eq(orderId))
             .execute() > 0

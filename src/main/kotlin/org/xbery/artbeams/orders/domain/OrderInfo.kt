@@ -15,5 +15,8 @@ data class OrderInfo(
     val orderTime: Instant,
     val items: List<OrderItemInfo>,
     val state: OrderState,
-    val price: Price
+    val price: Price,
+    val paidTime: Instant? = null,
+    val paymentMethod: String? = null,
+    val notes: String? = null
 )
