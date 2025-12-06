@@ -54,9 +54,33 @@ class PaidProductController(
      * thus it is NOT a page offering access to the paid product.
      */
     @GetMapping("/produkt/{slug}/podekovani")
-    fun showProductThankYouPage(request: HttpServletRequest, @PathVariable slug: String): Any {
+    fun showProductThankYouPage(
+        request: HttpServletRequest,
+        @PathVariable slug: String,
+        @RequestParam(name = "cislo_objednavky", required = false) orderNumber: String?
+    ): Any {
         val product = productService.findBySlug(slug)
         return if (product != null) {
+            // Use the order number from request parameter, or try to find the latest order for this user and product
+            val variableSymbol = orderNumber ?: run {
+                val currentUser = controllerComponents.getLoggedUser(request)
+                if (currentUser != null) {
+                    try {
+                        val orderItems = orderService.findOrderItemsOfUserAndProduct(currentUser.common.id, product.id)
+                        if (orderItems.isNotEmpty()) {
+                            // Find the order for the most recent order item
+                            val latestOrderItem = orderItems.maxByOrNull { it.common.created }
+                            latestOrderItem?.orderId?.let { orderId ->
+                                orderService.requireByOrderId(orderId).orderNumber
+                            }
+                        } else null
+                    } catch (e: Exception) {
+                        logger.warn("Could not find order for user ${currentUser.login} and product ${product.slug}", e)
+                        null
+                    }
+                } else null
+            } ?: "123456" // Fallback to default if order number cannot be determined
+
             renderProductArticle(
                 request,
                 "products/productOrderConfirmed",
@@ -67,7 +91,7 @@ class PaidProductController(
                 "bankCode" to appConfig.requireConfig("bankTransfer.bankCode"),
                 "amount" to product.price.price,
                 "currency" to product.price.currency,
-                "variableSymbol" to "123456", // TBD: Order number
+                "variableSymbol" to variableSymbol,
                 "message" to "Order of product ${product.title}"
             )
         } else {
