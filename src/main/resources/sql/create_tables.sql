@@ -128,9 +128,14 @@ CREATE TABLE orders (
 	modified timestamp NOT NULL,
 	modified_by VARCHAR(40) NOT NULL,
 	order_number VARCHAR(20) NOT NULL,
-	state VARCHAR(16) NOT NULL
+	state VARCHAR(16) NOT NULL,
+	paid_time timestamp DEFAULT NULL,
+	payment_method VARCHAR(32) DEFAULT NULL,
+	notes TEXT DEFAULT NULL
 );
 CREATE UNIQUE INDEX idx_orders_order_number ON orders (order_number);
+CREATE INDEX idx_orders_paid_time ON orders (paid_time);
+CREATE INDEX idx_orders_payment_method ON orders (payment_method);
 
 CREATE TABLE order_items (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
@@ -251,3 +256,23 @@ CREATE TABLE consents (
 CREATE INDEX idx_consents_login ON consents (login);
 CREATE INDEX idx_consents_validity ON consents (valid_from, valid_to);
 CREATE INDEX idx_consents_login_type_validity ON consents (login, consent_type, valid_from, valid_to);
+
+-- User activity log for tracking user actions (logins, orders, downloads, etc.)
+CREATE TABLE user_activity_log (
+	id VARCHAR(40) NOT NULL PRIMARY KEY,
+	user_id VARCHAR(40) NOT NULL,
+	action_type VARCHAR(32) NOT NULL,
+	action_time timestamp NOT NULL,
+	entity_type VARCHAR(20) DEFAULT NULL,
+	entity_id VARCHAR(40) DEFAULT NULL,
+	ip_address VARCHAR(60) DEFAULT NULL,
+	user_agent VARCHAR(200) DEFAULT NULL,
+	details TEXT DEFAULT NULL
+);
+
+ALTER TABLE user_activity_log ADD CONSTRAINT user_activity_log_user_fk FOREIGN KEY (user_id) REFERENCES users (id);
+CREATE INDEX idx_user_activity_log_user_id ON user_activity_log (user_id);
+CREATE INDEX idx_user_activity_log_action_time ON user_activity_log (action_time);
+CREATE INDEX idx_user_activity_log_action_type ON user_activity_log (action_type);
+CREATE INDEX idx_user_activity_log_entity ON user_activity_log (entity_type, entity_id);
+CREATE INDEX idx_user_activity_log_user_time ON user_activity_log (user_id, action_time DESC);

@@ -1,0 +1,37 @@
+{
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read(./**)",
+      "Write(./**)",
+      "Edit(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Bash(*)",
+      "WebFetch(*)",
+      "WebSearch",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "mcp__puppeteer__puppeteer_navigate",
+      "mcp__puppeteer__puppeteer_screenshot",
+      "mcp__puppeteer__puppeteer_click",
+      "mcp__puppeteer__puppeteer_fill",
+      "mcp__puppeteer__puppeteer_select",
+      "mcp__puppeteer__puppeteer_hover",
+      "mcp__puppeteer__puppeteer_evaluate",
+      "mcp__postgres__list_schemas",
+      "mcp__postgres__list_objects",
+      "mcp__postgres__get_object_details",
+      "mcp__postgres__execute_sql",
+      "mcp__postgres__explain_query",
+      "mcp__postgres__get_top_queries",
+      "mcp__postgres__analyze_workload_indexes",
+      "mcp__postgres__analyze_query_indexes",
+      "mcp__postgres__analyze_db_health"
+    ]
+  }
+}
