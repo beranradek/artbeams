@@ -17,6 +17,7 @@
 
     Admin login URL is: http://localhost:8080/admin
     User admin / adminadmin can be used as local admin user to test the changes.
+    Admin does not have automatically access to /clenska-sekce, user with MEMBER role is needed (CommonRoles.MEMBER).
   </overview>
 
   <technology_stack>
