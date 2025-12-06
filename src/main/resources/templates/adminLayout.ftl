@@ -136,11 +136,17 @@
             </li>
           </ul>
   
+          <#if _isRemoteDbConfigured?? && _isRemoteDbConfigured>
+          <a href="/admin/sync/confirm" class="btn btn-primary my-2 my-sm-0 mx-2">
+            <i class="fas fa-sync-alt"></i> Sync remote DB
+          </a>
+          </#if>
+
           <form class="form-inline my-2 my-lg-0 form-config-reload" action="/admin/config/reload" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Reload config</button>
           </form>
-  
+
           <form class="form-inline my-2 my-lg-0 form-localisations-reload" action="/admin/localisations/reload" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <button class="btn btn-secondary my-2 my-sm-0" type="submit">Reload localisations</button>
