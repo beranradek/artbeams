@@ -40,7 +40,15 @@ class OrderRepository(
         ) { "Order with number $orderNumber was not found" }
 
     fun findOrders(): List<OrderInfo> {
-        val records = dsl.select(
+        return findOrdersWithFilter(null)
+    }
+
+    fun findOrdersByUserId(userId: String): List<OrderInfo> {
+        return findOrdersWithFilter(userId)
+    }
+
+    private fun findOrdersWithFilter(userId: String?): List<OrderInfo> {
+        val baseQuery = dsl.select(
             ORDERS.ID,
             ORDERS.ORDER_NUMBER,
             ORDERS.CREATED,
@@ -63,11 +71,18 @@ class OrderRepository(
             .leftJoin(USERS).on(ORDERS.CREATED_BY.eq(USERS.ID))
             .leftJoin(ORDER_ITEMS).on(ORDERS.ID.eq(ORDER_ITEMS.ORDER_ID))
             .leftJoin(PRODUCTS).on(ORDER_ITEMS.PRODUCT_ID.eq(PRODUCTS.ID))
-            .orderBy(ORDERS.CREATED.desc())
-            .fetch()
+
+        val records = if (userId != null) {
+            baseQuery.where(ORDERS.CREATED_BY.eq(userId))
+                .orderBy(ORDERS.CREATED.desc())
+                .fetch()
+        } else {
+            baseQuery.orderBy(ORDERS.CREATED.desc())
+                .fetch()
+        }
 
         return records.groupBy { requireNotNull(it[ORDERS.ID]) }.map { (orderId, groupedRecords) ->
-            val userId = groupedRecords.first()[USERS.ID]
+            val orderUserId = groupedRecords.first()[USERS.ID]
             val items = groupedRecords.map { record ->
                 OrderItemInfo(
                     id = requireNotNull(record[ORDER_ITEMS.ID]),
@@ -81,7 +96,7 @@ class OrderRepository(
             OrderInfo(
                 id = orderId,
                 orderNumber = requireNotNull(groupedRecords.first()[ORDERS.ORDER_NUMBER]),
-                createdBy = userId?.let { UserInfo(
+                createdBy = orderUserId?.let { UserInfo(
                     id = it,
                     name = "${groupedRecords.first()[USERS.FIRST_NAME]} ${groupedRecords.first()[USERS.LAST_NAME]}",
                     login = requireNotNull(groupedRecords.first()[USERS.LOGIN])

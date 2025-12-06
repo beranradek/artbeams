@@ -71,6 +71,9 @@ class OrderServiceImpl(
     override fun findOrders(): List<OrderInfo> =
         orderRepository.findOrders()
 
+    override fun findOrdersByUserId(userId: String): List<OrderInfo> =
+        orderRepository.findOrdersByUserId(userId)
+
     override fun findOrder(orderId: String): OrderInfo {
         return requireFound(
             orderRepository.findOrders().find { it.id == orderId }

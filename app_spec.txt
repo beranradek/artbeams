@@ -15,6 +15,7 @@
     user experience refinements, API integrations, and administrative features.
     This specification targets approximately 25-30 essential features and improvements to be implemented incrementally.
 
+    Admin login URL is: http://localhost:8080/admin
     User admin / adminadmin can be used as local admin user to test the changes.
   </overview>
 

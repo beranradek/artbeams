@@ -21,6 +21,8 @@ interface OrderService {
 
     fun findOrders(): List<OrderInfo>
 
+    fun findOrdersByUserId(userId: String): List<OrderInfo>
+
     fun findOrder(orderId: String): OrderInfo
 
     fun requireByOrderNumber(orderNumber: String): Order
