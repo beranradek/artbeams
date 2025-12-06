@@ -9,7 +9,7 @@
       "Step 4: For SimpleShop-initiated orders, verify order number is taken from SimpleShop API",
       "Step 5: Check database orders table to confirm variable_symbol column is populated correctly"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -35,7 +35,7 @@
       "Step 5: Verify state change is visible in admin order list",
       "Step 6: For free products, verify state changes on confirmation"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -47,7 +47,7 @@
       "Step 4: View order in admin and verify paid_time is displayed",
       "Step 5: Test that paid_time remains null for unpaid orders"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
