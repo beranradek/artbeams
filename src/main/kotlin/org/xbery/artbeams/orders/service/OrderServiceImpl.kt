@@ -29,7 +29,9 @@ class OrderServiceImpl(
     private val orderNumberGenerator: OrderNumberGenerator,
     private val userRepository: UserRepository,
     private val passwordSetupMailer: PasswordSetupMailer,
-    private val memberSectionMailer: MemberSectionMailer
+    private val memberSectionMailer: MemberSectionMailer,
+    private val productService: org.xbery.artbeams.products.service.ProductService,
+    private val mailingApi: org.xbery.artbeams.mailing.api.MailingApi
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -96,17 +98,38 @@ class OrderServiceImpl(
         val updated = orderRepository.updateOrderPaid(orderId)
         val order = orderRepository.requireById(orderId)
         val userId = order.common.createdBy
-        
+
         // Get user with roles to check member status
         val user = requireNotNull(userRepository.findByIdWithRoles(userId)) {
             "User with ID $userId not found for paid order $orderId"
         }
-        
+
         val isMember = user.roles.any { it.name == CommonRoles.MEMBER.roleName }
         val hasPassword = user.password.isNotEmpty()
-        
-        // TBD: Also subscribe user to final mailing group for paid product 
-        // but without triggering email with product download
+
+        // Subscribe user to final mailing groups for paid products
+        val orderItems = orderItemRepository.findByOrderId(orderId)
+        orderItems.forEach { orderItem ->
+            try {
+                val product = productService.findBySlug(orderItem.productId)
+                    ?: productService.findProducts().find { it.id == orderItem.productId }
+
+                product?.mailingGroupId?.let { mailingGroupId ->
+                    val userName = "${user.firstName ?: ""} ${user.lastName ?: ""}".trim()
+                        .ifEmpty { user.login }
+
+                    mailingApi.subscribeToGroup(
+                        user.login,
+                        userName,
+                        mailingGroupId,
+                        null // IP address not available in this context
+                    )
+                    logger.info("Subscribed user ${user.login} to mailing group $mailingGroupId for product ${product.title}")
+                }
+            } catch (e: Exception) {
+                logger.error("Failed to subscribe user ${user.login} to mailing group for order item ${orderItem.id}: ${e.message}", e)
+            }
+        }
 
         if (!isMember || !hasPassword) {
             // User needs member role or password setup

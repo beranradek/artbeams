@@ -29,11 +29,12 @@ class MailerLiteMailingApi(
     // what subscribers are really confirmed/active, because user can unsubscribe
     // via their links.
 
-    internal fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse {
+    override fun subscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse {
         // NOTE: More robust subscription is implemented by [#resubscribeToGroup],
         // so even if the subscriber already exists in MailerLite,
         // email workflow is triggered.
-        // This method should no longer be used (or in specific use cases).
+        // This method is used for specific use cases where we want to subscribe
+        // without triggering automation workflows (e.g., after payment confirmation).
 
         // See https://developers.mailerlite.com/docs/subscribers.html#create-upsert-subscriber
         val url = mailingApiConfig.baseUrl + "/api/subscribers"
