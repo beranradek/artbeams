@@ -1,7 +1,13 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/pagination.ftl" as pag>
 <@layout.page>
 
-<a class="btn btn-primary" href="/admin/users/${emptyId}/edit" role="button">New User</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <a class="btn btn-primary" href="/admin/users/${emptyId}/edit" role="button">New User</a>
+  <div>
+    <strong>Total users:</strong> ${resultPage.pagination.totalCount!0}
+  </div>
+</div>
 
 <table class="table table-sm admin-table">
   <thead>
@@ -15,7 +21,7 @@
     </tr>
   </thead>
   <tbody>
-<#list users as user>
+<#list resultPage.records as user>
     <tr>
         <td>${user.login}</td>
         <td>${user.firstName!}</td>
@@ -34,4 +40,7 @@
 </#list>
   </tbody>
 </table>
+
+<@pag.pagination resultPage.pagination />
+
 </@layout.page>

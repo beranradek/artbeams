@@ -6,6 +6,8 @@ import org.jooq.Table
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.common.assets.repository.AssetRepository
 import org.xbery.artbeams.common.error.requireFound
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
 import org.xbery.artbeams.jooq.schema.tables.references.USERS
 import org.xbery.artbeams.users.domain.User
@@ -34,6 +36,22 @@ class UserRepository(
     }
 
     fun findUsers(): List<User> = dsl.selectFrom(table).orderBy(USERS.MODIFIED.desc()).fetch(mapper)
+
+    fun findUsers(pagination: Pagination): ResultPage<User> {
+        // Get total count
+        val totalCount = dsl.selectCount()
+            .from(table)
+            .fetchOne(0, Long::class.java) ?: 0L
+
+        // Get paginated records
+        val records = dsl.selectFrom(table)
+            .orderBy(USERS.MODIFIED.desc())
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .fetch(mapper)
+
+        return ResultPage(records, pagination.withTotalCount(totalCount))
+    }
 
     /**
      * Returns user by id, including roles.

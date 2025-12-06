@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.Role
 import org.xbery.artbeams.users.domain.User
@@ -38,13 +40,17 @@ class UserAdminController(
     private val editFormDef: FormMapping<EditedUser> = UserForm.definition
 
     @GetMapping
-    fun list(request: HttpServletRequest): Any {
-        // TODO RBe: Pagination
-        val users = userRepository.findUsers()
+    fun list(
+        @RequestParam("offset", defaultValue = "0") offset: Int,
+        @RequestParam("limit", defaultValue = "20") limit: Int,
+        request: HttpServletRequest
+    ): Any {
+        val pagination = Pagination(offset, limit)
+        val resultPage = userRepository.findUsers(pagination)
         val model = createModel(
-            request, "users"
-                    to users, "emptyId"
-                    to AssetAttributes.EMPTY_ID
+            request,
+            "resultPage" to resultPage,
+            "emptyId" to AssetAttributes.EMPTY_ID
         )
         return ModelAndView("$TplBasePath/userList", model)
     }
