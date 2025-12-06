@@ -895,3 +895,109 @@ Once application is restarted, test with these steps:
 ---
 
 End of Session 6
+
+## Session 7: Verification and Mailing Group Subscription (2024-12-06)
+
+### Objectives Completed
+✅ **Verification Tests** - Verified core features #1, #3, #4 still working correctly
+✅ **Feature #6 Implementation** - Automatic mailing group subscription on payment
+✅ **Code Quality** - Clean compilation and build
+✅ **Git Commit** - Changes committed with descriptive message
+
+### Session Context
+- Application already running from Session 6 (PID 83480)
+- Browser automation had technical issues, used database verification instead
+- Cannot restart app in sandbox environment
+
+### Verification Tests (Step 3)
+Verified existing features still work correctly:
+- ✅ **Feature #1**: Order number '2024120601' (not hardcoded '123456')
+- ✅ **Feature #3**: Order state SHIPPED correctly set
+- ✅ **Feature #4**: paid_time correctly populated: 2025-12-06 15:40:28.514313
+
+### Feature #6 Implementation: Automatic Mailing Group Subscription
+
+**Requirement**: Subscribe users to product's final mailing group when payment is confirmed, without triggering automation email workflows.
+
+**Implementation Details**:
+
+1. **MailingApi Interface** (`MailingApi.kt`)
+   - Added `subscribeToGroup()` method to interface
+   - Documented as "silent subscription" for payment use cases
+   - Differentiated from `resubscribeToGroup()` which triggers workflows
+
+2. **MailerLiteMailingApi** (`MailerLiteMailingApi.kt`)
+   - Changed `subscribeToGroup()` from `internal` to `override` (public)
+   - Updated comments to clarify use case for post-payment subscriptions
+
+3. **OrderServiceImpl** (`OrderServiceImpl.kt`)
+   - Added dependencies: `ProductService` and `MailingApi`
+   - Updated `updateOrderPaid()` method with subscription logic:
+     - Loads all order items
+     - For each product with `mailingGroupId`, subscribes user
+     - Uses user's full name or email as subscriber name
+     - Includes comprehensive error handling with logging
+     - Does NOT block payment confirmation if subscription fails
+
+**Code Flow**:
+```kotlin
+updateOrderPaid(orderId) →
+  Load order items →
+  For each item:
+    Load product →
+    If product.mailingGroupId exists:
+      Subscribe user to mailing group →
+      Log success/failure
+```
+
+**Error Handling**:
+- Try-catch around each subscription
+- Logs errors without failing the payment
+- Continues processing other products if one fails
+
+**Database Verification**:
+- ✅ Products have mailing_group_id:
+  - "Klíčová opatření..." → 101272348026472039
+  - "Praktický průvodce..." → 139148974401521574
+
+### Files Modified (3 files)
+1. `src/main/kotlin/org/xbery/artbeams/mailing/api/MailingApi.kt` - Added interface method
+2. `src/main/kotlin/org/xbery/artbeams/mailing/api/MailerLiteMailingApi.kt` - Made method public
+3. `src/main/kotlin/org/xbery/artbeams/orders/service/OrderServiceImpl.kt` - Implemented subscription logic
+
+### Build Status
+✅ **Kotlin Compilation**: SUCCESS
+✅ **Full Build**: SUCCESS (without tests)
+✅ **Code Quality**: Follows existing patterns and conventions
+
+### Git Commit
+Commit: 11ec6f0
+Message: "Implement automatic mailing group subscription on payment"
+
+### Testing Status
+⚠️ **Cannot fully test** - Application restart required but not available in sandbox
+✅ **Code verified** - Logic review confirms correct implementation
+✅ **Database verified** - Products have mailing groups configured
+⏳ **Runtime testing** - Pending application restart
+
+### Feature Completion Status
+**Feature #6**: Implementation Complete ✅ | Full Testing Pending ⏳
+
+The feature is code-complete and follows all requirements:
+- ✅ Subscribes only when payment confirmed
+- ✅ Checks for product's mailingGroupId
+- ✅ Uses silent subscription (no automation workflow trigger)
+- ✅ Handles multiple products in order
+- ✅ Comprehensive error handling
+- ✅ Detailed logging for tracking
+
+### Session Summary
+**Lines of Code**: ~40 lines added/modified
+**Features Implemented**: 1 feature (Feature #6)
+**Build Status**: ✅ SUCCESS
+**Tests Passing**: 4/44 (from previous sessions)
+**Next Session**: Test Feature #6 after app restart, implement next feature
+
+---
+
+End of Session 7
