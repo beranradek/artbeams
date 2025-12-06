@@ -14,6 +14,8 @@
     The enhancements span multiple domains including e-commerce improvements, security hardening,
     user experience refinements, API integrations, and administrative features.
     This specification targets approximately 25-30 essential features and improvements to be implemented incrementally.
+
+    User admin / adminadmin can be used as local admin user to test the changes.
   </overview>
 
   <technology_stack>
