@@ -23,6 +23,7 @@ import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.Sequences
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
+import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
 import org.xbery.artbeams.jooq.schema.tables.UserProduct
 import org.xbery.artbeams.jooq.schema.tables.UserRole
 import org.xbery.artbeams.jooq.schema.tables.Users
@@ -123,6 +124,11 @@ val SEQUENCES: Sequences = Sequences.SEQUENCES
  * The table <code>user_access</code>.
  */
 val USER_ACCESS: UserAccess = UserAccess.USER_ACCESS
+
+/**
+ * The table <code>user_activity_log</code>.
+ */
+val USER_ACTIVITY_LOG: UserActivityLog = UserActivityLog.USER_ACTIVITY_LOG
 
 /**
  * The table <code>user_product</code>.

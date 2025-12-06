@@ -15,6 +15,7 @@ import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
+import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
 import org.xbery.artbeams.jooq.schema.tables.Users
 
 
@@ -32,8 +33,14 @@ val IDX_CONSENTS_VALIDITY: Index = Internal.createIndex(DSL.name("idx_consents_v
 val IDX_MEDIA_FILENAME: Index = Internal.createIndex(DSL.name("idx_media_filename"), Media.MEDIA, arrayOf(Media.MEDIA.FILENAME), false)
 val IDX_NEWS_SUBSCRIPTION_EMAIL: Index = Internal.createIndex(DSL.name("idx_news_subscription_email"), NewsSubscription.NEWS_SUBSCRIPTION, arrayOf(NewsSubscription.NEWS_SUBSCRIPTION.EMAIL), false)
 val IDX_ORDERS_ORDER_NUMBER: Index = Internal.createIndex(DSL.name("idx_orders_order_number"), Orders.ORDERS, arrayOf(Orders.ORDERS.ORDER_NUMBER), true)
+val IDX_ORDERS_PAID_TIME: Index = Internal.createIndex(DSL.name("idx_orders_paid_time"), Orders.ORDERS, arrayOf(Orders.ORDERS.PAID_TIME), false)
+val IDX_ORDERS_PAYMENT_METHOD: Index = Internal.createIndex(DSL.name("idx_orders_payment_method"), Orders.ORDERS, arrayOf(Orders.ORDERS.PAYMENT_METHOD), false)
 val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)
 val IDX_QUEUE_NEXT_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_queue_next_action_time"), Queue.QUEUE, arrayOf(Queue.QUEUE.NEXT_ACTION_TIME), false)
 val IDX_USER_ACCESS_UNIQUE: Index = Internal.createIndex(DSL.name("idx_user_access_unique"), UserAccess.USER_ACCESS, arrayOf(UserAccess.USER_ACCESS.ACCESS_DATE, UserAccess.USER_ACCESS.IP, UserAccess.USER_ACCESS.USER_AGENT, UserAccess.USER_ACCESS.ENTITY_TYPE, UserAccess.USER_ACCESS.ENTITY_ID), true)
-val IDX_USERS_EMAIL: Index = Internal.createIndex(DSL.name("idx_users_email"), Users.USERS, arrayOf(Users.USERS.EMAIL), true)
+val IDX_USER_ACTIVITY_LOG_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_user_activity_log_action_time"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ACTION_TIME), false)
+val IDX_USER_ACTIVITY_LOG_ACTION_TYPE: Index = Internal.createIndex(DSL.name("idx_user_activity_log_action_type"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ACTION_TYPE), false)
+val IDX_USER_ACTIVITY_LOG_ENTITY: Index = Internal.createIndex(DSL.name("idx_user_activity_log_entity"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ENTITY_TYPE, UserActivityLog.USER_ACTIVITY_LOG.ENTITY_ID), false)
+val IDX_USER_ACTIVITY_LOG_USER_ID: Index = Internal.createIndex(DSL.name("idx_user_activity_log_user_id"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.USER_ID), false)
+val IDX_USER_ACTIVITY_LOG_USER_TIME: Index = Internal.createIndex(DSL.name("idx_user_activity_log_user_time"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.USER_ID, UserActivityLog.USER_ACTIVITY_LOG.ACTION_TIME), false)
 val IDX_USERS_LOGIN: Index = Internal.createIndex(DSL.name("idx_users_login"), Users.USERS, arrayOf(Users.USERS.LOGIN), true)

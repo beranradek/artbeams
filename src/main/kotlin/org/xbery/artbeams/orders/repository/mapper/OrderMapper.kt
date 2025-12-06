@@ -24,7 +24,10 @@ class OrderMapper : RecordMapper<OrdersRecord, Order> {
             ),
             orderNumber = requireNotNull(record.orderNumber),
             state = OrderState.valueOf(requireNotNull(record.state)),
-            items = emptyList()
+            items = emptyList(),
+            paidTime = record.paidTime,
+            paymentMethod = record.paymentMethod,
+            notes = record.notes
         )
     }
 }

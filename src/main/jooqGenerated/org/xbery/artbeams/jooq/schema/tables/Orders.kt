@@ -34,6 +34,8 @@ import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_ORDER_NUMBER
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_PAID_TIME
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_PAYMENT_METHOD
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3
 import org.xbery.artbeams.jooq.schema.keys.ORDER_FK
 import org.xbery.artbeams.jooq.schema.tables.OrderItems.OrderItemsPath
@@ -112,6 +114,21 @@ open class Orders(
      */
     val STATE: TableField<OrdersRecord, String?> = createField(DSL.name("state"), SQLDataType.VARCHAR(16).nullable(false), this, "")
 
+    /**
+     * The column <code>orders.paid_time</code>.
+     */
+    val PAID_TIME: TableField<OrdersRecord, Instant?> = createField(DSL.name("paid_time"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.LOCALDATETIME)), this, "", InstantConverter())
+
+    /**
+     * The column <code>orders.payment_method</code>.
+     */
+    val PAYMENT_METHOD: TableField<OrdersRecord, String?> = createField(DSL.name("payment_method"), SQLDataType.VARCHAR(32).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
+    /**
+     * The column <code>orders.notes</code>.
+     */
+    val NOTES: TableField<OrdersRecord, String?> = createField(DSL.name("notes"), SQLDataType.CLOB.defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.CLOB)), this, "")
+
     private constructor(alias: Name, aliased: Table<OrdersRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<OrdersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<OrdersRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)
@@ -144,7 +161,7 @@ open class Orders(
         override fun `as`(alias: Table<*>): OrdersPath = OrdersPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getIndexes(): List<Index> = listOf(IDX_ORDERS_ORDER_NUMBER)
+    override fun getIndexes(): List<Index> = listOf(IDX_ORDERS_ORDER_NUMBER, IDX_ORDERS_PAID_TIME, IDX_ORDERS_PAYMENT_METHOD)
     override fun getPrimaryKey(): UniqueKey<OrdersRecord> = CONSTRAINT_C3
 
     private lateinit var _orderItems: OrderItemsPath

@@ -21,6 +21,9 @@ class OrderUnmapper : RecordUnmapper<Order, OrdersRecord> {
         record.modifiedBy = order.common.modifiedBy
         record.orderNumber = order.orderNumber
         record.state = order.state.name
+        record.paidTime = order.paidTime
+        record.paymentMethod = order.paymentMethod
+        record.notes = order.notes
         return record
     }
 }

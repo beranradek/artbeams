@@ -33,11 +33,12 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
-import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_EMAIL
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_LOGIN
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A
 import org.xbery.artbeams.jooq.schema.keys.FK_USER_ID
+import org.xbery.artbeams.jooq.schema.keys.USER_ACTIVITY_LOG_USER_FK
 import org.xbery.artbeams.jooq.schema.keys.USER_FK
+import org.xbery.artbeams.jooq.schema.tables.UserActivityLog.UserActivityLogPath
 import org.xbery.artbeams.jooq.schema.tables.UserProduct.UserProductPath
 import org.xbery.artbeams.jooq.schema.tables.UserRole.UserRolePath
 import org.xbery.artbeams.jooq.schema.tables.records.UsersRecord
@@ -128,7 +129,7 @@ open class Users(
     /**
      * The column <code>users.email</code>.
      */
-    val EMAIL: TableField<UsersRecord, String?> = createField(DSL.name("email"), SQLDataType.VARCHAR(64).nullable(false), this, "")
+    val EMAIL: TableField<UsersRecord, String?> = createField(DSL.name("email"), SQLDataType.VARCHAR(64).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
 
     private constructor(alias: Name, aliased: Table<UsersRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<UsersRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
@@ -162,7 +163,7 @@ open class Users(
         override fun `as`(alias: Table<*>): UsersPath = UsersPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getIndexes(): List<Index> = listOf(IDX_USERS_EMAIL, IDX_USERS_LOGIN)
+    override fun getIndexes(): List<Index> = listOf(IDX_USERS_LOGIN)
     override fun getPrimaryKey(): UniqueKey<UsersRecord> = CONSTRAINT_6A
 
     private lateinit var _userRole: UserRolePath
@@ -180,6 +181,22 @@ open class Users(
 
     val userRole: UserRolePath
         get(): UserRolePath = userRole()
+
+    private lateinit var _userActivityLog: UserActivityLogPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>PUBLIC.user_activity_log</code> table
+     */
+    fun userActivityLog(): UserActivityLogPath {
+        if (!this::_userActivityLog.isInitialized)
+            _userActivityLog = UserActivityLogPath(this, null, USER_ACTIVITY_LOG_USER_FK.inverseKey)
+
+        return _userActivityLog;
+    }
+
+    val userActivityLog: UserActivityLogPath
+        get(): UserActivityLogPath = userActivityLog()
 
     private lateinit var _userProduct: UserProductPath
 
