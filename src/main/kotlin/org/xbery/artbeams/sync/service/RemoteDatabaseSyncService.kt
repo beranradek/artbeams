@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.repository.ArticleCategoryRepository
-import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLES
 import org.xbery.artbeams.jooq.schema.tables.references.ARTICLE_CATEGORY
@@ -16,8 +15,8 @@ import org.xbery.artbeams.jooq.schema.tables.references.CATEGORIES
 import org.xbery.artbeams.jooq.schema.tables.references.LOCALISATION
 import org.xbery.artbeams.jooq.schema.tables.references.MEDIA
 import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
-import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.localisation.domain.Localisation
+import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import java.sql.DriverManager
 
 /**
@@ -28,7 +27,6 @@ import java.sql.DriverManager
 class RemoteDatabaseSyncService(
     private val appConfig: AppConfig,
     private val localDsl: DSLContext,
-    private val articleRepository: ArticleRepository,
     private val articleCategoryRepository: ArticleCategoryRepository,
     private val localisationRepository: LocalisationRepository
 ) {
@@ -80,8 +78,12 @@ class RemoteDatabaseSyncService(
                 logger.info("Syncing categories from remote database")
                 val remoteCategories = remoteDsl.selectFrom(CATEGORIES).fetch()
 
+                // Build mapping from remote category ID to local category ID
+                val remoteCategoryIdToLocalId = mutableMapOf<String, String>()
+
                 remoteCategories.forEach { remoteRecord ->
                     val slug = remoteRecord.slug ?: return@forEach
+                    val remoteCategoryId = remoteRecord.id ?: return@forEach
 
                     // Find existing local category by slug (not by ID)
                     val existingLocalCategory = localDsl.selectFrom(CATEGORIES)
@@ -94,9 +96,12 @@ class RemoteDatabaseSyncService(
                             .set(remoteRecord)
                             .execute()
                         categoriesCreated++
+                        // Map remote ID to itself (since we're using the remote ID as local ID for new categories)
+                        remoteCategoryIdToLocalId[remoteCategoryId] = remoteCategoryId
                         logger.debug("Created category: $slug - ${remoteRecord.title}")
                     } else {
                         // Update existing local category (keep local ID, update with remote data)
+                        val localCategoryId = existingLocalCategory.id!!
                         localDsl.update(CATEGORIES)
                             .set(CATEGORIES.VALID_FROM, remoteRecord.validFrom)
                             .set(CATEGORIES.VALID_TO, remoteRecord.validTo)
@@ -107,9 +112,11 @@ class RemoteDatabaseSyncService(
                             .set(CATEGORIES.SLUG, remoteRecord.slug)
                             .set(CATEGORIES.TITLE, remoteRecord.title)
                             .set(CATEGORIES.DESCRIPTION, remoteRecord.description)
-                            .where(CATEGORIES.ID.eq(existingLocalCategory.id))
+                            .where(CATEGORIES.ID.eq(localCategoryId))
                             .execute()
                         categoriesUpdated++
+                        // Map remote ID to local ID
+                        remoteCategoryIdToLocalId[remoteCategoryId] = localCategoryId
                         logger.debug("Updated category: $slug - ${remoteRecord.title}")
                     }
                 }
@@ -150,10 +157,10 @@ class RemoteDatabaseSyncService(
                             .set(PRODUCTS.MAILING_GROUP_ID, remoteRecord.mailingGroupId)
                             .set(PRODUCTS.PRICE_REGULAR, remoteRecord.priceRegular)
                             .set(PRODUCTS.PRICE_DISCOUNTED, remoteRecord.priceDiscounted)
-                            .set(PRODUCTS.DESCRIPTION, remoteRecord.description)
-                            .set(PRODUCTS.CONTENT, remoteRecord.content)
+                            .set(PRODUCTS.SIMPLE_SHOP_PRODUCT_ID, remoteRecord.simpleShopProductId)
                             .where(PRODUCTS.ID.eq(existingLocalProduct.id))
                             .execute()
+
                         productsUpdated++
                         logger.debug("Updated product: $slug - ${remoteRecord.title}")
                     }
@@ -235,15 +242,24 @@ class RemoteDatabaseSyncService(
 
                     syncedArticleIds.add(localArticleId)
 
-                    // Sync article categories (using local article ID)
-                    val remoteCategories = remoteDsl.select(ARTICLE_CATEGORY.CATEGORY_ID)
+                    // Sync article categories (using local article ID and mapped local category IDs)
+                    val remoteCategoryIds = remoteDsl.select(ARTICLE_CATEGORY.CATEGORY_ID)
                         .from(ARTICLE_CATEGORY)
                         .where(ARTICLE_CATEGORY.ARTICLE_ID.eq(remoteRecord.id))
                         .fetch()
                         .map { it.value1() }
                         .filterNotNull()
 
-                    articleCategoryRepository.updateArticleCategories(localArticleId, remoteCategories)
+                    // Map remote category IDs to local category IDs
+                    val localCategoryIds = remoteCategoryIds.mapNotNull { remoteCategoryId ->
+                        remoteCategoryIdToLocalId[remoteCategoryId].also { localId ->
+                            if (localId == null) {
+                                logger.warn("No local category mapping found for remote category ID: $remoteCategoryId (article: $slug)")
+                            }
+                        }
+                    }
+
+                    articleCategoryRepository.updateArticleCategories(localArticleId, localCategoryIds)
                 }
 
                 // Remove external IDs from all synced articles to prevent accidental Google Docs updates
