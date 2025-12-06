@@ -1,0 +1,527 @@
+# ArtBeams Enhancement Project - Agent Progress Log
+
+## Session 1: Initialization Agent (2024-12-06)
+
+### Objectives Completed
+✅ Analyzed existing ArtBeams CMS codebase
+✅ Read and analyzed app_spec.txt enhancement specification
+✅ Created comprehensive feature_list.json with 45 test cases
+✅ Created init.sh development environment setup script
+✅ Committed initialization files to git repository
+✅ Documented existing codebase structure and functionality
+
+---
+
+## Existing Project Analysis
+
+### Technology Stack
+- **Language**: Kotlin 1.9.22 with Java 21
+- **Framework**: Spring Boot 3.1.5, Spring MVC, Spring Security
+- **Database**: PostgreSQL with JOOQ 3.18.7 for type-safe SQL queries
+- **Templates**: FreeMarker with Bootstrap CSS
+- **Testing**: Kotest, MockK
+- **Forms**: Formio 1.7.0 for validation and binding
+- **Build**: Gradle with Kotlin DSL
+
+### Key Integrations
+- Google Docs API (OAuth2 for content sync)
+- Evernote API (note import)
+- Mailgun (transactional email)
+- MailerLite (newsletter management)
+- SimpleShop API (payment processing)
+- OpenAI (article editing agent)
+- Google reCAPTCHA (anti-spam)
+- zxcvbn (password strength estimation)
+
+### Architecture Patterns
+- **Package Organization**: Feature-based (not layer-based)
+- **Repository Pattern**: AbstractMappingRepository with Mapper/Unmapper classes
+- **Context Handling**: OperationCtx for request context tracking
+- **Error Handling**: OperationException hierarchy with status codes
+- **Security**: PBKDF2 password hashing, role-based access control (ADMIN, MEMBER)
+
+### Main Package Structure
+```
+org.xbery.artbeams/
+├── articles/         - Article management with Markdown/WYSIWYG
+├── categories/       - Category system
+├── comments/         - Comment system with spam detection
+├── users/            - Authentication, roles, password management
+├── orders/           - E-commerce order management
+├── products/         - Product catalog
+├── userproducts/     - User product access library
+├── contact/          - Contact form
+├── consents/         - User consent management (GDPR)
+├── google/           - Google Docs integration
+├── evernote/         - Evernote integration
+├── mailing/          - Mailgun and MailerLite integrations
+├── simpleshop/       - SimpleShop payment integration
+├── media/            - Media file management
+├── config/           - Configuration management
+├── localisation/     - Localization management
+├── sync/             - Remote DB sync features
+├── members/          - Member section
+├── common/           - Shared infrastructure
+└── web/              - Public controllers
+```
+
+### Database Schema (Current State)
+Key tables identified:
+- **users, roles, user_role** - User authentication and authorization
+- **articles, categories, article_category** - Content management
+- **comments** - Comment system with spam detection
+- **products, orders, order_items** - E-commerce
+- **media** - Media file storage
+- **user_access, entity_access_count** - Access tracking
+- **config, localisation** - Configuration and translations
+- **antispam_quiz** - Anti-spam questions
+- **queue** - Asynchronous task processing template
+- **auth_code** - Authorization codes for password recovery, etc.
+- **user_product** - User product access mapping
+- **sequences** - Sequence number generation
+- **news_subscription** - Newsletter subscriptions
+- **consents** - User consent tracking (GDPR)
+
+### Entry Points
+- **Main Application**: `org.xbery.artbeams.Application.kt`
+- **Public Web**: Controllers in `org.xbery.artbeams.web` package
+- **Admin Interface**: Controllers in various feature packages under `admin` subpackages
+- **Member Section**: `org.xbery.artbeams.members` package
+
+### Build and Run Commands
+```bash
+# Clean build
+./gradlew clean build
+
+# Run locally
+./gradlew bootRun --args='--spring.profiles.active=local'
+# Application available at: http://localhost:8080/
+
+# Generate JOOQ classes (after DB schema changes)
+./gradlew generateJooq
+
+# Run tests
+./gradlew test
+
+# Run specific test
+./gradlew test --tests "TestClassName"
+```
+
+### Configuration
+- Local development: `application-local.yml` (copy from template)
+- Production: Environment variables (JDBC_DATABASE_URL, etc.)
+- Database schema: `src/main/resources/sql/create_tables.sql`
+- Migrations: `src/main/resources/sql/migrations/`
+
+---
+
+## TODO/TBD Items Found in Codebase
+
+### E-commerce (Priority: HIGH)
+1. ✅ **Variable symbol for orders** (PaidProductController.kt:70)
+   - Currently hardcoded as "123456"
+   - Need to use actual order number
+   - For SimpleShop orders, get from SimpleShop API
+
+2. ✅ **Order data validation against SimpleShop API** (PaidProductController.kt:89)
+   - Validate order before confirmation
+
+3. ✅ **Update order state to SHIPPED** (FreeProductController.kt:155)
+   - When product is downloaded/sent
+
+4. ✅ **Update paid time** (OrderRepository.kt:98)
+   - Track when order is paid (Instant)
+
+5. ✅ **Subscribe to final mailing group** (OrderServiceImpl.kt:99)
+   - Auto-subscribe user to product's mailing group when paid
+
+### Admin Interface (Priority: HIGH)
+6. ✅ **User admin pagination** (UserAdminController.kt:42)
+7. ✅ **Order admin pagination** (OrderAdminController.kt:33)
+8. ✅ **Product admin pagination** (ProductAdminController.kt:41)
+9. ✅ **Category admin pagination** (CategoryAdminController.kt:39)
+
+### Password Management (Priority: HIGH)
+10. ✅ **Password strength and match validation** (PasswordSetupForm.kt:22)
+    - Use zxcvbn library for strength estimation
+    - Add match validation
+
+### Performance (Priority: MEDIUM)
+11. ✅ **Category caching by articles** (WebController.kt:181)
+    - Cache categories for performance
+
+### Google Integration (Priority: MEDIUM)
+12. ✅ **Validate Google OAuth code input** (GoogleApiAuth.kt:163)
+13. ⚠️  **Move Evernote constants to config** (EvernoteApi.kt:29)
+    - Similar pattern for Google API constants
+
+### Email Validation (Priority: LOW)
+14. Multiple TODO items in EmailValidationWarning.kt (lines 10-65)
+    - Various email state validations to implement
+
+---
+
+## Enhancement Specification Summary
+
+Based on `app_spec.txt`, the following NEW features need to be added:
+
+### 1. E-commerce Enhancements (6 features)
+- Variable symbol generation from order number
+- SimpleShop API validation
+- Order state management (SHIPPED status)
+- Paid time tracking (new DB column)
+- Payment method and admin notes (new DB columns)
+- Automatic mailing group subscription
+- Order history view for users
+
+### 2. Administrative Interface (4 features)
+- Pagination for users, orders, products, categories
+- Advanced search and filtering in admin lists
+- Admin email notifications for important events
+
+### 3. User Management & Security (6 features)
+- Password strength validation with zxcvbn
+- Password match validation
+- User activity logging (new DB table needed)
+- Account deletion with GDPR compliance
+- Verify user profile editing exists
+- Verify email verification flow exists
+
+### 4. Content Management (1 feature)
+- Category caching by articles
+
+### 5. Google Integrations (5 features)
+- Move API constants to configuration
+- OAuth code validation
+- Token refresh mechanism
+- Google Analytics integration
+- Google Search Console integration
+
+### 6. UI/UX Improvements (2 features)
+- Keyboard shortcuts for power users
+- Accessibility improvements (ARIA labels, screen readers)
+
+### 7. Comment System (2 features)
+- Comment notifications for authors
+- Comment search in admin
+
+### 8. Media & Localization (2 features)
+- Media library search/filtering
+- Verify localization search exists
+
+### 9. Performance (1 feature)
+- Database index review and optimization
+
+**Total: ~29 core features** spanning multiple domains
+
+---
+
+## Database Schema Changes Needed
+
+### New Tables Required:
+1. **user_activity_log** - For tracking user actions
+   - id (VARCHAR 40)
+   - user_id (VARCHAR 40)
+   - action_type (VARCHAR 32) - e.g., 'LOGIN', 'ORDER_CREATED', 'PRODUCT_DOWNLOADED', 'PAYMENT_CONFIRMED'
+   - action_time (TIMESTAMP)
+   - entity_type (VARCHAR 20) - e.g., 'ORDER', 'PRODUCT'
+   - entity_id (VARCHAR 40)
+   - ip_address (VARCHAR 60)
+   - user_agent (VARCHAR 200)
+   - details (TEXT) - JSON or additional context
+   - Indexes on: user_id, action_time, action_type, entity_type+entity_id
+
+### Schema Modifications Required:
+1. **orders table** - Add columns:
+   - paid_time (TIMESTAMP) - When payment was confirmed
+   - payment_method (VARCHAR 32) - e.g., 'card', 'transfer', 'paypal'
+   - notes (TEXT) - Admin notes about the order
+
+### Migration Strategy:
+- Create migration script in `src/main/resources/sql/migrations/`
+- Run `./gradlew generateJooq` after schema changes
+- Update OrderMapper and OrderUnmapper classes
+- Update Order domain class
+
+---
+
+## Feature Priority Recommendations
+
+### PHASE 1 - Critical E-commerce & Admin (Sprint 1-2)
+1. Database schema updates (orders table columns, user_activity_log table)
+2. Variable symbol generation for orders
+3. SimpleShop API validation service
+4. Order state management (SHIPPED)
+5. Paid time tracking
+6. User activity logging infrastructure
+7. Admin pagination (users, orders, products, categories)
+
+### PHASE 2 - User Experience & Security (Sprint 3-4)
+8. Password strength validation (zxcvbn)
+9. Password match validation
+10. Order history view for users
+11. Advanced search/filtering in admin
+12. Admin email notifications
+13. Account deletion (GDPR)
+
+### PHASE 3 - Performance & Content (Sprint 5)
+14. Category caching
+15. Database index optimization
+16. Comment notifications for authors
+17. Comment search in admin
+
+### PHASE 4 - Integrations & Advanced Features (Sprint 6-7)
+18. Google API configuration externalization
+19. Google OAuth validation
+20. Token refresh mechanism
+21. Google Analytics integration
+22. Google Search Console integration
+23. Media library enhancements
+24. Localization search verification
+
+### PHASE 5 - Accessibility & Polish (Sprint 8)
+25. Keyboard shortcuts
+26. Accessibility improvements (ARIA, screen readers)
+27. UI refinements and testing
+
+---
+
+## Testing Strategy
+
+### Unit Tests
+- Service layer business logic
+- Mapper/Unmapper classes
+- Validators and utilities
+- Use Kotest assertions, MockK for mocking
+
+### Integration Tests
+- Repository layer with test database
+- API integrations (SimpleShop, MailerLite, Google)
+- Order processing flow end-to-end
+
+### Manual Testing
+- feature_list.json provides 45 comprehensive test cases
+- Admin workflows with pagination and search
+- Member section functionality
+- E-commerce flow end-to-end
+- Accessibility testing with screen readers
+- Performance testing with large datasets
+
+### Test Coverage Goals
+- Service layer: >80%
+- Critical business logic: 100%
+- Repository layer: >70%
+- Controllers: Integration tests for happy paths
+
+---
+
+## Development Guidelines for Future Agents
+
+### Code Style
+- Follow existing Kotlin conventions in codebase
+- See CODE_STYLE.md for detailed guidelines
+- Use feature-based package organization
+- Maintain Repository/Mapper/Unmapper pattern
+
+### Database Changes Process
+1. Update `create_tables.sql` with new columns/tables
+2. Create migration script in `migrations/` folder
+3. Run `./gradlew generateJooq` to regenerate JOOQ classes
+4. Update Mapper/Unmapper classes
+5. Update domain classes
+6. Add tests for new database interactions
+
+### Adding New Features Process
+1. Create feature package structure (domain, repository, service, admin/controller)
+2. Define domain classes with validation
+3. Implement Repository with Mapper/Unmapper
+4. Add Service layer with business logic
+5. Create Controllers (admin and/or public)
+6. Add FreeMarker templates in `src/main/resources/templates`
+7. Write tests (unit + integration)
+8. Update feature_list.json test to "passes": true when complete
+
+### Security Checklist
+- ✅ Never log sensitive information
+- ✅ Use PBKDF2 for password hashing (utilities available)
+- ✅ Validate all user inputs (use Formio validation)
+- ✅ Check authorization at service layer
+- ✅ Use parameterized queries (JOOQ handles this)
+- ✅ No hardcoded credentials (use application.yml or env vars)
+
+### Performance Checklist
+- ✅ Add database indexes for common queries
+- ✅ Use pagination for large datasets
+- ✅ Implement caching where appropriate (Spring Cache with Caffeine)
+- ✅ Avoid N+1 query problems
+- ✅ Profile slow queries with EXPLAIN ANALYZE
+
+---
+
+## Current Application State
+
+### Working Features (Existing)
+✅ Article management with Markdown/WYSIWYG editing
+✅ Category-based content organization
+✅ User authentication and role management
+✅ Comment system with spam detection
+✅ Product catalog
+✅ Order management (basic)
+✅ Media file management with image transformation
+✅ Google Docs integration
+✅ Evernote integration
+✅ Email delivery (Mailgun)
+✅ MailerLite webhook integration
+✅ Contact forms with anti-spam
+✅ Configuration and localization management
+✅ Remote database sync
+✅ In-site editing for admins
+✅ Member section (basic)
+
+### Known Gaps (To Be Addressed)
+❌ Order variable symbols (hardcoded)
+❌ SimpleShop API validation
+❌ Order state automation
+❌ Paid time tracking
+❌ User activity logging
+❌ Admin pagination (all lists)
+❌ Password strength validation
+❌ Account deletion (GDPR)
+❌ Category caching
+❌ Many Google integration improvements
+❌ Accessibility enhancements
+❌ Comment notifications
+❌ Advanced search/filtering
+
+---
+
+## Next Steps for Future Agents
+
+### Immediate Priorities (Session 2)
+1. **Database Schema Migration**
+   - Create migration script for orders table (add paid_time, payment_method, notes)
+   - Create user_activity_log table
+   - Run generateJooq
+   - Update domain classes and mappers
+
+2. **Order Variable Symbol Fix**
+   - Replace hardcoded "123456" in PaidProductController
+   - Implement logic to use order_number
+   - Integrate with SimpleShop API for SimpleShop-initiated orders
+
+3. **SimpleShop API Validation Service**
+   - Create SimpleShopValidationService
+   - Read SimpleShop API docs: https://simpleshopcz.docs.apiary.io/
+   - Implement validation before order confirmation
+   - Add error handling and user feedback
+
+### Session 3-4 Goals
+- Complete order state management (SHIPPED status)
+- Implement user activity logging
+- Add admin pagination (start with users)
+- Password validation improvements
+
+### Session 5+ Goals
+- Continue through feature list systematically
+- Update feature_list.json as tests pass
+- Maintain code quality and test coverage
+- Regular git commits with descriptive messages
+
+---
+
+## Resources and Documentation
+
+### External APIs
+- **SimpleShop API**: https://simpleshopcz.docs.apiary.io/
+- **MailerLite API**: Existing integration in mailing package
+- **Google APIs**: Existing OAuth2 integration
+- **Mailgun**: Existing integration for transactional emails
+
+### Libraries Documentation
+- **JOOQ**: https://www.jooq.org/doc/latest/manual/
+- **Spring Boot**: https://docs.spring.io/spring-boot/docs/3.1.5/reference/html/
+- **Kotest**: https://kotest.io/
+- **zxcvbn**: For password strength estimation
+
+### Internal Documentation
+- `CLAUDE.md` - Project overview and conventions
+- `CODE_STYLE.md` - Code style guidelines
+- `README.md` - Quick start guide
+- `TASKS.md` - Development tasks
+- `CHANGELOG.md` - Change history
+
+---
+
+## Git Workflow
+
+### Branch Strategy
+- Main branch: `master`
+- Feature branches: Create for major features
+- Remote: `origin` (GitHub) and `master` (Heroku deployment)
+
+### Commit Guidelines
+- Descriptive commit messages
+- Reference feature being implemented
+- Include context for why changes were made
+- Commit after completing each logical unit of work
+
+### Example Good Commits
+```
+"Add paid_time column to orders table and update mappers"
+"Implement SimpleShop API validation service"
+"Add pagination to user administration list"
+"Feature complete: Order history view for members [feature_list.json #7]"
+```
+
+---
+
+## Session 1 Accomplishments Summary
+
+✅ **Analyzed existing codebase** - Comprehensive understanding of architecture, patterns, and current state
+✅ **Created feature_list.json** - 45 detailed test cases covering all enhancements from app_spec.txt
+✅ **Created init.sh** - Development environment setup script for future sessions
+✅ **Documented everything** - This comprehensive agent_progress.txt for knowledge transfer
+✅ **Committed to git** - All initialization work saved
+
+### Files Created
+- `feature_list.json` - 45 test cases (all initially "passes": false)
+- `init.sh` - Development setup script (executable)
+- `agent_progress.txt` - This documentation
+
+### Knowledge Transferred
+- Complete understanding of ArtBeams architecture
+- All TODO/TBD items identified and catalogued
+- Database schema documented
+- Enhancement requirements broken down
+- Priority and phasing recommendations
+- Development guidelines established
+
+---
+
+## Notes for Next Agent
+
+🔥 **CRITICAL**: This is an ENHANCEMENT project, not a greenfield build. Do NOT recreate existing functionality!
+
+✅ **DO**:
+- Read this agent_progress.txt thoroughly
+- Work through feature_list.json systematically
+- Follow existing code patterns and conventions
+- Test thoroughly before marking features as passing
+- Commit frequently with good messages
+- Update this file with your progress
+
+❌ **DON'T**:
+- Modify existing working features unless required for integration
+- Remove or edit features from feature_list.json (only change "passes" to true)
+- Hardcode credentials or sensitive data
+- Skip testing
+- Make large changes without commits
+
+🎯 **Goal**: Production-ready enhancements that seamlessly integrate with existing codebase.
+
+📊 **Progress Tracking**: 0/45 features complete (0%)
+
+---
+
+End of Session 1 - Initialization Agent
+Next session should begin with database schema updates and order variable symbol implementation.
