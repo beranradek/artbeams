@@ -117,7 +117,7 @@
       "Step 6: Verify helpful suggestions for improving weak passwords",
       "Step 7: Test form submission - weak passwords should be rejected with clear message"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -131,7 +131,7 @@
       "Step 6: Submit form with matching passwords and verify success",
       "Step 7: Test submission with mismatched passwords - should be rejected"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -490,7 +490,7 @@
       "Step 7: Verify suggestions appear for improving password",
       "Step 8: Test on mobile devices for touch-friendly design"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
