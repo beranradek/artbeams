@@ -30,7 +30,9 @@ import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 @EnableWebSecurity
 @Configuration
 @EnableWebMvc
-class SecurityConfig {
+class SecurityConfig(
+    private val loginActivityHandler: org.xbery.artbeams.users.security.LoginActivityHandler
+) {
 
     @Bean
     @Throws(Exception::class)
@@ -52,6 +54,7 @@ class SecurityConfig {
             .formLogin { formLoginConfigurer ->
                 formLoginConfigurer
                     .loginPage("/login")
+                    .successHandler(loginActivityHandler)
                     .permitAll()
             }
             .logout { logoutConfigurer ->
