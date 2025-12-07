@@ -3,6 +3,7 @@ package org.xbery.artbeams.common.agent
 import com.openai.client.OpenAIClient
 import com.openai.client.okhttp.OpenAIOkHttpClient
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration
  * @author Radek Beran
  */
 @Configuration
+@ConditionalOnProperty(name = ["openai.enabled"], havingValue = "true", matchIfMissing = false)
 class OpenAIClientConfig {
 
     private val logger = LoggerFactory.getLogger(javaClass)

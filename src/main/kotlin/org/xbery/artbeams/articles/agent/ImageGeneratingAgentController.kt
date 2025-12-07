@@ -3,6 +3,7 @@ package org.xbery.artbeams.articles.agent
 import jakarta.annotation.PreDestroy
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -24,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Controller
 @RequestMapping("/admin/articles/agent/image")
+@ConditionalOnBean(ImageGeneratingAgent::class)
 class ImageGeneratingAgentController(
     private val imageGeneratingAgent: ImageGeneratingAgent,
     private val jobExecutor: AgentJobExecutor,

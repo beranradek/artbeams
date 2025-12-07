@@ -6,6 +6,7 @@ import com.openai.client.OpenAIClient
 import com.openai.models.images.ImageGenerateParams
 import com.openai.models.images.ImageModel
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.file.TempFiles
 import org.xbery.artbeams.media.domain.ImageFormat
@@ -36,6 +37,7 @@ data class TempGeneratedImage(
  * @author Radek Beran
  */
 @Service
+@ConditionalOnBean(OpenAIClient::class)
 class ImageGeneratingAgent(
     private val mediaRepository: MediaRepository,
     private val client: OpenAIClient

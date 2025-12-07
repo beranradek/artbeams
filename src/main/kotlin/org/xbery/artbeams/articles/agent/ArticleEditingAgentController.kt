@@ -4,6 +4,7 @@ import jakarta.annotation.PreDestroy
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -27,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Controller
 @RequestMapping("/admin/articles/agent")
+@ConditionalOnBean(ArticleEditingAgent::class)
 class ArticleEditingAgentController(
     private val articleEditingAgent: ArticleEditingAgent,
     private val jobExecutor: AgentJobExecutor,

@@ -11,6 +11,7 @@ import com.openai.models.chat.completions.ChatCompletionContentPartImage
 import com.openai.models.chat.completions.ChatCompletionContentPartText
 import com.openai.models.chat.completions.ChatCompletionCreateParams
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.config.repository.AppConfig
 import java.util.Base64
@@ -58,6 +59,7 @@ data class UploadedFileData(
  * @author Radek Beran
  */
 @Service
+@ConditionalOnBean(OpenAIClient::class)
 class ArticleEditingAgent(
     private val appConfig: AppConfig,
     private val client: OpenAIClient
