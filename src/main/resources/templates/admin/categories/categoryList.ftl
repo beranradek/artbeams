@@ -1,7 +1,11 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/pagination.ftl" as pag>
 <@layout.page>
 
-<a class="btn btn-primary" href="/admin/categories/${emptyId}/edit" role="button">New Category</a>
+<div class="mb-3">
+  <a class="btn btn-primary" href="/admin/categories/${emptyId}/edit" role="button">New Category</a>
+  <strong style="margin-left: 20px;">Total categories:</strong> ${resultPage.pagination.totalCount!0}
+</div>
 
 <table class="table table-sm admin-table">
   <thead>
@@ -13,7 +17,7 @@
     </tr>
   </thead>
   <tbody>
-<#list categories as category>
+<#list resultPage.records as category>
     <tr>
         <td>${category.title!}</td>
         <td>${category.slug!}</td>
@@ -23,4 +27,7 @@
 </#list>
   </tbody>
 </table>
+
+<@pag.pagination resultPage.pagination />
+
 </@layout.page>

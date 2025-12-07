@@ -196,7 +196,7 @@
       "Step 7: Verify total product count",
       "Step 8: Test sorting while paginated"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",

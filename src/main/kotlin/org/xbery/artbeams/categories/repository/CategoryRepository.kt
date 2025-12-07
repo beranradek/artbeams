@@ -9,6 +9,8 @@ import org.xbery.artbeams.categories.domain.Category
 import org.xbery.artbeams.categories.repository.mapper.CategoryMapper
 import org.xbery.artbeams.categories.repository.mapper.CategoryUnmapper
 import org.xbery.artbeams.common.assets.repository.AssetRepository
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
 import org.xbery.artbeams.jooq.schema.tables.references.CATEGORIES
 import java.time.Instant
@@ -32,6 +34,22 @@ class CategoryRepository(
         dsl.selectFrom(table)
             .orderBy(CATEGORIES.TITLE)
             .fetch(mapper)
+
+    fun findCategories(pagination: Pagination): ResultPage<Category> {
+        // Get total count
+        val totalCount = dsl.selectCount()
+            .from(table)
+            .fetchOne(0, Long::class.java) ?: 0L
+
+        // Get paginated categories
+        val categories = dsl.selectFrom(table)
+            .orderBy(CATEGORIES.TITLE)
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .fetch(mapper)
+
+        return ResultPage(categories, pagination.withTotalCount(totalCount))
+    }
 
     fun findBySlug(slug: String): Category? =
         dsl.selectFrom(table)

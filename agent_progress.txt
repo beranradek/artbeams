@@ -14,57 +14,6 @@
 
 ## Existing Project Analysis
 
-### Technology Stack
-- **Language**: Kotlin 1.9.22 with Java 21
-- **Framework**: Spring Boot 3.1.5, Spring MVC, Spring Security
-- **Database**: PostgreSQL with JOOQ 3.18.7 for type-safe SQL queries
-- **Templates**: FreeMarker with Bootstrap CSS
-- **Testing**: Kotest, MockK
-- **Forms**: Formio 1.7.0 for validation and binding
-- **Build**: Gradle with Kotlin DSL
-
-### Key Integrations
-- Google Docs API (OAuth2 for content sync)
-- Evernote API (note import)
-- Mailgun (transactional email)
-- MailerLite (newsletter management)
-- SimpleShop API (payment processing)
-- OpenAI (article editing agent)
-- Google reCAPTCHA (anti-spam)
-- zxcvbn (password strength estimation)
-
-### Architecture Patterns
-- **Package Organization**: Feature-based (not layer-based)
-- **Repository Pattern**: AbstractMappingRepository with Mapper/Unmapper classes
-- **Context Handling**: OperationCtx for request context tracking
-- **Error Handling**: OperationException hierarchy with status codes
-- **Security**: PBKDF2 password hashing, role-based access control (ADMIN, MEMBER)
-
-### Main Package Structure
-```
-org.xbery.artbeams/
-├── articles/         - Article management with Markdown/WYSIWYG
-├── categories/       - Category system
-├── comments/         - Comment system with spam detection
-├── users/            - Authentication, roles, password management
-├── orders/           - E-commerce order management
-├── products/         - Product catalog
-├── userproducts/     - User product access library
-├── contact/          - Contact form
-├── consents/         - User consent management (GDPR)
-├── google/           - Google Docs integration
-├── evernote/         - Evernote integration
-├── mailing/          - Mailgun and MailerLite integrations
-├── simpleshop/       - SimpleShop payment integration
-├── media/            - Media file management
-├── config/           - Configuration management
-├── localisation/     - Localization management
-├── sync/             - Remote DB sync features
-├── members/          - Member section
-├── common/           - Shared infrastructure
-└── web/              - Public controllers
-```
-
 ### Database Schema (Current State)
 Key tables identified:
 - **users, roles, user_role** - User authentication and authorization

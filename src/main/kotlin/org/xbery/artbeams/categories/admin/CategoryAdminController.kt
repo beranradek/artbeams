@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.categories.domain.Category
 import org.xbery.artbeams.categories.domain.EditedCategory
@@ -19,6 +20,7 @@ import org.xbery.artbeams.categories.service.CategoryService
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.overview.Pagination
 
 /**
  * Category administration routes.
@@ -35,13 +37,17 @@ class CategoryAdminController(
     private val editFormDef: FormMapping<EditedCategory> = CategoryForm.definition
 
     @GetMapping
-    fun list(request: HttpServletRequest): Any {
-        // TODO RBe: Pagination
-        val categories: List<Category> = categoryRepository.findCategories()
+    fun list(
+        @RequestParam("offset", defaultValue = "0") offset: Int,
+        @RequestParam("limit", defaultValue = "20") limit: Int,
+        request: HttpServletRequest
+    ): Any {
+        val pagination = Pagination(offset, limit)
+        val resultPage = categoryRepository.findCategories(pagination)
         val model = createModel(
-            request, "categories"
-            to categories, "emptyId"
-            to AssetAttributes . EMPTY_ID
+            request,
+            "resultPage" to resultPage,
+            "emptyId" to AssetAttributes.EMPTY_ID
         )
         return ModelAndView(TplBasePath + "/categoryList", model)
     }
