@@ -8,5 +8,6 @@ import org.xbery.artbeams.common.error.ErrorCode
 enum class GoogleErrorCode(
     override val code: String
 ) : ErrorCode {
-    UNAUTHORIZED("google.unauthorized")
+    UNAUTHORIZED("google.unauthorized"),
+    API_ERROR("google.api.error")
 }
