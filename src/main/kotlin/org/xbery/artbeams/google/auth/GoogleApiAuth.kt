@@ -159,19 +159,68 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
      * Method for accepting authorization code or error during an authorization flow.
      */
     open fun receiveAuthorizationCodeOrError(code: String?, error: String?) {
-        if (code != null && code.length > 60) {
-            // TODO: Validate code input, e.g. 4%2F0AfJohXnaRaPO1os9nfXxUDYUzgF6_L8VBr9KyIBqUxkweqDM0CClhAUM6roe2T-0YsvROg
+        if (code != null) {
+            // Validate authorization code format
+            // Google OAuth2 authorization codes are URL-encoded strings, typically 60-400 characters
+            // Format: numeric/alphanumeric with URL encoding (%2F for /, etc.)
+            // Example: 4%2F0AfJohXnaRaPO1os9nfXxUDYUzgF6_L8VBr9KyIBqUxkweqDM0CClhAUM6roe2T-0YsvROg
+            if (!isValidAuthorizationCode(code)) {
+                logger.warn("Invalid Google OAuth2 authorization code format received: ${code.take(20)}...")
+                authCodeServerReceiver?.error = "invalid_authorization_code"
+                return
+            }
+            
             if (authCodeServerReceiver != null) {
                 val receiver = requireNotNull(authCodeServerReceiver)
                 receiver.code = code
-                val flow = buildOAuth2AuthorizationCodeFlow(receiver.scopes)
-                val response: TokenResponse = flow.newTokenRequest(code).setRedirectUri(receiver.redirectUri).execute()
-                flow.createAndStoreCredential(response, applicationUserId)
+                try {
+                    val flow = buildOAuth2AuthorizationCodeFlow(receiver.scopes)
+                    val response: TokenResponse = flow.newTokenRequest(code).setRedirectUri(receiver.redirectUri).execute()
+                    flow.createAndStoreCredential(response, applicationUserId)
+                } catch (e: IOException) {
+                    logger.error("Failed to exchange authorization code for tokens: ${e.message}", e)
+                    receiver.error = "token_exchange_failed"
+                }
             }
         }
         if (!error.isNullOrEmpty()) {
             authCodeServerReceiver?.error = error
         }
+    }
+    
+    /**
+     * Validates Google OAuth2 authorization code format.
+     * Authorization codes should be:
+     * - Between 60 and 400 characters
+     * - Contain alphanumeric characters, underscores, hyphens, and URL-encoded characters
+     * - Not contain obvious injection patterns
+     */
+    private fun isValidAuthorizationCode(code: String): Boolean {
+        if (code.length < 60 || code.length > 400) {
+            return false
+        }
+        
+        // Valid characters: alphanumeric, _, -, %, digits after %
+        // Pattern allows URL-encoded characters like %2F, %20, etc.
+        val validPattern = Regex("^[A-Za-z0-9_\\-/%]+$")
+        if (!validPattern.matches(code)) {
+            return false
+        }
+        
+        // Check URL encoding is valid (% followed by two hex digits)
+        val urlEncodingPattern = Regex("%[0-9A-Fa-f]{2}")
+        val percentPositions = code.withIndex().filter { it.value == '%' }.map { it.index }
+        for (pos in percentPositions) {
+            if (pos + 2 >= code.length) {
+                return false // % at end without two following characters
+            }
+            val encodedPart = code.substring(pos, pos + 3)
+            if (!urlEncodingPattern.matches(encodedPart)) {
+                return false
+            }
+        }
+        
+        return true
     }
 
     /**

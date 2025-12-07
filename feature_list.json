@@ -611,7 +611,7 @@
       "Step 8: Test resending verification email",
       "Step 9: Verify already-verified users can't verify again"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
