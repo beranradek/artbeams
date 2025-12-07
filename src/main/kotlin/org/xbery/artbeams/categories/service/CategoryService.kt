@@ -9,6 +9,7 @@ import org.xbery.artbeams.common.context.OperationCtx
  */
 interface CategoryService {
     fun findCategories(): List<Category>
+    fun findCategoriesByArticleId(articleId: String): List<Category>
     fun saveCategory(edited: EditedCategory, ctx: OperationCtx): Category?
     fun findBySlug(slug: String): Category?
 }

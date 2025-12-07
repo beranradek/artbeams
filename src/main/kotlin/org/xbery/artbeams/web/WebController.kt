@@ -178,13 +178,8 @@ class WebController(
                         }
                 val fArticleCategories =
                         CompletableFuture.supplyAsync {
-                            // TBD RBe: Cache categories by articles?
-                            val categoryIds =
-                                    articleCategoryRepository.findArticleCategoryIdsByArticleId(
-                                            article.id
-                                    )
-                            val allCategories = categoryService.findCategories()
-                            allCategories.filter { categoryIds.contains(it.id) }
+                            // Cached method - categories per article are cached efficiently
+                            categoryService.findCategoriesByArticleId(article.id)
                         }
                 CompletableFuture.allOf(
                                 fUserAccessReport,
