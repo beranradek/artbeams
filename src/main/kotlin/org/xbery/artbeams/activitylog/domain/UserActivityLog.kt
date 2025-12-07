@@ -46,7 +46,10 @@ enum class ActionType(val value: String) {
     PROFILE_UPDATED("PROFILE_UPDATED"),
 
     /** Password was changed */
-    PASSWORD_CHANGED("PASSWORD_CHANGED");
+    PASSWORD_CHANGED("PASSWORD_CHANGED"),
+
+    /** Account was deleted (GDPR) */
+    ACCOUNT_DELETED("ACCOUNT_DELETED");
 
     companion object {
         fun fromValue(value: String): ActionType? = entries.find { it.value == value }

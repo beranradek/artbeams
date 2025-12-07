@@ -59,6 +59,42 @@ class MyProfileController(
         }
     }
 
+    @GetMapping("/smazat-ucet")
+    fun deleteAccountConfirm(request: HttpServletRequest): Any {
+        return tryOrErrorResponse(request) {
+            val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
+            val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
+            val model = createModel(
+                request,
+                "user" to user
+            )
+            ModelAndView("$TPL_BASE_PATH/deleteAccount", model)
+        }
+    }
+
+    @PostMapping("/smazat-ucet")
+    fun deleteAccount(request: HttpServletRequest): Any {
+        return tryOrErrorResponse(request) {
+            val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
+            val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
+            
+            val deleted = userService.deleteAccount(user.id, requestToOperationCtx(request))
+            
+            if (deleted) {
+                // Log out the user
+                request.session.invalidate()
+                redirect("/")
+            } else {
+                val model = createModel(
+                    request,
+                    "user" to user,
+                    "error" to "Nepodařilo se smazat účet. Kontaktujte prosím podporu."
+                )
+                ModelAndView("$TPL_BASE_PATH/deleteAccount", model)
+            }
+        }
+    }
+
     private fun toEditedProfile(user: User): MyProfile {
         return MyProfile(user.login, user.firstName, user.lastName, "", "")
     }

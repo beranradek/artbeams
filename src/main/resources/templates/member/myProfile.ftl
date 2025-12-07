@@ -18,4 +18,16 @@
     <@forms.inputText type="password" field=fields.password2 label="${xlat['password.again-for-control']}" required=false size=60 inputDivClass="col-sm-3" labelFix=false />
     <@forms.buttonSubmit text="Uložit profil" class="btn btn-primary" />
 </form>
+
+<div class="mt-5 pt-4 border-top">
+    <h4 class="text-danger">Nebezpečná zóna</h4>
+    <p class="text-muted">
+        Smazání účtu je nevratná operace. Vaše osobní údaje budou anonymizovány v souladu s GDPR.
+    </p>
+    <a href="/clenska-sekce/muj-profil/smazat-ucet" class="btn btn-outline-danger">
+        <i class="fas fa-trash-alt"></i>
+        Smazat můj účet
+    </a>
+</div>
+
 </@layout.page>

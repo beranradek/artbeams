@@ -25,7 +25,8 @@ import org.xbery.artbeams.users.repository.UserRepository
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
-    private val consentService: ConsentService
+    private val consentService: ConsentService,
+    private val userActivityLogService: org.xbery.artbeams.activitylog.service.UserActivityLogService
 ) : UserService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -126,6 +127,49 @@ class UserServiceImpl(
 
     private fun updateRoles(userId: String, roles: List<Role>) {
         roleRepository.updateRolesOfUser(userId, roles)
+    }
+
+    override fun deleteAccount(userId: String, ctx: OperationCtx): Boolean {
+        return try {
+            val user = userRepository.requireById(userId)
+            
+            // Create anonymized version of user for GDPR compliance
+            val anonymizedUser = user.copy(
+                common = user.common.updatedWith(userId),
+                login = "deleted_${user.id.take(8)}", // Make login unique but anonymized
+                password = "", // Clear password to prevent login
+                firstName = "[deleted]",
+                lastName = "",
+                email = null, // Clear email for privacy
+                roles = emptyList() // Remove all roles to prevent access
+            )
+            
+            // Update user with anonymized data
+            userRepository.update(anonymizedUser)
+            
+            // Remove all user roles
+            roleRepository.updateRolesOfUser(userId, emptyList())
+            
+            // Revoke all consents
+            consentService.revokeConsent(user.login, org.xbery.artbeams.consents.domain.ConsentType.NEWS)
+            
+            // Log account deletion
+            userActivityLogService.logActivity(
+                userId = userId,
+                actionType = org.xbery.artbeams.activitylog.domain.ActionType.ACCOUNT_DELETED,
+                entityType = org.xbery.artbeams.activitylog.domain.EntityType.USER,
+                entityId = userId,
+                ipAddress = null, // IP not available in service layer
+                userAgent = null, // User agent not available in service layer
+                details = "Account deleted and anonymized for user ${user.login}"
+            )
+            
+            logger.info("Account deleted and anonymized for user ${user.login} (ID: $userId)")
+            true
+        } catch (e: Exception) {
+            logger.error("Failed to delete account for user ID: $userId", e)
+            false
+        }
     }
 
     private fun toEditedProfile(user: User, validatedPassword: String): MyProfile {

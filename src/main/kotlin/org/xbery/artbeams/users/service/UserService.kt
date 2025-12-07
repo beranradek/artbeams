@@ -35,4 +35,16 @@ interface UserService {
      * @param originProductId optional product ID if consent was created by product subscription/download
      */
     fun updateUserConsent(userId: String, hasConsent: Boolean, originProductId: String? = null)
+
+    /**
+     * Deletes (anonymizes) user account for GDPR compliance.
+     * - Anonymizes personal data (firstName, lastName, email, password)
+     * - Keeps user record for referential integrity (orders, comments remain linked)
+     * - Prevents future login
+     * - Logs the deletion action
+     * @param userId user ID to delete
+     * @param ctx operation context
+     * @return true if deletion was successful
+     */
+    fun deleteAccount(userId: String, ctx: OperationCtx): Boolean
 }
