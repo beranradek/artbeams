@@ -304,7 +304,7 @@
       "Step 7: Test when refresh token is also expired - verify re-authentication prompt",
       "Step 8: Verify user is notified when re-authentication is needed"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
