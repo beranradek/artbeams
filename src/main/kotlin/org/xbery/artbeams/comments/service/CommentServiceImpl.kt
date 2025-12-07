@@ -29,7 +29,8 @@ class CommentServiceImpl(
     private val userRepository: UserRepository,
     private val mailSender: MailgunMailSender,
     private val spamDetector: SpamDetector,
-    private val appConfig: org.xbery.artbeams.config.repository.AppConfig
+    private val appConfig: org.xbery.artbeams.config.repository.AppConfig,
+    private val adminNotificationService: org.xbery.artbeams.admin.notification.AdminNotificationService
 ) : CommentService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
@@ -102,7 +103,16 @@ class CommentServiceImpl(
     private fun approvedOrWaiting(comment: Comment): Comment {
         if (spamDetector.isSpam(comment.comment, comment.userName, comment.email)) {
             logger.info("Comment detected as spam: userName=${comment.userName}, email=${comment.email}, comment=${comment.comment}")
-            return comment.copy(state = CommentState.WAITING_FOR_APPROVAL)
+            val spamComment = comment.copy(state = CommentState.WAITING_FOR_APPROVAL)
+
+            // Send admin notification about spam detection
+            try {
+                adminNotificationService.sendSpamDetectedNotification(spamComment)
+            } catch (e: Exception) {
+                logger.error("Failed to send admin notification for spam comment", e)
+            }
+
+            return spamComment
         }
         return comment.copy(state = CommentState.APPROVED)
     }

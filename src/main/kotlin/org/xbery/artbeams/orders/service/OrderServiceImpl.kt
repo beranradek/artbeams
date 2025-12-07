@@ -37,7 +37,8 @@ class OrderServiceImpl(
     private val memberSectionMailer: MemberSectionMailer,
     private val productService: org.xbery.artbeams.products.service.ProductService,
     private val mailingApi: org.xbery.artbeams.mailing.api.MailingApi,
-    private val activityLogService: UserActivityLogService
+    private val activityLogService: UserActivityLogService,
+    private val adminNotificationService: org.xbery.artbeams.admin.notification.AdminNotificationService
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -85,6 +86,13 @@ class OrderServiceImpl(
             )
         } catch (e: Exception) {
             logger.error("Failed to log order creation activity for order ${createdOrderWithItems.id}", e)
+        }
+
+        // Send admin notification about new order
+        try {
+            adminNotificationService.sendNewOrderNotification(createdOrderWithItems)
+        } catch (e: Exception) {
+            logger.error("Failed to send admin notification for new order ${createdOrderWithItems.id}", e)
         }
 
         return createdOrderWithItems
