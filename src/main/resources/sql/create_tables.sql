@@ -23,6 +23,8 @@ CREATE TABLE users (
 );
 
 CREATE UNIQUE INDEX idx_users_login ON users (login);
+CREATE INDEX idx_users_email ON users (email);
+CREATE INDEX idx_users_created_by ON users (created_by);
 
 CREATE TABLE user_role (
 	user_id VARCHAR(40) NOT NULL,
@@ -31,6 +33,8 @@ CREATE TABLE user_role (
 
 ALTER TABLE user_role ADD CONSTRAINT FK_role_id FOREIGN KEY (role_id) REFERENCES roles(id);
 ALTER TABLE user_role ADD CONSTRAINT FK_user_id FOREIGN KEY (user_id) REFERENCES users(id);
+CREATE INDEX idx_user_role_user_id ON user_role (user_id);
+CREATE INDEX idx_user_role_role_id ON user_role (role_id);
 
 CREATE TABLE categories (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
@@ -44,6 +48,8 @@ CREATE TABLE categories (
 	title VARCHAR(128) DEFAULT NULL,
 	description VARCHAR(1000) DEFAULT NULL
 );
+
+CREATE INDEX idx_categories_slug ON categories (slug);
 
 CREATE TABLE articles (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
@@ -65,10 +71,18 @@ CREATE TABLE articles (
 	show_on_blog boolean DEFAULT TRUE
 );
 
+CREATE INDEX idx_articles_slug ON articles (slug);
+CREATE INDEX idx_articles_created_by ON articles (created_by);
+CREATE INDEX idx_articles_show_on_blog ON articles (show_on_blog);
+CREATE INDEX idx_articles_created ON articles (created DESC);
+
 CREATE TABLE article_category (
 	article_id VARCHAR(40) NOT NULL,
 	category_id VARCHAR(40) NOT NULL
 );
+
+CREATE INDEX idx_article_category_article_id ON article_category (article_id);
+CREATE INDEX idx_article_category_category_id ON article_category (category_id);
 
 CREATE TABLE media (
     id VARCHAR(128) NOT NULL PRIMARY KEY,
@@ -100,6 +114,8 @@ CREATE TABLE products (
 	price_discounted DECIMAL(19, 4),
 	simple_shop_product_id VARCHAR(64) DEFAULT NULL
 );
+
+CREATE INDEX idx_products_slug ON products (slug);
 
 CREATE TABLE user_access (
   id VARCHAR(40) NOT NULL PRIMARY KEY,
@@ -136,6 +152,9 @@ CREATE TABLE orders (
 CREATE UNIQUE INDEX idx_orders_order_number ON orders (order_number);
 CREATE INDEX idx_orders_paid_time ON orders (paid_time);
 CREATE INDEX idx_orders_payment_method ON orders (payment_method);
+CREATE INDEX idx_orders_created_by ON orders (created_by);
+CREATE INDEX idx_orders_state ON orders (state);
+CREATE INDEX idx_orders_created ON orders (created DESC);
 
 CREATE TABLE order_items (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
@@ -152,6 +171,8 @@ CREATE TABLE order_items (
 
 ALTER TABLE order_items ADD CONSTRAINT ordered_product_fk FOREIGN KEY (product_id) REFERENCES products (id);
 ALTER TABLE order_items ADD CONSTRAINT order_fk FOREIGN KEY (order_id) REFERENCES orders (id);
+CREATE INDEX idx_order_items_order_id ON order_items (order_id);
+CREATE INDEX idx_order_items_product_id ON order_items (product_id);
 -- ALTER TABLE order_items ADD COLUMN downloaded timestamp DEFAULT NULL;
 
 CREATE TABLE comments (
@@ -174,6 +195,9 @@ CREATE TABLE comments (
 ALTER TABLE comments ADD CONSTRAINT parent_id_fk FOREIGN KEY (parent_id) REFERENCES comments (id);
 CREATE INDEX idx_comments_entity_id ON comments (entity_id);
 CREATE INDEX idx_comments_state ON comments (state);
+CREATE INDEX idx_comments_created ON comments (created DESC);
+CREATE INDEX idx_comments_created_by ON comments (created_by);
+CREATE INDEX idx_comments_email ON comments (email);
 
 CREATE TABLE config (
 	entry_key VARCHAR(120) NOT NULL PRIMARY KEY,
@@ -229,6 +253,9 @@ CREATE TABLE user_product (
 
 ALTER TABLE user_product ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES users (id);
 ALTER TABLE user_product ADD CONSTRAINT product_fk FOREIGN KEY (product_id) REFERENCES products (id);
+CREATE INDEX idx_user_product_user_id ON user_product (user_id);
+CREATE INDEX idx_user_product_product_id ON user_product (product_id);
+CREATE INDEX idx_user_product_composite ON user_product (user_id, product_id);
 
 CREATE TABLE sequences (
     sequence_name VARCHAR(20) NOT NULL PRIMARY KEY,
