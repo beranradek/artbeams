@@ -15,14 +15,14 @@
         <label for="searchInput" class="form-label">Search</label>
         <input type="text" class="form-control" id="searchInput" name="search"
                placeholder="Search by order number, user login, or user name..."
-               value="${searchTerm}">
+               value="${searchTerm!""}">
       </div>
       <div class="col-md-3">
         <label for="stateFilter" class="form-label">State</label>
         <select class="form-select" id="stateFilter" name="state">
           <option value="">All States</option>
           <#list orderStates as state>
-            <option value="${state}" <#if stateFilter == state>selected</#if>>${state}</option>
+            <option value="${state}" <#if stateFilter?? && stateFilter == state>selected</#if>>${state}</option>
           </#list>
         </select>
       </div>
