@@ -460,7 +460,7 @@
       "Step 7: Verify download buttons are prominently displayed for shipped orders",
       "Step 8: Check spacing, typography consistency with rest of site"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
@@ -475,7 +475,7 @@
       "Step 7: Check hover states for clickable page numbers",
       "Step 8: Verify consistent pagination design across all admin lists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
@@ -506,7 +506,7 @@
       "Step 8: Check spam score of notification emails",
       "Step 9: Verify plain text fallback version exists"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
@@ -549,7 +549,7 @@
       "Step 6: Verify clear/reset filters button is accessible",
       "Step 7: Test responsive design on smaller screens"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
@@ -565,7 +565,7 @@
       "Step 8: Verify responsive design for mobile media management",
       "Step 9: Verify loading states for images"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
