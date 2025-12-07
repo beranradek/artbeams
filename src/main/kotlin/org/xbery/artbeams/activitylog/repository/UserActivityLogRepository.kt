@@ -14,7 +14,8 @@ import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog.Companion.USER_ACTIVITY_LOG
 import org.xbery.artbeams.jooq.schema.tables.records.UserActivityLogRecord
-import java.time.Clock
+import kotlinx.datetime.Clock
+import kotlinx.datetime.toJavaInstant
 import java.time.Instant
 import java.util.*
 
@@ -115,7 +116,7 @@ class UserActivityLogRepository(
             id = UUID.randomUUID().toString(),
             userId = userId,
             actionType = actionType,
-            actionTime = clock.instant(),
+            actionTime = clock.now().toJavaInstant(),
             entityType = entityType,
             entityId = entityId,
             ipAddress = ipAddress,
