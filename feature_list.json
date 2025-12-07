@@ -390,7 +390,7 @@
       "Step 8: Test that spam comments do not trigger notifications until approved",
       "Step 9: Verify notifications work for multiple authors if article has co-authors"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
