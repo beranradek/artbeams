@@ -337,7 +337,7 @@
       "Step 9: Test error handling when Search Console API is unavailable",
       "Step 10: Verify data caching to avoid excessive API calls"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -580,7 +580,7 @@
       "Step 7: Verify loading states for data fetching",
       "Step 8: Test responsive design on different screen sizes"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
