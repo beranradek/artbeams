@@ -191,9 +191,12 @@
         </div>
         </#if>
       </footer>
-    
+
     <!-- Bootstrap core JavaScript -->
     <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
+
+    <!-- Admin Keyboard Shortcuts -->
+    <script nonce="${_cspNonce}" src="/static/js/admin-keyboard-shortcuts.js"></script>
   </body>
 </html>
 </#macro>
