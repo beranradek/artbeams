@@ -22,7 +22,7 @@
       "Step 5: Test with valid product and verify successful validation",
       "Step 6: Check logs for SimpleShop API communication"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -73,7 +73,7 @@
       "Step 5: Verify subscription only happens once payment is confirmed, not on order creation",
       "Step 6: Test with user already in group - verify no duplicate subscription error"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -88,7 +88,7 @@
       "Step 7: Test with user who has no orders - verify appropriate empty state message",
       "Step 8: Verify pagination if user has many orders"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -103,7 +103,7 @@
       "Step 7: Verify total user count is displayed",
       "Step 8: Test edge cases: first page, last page, single page"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
