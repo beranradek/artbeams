@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.orders.admin.service.OrderCreatingAdminService
 import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
@@ -29,12 +30,16 @@ class OrderAdminController(
     private val createFormDef: FormMapping<CreateOrderData> = CreateOrderForm.definition
 
     @GetMapping
-    fun list(request: HttpServletRequest): Any {
-        // TODO RBe: Pagination
-        val orders = orderService.findOrders()
+    fun list(
+        @RequestParam("offset", defaultValue = "0") offset: Int,
+        @RequestParam("limit", defaultValue = "20") limit: Int,
+        request: HttpServletRequest
+    ): Any {
+        val pagination = Pagination(offset, limit)
+        val resultPage = orderService.findOrders(pagination)
         val model = createModel(
             request,
-            "orders" to orders,
+            "resultPage" to resultPage,
             "orderStates" to OrderState.entries.map { it.name }
         )
         return ModelAndView("$TplBasePath/orderList", model)

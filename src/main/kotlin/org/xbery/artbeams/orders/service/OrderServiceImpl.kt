@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.error.requireFound
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.members.service.MemberSectionMailer
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderInfo
@@ -72,6 +74,9 @@ class OrderServiceImpl(
 
     override fun findOrders(): List<OrderInfo> =
         orderRepository.findOrders()
+
+    override fun findOrders(pagination: Pagination): ResultPage<OrderInfo> =
+        orderRepository.findOrders(pagination)
 
     override fun findOrdersByUserId(userId: String): List<OrderInfo> =
         orderRepository.findOrdersByUserId(userId)

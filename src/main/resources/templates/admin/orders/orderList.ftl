@@ -1,8 +1,10 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/pagination.ftl" as pag>
 <@layout.page>
 
 <div class="mb-3">
   <a href="/admin/orders/create" class="btn btn-primary">New Order</a>
+  <strong>Total orders:</strong> ${resultPage.pagination.totalCount!0}
 </div>
 
 <table class="table table-sm admin-table">
@@ -18,7 +20,7 @@
     </tr>
   </thead>
   <tbody>
-<#list orders as order>
+<#list resultPage.records as order>
     <tr>
         <td>${order.orderNumber}</td>
         <td>${order.orderTime?string["d.M.yyyy, HH:mm"]}</td>
@@ -64,4 +66,7 @@
 </#list>
   </tbody>
 </table>
+
+<@pag.pagination resultPage.pagination />
+
 </@layout.page>

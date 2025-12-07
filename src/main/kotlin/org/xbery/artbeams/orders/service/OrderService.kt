@@ -1,5 +1,7 @@
 package org.xbery.artbeams.orders.service
 
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderInfo
 import org.xbery.artbeams.orders.domain.OrderItem
@@ -20,6 +22,8 @@ interface OrderService {
     fun createOrder(order: Order): Order
 
     fun findOrders(): List<OrderInfo>
+
+    fun findOrders(pagination: Pagination): ResultPage<OrderInfo>
 
     fun findOrdersByUserId(userId: String): List<OrderInfo>
 
