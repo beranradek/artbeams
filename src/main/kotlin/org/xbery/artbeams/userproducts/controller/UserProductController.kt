@@ -25,6 +25,9 @@ import java.io.ByteArrayOutputStream
 import jakarta.servlet.http.HttpServletRequest
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.orders.service.OrderService
+import org.xbery.artbeams.activitylog.service.UserActivityLogService
+import org.xbery.artbeams.activitylog.domain.ActionType
+import org.xbery.artbeams.activitylog.domain.EntityType
 import java.time.Instant
 
 /**
@@ -41,6 +44,7 @@ class UserProductController(
     private val orderService: OrderService,
     private val mediaRepository: MediaRepository,
     private val pdfSigner: PdfSigner,
+    private val activityLogService: UserActivityLogService,
     // TBD RBe: Separate common component/controller
     private val freeProductController: FreeProductController,
     common: ControllerComponents
@@ -107,6 +111,22 @@ class UserProductController(
             // Update order item as downloaded
             orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
             freeProductController.sendProductDownloadedNotification(product, user)
+
+            // Log product download activity
+            try {
+                activityLogService.logActivity(
+                    userId = user.id,
+                    actionType = ActionType.PRODUCT_DOWNLOADED,
+                    entityType = EntityType.PRODUCT,
+                    entityId = product.id,
+                    ipAddress = request.remoteAddr,
+                    userAgent = request.getHeader("User-Agent"),
+                    details = "Product: ${product.title}, Order: ${completedOrder.orderNumber}"
+                )
+            } catch (e: Exception) {
+                // Don't fail download if logging fails
+                logger.error("Failed to log product download activity", e)
+            }
 
             ResponseEntity.ok()
                 .contentType(mediaType)

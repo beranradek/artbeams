@@ -108,6 +108,9 @@
               <a class="nav-link" href="/admin/users">Users</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="/admin/activity-logs">Activity Logs</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="/admin/categories">Categories</a>
             </li>
             <li class="nav-item">
