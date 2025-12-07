@@ -275,7 +275,7 @@
       "Step 5: Verify application fails gracefully if credentials are missing",
       "Step 6: Test with different environments (local, production)"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -289,7 +289,7 @@
       "Step 6: Enter valid code format and verify acceptance",
       "Step 7: Test with expired code and verify appropriate error handling"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
