@@ -18,6 +18,7 @@ interface CommentService {
     ): Comment
 
     fun findComments(pagination: Pagination): ResultPage<Comment>
+    fun searchComments(searchTerm: String?, state: CommentState?, pagination: Pagination): ResultPage<Comment>
     fun deleteComment(id: String): Boolean
     fun updateCommentState(id: String, state: CommentState): Boolean
 }

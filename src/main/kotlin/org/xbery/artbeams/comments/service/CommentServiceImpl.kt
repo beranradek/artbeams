@@ -69,6 +69,10 @@ class CommentServiceImpl(
         return commentRepository.findComments(pagination)
     }
 
+    override fun searchComments(searchTerm: String?, state: CommentState?, pagination: Pagination): ResultPage<Comment> {
+        return commentRepository.searchComments(searchTerm, state, pagination)
+    }
+
     @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
     override fun deleteComment(id: String): Boolean {
         logger.info("Deleting comment $id")

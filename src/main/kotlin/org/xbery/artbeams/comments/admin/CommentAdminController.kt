@@ -26,14 +26,33 @@ class CommentAdminController(
     fun list(
         @RequestParam("offset", defaultValue = "0") offset: Int,
         @RequestParam("limit", defaultValue = "20") limit: Int,
+        @RequestParam("search", required = false) searchTerm: String?,
+        @RequestParam("state", required = false) stateParam: String?,
         request: HttpServletRequest
     ): Any {
         val pagination = Pagination(offset, limit)
-        val resultPage = commentService.findComments(pagination)
+        val state = if (!stateParam.isNullOrBlank()) {
+            try {
+                CommentState.valueOf(stateParam)
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+        } else {
+            null
+        }
+        
+        val resultPage = if (searchTerm.isNullOrBlank() && state == null) {
+            commentService.findComments(pagination)
+        } else {
+            commentService.searchComments(searchTerm, state, pagination)
+        }
+        
         val model = createModel(
             request,
             "resultPage" to resultPage,
-            "commentStates" to CommentState.entries.map { it.name }
+            "commentStates" to CommentState.entries.map { it.name },
+            "searchTerm" to (searchTerm ?: ""),
+            "selectedState" to (stateParam ?: "")
         )
         return ModelAndView("$TplBasePath/commentList", model)
     }

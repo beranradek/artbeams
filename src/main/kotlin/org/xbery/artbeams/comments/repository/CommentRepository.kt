@@ -39,6 +39,49 @@ class CommentRepository(
         )
 
     /**
+     * Finds comments with optional search filters.
+     * @param searchTerm Search term to match against author name, email, or content
+     * @param state Filter by comment state (optional)
+     * @param pagination Pagination parameters
+     * @return Page of comments matching the criteria
+     */
+    fun searchComments(
+        searchTerm: String?,
+        state: CommentState?,
+        pagination: Pagination
+    ): ResultPage<Comment> {
+        val conditions = mutableListOf<org.jooq.Condition>()
+
+        // Add search term condition (search in username, email, and comment)
+        if (!searchTerm.isNullOrBlank()) {
+            val searchPattern = "%${searchTerm.lowercase()}%"
+            conditions.add(
+                DSL.lower(COMMENTS.USERNAME).like(searchPattern)
+                    .or(DSL.lower(COMMENTS.EMAIL).like(searchPattern))
+                    .or(DSL.lower(COMMENTS.COMMENT).like(searchPattern))
+            )
+        }
+
+        // Add state filter
+        if (state != null) {
+            conditions.add(COMMENTS.STATE.eq(state.name))
+        }
+
+        val condition = if (conditions.isNotEmpty()) {
+            conditions.reduce { acc, c -> acc.and(c) }
+        } else {
+            null
+        }
+
+        return findByCriteria(
+            condition,
+            COMMENTS.CREATED.desc(),
+            pagination,
+            mapper
+        )
+    }
+
+    /**
      * Finds approved comments for an entity (e.g. article id).
      * @param entityId
      * @return
