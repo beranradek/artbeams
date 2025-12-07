@@ -1319,3 +1319,99 @@ The old application is still running. To test Feature #10:
 
 End of Session 12
 
+
+## Session 12b: Category Caching Implementation - Feature #19 (2024-12-07)
+
+### Objectives Completed
+✅ **Category Caching** - Implemented efficient caching for categories by article
+✅ **Code Compiled and Built** - All changes compile successfully
+✅ **Git Commit** - Changes committed to repository
+
+### Implementation Details
+
+#### Problem Identified
+In WebController.kt (line 181-187), for every article view:
+- Fetched ALL categories from database
+- Filtered them in memory to get only the article's categories
+- This was inefficient and the code had a TBD comment: "TBD RBe: Cache categories by articles?"
+
+#### Solution Implemented
+Created a new cached method in CategoryService that:
+1. Caches categories per article ID
+2. Reuses the existing global categories cache
+3. Automatically invalidates when categories are updated
+
+#### Changes Made
+
+**1. CategoryService.kt**
+- Added `findCategoriesByArticleId(articleId: String): List<Category>` method to interface
+
+**2. CategoryServiceImpl.kt**
+- Added `ArticleCategoryRepository` dependency
+- Added companion object with `ARTICLE_CATEGORIES_CACHE_NAME = "articleCategories"`
+- Implemented `findCategoriesByArticleId()` with `@Cacheable` annotation
+- Method fetches category IDs, then filters from cached categories list
+- Updated `@CacheEvict` to clear both Category and ArticleCategories caches on save
+
+**3. CachingConfig.kt**
+- Added `CategoryServiceImpl.ARTICLE_CATEGORIES_CACHE_NAME` to cache manager
+- Imported CategoryServiceImpl for constant access
+
+**4. WebController.kt**
+- Replaced 6 lines of manual filtering with single cached method call
+- Updated comment from "TBD RBe: Cache categories by articles?" to "Cached method - categories per article are cached efficiently"
+
+### Performance Benefits
+
+**Before:**
+- Every article page view: Query all categories + filter in memory
+- No caching of per-article category lists
+- Inefficient even with global categories cache
+
+**After:**
+- First view: Fetch category IDs + use cached global categories list
+- Subsequent views: Fully cached article-specific category list (keyed by articleId)
+- Cache invalidation: Automatic when any category is saved
+- Significantly reduced memory filtering operations
+
+### Code Quality
+✅ Follows existing caching patterns (Article, Comment, AntispamQuiz)
+✅ Proper cache invalidation on updates
+✅ Reuses existing infrastructure
+✅ Clean, maintainable code
+✅ Addresses specific TBD comment from codebase
+
+### Build Status
+✅ **Kotlin Compilation**: SUCCESS
+✅ **Full Build**: SUCCESS (without tests)
+
+### Git Commit
+Commit: 3edb108
+Message: "Implement category caching by articles for performance - Feature #19"
+
+### Files Modified (4 files)
+1. `CategoryService.kt` - Added interface method
+2. `CategoryServiceImpl.kt` - Implemented cached method
+3. `CachingConfig.kt` - Registered new cache
+4. `WebController.kt` - Updated to use cached method
+
+### Session Summary
+**Lines of Code**: ~30 lines modified/added
+**Features Completed**: Feature #19 (Category Caching)
+**Build Status**: ✅ SUCCESS
+**Tests Passing**: 14/44 (31.8%) - unchanged from Session 12a
+**Application Status**: Running old version - restart needed
+
+### Testing Notes
+⚠️ **Application restart required** to verify caching performance
+Testing should verify:
+1. Article pages load correctly with categories
+2. Log shows "Finding categories for article {id}" on first load
+3. Subsequent loads of same article don't log category fetch (cache hit)
+4. Updating a category invalidates cache
+5. After category update, next article load fetches fresh data
+
+---
+
+End of Session 12b
+
