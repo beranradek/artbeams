@@ -9,6 +9,34 @@
   </div>
 </div>
 
+<!-- Search and Filter Form -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/admin/users" class="row g-3">
+      <div class="col-md-5">
+        <label for="searchInput" class="form-label">Search</label>
+        <input type="text" class="form-control" id="searchInput" name="search"
+               placeholder="Search by login, email, first name, or last name..."
+               value="${searchTerm}">
+      </div>
+      <div class="col-md-3">
+        <label for="roleFilter" class="form-label">Role</label>
+        <select class="form-select" id="roleFilter" name="role">
+          <option value="">All Roles</option>
+          <#list roles as role>
+            <option value="${role.id}" <#if roleFilter == role.id>selected</#if>>${role.name}</option>
+          </#list>
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+        <a href="/admin/users" class="btn btn-secondary">Clear</a>
+      </div>
+    </form>
+    <small class="text-muted mt-2 d-block">Search searches in login, email, first name, and last name fields</small>
+  </div>
+</div>
+
 <table class="table table-sm admin-table">
   <thead>
     <tr>
@@ -41,6 +69,14 @@
   </tbody>
 </table>
 
-<@pag.pagination resultPage.pagination />
+<#-- Preserve search and filter parameters in pagination -->
+<#assign additionalParams = "">
+<#if searchTerm?has_content>
+  <#assign additionalParams = additionalParams + "&search=" + searchTerm?url>
+</#if>
+<#if roleFilter?has_content>
+  <#assign additionalParams = additionalParams + "&role=" + roleFilter?url>
+</#if>
+<@pag.pagination resultPage.pagination additionalParams />
 
 </@layout.page>

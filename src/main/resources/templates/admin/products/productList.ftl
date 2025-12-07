@@ -34,6 +34,25 @@
   <strong style="margin-left: 20px;">Total products:</strong> ${resultPage.pagination.totalCount!0}
 </div>
 
+<!-- Search Form -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/admin/products" class="row g-3">
+      <div class="col-md-8">
+        <label for="searchInput" class="form-label">Search</label>
+        <input type="text" class="form-control" id="searchInput" name="search"
+               placeholder="Search by title, slug, or subtitle..."
+               value="${searchTerm}">
+      </div>
+      <div class="col-md-4 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="/admin/products" class="btn btn-secondary">Clear</a>
+      </div>
+    </form>
+    <small class="text-muted mt-2 d-block">Search searches in product title, slug, and subtitle</small>
+  </div>
+</div>
+
 <table class="table table-sm admin-table">
   <thead>
     <tr>
@@ -61,6 +80,11 @@
   </tbody>
 </table>
 
-<@pag.pagination resultPage.pagination />
+<#-- Preserve search parameters in pagination -->
+<#assign additionalParams = "">
+<#if searchTerm?has_content>
+  <#assign additionalParams = additionalParams + "&search=" + searchTerm?url>
+</#if>
+<@pag.pagination resultPage.pagination additionalParams />
 
 </@layout.page>

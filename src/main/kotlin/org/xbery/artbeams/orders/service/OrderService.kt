@@ -25,6 +25,8 @@ interface OrderService {
 
     fun findOrders(pagination: Pagination): ResultPage<OrderInfo>
 
+    fun searchOrders(searchTerm: String?, stateFilter: String?, pagination: Pagination): ResultPage<OrderInfo>
+
     fun findOrdersByUserId(userId: String): List<OrderInfo>
 
     fun findOrder(orderId: String): OrderInfo

@@ -124,6 +124,107 @@ class OrderRepository(
         return ResultPage(orders, pagination.withTotalCount(totalCount))
     }
 
+    fun searchOrders(searchTerm: String?, stateFilter: String?, pagination: Pagination): ResultPage<OrderInfo> {
+        var condition: org.jooq.Condition = org.jooq.impl.DSL.trueCondition()
+
+        // Add search term filter (order number, user login, user first name, user last name)
+        if (!searchTerm.isNullOrBlank()) {
+            val searchLower = searchTerm.lowercase()
+            condition = condition.and(
+                org.jooq.impl.DSL.lower(ORDERS.ORDER_NUMBER).contains(searchLower)
+                    .or(org.jooq.impl.DSL.lower(USERS.LOGIN).contains(searchLower))
+                    .or(org.jooq.impl.DSL.lower(USERS.FIRST_NAME).contains(searchLower))
+                    .or(org.jooq.impl.DSL.lower(USERS.LAST_NAME).contains(searchLower))
+            )
+        }
+
+        // Add state filter
+        if (!stateFilter.isNullOrBlank()) {
+            condition = condition.and(ORDERS.STATE.eq(stateFilter))
+        }
+
+        // First get total count with filters
+        val totalCount = dsl.selectCount()
+            .from(ORDERS)
+            .leftJoin(USERS).on(ORDERS.CREATED_BY.eq(USERS.ID))
+            .where(condition)
+            .fetchOne(0, Long::class.java) ?: 0L
+
+        // Get paginated order IDs with filters
+        val orderIds = dsl.select(ORDERS.ID)
+            .from(ORDERS)
+            .leftJoin(USERS).on(ORDERS.CREATED_BY.eq(USERS.ID))
+            .where(condition)
+            .orderBy(ORDERS.CREATED.desc())
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .fetch(ORDERS.ID)
+
+        if (orderIds.isEmpty()) {
+            return ResultPage(emptyList(), pagination.withTotalCount(totalCount))
+        }
+
+        // Now get full order data for these specific order IDs
+        val records = dsl.select(
+            ORDERS.ID,
+            ORDERS.ORDER_NUMBER,
+            ORDERS.CREATED,
+            ORDERS.STATE,
+            ORDERS.PAID_TIME,
+            ORDERS.PAYMENT_METHOD,
+            ORDERS.NOTES,
+            USERS.ID,
+            USERS.FIRST_NAME,
+            USERS.LAST_NAME,
+            USERS.LOGIN,
+            ORDER_ITEMS.ID,
+            ORDER_ITEMS.QUANTITY,
+            ORDER_ITEMS.PRODUCT_ID,
+            ORDER_ITEMS.PRICE,
+            ORDER_ITEMS.DOWNLOADED,
+            PRODUCTS.TITLE
+        )
+            .from(ORDERS)
+            .leftJoin(USERS).on(ORDERS.CREATED_BY.eq(USERS.ID))
+            .leftJoin(ORDER_ITEMS).on(ORDERS.ID.eq(ORDER_ITEMS.ORDER_ID))
+            .leftJoin(PRODUCTS).on(ORDER_ITEMS.PRODUCT_ID.eq(PRODUCTS.ID))
+            .where(ORDERS.ID.`in`(orderIds))
+            .orderBy(ORDERS.CREATED.desc())
+            .fetch()
+
+        val orders = records.groupBy { requireNotNull(it[ORDERS.ID]) }.map { (orderId, groupedRecords) ->
+            val orderUserId = groupedRecords.first()[USERS.ID]
+            val items = groupedRecords.map { record ->
+                OrderItemInfo(
+                    id = requireNotNull(record[ORDER_ITEMS.ID]),
+                    productId = requireNotNull(record[ORDER_ITEMS.PRODUCT_ID]),
+                    productName = requireNotNull(record[PRODUCTS.TITLE]),
+                    quantity = requireNotNull(record[ORDER_ITEMS.QUANTITY]),
+                    price = Price(requireNotNull(record[ORDER_ITEMS.PRICE]), Price.DEFAULT_CURRENCY),
+                    downloaded = record[ORDER_ITEMS.DOWNLOADED]
+                )
+            }
+            OrderInfo(
+                id = orderId,
+                orderNumber = requireNotNull(groupedRecords.first()[ORDERS.ORDER_NUMBER]),
+                createdBy = orderUserId?.let { UserInfo(
+                    id = it,
+                    name = "${groupedRecords.first()[USERS.FIRST_NAME]} ${groupedRecords.first()[USERS.LAST_NAME]}",
+                    login = requireNotNull(groupedRecords.first()[USERS.LOGIN])
+                )},
+                orderTime = requireNotNull(groupedRecords.first()[ORDERS.CREATED]),
+                items = items,
+                state = OrderState.valueOf(requireNotNull(groupedRecords.first()[ORDERS.STATE])),
+                price = items.fold(Price.ZERO) { acc, item -> acc + item.price },
+                paidTime = groupedRecords.first()[ORDERS.PAID_TIME],
+                paymentMethod = groupedRecords.first()[ORDERS.PAYMENT_METHOD],
+                notes = groupedRecords.first()[ORDERS.NOTES]
+            )
+        }
+
+        return ResultPage(orders, pagination.withTotalCount(totalCount))
+    }
+
     fun findOrdersByUserId(userId: String): List<OrderInfo> {
         return findOrdersWithFilter(userId)
     }

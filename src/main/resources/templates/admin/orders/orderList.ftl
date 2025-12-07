@@ -7,6 +7,34 @@
   <strong>Total orders:</strong> ${resultPage.pagination.totalCount!0}
 </div>
 
+<!-- Search and Filter Form -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/admin/orders" class="row g-3">
+      <div class="col-md-5">
+        <label for="searchInput" class="form-label">Search</label>
+        <input type="text" class="form-control" id="searchInput" name="search"
+               placeholder="Search by order number, user login, or user name..."
+               value="${searchTerm}">
+      </div>
+      <div class="col-md-3">
+        <label for="stateFilter" class="form-label">State</label>
+        <select class="form-select" id="stateFilter" name="state">
+          <option value="">All States</option>
+          <#list orderStates as state>
+            <option value="${state}" <#if stateFilter == state>selected</#if>>${state}</option>
+          </#list>
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+        <a href="/admin/orders" class="btn btn-secondary">Clear</a>
+      </div>
+    </form>
+    <small class="text-muted mt-2 d-block">Search searches in order number, user login, first name, and last name</small>
+  </div>
+</div>
+
 <table class="table table-sm admin-table">
   <thead>
     <tr>
@@ -67,6 +95,14 @@
   </tbody>
 </table>
 
-<@pag.pagination resultPage.pagination />
+<#-- Preserve search and filter parameters in pagination -->
+<#assign additionalParams = "">
+<#if searchTerm?has_content>
+  <#assign additionalParams = additionalParams + "&search=" + searchTerm?url>
+</#if>
+<#if stateFilter?has_content>
+  <#assign additionalParams = additionalParams + "&state=" + stateFilter?url>
+</#if>
+<@pag.pagination resultPage.pagination additionalParams />
 
 </@layout.page>

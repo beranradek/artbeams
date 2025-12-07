@@ -48,6 +48,36 @@ class ProductRepository(
         return ResultPage(products, pagination.withTotalCount(totalCount))
     }
 
+    fun searchProducts(searchTerm: String?, pagination: Pagination): ResultPage<Product> {
+        var condition: org.jooq.Condition = org.jooq.impl.DSL.trueCondition()
+
+        // Add search term filter (title, slug, subtitle)
+        if (!searchTerm.isNullOrBlank()) {
+            val searchLower = searchTerm.lowercase()
+            condition = condition.and(
+                org.jooq.impl.DSL.lower(PRODUCTS.TITLE).contains(searchLower)
+                    .or(org.jooq.impl.DSL.lower(PRODUCTS.SLUG).contains(searchLower))
+                    .or(org.jooq.impl.DSL.lower(PRODUCTS.SUBTITLE).contains(searchLower))
+            )
+        }
+
+        // Get total count with filters
+        val totalCount = dsl.selectCount()
+            .from(table)
+            .where(condition)
+            .fetchOne(0, Long::class.java) ?: 0L
+
+        // Get paginated products with filters
+        val products = dsl.selectFrom(table)
+            .where(condition)
+            .orderBy(PRODUCTS.TITLE)
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .fetch(mapper)
+
+        return ResultPage(products, pagination.withTotalCount(totalCount))
+    }
+
     fun findBySlug(slug: String): Product? =
         dsl.selectFrom(table)
             .where(PRODUCTS.SLUG.eq(slug))

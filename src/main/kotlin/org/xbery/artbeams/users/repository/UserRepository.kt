@@ -53,6 +53,49 @@ class UserRepository(
         return ResultPage(records, pagination.withTotalCount(totalCount))
     }
 
+    fun searchUsers(searchTerm: String?, roleFilter: String?, pagination: Pagination): ResultPage<User> {
+        var condition: org.jooq.Condition = org.jooq.impl.DSL.trueCondition()
+
+        // Add search term filter (login, email, firstName, lastName)
+        if (!searchTerm.isNullOrBlank()) {
+            val searchLower = searchTerm.lowercase()
+            condition = condition.and(
+                org.jooq.impl.DSL.lower(USERS.LOGIN).contains(searchLower)
+                    .or(org.jooq.impl.DSL.lower(USERS.EMAIL).contains(searchLower))
+                    .or(org.jooq.impl.DSL.lower(USERS.FIRST_NAME).contains(searchLower))
+                    .or(org.jooq.impl.DSL.lower(USERS.LAST_NAME).contains(searchLower))
+            )
+        }
+
+        // Add role filter (requires JOIN with user_role table)
+        if (!roleFilter.isNullOrBlank()) {
+            val userRole = org.xbery.artbeams.jooq.schema.tables.references.USER_ROLE
+            condition = condition.and(
+                USERS.ID.`in`(
+                    dsl.select(userRole.USER_ID)
+                        .from(userRole)
+                        .where(userRole.ROLE_ID.eq(roleFilter))
+                )
+            )
+        }
+
+        // Get total count with filters
+        val totalCount = dsl.selectCount()
+            .from(table)
+            .where(condition)
+            .fetchOne(0, Long::class.java) ?: 0L
+
+        // Get paginated records with filters
+        val records = dsl.selectFrom(table)
+            .where(condition)
+            .orderBy(USERS.MODIFIED.desc())
+            .limit(pagination.limit)
+            .offset(pagination.offset)
+            .fetch(mapper)
+
+        return ResultPage(records, pagination.withTotalCount(totalCount))
+    }
+
     /**
      * Returns user by id, including roles.
      */

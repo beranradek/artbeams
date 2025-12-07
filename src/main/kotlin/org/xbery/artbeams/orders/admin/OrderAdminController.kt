@@ -33,14 +33,22 @@ class OrderAdminController(
     fun list(
         @RequestParam("offset", defaultValue = "0") offset: Int,
         @RequestParam("limit", defaultValue = "20") limit: Int,
+        @RequestParam("search", required = false) searchTerm: String?,
+        @RequestParam("state", required = false) stateFilter: String?,
         request: HttpServletRequest
     ): Any {
         val pagination = Pagination(offset, limit)
-        val resultPage = orderService.findOrders(pagination)
+        val resultPage = if (searchTerm.isNullOrBlank() && stateFilter.isNullOrBlank()) {
+            orderService.findOrders(pagination)
+        } else {
+            orderService.searchOrders(searchTerm, stateFilter, pagination)
+        }
         val model = createModel(
             request,
             "resultPage" to resultPage,
-            "orderStates" to OrderState.entries.map { it.name }
+            "orderStates" to OrderState.entries.map { it.name },
+            "searchTerm" to (searchTerm ?: ""),
+            "stateFilter" to (stateFilter ?: "")
         )
         return ModelAndView("$TplBasePath/orderList", model)
     }

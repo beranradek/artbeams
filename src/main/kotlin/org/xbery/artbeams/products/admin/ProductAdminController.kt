@@ -42,14 +42,20 @@ class ProductAdminController(
     fun list(
         @RequestParam("offset", defaultValue = "0") offset: Int,
         @RequestParam("limit", defaultValue = "20") limit: Int,
+        @RequestParam("search", required = false) searchTerm: String?,
         request: HttpServletRequest
     ): Any {
         val pagination = Pagination(offset, limit)
-        val resultPage = productRepository.findProducts(pagination)
+        val resultPage = if (searchTerm.isNullOrBlank()) {
+            productRepository.findProducts(pagination)
+        } else {
+            productRepository.searchProducts(searchTerm, pagination)
+        }
         val model = createModel(
             request,
             "resultPage" to resultPage,
-            "emptyId" to AssetAttributes.EMPTY_ID
+            "emptyId" to AssetAttributes.EMPTY_ID,
+            "searchTerm" to (searchTerm ?: "")
         )
         return ModelAndView("$tplBasePath/productList", model)
     }

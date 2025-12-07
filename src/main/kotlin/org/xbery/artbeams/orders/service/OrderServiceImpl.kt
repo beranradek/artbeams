@@ -96,6 +96,9 @@ class OrderServiceImpl(
     override fun findOrders(pagination: Pagination): ResultPage<OrderInfo> =
         orderRepository.findOrders(pagination)
 
+    override fun searchOrders(searchTerm: String?, stateFilter: String?, pagination: Pagination): ResultPage<OrderInfo> =
+        orderRepository.searchOrders(searchTerm, stateFilter, pagination)
+
     override fun findOrdersByUserId(userId: String): List<OrderInfo> =
         orderRepository.findOrdersByUserId(userId)
 

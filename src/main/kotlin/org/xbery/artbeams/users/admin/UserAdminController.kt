@@ -43,14 +43,24 @@ class UserAdminController(
     fun list(
         @RequestParam("offset", defaultValue = "0") offset: Int,
         @RequestParam("limit", defaultValue = "20") limit: Int,
+        @RequestParam("search", required = false) searchTerm: String?,
+        @RequestParam("role", required = false) roleFilter: String?,
         request: HttpServletRequest
     ): Any {
         val pagination = Pagination(offset, limit)
-        val resultPage = userRepository.findUsers(pagination)
+        val resultPage = if (searchTerm.isNullOrBlank() && roleFilter.isNullOrBlank()) {
+            userRepository.findUsers(pagination)
+        } else {
+            userRepository.searchUsers(searchTerm, roleFilter, pagination)
+        }
+        val roles: List<Role> = roleRepository.findRoles()
         val model = createModel(
             request,
             "resultPage" to resultPage,
-            "emptyId" to AssetAttributes.EMPTY_ID
+            "emptyId" to AssetAttributes.EMPTY_ID,
+            "roles" to roles,
+            "searchTerm" to (searchTerm ?: ""),
+            "roleFilter" to (roleFilter ?: "")
         )
         return ModelAndView("$TplBasePath/userList", model)
     }
