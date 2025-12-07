@@ -445,7 +445,7 @@
       "Step 11: Run EXPLAIN ANALYZE on critical queries to verify index usage",
       "Step 12: Add indexes to user_activity_log table for common query patterns"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
@@ -595,7 +595,7 @@
       "Step 7: Test that login cannot be changed (or requires special verification)",
       "Step 8: Verify password change link is available"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -626,7 +626,7 @@
       "Step 7: Test with special characters",
       "Step 8: Verify pagination works with search active"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
