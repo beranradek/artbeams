@@ -181,7 +181,7 @@
       "Step 7: Verify total order count is displayed",
       "Step 8: Test sorting by order date, status, order number while paginated"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",

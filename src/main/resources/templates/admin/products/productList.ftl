@@ -1,4 +1,5 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/pagination.ftl" as pag>
 <@layout.page>
 
 <#if RequestParameters?? && RequestParameters.syncSuccess??>
@@ -22,12 +23,16 @@
   </div>
 </#if>
 
-<a class="btn btn-primary" href="/admin/products/${emptyId}/edit" role="button">New Product</a>
+<div class="mb-3">
+  <a class="btn btn-primary" href="/admin/products/${emptyId}/edit" role="button">New Product</a>
 
-<form action="/admin/products/sync-all-from-simpleshop" method="post" style="display: inline; margin-left: 10px;">
-  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-  <button type="submit" class="btn btn-info" onclick="return confirm('This will sync all products that have SimpleShop Product ID set. Continue?');">Sync All from SimpleShop</button>
-</form>
+  <form action="/admin/products/sync-all-from-simpleshop" method="post" style="display: inline; margin-left: 10px;">
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <button type="submit" class="btn btn-info" onclick="return confirm('This will sync all products that have SimpleShop Product ID set. Continue?');">Sync All from SimpleShop</button>
+  </form>
+
+  <strong style="margin-left: 20px;">Total products:</strong> ${resultPage.pagination.totalCount!0}
+</div>
 
 <table class="table table-sm admin-table">
   <thead>
@@ -42,7 +47,7 @@
     </tr>
   </thead>
   <tbody>
-<#list products as product>
+<#list resultPage.records as product>
     <tr>
         <td>${product.title!}</td>
         <td>${product.slug!}</td>
@@ -55,4 +60,7 @@
 </#list>
   </tbody>
 </table>
+
+<@pag.pagination resultPage.pagination />
+
 </@layout.page>

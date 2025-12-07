@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.products.domain.EditedProduct
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.repository.ProductRepository
@@ -37,13 +39,17 @@ class ProductAdminController(
     private val editFormDef: FormMapping<EditedProduct> = ProductForm.definition
 
     @GetMapping
-    fun list(request: HttpServletRequest): Any {
-        // TODO: Pagination
-        val products: List<Product> = productRepository.findProducts()
+    fun list(
+        @RequestParam("offset", defaultValue = "0") offset: Int,
+        @RequestParam("limit", defaultValue = "20") limit: Int,
+        request: HttpServletRequest
+    ): Any {
+        val pagination = Pagination(offset, limit)
+        val resultPage = productRepository.findProducts(pagination)
         val model = createModel(
-            request, "products"
-                    to products, "emptyId"
-                    to AssetAttributes.EMPTY_ID
+            request,
+            "resultPage" to resultPage,
+            "emptyId" to AssetAttributes.EMPTY_ID
         )
         return ModelAndView("$tplBasePath/productList", model)
     }
