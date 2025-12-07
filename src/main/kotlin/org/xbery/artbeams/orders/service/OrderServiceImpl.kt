@@ -3,6 +3,9 @@ package org.xbery.artbeams.orders.service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.xbery.artbeams.activitylog.domain.ActionType
+import org.xbery.artbeams.activitylog.domain.EntityType
+import org.xbery.artbeams.activitylog.service.UserActivityLogService
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.overview.Pagination
@@ -33,7 +36,8 @@ class OrderServiceImpl(
     private val passwordSetupMailer: PasswordSetupMailer,
     private val memberSectionMailer: MemberSectionMailer,
     private val productService: org.xbery.artbeams.products.service.ProductService,
-    private val mailingApi: org.xbery.artbeams.mailing.api.MailingApi
+    private val mailingApi: org.xbery.artbeams.mailing.api.MailingApi,
+    private val activityLogService: UserActivityLogService
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -69,6 +73,20 @@ class OrderServiceImpl(
         }
         val createdOrderWithItems = createdOrder.copy(items = createdOrderItems)
         logger.info("New order ${createdOrderWithItems.id} for user ${createdOrderWithItems.common.createdBy} was created")
+
+        // Log order creation activity
+        try {
+            activityLogService.logActivity(
+                userId = createdOrderWithItems.common.createdBy,
+                actionType = ActionType.ORDER_CREATED,
+                entityType = EntityType.ORDER,
+                entityId = createdOrderWithItems.id,
+                details = "Order number: ${createdOrderWithItems.orderNumber}"
+            )
+        } catch (e: Exception) {
+            logger.error("Failed to log order creation activity for order ${createdOrderWithItems.id}", e)
+        }
+
         return createdOrderWithItems
     }
 
@@ -144,6 +162,19 @@ class OrderServiceImpl(
             // User already has member role and password, send member section login info
             memberSectionMailer.sendMemberSectionLoginMail(user.login)
             logger.info("Sent member section login email to user ${user.login} for order $orderId")
+        }
+
+        // Log payment confirmation activity
+        try {
+            activityLogService.logActivity(
+                userId = userId,
+                actionType = ActionType.PAYMENT_CONFIRMED,
+                entityType = EntityType.ORDER,
+                entityId = orderId,
+                details = "Order number: ${order.orderNumber}"
+            )
+        } catch (e: Exception) {
+            logger.error("Failed to log payment confirmation activity for order $orderId", e)
         }
 
         return updated

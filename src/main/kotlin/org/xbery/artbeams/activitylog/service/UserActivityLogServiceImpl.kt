@@ -42,8 +42,7 @@ class UserActivityLogServiceImpl(
         entityId: String?,
         ipAddress: String?,
         userAgent: String?,
-        details: String?,
-        ctx: OperationCtx
+        details: String?
     ): UserActivityLog {
         return repository.logActivity(userId, actionType, entityType, entityId, ipAddress, userAgent, details)
     }

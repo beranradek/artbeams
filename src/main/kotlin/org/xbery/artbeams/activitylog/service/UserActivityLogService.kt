@@ -42,7 +42,6 @@ interface UserActivityLogService {
         entityId: String? = null,
         ipAddress: String? = null,
         userAgent: String? = null,
-        details: String? = null,
-        ctx: OperationCtx
+        details: String? = null
     ): UserActivityLog
 }

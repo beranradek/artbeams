@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
+import org.xbery.artbeams.activitylog.domain.ActionType
+import org.xbery.artbeams.activitylog.domain.EntityType
+import org.xbery.artbeams.activitylog.service.UserActivityLogService
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
@@ -18,7 +21,8 @@ import org.xbery.artbeams.users.repository.UserRepository
 open class LoginServiceImpl(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
-    private val cmsAuthenticationProvider: CmsAuthenticationProvider
+    private val cmsAuthenticationProvider: CmsAuthenticationProvider,
+    private val activityLogService: UserActivityLogService
 ) : AbstractLoginService(), LoginService {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -32,6 +36,20 @@ open class LoginServiceImpl(
         if (authentication != null && authentication.isAuthenticated) {
             storeAuthenticated(authentication, request)
             logger.info("User ${user.login} was logged in")
+
+            // Log user activity
+            try {
+                activityLogService.logActivity(
+                    userId = user.id,
+                    actionType = ActionType.LOGIN,
+                    entityType = EntityType.USER,
+                    entityId = user.id,
+                    ipAddress = request.remoteAddr,
+                    userAgent = request.getHeader("User-Agent")
+                )
+            } catch (e: Exception) {
+                logger.error("Failed to log login activity for user ${user.login}", e)
+            }
         } else {
             logger.error("Authentication failed for user ${user.login}")
         }

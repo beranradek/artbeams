@@ -56,63 +56,6 @@
 14. Multiple TODO items in EmailValidationWarning.kt (lines 10-65)
     - Various email state validations to implement
 
----
-
-## Enhancement Specification Summary
-
-Based on `app_spec.txt`, the following NEW features need to be added:
-
-### 1. E-commerce Enhancements (6 features)
-- Variable symbol generation from order number
-- SimpleShop API validation
-- Order state management (SHIPPED status)
-- Paid time tracking (new DB column)
-- Payment method and admin notes (new DB columns)
-- Automatic mailing group subscription
-- Order history view for users
-
-### 2. Administrative Interface (4 features)
-- Pagination for users, orders, products, categories
-- Advanced search and filtering in admin lists
-- Admin email notifications for important events
-
-### 3. User Management & Security (6 features)
-- Password strength validation with zxcvbn
-- Password match validation
-- User activity logging (new DB table needed)
-- Account deletion with GDPR compliance
-- Verify user profile editing exists
-- Verify email verification flow exists
-
-### 4. Content Management (1 feature)
-- Category caching by articles
-
-### 5. Google Integrations (5 features)
-- Move API constants to configuration
-- OAuth code validation
-- Token refresh mechanism
-- Google Analytics integration
-- Google Search Console integration
-
-### 6. UI/UX Improvements (2 features)
-- Keyboard shortcuts for power users
-- Accessibility improvements (ARIA labels, screen readers)
-
-### 7. Comment System (2 features)
-- Comment notifications for authors
-- Comment search in admin
-
-### 8. Media & Localization (2 features)
-- Media library search/filtering
-- Verify localization search exists
-
-### 9. Performance (1 feature)
-- Database index review and optimization
-
-**Total: ~29 core features** spanning multiple domains
-
----
-
 ## Database Schema Changes Needed
 
 ### New Tables Required:
@@ -266,7 +209,6 @@ Based on `app_spec.txt`, the following NEW features need to be added:
 ✅ Order management (basic)
 ✅ Media file management with image transformation
 ✅ Google Docs integration
-✅ Evernote integration
 ✅ Email delivery (Mailgun)
 ✅ MailerLite webhook integration
 ✅ Contact forms with anti-spam
