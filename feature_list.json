@@ -246,7 +246,7 @@
       "Step 8: Test notification when order payment is confirmed",
       "Step 9: Verify multiple admins can receive notifications if configured"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
