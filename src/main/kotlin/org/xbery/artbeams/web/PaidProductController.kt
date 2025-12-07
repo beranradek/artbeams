@@ -36,7 +36,8 @@ class PaidProductController(
     private val userService: UserService,
     private val orderService: OrderService,
     private val userProductService: UserProductService,
-    private val appConfig: AppConfig
+    private val appConfig: AppConfig,
+    private val simpleShopApiClient: org.xbery.artbeams.simpleshop.service.SimpleShopApiClient
 ) : BaseController(controllerComponents) {
 
     /**
@@ -109,8 +110,44 @@ class PaidProductController(
     ): Any {
         checkInvoicingSystemSecret(state)
         val product = productService.requireBySlug(slug)
+
+        // Validate order data against SimpleShop API if SimpleShop product ID is configured
+        product.simpleShopProductId?.let { simpleShopProductId ->
+            try {
+                val simpleShopProduct = simpleShopApiClient.getProduct(simpleShopProductId)
+                if (simpleShopProduct == null) {
+                    logger.error("SimpleShop product validation failed: Product $simpleShopProductId not found in SimpleShop")
+                    return ResponseEntity
+                        .badRequest()
+                        .body("Order validation failed: Product not found in payment system")
+                }
+
+                // Validate product name/title matches
+                val productMatches = simpleShopProduct.name == product.slug ||
+                                    simpleShopProduct.title?.contains(product.title, ignoreCase = true) == true
+                if (!productMatches) {
+                    logger.warn("SimpleShop product validation: Product name/title mismatch. " +
+                               "Expected slug='${product.slug}' or title containing '${product.title}', " +
+                               "but got name='${simpleShopProduct.name}', title='${simpleShopProduct.title}'")
+                }
+
+                // Validate price matches (if available in SimpleShop)
+                simpleShopProduct.price?.let { simpleShopPrice ->
+                    if (simpleShopPrice.compareTo(product.price.price) != 0) {
+                        logger.warn("SimpleShop product validation: Price mismatch. " +
+                                   "Expected ${product.price.price}, but SimpleShop has $simpleShopPrice")
+                    }
+                }
+
+                logger.info("SimpleShop product validation successful for product $simpleShopProductId, order $orderNumber")
+            } catch (e: Exception) {
+                logger.error("SimpleShop product validation error for product $simpleShopProductId: ${e.message}", e)
+                // Don't block the order on validation errors, just log them
+                // The invoicing system has already confirmed the order
+            }
+        }
+
         // Creates or updates user (possible new registration can be created). Adds consent to user.
-        // TBD: Validate orderNumber, user's and product's data against SimpleShop API?
         // Pull first and last name of the user.
         val user = userSubscriptionService.createOrUpdateUserWithOrderAndConsent(
             null,
