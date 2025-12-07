@@ -32,8 +32,12 @@ class LoginActivityHandler(
     ) {
         // Log the login activity
         try {
-            val username = authentication.name
-            val user = userRepository.findByLogin(username)
+            val principal = authentication.name
+            // Principal format is "userId:login" from LoginVerificationServiceImpl
+            val userId = principal.substringBefore(":")
+            val username = principal.substringAfter(":")
+            
+            val user = userRepository.findById(userId)
 
             if (user != null) {
                 activityLogService.logActivity(
@@ -46,7 +50,7 @@ class LoginActivityHandler(
                 )
                 logger.debug("Logged login activity for user: $username")
             } else {
-                logger.warn("User not found for login: $username")
+                logger.warn("User not found for login: $username (userId: $userId)")
             }
         } catch (e: Exception) {
             logger.error("Failed to log login activity", e)
