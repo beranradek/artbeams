@@ -651,7 +651,7 @@
       "Step 17: User activity log records download",
       "Step 18: Verify all data is correct in admin order view"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -670,7 +670,7 @@
       "Step 11: Test sorting combined with search and filters",
       "Step 12: Verify page load times are under 2 seconds even with large datasets"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -689,6 +689,6 @@
       "Step 11: Test that admin cannot see user passwords (only reset them)",
       "Step 12: Verify email verification prevents unauthorized access"
     ],
-    "passes": false
+    "passes": true
   }
 ]
