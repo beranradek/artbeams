@@ -156,6 +156,47 @@
         color: #111111c2;
         /* text-transform: uppercase; */
       }
+
+      /* Accessibility: Enhanced focus indicators for keyboard navigation */
+      a:focus-visible,
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible,
+      select:focus-visible,
+      [tabindex]:focus-visible {
+        outline: 3px solid #0d6efd;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+      }
+
+      .nav-link:focus-visible {
+        outline: 2px solid #ffffff;
+        outline-offset: 2px;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .btn:focus-visible {
+        outline: 3px solid #0d6efd;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.3);
+      }
+
+      /* Skip to main content link for keyboard users */
+      .skip-to-main {
+        position: absolute;
+        left: -9999px;
+        z-index: 999;
+        padding: 10px 20px;
+        background: #0d6efd;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .skip-to-main:focus {
+        left: 10px;
+        top: 10px;
+      }
     </style>
     
     <#-- NOTE: Improvement: Embedding critical CSSs as recommended by Google PageSpeed Insights -->
@@ -167,41 +208,44 @@
     
   </head>
   <body class="d-flex flex-column h-100">
+     <!-- Skip to main content link for keyboard navigation -->
+     <a href="#main-content" class="skip-to-main">Skip to main content</a>
+     
      <!-- Navbar, not fixed to the top (fixed-top), but static with additional mb-4 (bottom padding) -->
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" role="navigation" aria-label="Main navigation">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/clenska-sekce">${xlat['member-section.title']}</a>
+        <a class="navbar-brand" href="/clenska-sekce" aria-label="Member section home">${xlat['member-section.title']}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav mr-4">
+          <ul class="navbar-nav mr-4" role="menubar">
             <#if _loggedUser??>
-            <li class="nav-item">
-              <a class="nav-link" href="/clenska-sekce/moje-objednavky">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <li class="nav-item" role="none">
+              <a class="nav-link" href="/clenska-sekce/moje-objednavky" role="menuitem" aria-label="View my orders">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                   <path d="M9 11L12 14L22 4M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16"
                   stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                Moje objednávky
+                <span>Moje objednávky</span>
               </a>
             </li>
-            <li class="nav-item logged-user">
-              <a class="nav-link" href="/clenska-sekce/muj-profil">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <li class="nav-item logged-user" role="none">
+              <a class="nav-link" href="/clenska-sekce/muj-profil" role="menuitem" aria-label="My profile for ${_loggedUser.login}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                   <path d="M9 15.5H7.5C6.10444 15.5 5.40665 15.5 4.83886 15.6722C3.56045 16.06 2.56004 17.0605 2.17224 18.3389C2 18.9067 2 19.6044 2 21M14.5 7.5C14.5 9.98528 12.4853 12 10 12C7.51472 12 5.5 9.98528 5.5 7.5C5.5 5.01472 7.51472 3 10 3C12.4853 3 14.5 5.01472 14.5 7.5ZM11 21L14.1014 20.1139C14.2499 20.0715 14.3241 20.0502 14.3934 20.0184C14.4549 19.9902 14.5134 19.9558 14.5679 19.9158C14.6293 19.8707 14.6839 19.8161 14.7932 19.7068L21.25 13.25C21.9404 12.5597 21.9404 11.4403 21.25 10.75C20.5597 10.0596 19.4404 10.0596 18.75 10.75L12.2932 17.2068C12.1839 17.3161 12.1293 17.3707 12.0842 17.4321C12.0442 17.4866 12.0098 17.5451 11.9816 17.6066C11.9497 17.6759 11.9285 17.7501 11.8861 17.8987L11 21Z"
                   stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span title="${_loggedUser.login}">Můj profil</span>
+                <span>Můj profil</span>
                 </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logout">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <li class="nav-item" role="none">
+              <a class="nav-link" href="/logout" role="menuitem" aria-label="Log out from member section">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                   <path d="M16 17L21 12M21 12L16 7M21 12H9M12 17C12 17.93 12 18.395 11.8978 18.7765C11.6204 19.8117 10.8117 20.6204 9.77646 20.8978C9.39496 21 8.92997 21 8 21H7.5C6.10218 21 5.40326 21 4.85195 20.7716C4.11687 20.4672 3.53284 19.8831 3.22836 19.1481C3 18.5967 3 17.8978 3 16.5V7.5C3 6.10217 3 5.40326 3.22836 4.85195C3.53284 4.11687 4.11687 3.53284 4.85195 3.22836C5.40326 3 6.10218 3 7.5 3H8C8.92997 3 9.39496 3 9.77646 3.10222C10.8117 3.37962 11.6204 4.18827 11.8978 5.22354C12 5.60504 12 6.07003 12 7"
                   stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                ${xlat['logout']}
+                <span>${xlat['logout']}</span>
               </a>
             </li>
             </#if>
@@ -210,7 +254,7 @@
       </div>
     </nav>
 
-    <main role="main" class="container page-content">
+    <main role="main" class="container page-content" id="main-content" aria-label="Main content">
         <#nested/>
     </main><!-- /.container -->
     
