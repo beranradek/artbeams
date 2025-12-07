@@ -355,7 +355,7 @@
       "Step 10: Verify shortcuts don't interfere with form inputs",
       "Step 11: Test on different browsers and operating systems"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -521,7 +521,7 @@
       "Step 7: Verify overlay background dims the content below",
       "Step 8: Test on different screen sizes"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
