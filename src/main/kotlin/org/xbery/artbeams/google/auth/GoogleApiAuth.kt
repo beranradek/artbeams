@@ -14,8 +14,11 @@ import com.google.api.client.util.store.FileDataStoreFactory
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.common.file.TempFiles
 import org.xbery.artbeams.config.repository.AppConfig
+import org.xbery.artbeams.error.OperationException
+import org.xbery.artbeams.google.error.GoogleErrorCode
 import java.io.File
 import java.io.IOException
 import java.io.StringReader
@@ -135,10 +138,62 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
 
     /**
      * Returns credentials if user is already authorized.
+     * Automatically refreshes access token if it's expired and refresh token is available.
      */
     fun getCredentials(scopes: List<String>): Credential {
         val flow = buildOAuth2AuthorizationCodeFlow(scopes)
-        return flow.loadCredential(applicationUserId)
+        val credential = flow.loadCredential(applicationUserId)
+        
+        // Check if access token is expired or about to expire (within 5 minutes)
+        if (credential != null && credential.expiresInSeconds != null && credential.expiresInSeconds < 300L) {
+            if (credential.refreshToken != null) {
+                logger.info("Access token expired or about to expire (${credential.expiresInSeconds}s remaining), refreshing...")
+                try {
+                    val refreshed = credential.refreshToken()
+                    if (refreshed) {
+                        logger.info("Access token successfully refreshed, new expiration: ${credential.expiresInSeconds}s")
+                    } else {
+                        logger.warn("Failed to refresh access token, may need re-authorization")
+                    }
+                } catch (e: IOException) {
+                    logger.error("Error refreshing access token: ${e.message}", e)
+                    throw OperationException(
+                        GoogleErrorCode.UNAUTHORIZED,
+                        "Failed to refresh Google API access token: ${e.message}",
+                        StatusCode.UNAUTHORIZED
+                    )
+                }
+            } else {
+                logger.warn("Access token expired but no refresh token available, re-authorization required")
+            }
+        }
+        
+        return credential
+    }
+    
+    /**
+     * Explicitly refreshes the access token using the refresh token.
+     * Returns true if refresh was successful.
+     */
+    fun refreshAccessToken(scopes: List<String>): Boolean {
+        return try {
+            val credential = getCredentials(scopes)
+            if (credential.refreshToken != null) {
+                val refreshed = credential.refreshToken()
+                if (refreshed) {
+                    logger.info("Access token manually refreshed, new expiration: ${credential.expiresInSeconds}s")
+                } else {
+                    logger.warn("Manual token refresh returned false")
+                }
+                refreshed
+            } else {
+                logger.warn("No refresh token available, cannot refresh access token")
+                false
+            }
+        } catch (e: IOException) {
+            logger.error("Error during manual token refresh: ${e.message}", e)
+            false
+        }
     }
 
     /**
