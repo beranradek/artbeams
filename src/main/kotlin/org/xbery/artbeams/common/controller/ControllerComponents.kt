@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.access.service.UserAccessService
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.context.OriginStamp
+import org.xbery.artbeams.config.service.ConfigService
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.LoginService
@@ -21,6 +22,7 @@ open class ControllerComponents(
   val loginService: LoginService,
   val userAccessService: UserAccessService,
   val localisationRepository: LocalisationRepository,
+  val configService: ConfigService,
   val freemarkerConfig: Configuration
 ) {
   open fun getLoggedUser(request: HttpServletRequest): User? {

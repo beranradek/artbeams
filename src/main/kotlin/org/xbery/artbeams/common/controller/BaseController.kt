@@ -43,6 +43,13 @@ abstract class BaseController(private val common: ControllerComponents) {
             model["_loggedUser"] = loggedUser
         }
         model["xlat"] = common.localisationRepository.getEntries()
+
+        // Google Analytics tracking ID (if configured)
+        val gaTrackingId = common.configService.findByKey("ga.tracking.id")?.entryValue
+        if (!gaTrackingId.isNullOrBlank()) {
+            model["_gaTrackingId"] = gaTrackingId
+        }
+
         for (arg in args) {
             val second = arg.second
             if (second != null) {

@@ -170,6 +170,22 @@ ${websiteJsonLd}
 
   <#include "/commonScripts.ftl">
 
+  <#-- Google Analytics tracking - only for public pages (not admin) -->
+  <#if _gaTrackingId?? && !(_loggedUser?? && _loggedUser.roleNames?seq_contains("admin"))>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${_gaTrackingId}" nonce="${_cspNonce}"></script>
+  <script nonce="${_cspNonce}">
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${_gaTrackingId}', {
+      'anonymize_ip': true,
+      'cookie_flags': 'SameSite=None;Secure'
+    });
+  </script>
+  <!-- End Google Analytics -->
+  </#if>
+
   </head>
   <body class="d-flex flex-column h-100" id="body-element">
     
