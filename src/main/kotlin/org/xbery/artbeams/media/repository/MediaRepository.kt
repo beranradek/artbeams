@@ -290,7 +290,7 @@ class MediaRepository(
     open fun listFiles(): List<FileData> {
         val files = mutableListOf<FileData>()
         dataSource.connection.use { conn ->
-            conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media")
+            conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media ORDER BY filename")
                 .use { ps ->
                     ps.executeQuery().use { rs ->
                         while (rs.next()) {
@@ -314,6 +314,78 @@ class MediaRepository(
                         }
                     }
                 }
+        }
+        return files.toList()
+    }
+
+    /**
+     * Search files with optional filters.
+     * @param searchTerm optional filename search (case-insensitive)
+     * @param contentTypeFilter optional content type filter (e.g., "image/", "application/pdf")
+     * @param privateAccessFilter optional private access filter
+     */
+    open fun searchFiles(
+        searchTerm: String?,
+        contentTypeFilter: String?,
+        privateAccessFilter: Boolean?
+    ): List<FileData> {
+        val files = mutableListOf<FileData>()
+
+        // Build dynamic SQL query
+        val conditions = mutableListOf<String>()
+        if (!searchTerm.isNullOrBlank()) {
+            conditions.add("LOWER(filename) LIKE ?")
+        }
+        if (!contentTypeFilter.isNullOrBlank()) {
+            conditions.add("content_type LIKE ?")
+        }
+        if (privateAccessFilter != null) {
+            conditions.add("private_access = ?")
+        }
+
+        val whereClause = if (conditions.isNotEmpty()) {
+            " WHERE " + conditions.joinToString(" AND ")
+        } else {
+            ""
+        }
+
+        val sql = "SELECT filename, content_type, size, private_access, width, height FROM media$whereClause ORDER BY filename"
+
+        dataSource.connection.use { conn ->
+            conn.prepareStatement(sql).use { ps ->
+                var paramIndex = 1
+                if (!searchTerm.isNullOrBlank()) {
+                    ps.setString(paramIndex++, "%${searchTerm.lowercase()}%")
+                }
+                if (!contentTypeFilter.isNullOrBlank()) {
+                    ps.setString(paramIndex++, "$contentTypeFilter%")
+                }
+                if (privateAccessFilter != null) {
+                    ps.setBoolean(paramIndex++, privateAccessFilter)
+                }
+
+                ps.executeQuery().use { rs ->
+                    while (rs.next()) {
+                        val filename = rs.getString(1)
+                        val contentType = rs.getString(2)
+                        val size = rs.getLong(3)
+                        val privateAccess = rs.getBoolean(4)
+                        val width = rs.getInt(5)
+                        val height = rs.getInt(6)
+                        files.add(
+                            FileData(
+                                filename,
+                                contentType ?: MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                                size,
+                                ByteArray(0),
+                                privateAccess,
+                                width,
+                                height
+                            )
+                        )
+                    }
+                }
+            }
         }
         return files.toList()
     }

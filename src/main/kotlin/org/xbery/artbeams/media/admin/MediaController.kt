@@ -32,10 +32,18 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
     private val mediaFileUploadFormDef: FormMapping<UploadedMediaFile> = MediaFileUploadForm.definition
 
     @GetMapping("/admin/media")
-    fun listFiles(request: HttpServletRequest): Any {
+    fun listFiles(
+        request: HttpServletRequest,
+        @RequestParam("search", required = false) searchTerm: String?,
+        @RequestParam("contentType", required = false) contentTypeFilter: String?,
+        @RequestParam("privateAccess", required = false) privateAccessFilter: Boolean?
+    ): Any {
         return listFilesWithVariables(
             request,
-            variablesForMediaFileUploadForm(UploadedMediaFile.Empty, ValidationResult.empty, null)
+            variablesForMediaFileUploadForm(UploadedMediaFile.Empty, ValidationResult.empty, null),
+            searchTerm,
+            contentTypeFilter,
+            privateAccessFilter
         )
     }
 
@@ -153,9 +161,25 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
         )
     }
 
-    private fun listFilesWithVariables(request: HttpServletRequest, vars: List<Pair<String, Any?>>): Any {
-        val files = mediaRepository.listFiles()
-        val model = createModel(request, Pair("files", files))
+    private fun listFilesWithVariables(
+        request: HttpServletRequest,
+        vars: List<Pair<String, Any?>>,
+        searchTerm: String? = null,
+        contentTypeFilter: String? = null,
+        privateAccessFilter: Boolean? = null
+    ): Any {
+        val files = if (searchTerm.isNullOrBlank() && contentTypeFilter.isNullOrBlank() && privateAccessFilter == null) {
+            mediaRepository.listFiles()
+        } else {
+            mediaRepository.searchFiles(searchTerm, contentTypeFilter, privateAccessFilter)
+        }
+        val model = createModel(
+            request,
+            Pair("files", files),
+            Pair("searchTerm", searchTerm ?: ""),
+            Pair("contentTypeFilter", contentTypeFilter ?: ""),
+            Pair("privateAccessFilter", privateAccessFilter?.toString() ?: "")
+        )
         vars.forEach { v -> model[v.first] = v.second }
         return ModelAndView("$tplBasePath/fileList", model)
     }

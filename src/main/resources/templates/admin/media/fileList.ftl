@@ -4,6 +4,42 @@
   <div class="alert alert-danger" role="alert">${mediaFileUploadFormErrorMessage}</div>
 </#if>
 
+<!-- Search and Filter Form -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="GET" action="/admin/media" class="row g-3">
+      <div class="col-md-4">
+        <label for="searchInput" class="form-label">Search by filename</label>
+        <input type="text" class="form-control" id="searchInput" name="search"
+               placeholder="Enter filename..."
+               value="${searchTerm!""}">
+      </div>
+      <div class="col-md-3">
+        <label for="contentTypeFilter" class="form-label">Content Type</label>
+        <select class="form-select" id="contentTypeFilter" name="contentType">
+          <option value="">All Types</option>
+          <option value="image/" <#if contentTypeFilter?? && contentTypeFilter == "image/">selected</#if>>Images</option>
+          <option value="application/pdf" <#if contentTypeFilter?? && contentTypeFilter == "application/pdf">selected</#if>>PDF</option>
+          <option value="application/" <#if contentTypeFilter?? && contentTypeFilter == "application/">selected</#if>>Applications</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="privateAccessFilter" class="form-label">Access</label>
+        <select class="form-select" id="privateAccessFilter" name="privateAccess">
+          <option value="">All</option>
+          <option value="false" <#if privateAccessFilter?? && privateAccessFilter == "false">selected</#if>>Public</option>
+          <option value="true" <#if privateAccessFilter?? && privateAccessFilter == "true">selected</#if>>Private</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-flex align-items-end gap-2">
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+        <a href="/admin/media" class="btn btn-secondary">Clear</a>
+      </div>
+    </form>
+    <small class="text-muted mt-2 d-block">Search by filename (case-insensitive)</small>
+  </div>
+</div>
+
 <form action="/admin/media/upload" method="POST" enctype="multipart/form-data">
     <input type="file" name="${mediaFileUploadForm.fields.file.name}" />
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
