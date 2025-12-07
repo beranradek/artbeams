@@ -149,7 +149,7 @@
       "Step 10: Test filtering log by user, date range, and action type",
       "Step 11: Verify log entries are properly indexed for performance"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -166,7 +166,7 @@
       "Step 9: Verify email is sent confirming account deletion",
       "Step 10: Test as admin - verify deleted user appears in audit log"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -262,7 +262,7 @@
       "Step 8: Test cache warming on application startup",
       "Step 9: Test cache eviction policy under memory pressure"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
