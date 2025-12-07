@@ -320,7 +320,7 @@
       "Step 8: Test that tracking respects user cookie consent settings",
       "Step 9: Verify tracking works in production but can be disabled for local development"
     ],
-    "passes": true
+    "passes": false
   },
   {
     "category": "functional",
