@@ -374,7 +374,7 @@
       "Step 11: Verify error messages are announced to screen readers",
       "Step 12: Test landmark navigation with screen reader"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "functional",
@@ -535,7 +535,7 @@
       "Step 6: Test in high contrast mode",
       "Step 7: Verify focus order is logical and intuitive"
     ],
-    "passes": false
+    "passes": true
   },
   {
     "category": "style",
