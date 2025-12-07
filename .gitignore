@@ -18,6 +18,15 @@ dist
 .sc
 .mcp.json
 
+# Verification tests
+verification_*.png
+verify.test.js
+
+# Node modules
+node_modules/
+package-lock.json
+package.json
+
 # Eclipse
 .cache
 .classpath
