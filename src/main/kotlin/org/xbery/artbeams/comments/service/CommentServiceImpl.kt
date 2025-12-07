@@ -28,7 +28,8 @@ class CommentServiceImpl(
     private val articleRepository: ArticleRepository,
     private val userRepository: UserRepository,
     private val mailSender: MailgunMailSender,
-    private val spamDetector: SpamDetector
+    private val spamDetector: SpamDetector,
+    private val appConfig: org.xbery.artbeams.config.repository.AppConfig
 ) : CommentService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
@@ -52,7 +53,10 @@ class CommentServiceImpl(
                 var comment =
                     approvedOrWaiting(Comment.EMPTY.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent))
                 comment = commentRepository.create(comment)
-                sendNewCommentNotification(comment)
+                // Only send notification if comment is approved (not spam)
+                if (comment.state == CommentState.APPROVED) {
+                    sendNewCommentNotification(comment)
+                }
                 comment
             } else {
                 val comment = commentRepository.requireById(edited.id)
@@ -82,7 +86,17 @@ class CommentServiceImpl(
     @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
     override fun updateCommentState(id: String, state: CommentState): Boolean {
         logger.info("Updating state of comment $id to $state")
-        return commentRepository.updateState(id, state)
+
+        // Get comment before update to check if transitioning from WAITING to APPROVED
+        val comment = commentRepository.findById(id)
+        val updated = commentRepository.updateState(id, state)
+
+        // Send notification if spam comment is manually approved
+        if (updated && comment != null && comment.state == CommentState.WAITING_FOR_APPROVAL && state == CommentState.APPROVED) {
+            sendNewCommentNotification(comment.copy(state = state))
+        }
+
+        return updated
     }
 
     private fun approvedOrWaiting(comment: Comment): Comment {
@@ -101,21 +115,49 @@ class CommentServiceImpl(
                 val article = articleRepository.findById(articleId)
                 if (article != null) {
                     val user = userRepository.findById(article.createdBy)
-                    if (user != null) {
-                        if (user.login.isNotEmpty()) {
-                            val subject: String =
-                                normalizationHelper.removeDiacriticalMarks("New comment for ${article.title}")
-                            val body: String =
-                                normalizationHelper.removeDiacriticalMarks("User ${comment.userName}/${comment.email} " +
-                                    "commented:\n\n${comment.comment}\n\n" +
-                                    "comment state: ${comment.state}"
-                                )
-                            mailSender.sendMailWithText(user.login, subject, body)
-                        } else {
-                            logger.warn("Author ${user.login}/${user.firstName} ${user.lastName} has no email set.")
-                        }
+                    if (user != null && user.email != null && user.email.isNotEmpty()) {
+                        // Get base URL from configuration
+                        val baseUrl = appConfig.findConfig("web.baseUrl") ?: "http://localhost:8080"
+                        val articleUrl = "$baseUrl/${article.slug}"
+
+                        val subject: String =
+                            normalizationHelper.removeDiacriticalMarks("Novy komentar k clanku: ${article.title}")
+
+                        // Create HTML email with article link
+                        val htmlBody: String = """
+                            <html>
+                            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                                <h2 style="color: #2c5aa0;">Novy komentar k vasemu clanku</h2>
+                                <p><strong>Clanek:</strong> ${normalizationHelper.removeDiacriticalMarks(article.title)}</p>
+                                <p><strong>Autor komentare:</strong> ${normalizationHelper.removeDiacriticalMarks(comment.userName)}</p>
+                                ${if (comment.email.isNotEmpty()) "<p><strong>Email:</strong> ${comment.email}</p>" else ""}
+
+                                <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #2c5aa0; margin: 20px 0;">
+                                    <p style="margin: 0;"><strong>Komentar:</strong></p>
+                                    <p style="margin: 10px 0 0 0;">${normalizationHelper.removeDiacriticalMarks(comment.comment).replace("\n", "<br>")}</p>
+                                </div>
+
+                                <p style="margin-top: 20px;">
+                                    <a href="${articleUrl}" style="background-color: #2c5aa0; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                                        Zobrazit clanek a komentar
+                                    </a>
+                                </p>
+
+                                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                                <p style="font-size: 12px; color: #666;">
+                                    Tato notifikace byla odeslana, protoze jste autorem clanku.
+                                </p>
+                            </body>
+                            </html>
+                        """.trimIndent()
+
+                        mailSender.sendMailWithHtml(user.email, subject, htmlBody)
+                        logger.info("Comment notification sent to ${user.email} for article '${article.title}'")
                     } else {
-                        logger.warn("Article ${article.title} has no author (createdBy) set.")
+                        val login = user?.login ?: "unknown"
+                        val firstName = user?.firstName ?: ""
+                        val lastName = user?.lastName ?: ""
+                        logger.warn("Author $login/$firstName $lastName has no email set.")
                     }
                 }
             }

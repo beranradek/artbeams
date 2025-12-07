@@ -69,6 +69,30 @@ open class MailgunMailSender(
         }
     }
 
+    open fun sendMailWithHtml(recipientEmail: String, subject: String, htmlBody: String, replyTo: String? = null) {
+        logger.info("Sending HTML email $subject to $recipientEmail")
+        try {
+            val message = Message.builder()
+                .from(mailerConfig.getFrom())
+                .replyTo(replyTo ?: mailerConfig.getReplyTo())
+                .to(recipientEmail)
+                .subject(subject)
+                .html(htmlBody)
+                .build()
+            mailgunMessagesApi.sendMessage(
+                mailerConfig.getDomain(),
+                message
+            )
+            logger.info("Email $subject to $recipientEmail was sent successfully.")
+        } catch (ex: FeignException) {
+            logMailerException(subject, recipientEmail, ex)
+            throw ex
+        } catch (ex: Exception) {
+            logMailerException(subject, recipientEmail, ex)
+            throw ex
+        }
+    }
+
     private fun logMailerException(subject: String, recipientEmail: String, ex: FeignException) {
         logger.error("Error while sending email $subject to $recipientEmail by calling ${mailerConfig.getApiBaseUrl()}.\n" +
                 "Response status: ${ex.status()}, headers: ${
