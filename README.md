@@ -3,7 +3,7 @@
 **Open source CMS** for blogs with admin interface. Simple, functional.
 
 Built with Spring Boot framework, Kotlin language, JOOQ (and PostgreSQL) for persistence layer, 
-Spring Security, Spring MVC for handling requests, Apache FreeMarker and Bootstrap templates, Formio form definition, binding and validation library (http://www.formio.net/documentation/), 
+Spring Security, Spring MVC for handling requests, Apache FreeMarker and Bootstrap templates, Formio form definition, binding and validation library (https://github.com/beranradek/formio), 
 Google APIs for integration with Google Docs, Browscap for browser detection,
 HttpClient and Jackson for integration with JSON APIs, 
 zxcvbn library for password strength estimation, 
