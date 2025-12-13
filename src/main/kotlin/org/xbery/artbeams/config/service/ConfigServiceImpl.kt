@@ -19,14 +19,45 @@ open class ConfigServiceImpl(
     private val appConfig: AppConfig
 ) : ConfigService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    
+    private val sensitiveKeyPatterns = listOf(
+        "secret", "secretkey", "password", "salt", "token", 
+        "google.oauth.client.json", "api.key", "apikey",
+        "client.secret", "private.key", "privatekey"
+    )
+    
+    private fun isSensitiveKey(key: String): Boolean {
+        val lowerKey = key.lowercase()
+        return sensitiveKeyPatterns.any { pattern ->
+            lowerKey.contains(pattern.lowercase())
+        }
+    }
 
     override fun findConfigs(pagination: Pagination, search: String?): ResultPage<Config> {
         logger.info("Finding configs with pagination: offset=${pagination.offset}, limit=${pagination.limit}, search=$search")
-        return configRepository.findConfigs(pagination, search)
+        val resultPage = configRepository.findConfigs(pagination, search)
+        
+        // Mask sensitive values for admin display
+        val maskedConfigs = resultPage.records.map { config ->
+            if (isSensitiveKey(config.entryKey)) {
+                config.copy(entryValue = "*****")
+            } else {
+                config
+            }
+        }
+        
+        return ResultPage(maskedConfigs, resultPage.pagination)
     }
 
     override fun findByKey(entryKey: String): Config? {
-        return configRepository.findByKey(entryKey)
+        val config = configRepository.findByKey(entryKey)
+        return config?.let { 
+            if (isSensitiveKey(it.entryKey)) {
+                it.copy(entryValue = "*****")
+            } else {
+                it
+            }
+        }
     }
 
     override fun saveConfig(edited: EditedConfig): Config {
