@@ -106,7 +106,12 @@ abstract class BaseController(private val common: ControllerComponents) {
     fun errorResponse(request: HttpServletRequest, operationEx: OperationException): Any {
         logger.error("Error during processing the request: ${operationEx.message}", operationEx)
         val status = statusCodeToHttpStatus(operationEx.statusCode)
-        val model = createModel(request, "status" to status.value())
+        val model = createModel(
+            request, 
+            "status" to status.value(),
+            "errorCode" to operationEx.errorCode.code,
+            "errorMessage" to operationEx.message
+        )
         return ModelAndView("error", model, status)
     }
 

@@ -8,10 +8,12 @@ import java.math.BigDecimal
 import java.time.Instant
 
 import kotlin.collections.Collection
+import kotlin.collections.List
 
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -32,6 +34,7 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_PRODUCTS_SLUG
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C
 import org.xbery.artbeams.jooq.schema.keys.ORDERED_PRODUCT_FK
 import org.xbery.artbeams.jooq.schema.keys.PRODUCT_FK
@@ -189,6 +192,7 @@ open class Products(
         override fun `as`(alias: Table<*>): ProductsPath = ProductsPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_PRODUCTS_SLUG)
     override fun getPrimaryKey(): UniqueKey<ProductsRecord> = CONSTRAINT_C
 
     private lateinit var _orderItems: OrderItemsPath

@@ -6,7 +6,7 @@ import org.xbery.artbeams.common.Dates
 import org.xbery.artbeams.common.access.domain.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.records.UserAccessRecord
 import org.xbery.artbeams.jooq.schema.tables.references.USER_ACCESS
-import kotlinx.datetime.toJavaZoneId
+import java.time.ZoneId
 
 /**
  * @author Radek Beran
@@ -18,7 +18,7 @@ class UserAccessUnmapper : RecordUnmapper<UserAccess, UserAccessRecord> {
         val record = USER_ACCESS.newRecord()
         record.id = access.id
         record.accessTime = access.time
-        record.accessDate = access.time.atZone(Dates.DEFAULT_TIME_ZONE.toJavaZoneId()).toLocalDate()
+        record.accessDate = access.time.atZone(ZoneId.of(Dates.APP_ZONE_ID)).toLocalDate()
         record.ip = access.ip
         record.userAgent = access.userAgent
         record.entityType = access.entityKey.entityType

@@ -1,7 +1,7 @@
 package org.xbery.artbeams.common.authcode.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.datetime.Clock
+import java.time.Instant
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
 import org.xbery.artbeams.common.authcode.domain.TokenPayload
@@ -68,13 +68,13 @@ class AuthorizationCodeGenerator(
         characterSource: String = DEFAULT_CHARACTER_SOURCE
     ): AuthorizationCode {
         logger.info("Generating authorization code for purpose $purpose and user $userId")
-        val currentTime = Clock.System.now()
+        val currentTime = Instant.now()
         val code = AuthorizationCode(
             SecureTokens.generate(length, characterSource),
             purpose,
             userId,
             currentTime,
-            currentTime.plus(getCodeValidityDuration(purpose)),
+            currentTime.plusSeconds(getCodeValidityDuration(purpose).inWholeSeconds),
             null
         )
         logger.info("Storing authorization code for purpose $purpose and user $userId")

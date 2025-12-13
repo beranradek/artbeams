@@ -10,5 +10,6 @@ enum class CommonErrorCode(override val code: String) : ErrorCode {
     INVALID_INPUT("invalid-input"),
     INTERNAL_ERROR("internal-error"),
     UNAUTHORIZED_ACCESS("unauthorized-access"),
-    FORBIDDEN("forbidden")
+    FORBIDDEN("forbidden"),
+    CONSENT_REQUIRED("consent-required")
 }

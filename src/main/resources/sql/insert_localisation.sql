@@ -119,3 +119,7 @@ INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Email.mes
 INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Phone.message', 'Zadejte prosím validní telefonní číslo.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.URL.message', 'Zadejte prosím validní URL adresu.');
 INSERT INTO localisation (entry_key, entry_value) VALUES ('constraints.Comment.message', 'Komentář obsahuje nepovolený obsah.');
+
+-- Consent-related error messages:
+INSERT INTO localisation (entry_key, entry_value) VALUES ('error.consent-required.message', 'Pro stažení produktu je třeba potvrzení souhlasu. Prosím zkontrolujte Váš profil nebo emailovou schránku a potvrďte požadované souhlasy.');
+INSERT INTO localisation (entry_key, entry_value) VALUES ('error.consent-required.title', 'Nebyl potvrzen souhlas s podmínkami.');

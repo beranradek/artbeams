@@ -1,7 +1,7 @@
 package org.xbery.artbeams.common.clock
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import java.time.Clock
+import java.time.Instant
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
 
@@ -13,14 +13,10 @@ class TestClockConfiguration {
     @Primary
     @Bean
     fun getTestClock(): Clock {
-        return FixedClock(FIXED_TIME)
+        return Clock.fixed(FIXED_TIME, java.time.ZoneOffset.UTC)
     }
 
     companion object {
-        val FIXED_TIME = Instant.parse("2024-11-25T11:16:00+02:00")
+        val FIXED_TIME = Instant.parse("2024-11-25T09:16:00Z") // Converted to UTC
     }
-}
-
-class FixedClock(private val fixedInstant: Instant) : Clock {
-    override fun now(): Instant = fixedInstant
 }

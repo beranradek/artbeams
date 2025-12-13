@@ -7,15 +7,22 @@ package org.xbery.artbeams.jooq.schema.indexes
 import org.jooq.Index
 import org.jooq.impl.DSL
 import org.jooq.impl.Internal
+import org.xbery.artbeams.jooq.schema.tables.ArticleCategory
+import org.xbery.artbeams.jooq.schema.tables.Articles
 import org.xbery.artbeams.jooq.schema.tables.AuthCode
+import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Consents
 import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
+import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
+import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
+import org.xbery.artbeams.jooq.schema.tables.UserProduct
+import org.xbery.artbeams.jooq.schema.tables.UserRole
 import org.xbery.artbeams.jooq.schema.tables.Users
 
 
@@ -24,7 +31,17 @@ import org.xbery.artbeams.jooq.schema.tables.Users
 // INDEX definitions
 // -------------------------------------------------------------------------
 
+val IDX_ARTICLE_CATEGORY_ARTICLE_ID: Index = Internal.createIndex(DSL.name("idx_article_category_article_id"), ArticleCategory.ARTICLE_CATEGORY, arrayOf(ArticleCategory.ARTICLE_CATEGORY.ARTICLE_ID), false)
+val IDX_ARTICLE_CATEGORY_CATEGORY_ID: Index = Internal.createIndex(DSL.name("idx_article_category_category_id"), ArticleCategory.ARTICLE_CATEGORY, arrayOf(ArticleCategory.ARTICLE_CATEGORY.CATEGORY_ID), false)
+val IDX_ARTICLES_CREATED: Index = Internal.createIndex(DSL.name("idx_articles_created"), Articles.ARTICLES, arrayOf(Articles.ARTICLES.CREATED), false)
+val IDX_ARTICLES_CREATED_BY: Index = Internal.createIndex(DSL.name("idx_articles_created_by"), Articles.ARTICLES, arrayOf(Articles.ARTICLES.CREATED_BY), false)
+val IDX_ARTICLES_SHOW_ON_BLOG: Index = Internal.createIndex(DSL.name("idx_articles_show_on_blog"), Articles.ARTICLES, arrayOf(Articles.ARTICLES.SHOW_ON_BLOG), false)
+val IDX_ARTICLES_SLUG: Index = Internal.createIndex(DSL.name("idx_articles_slug"), Articles.ARTICLES, arrayOf(Articles.ARTICLES.SLUG), false)
 val IDX_AUTH_CODE_USER_ID: Index = Internal.createIndex(DSL.name("idx_auth_code_user_id"), AuthCode.AUTH_CODE, arrayOf(AuthCode.AUTH_CODE.USER_ID), false)
+val IDX_CATEGORIES_SLUG: Index = Internal.createIndex(DSL.name("idx_categories_slug"), Categories.CATEGORIES, arrayOf(Categories.CATEGORIES.SLUG), false)
+val IDX_COMMENTS_CREATED: Index = Internal.createIndex(DSL.name("idx_comments_created"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.CREATED), false)
+val IDX_COMMENTS_CREATED_BY: Index = Internal.createIndex(DSL.name("idx_comments_created_by"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.CREATED_BY), false)
+val IDX_COMMENTS_EMAIL: Index = Internal.createIndex(DSL.name("idx_comments_email"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.EMAIL), false)
 val IDX_COMMENTS_ENTITY_ID: Index = Internal.createIndex(DSL.name("idx_comments_entity_id"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.ENTITY_ID), false)
 val IDX_COMMENTS_STATE: Index = Internal.createIndex(DSL.name("idx_comments_state"), Comments.COMMENTS, arrayOf(Comments.COMMENTS.STATE), false)
 val IDX_CONSENTS_LOGIN: Index = Internal.createIndex(DSL.name("idx_consents_login"), Consents.CONSENTS, arrayOf(Consents.CONSENTS.LOGIN), false)
@@ -32,9 +49,15 @@ val IDX_CONSENTS_LOGIN_TYPE_VALIDITY: Index = Internal.createIndex(DSL.name("idx
 val IDX_CONSENTS_VALIDITY: Index = Internal.createIndex(DSL.name("idx_consents_validity"), Consents.CONSENTS, arrayOf(Consents.CONSENTS.VALID_FROM, Consents.CONSENTS.VALID_TO), false)
 val IDX_MEDIA_FILENAME: Index = Internal.createIndex(DSL.name("idx_media_filename"), Media.MEDIA, arrayOf(Media.MEDIA.FILENAME), false)
 val IDX_NEWS_SUBSCRIPTION_EMAIL: Index = Internal.createIndex(DSL.name("idx_news_subscription_email"), NewsSubscription.NEWS_SUBSCRIPTION, arrayOf(NewsSubscription.NEWS_SUBSCRIPTION.EMAIL), false)
+val IDX_ORDER_ITEMS_ORDER_ID: Index = Internal.createIndex(DSL.name("idx_order_items_order_id"), OrderItems.ORDER_ITEMS, arrayOf(OrderItems.ORDER_ITEMS.ORDER_ID), false)
+val IDX_ORDER_ITEMS_PRODUCT_ID: Index = Internal.createIndex(DSL.name("idx_order_items_product_id"), OrderItems.ORDER_ITEMS, arrayOf(OrderItems.ORDER_ITEMS.PRODUCT_ID), false)
+val IDX_ORDERS_CREATED: Index = Internal.createIndex(DSL.name("idx_orders_created"), Orders.ORDERS, arrayOf(Orders.ORDERS.CREATED), false)
+val IDX_ORDERS_CREATED_BY: Index = Internal.createIndex(DSL.name("idx_orders_created_by"), Orders.ORDERS, arrayOf(Orders.ORDERS.CREATED_BY), false)
 val IDX_ORDERS_ORDER_NUMBER: Index = Internal.createIndex(DSL.name("idx_orders_order_number"), Orders.ORDERS, arrayOf(Orders.ORDERS.ORDER_NUMBER), true)
 val IDX_ORDERS_PAID_TIME: Index = Internal.createIndex(DSL.name("idx_orders_paid_time"), Orders.ORDERS, arrayOf(Orders.ORDERS.PAID_TIME), false)
 val IDX_ORDERS_PAYMENT_METHOD: Index = Internal.createIndex(DSL.name("idx_orders_payment_method"), Orders.ORDERS, arrayOf(Orders.ORDERS.PAYMENT_METHOD), false)
+val IDX_ORDERS_STATE: Index = Internal.createIndex(DSL.name("idx_orders_state"), Orders.ORDERS, arrayOf(Orders.ORDERS.STATE), false)
+val IDX_PRODUCTS_SLUG: Index = Internal.createIndex(DSL.name("idx_products_slug"), Products.PRODUCTS, arrayOf(Products.PRODUCTS.SLUG), false)
 val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)
 val IDX_QUEUE_NEXT_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_queue_next_action_time"), Queue.QUEUE, arrayOf(Queue.QUEUE.NEXT_ACTION_TIME), false)
 val IDX_USER_ACCESS_UNIQUE: Index = Internal.createIndex(DSL.name("idx_user_access_unique"), UserAccess.USER_ACCESS, arrayOf(UserAccess.USER_ACCESS.ACCESS_DATE, UserAccess.USER_ACCESS.IP, UserAccess.USER_ACCESS.USER_AGENT, UserAccess.USER_ACCESS.ENTITY_TYPE, UserAccess.USER_ACCESS.ENTITY_ID), true)
@@ -43,4 +66,11 @@ val IDX_USER_ACTIVITY_LOG_ACTION_TYPE: Index = Internal.createIndex(DSL.name("id
 val IDX_USER_ACTIVITY_LOG_ENTITY: Index = Internal.createIndex(DSL.name("idx_user_activity_log_entity"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ENTITY_TYPE, UserActivityLog.USER_ACTIVITY_LOG.ENTITY_ID), false)
 val IDX_USER_ACTIVITY_LOG_USER_ID: Index = Internal.createIndex(DSL.name("idx_user_activity_log_user_id"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.USER_ID), false)
 val IDX_USER_ACTIVITY_LOG_USER_TIME: Index = Internal.createIndex(DSL.name("idx_user_activity_log_user_time"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.USER_ID, UserActivityLog.USER_ACTIVITY_LOG.ACTION_TIME), false)
+val IDX_USER_PRODUCT_COMPOSITE: Index = Internal.createIndex(DSL.name("idx_user_product_composite"), UserProduct.USER_PRODUCT, arrayOf(UserProduct.USER_PRODUCT.USER_ID, UserProduct.USER_PRODUCT.PRODUCT_ID), false)
+val IDX_USER_PRODUCT_PRODUCT_ID: Index = Internal.createIndex(DSL.name("idx_user_product_product_id"), UserProduct.USER_PRODUCT, arrayOf(UserProduct.USER_PRODUCT.PRODUCT_ID), false)
+val IDX_USER_PRODUCT_USER_ID: Index = Internal.createIndex(DSL.name("idx_user_product_user_id"), UserProduct.USER_PRODUCT, arrayOf(UserProduct.USER_PRODUCT.USER_ID), false)
+val IDX_USER_ROLE_ROLE_ID: Index = Internal.createIndex(DSL.name("idx_user_role_role_id"), UserRole.USER_ROLE, arrayOf(UserRole.USER_ROLE.ROLE_ID), false)
+val IDX_USER_ROLE_USER_ID: Index = Internal.createIndex(DSL.name("idx_user_role_user_id"), UserRole.USER_ROLE, arrayOf(UserRole.USER_ROLE.USER_ID), false)
+val IDX_USERS_CREATED_BY: Index = Internal.createIndex(DSL.name("idx_users_created_by"), Users.USERS, arrayOf(Users.USERS.CREATED_BY), false)
+val IDX_USERS_EMAIL: Index = Internal.createIndex(DSL.name("idx_users_email"), Users.USERS, arrayOf(Users.USERS.EMAIL), false)
 val IDX_USERS_LOGIN: Index = Internal.createIndex(DSL.name("idx_users_login"), Users.USERS, arrayOf(Users.USERS.LOGIN), true)

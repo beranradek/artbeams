@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS user_activity_log (
 );
 
 -- Add foreign key constraint to users table
-ALTER TABLE user_activity_log ADD CONSTRAINT IF NOT EXISTS user_activity_log_user_fk
+ALTER TABLE user_activity_log ADD CONSTRAINT user_activity_log_user_fk
     FOREIGN KEY (user_id) REFERENCES users (id);
 
 -- Index on user_id for efficient user activity lookups
@@ -57,15 +57,3 @@ CREATE INDEX IF NOT EXISTS idx_user_activity_log_entity ON user_activity_log (en
 
 -- Composite index for user + time range queries (most common query pattern)
 CREATE INDEX IF NOT EXISTS idx_user_activity_log_user_time ON user_activity_log (user_id, action_time DESC);
-
--- =====================================================
--- COMMENTS
--- =====================================================
-
--- Migration script successfully created!
--- After running this script, remember to:
--- 1. Run: ./gradlew generateJooq
--- 2. Update Order domain class with new fields
--- 3. Update OrderMapper and OrderUnmapper
--- 4. Create UserActivityLog domain class
--- 5. Create UserActivityLog repository and mappers

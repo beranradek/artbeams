@@ -10,6 +10,7 @@ import kotlin.collections.List
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -28,6 +29,8 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ROLE_ROLE_ID
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ROLE_USER_ID
 import org.xbery.artbeams.jooq.schema.keys.FK_ROLE_ID
 import org.xbery.artbeams.jooq.schema.keys.FK_USER_ID
 import org.xbery.artbeams.jooq.schema.tables.Roles.RolesPath
@@ -114,6 +117,7 @@ open class UserRole(
         override fun `as`(alias: Table<*>): UserRolePath = UserRolePath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_USER_ROLE_ROLE_ID, IDX_USER_ROLE_USER_ID)
     override fun getReferences(): List<ForeignKey<UserRoleRecord, *>> = listOf(FK_ROLE_ID, FK_USER_ID)
 
     private lateinit var _roles: RolesPath

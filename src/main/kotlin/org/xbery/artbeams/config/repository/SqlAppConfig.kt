@@ -1,6 +1,6 @@
 package org.xbery.artbeams.config.repository
 
-import kotlinx.datetime.Instant
+import java.time.Instant
 import org.jooq.DSLContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

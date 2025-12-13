@@ -128,8 +128,8 @@
     <input type="hidden" name="${field.name}" value="${field.value!}"/>
 </#macro>
 
-<#macro buttonSubmit text class="btn btn-primary-custom">
+<#macro buttonSubmit text class="btn btn-primary-custom" id="">
     <div class="form-group">
-      <button name="submitButton" type="submit" class="${class}">${text}</button>
+      <button name="submitButton" type="submit" class="${class}"<#if id?has_content> id="${id}"</#if>>${text}</button>
     </div>
 </#macro>

@@ -7,10 +7,12 @@ package org.xbery.artbeams.jooq.schema.tables
 import java.time.Instant
 
 import kotlin.collections.Collection
+import kotlin.collections.List
 
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.PlainSQL
@@ -29,6 +31,7 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_CATEGORIES_SLUG
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_4
 import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
 
@@ -139,6 +142,7 @@ open class Categories(
      */
     constructor(): this(DSL.name("categories"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_CATEGORIES_SLUG)
     override fun getPrimaryKey(): UniqueKey<CategoriesRecord> = CONSTRAINT_4
     override fun `as`(alias: String): Categories = Categories(DSL.name(alias), this)
     override fun `as`(alias: Name): Categories = Categories(alias, this)

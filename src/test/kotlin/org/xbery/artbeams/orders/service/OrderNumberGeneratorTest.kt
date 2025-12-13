@@ -4,9 +4,9 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.datetime.LocalDateTime
-import org.xbery.artbeams.common.clock.FixedClock
-import org.xbery.artbeams.common.clock.TestClockConfiguration
+import java.time.Clock
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import org.xbery.artbeams.config.repository.TestAppConfig
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.sequences.repository.SequenceRepository
@@ -18,12 +18,12 @@ class OrderNumberGeneratorTest : FunSpec({
     val generator = OrderNumberGenerator(
         TestAppConfig(emptyMap()),
         sequenceRepository,
-        FixedClock(TestClockConfiguration.FIXED_TIME)
+        Clock.fixed(java.time.Instant.parse("2024-11-25T09:16:00Z"), ZoneOffset.UTC)
     )
 
     test("createDatePrefix") {
-        generator.createDatePrefix(LocalDateTime(2021, 1, 1, 0, 0)) shouldBe "210101"
-        generator.createDatePrefix(LocalDateTime(2021, 12, 31, 0, 0)) shouldBe "211231"
+        generator.createDatePrefix(LocalDateTime.of(2021, 1, 1, 0, 0)) shouldBe "210101"
+        generator.createDatePrefix(LocalDateTime.of(2021, 12, 31, 0, 0)) shouldBe "211231"
     }
 
     test("generateOrderNumber") {

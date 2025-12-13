@@ -33,6 +33,8 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_CREATED_BY
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_EMAIL
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_LOGIN
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A
 import org.xbery.artbeams.jooq.schema.keys.FK_USER_ID
@@ -163,7 +165,7 @@ open class Users(
         override fun `as`(alias: Table<*>): UsersPath = UsersPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getIndexes(): List<Index> = listOf(IDX_USERS_LOGIN)
+    override fun getIndexes(): List<Index> = listOf(IDX_USERS_CREATED_BY, IDX_USERS_EMAIL, IDX_USERS_LOGIN)
     override fun getPrimaryKey(): UniqueKey<UsersRecord> = CONSTRAINT_6A
 
     private lateinit var _userRole: UserRolePath

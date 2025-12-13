@@ -13,6 +13,7 @@ import kotlin.collections.List
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -33,6 +34,8 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDER_ITEMS_ORDER_ID
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDER_ITEMS_PRODUCT_ID
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_7
 import org.xbery.artbeams.jooq.schema.keys.ORDERED_PRODUCT_FK
 import org.xbery.artbeams.jooq.schema.keys.ORDER_FK
@@ -160,6 +163,7 @@ open class OrderItems(
         override fun `as`(alias: Table<*>): OrderItemsPath = OrderItemsPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_ORDER_ITEMS_ORDER_ID, IDX_ORDER_ITEMS_PRODUCT_ID)
     override fun getPrimaryKey(): UniqueKey<OrderItemsRecord> = CONSTRAINT_7
     override fun getReferences(): List<ForeignKey<OrderItemsRecord, *>> = listOf(ORDER_FK, ORDERED_PRODUCT_FK)
 

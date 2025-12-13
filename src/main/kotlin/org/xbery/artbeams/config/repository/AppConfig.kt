@@ -1,6 +1,6 @@
 package org.xbery.artbeams.config.repository
 
-import kotlinx.datetime.Instant
+import java.time.Instant
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 

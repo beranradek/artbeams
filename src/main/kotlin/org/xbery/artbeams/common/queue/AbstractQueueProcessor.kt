@@ -1,7 +1,6 @@
 package org.xbery.artbeams.common.queue
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toJavaInstant
+import java.time.Clock
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.SchedulingConfigurer
@@ -16,13 +15,6 @@ import java.time.Instant
 import java.util.*
 import kotlin.concurrent.Volatile
 import kotlin.math.min
-import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.nanoseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
-import kotlin.time.toKotlinDuration
 
 /**
  * Base implementation for queued processing of some entries.
@@ -78,14 +70,14 @@ protected constructor(
      * Initial delay before the first task execution.
      * The default is to select a reasonable value randomly.
      */
-    open var initialDelay: Duration = (
-        MINIMUM_INITIAL_TASK_DELAY.toKotlinDuration().inWholeMilliseconds + randGen.nextInt(
+    open var initialDelay: Duration = Duration.ofMillis(
+        MINIMUM_INITIAL_TASK_DELAY.toMillis() + randGen.nextInt(
             min(
-                MAX_INITIAL_TASK_DELAY_ADDITION.toKotlinDuration().inWholeMilliseconds.toDouble(),
-                taskDelay.toKotlinDuration().inWholeMilliseconds.toDouble()
+                MAX_INITIAL_TASK_DELAY_ADDITION.toMillis().toDouble(),
+                taskDelay.toMillis().toDouble()
             ).toInt()
         )
-        ).milliseconds.toJavaDuration()
+        )
 
     /**
      * Time for which an entry will be reserved for processing by the task.
@@ -151,8 +143,8 @@ protected constructor(
     protected open fun logTaskConfigure() {
         logger.debug(
             serviceName + " task scheduled to run in " +
-                (initialDelay.toKotlinDuration().inWholeSeconds) + "s and then with a fixed delay of " +
-                (taskDelay.toKotlinDuration().inWholeSeconds) + "s"
+                initialDelay.toSeconds() + "s and then with a fixed delay of " +
+                taskDelay.toSeconds() + "s"
         )
     }
 
@@ -195,7 +187,7 @@ protected constructor(
                 entry = findNextEntry()
             }
             logTaskDone(state)
-            deleteExpiredEntries(clock.now().toJavaInstant())
+            deleteExpiredEntries(Instant.now(clock))
         } catch (@Suppress("TooGenericExceptionCaught") ex: Throwable) {
             // this is necessary
             // the method is usually run by Spring scheduler, which means the exception would not be visible anywhere
@@ -252,7 +244,7 @@ protected constructor(
             rescheduleEntry(entry, ex, null, opCtx)
             state.frozenId = null // not frozen anymore after the last line
             if (isPausingException(ex)) {
-                pause(clock.now().toJavaInstant() + pauseDuration)
+                pause(Instant.now(clock).plus(pauseDuration))
             }
         }
         state.isLastSuccess = success
@@ -261,7 +253,7 @@ protected constructor(
     protected open fun findNextEntry(): E? {
         // this must use the real time, not the context
         // (not mentioning that no context may exist at this moment)
-        return repository.findNextEntry(clock.now().toJavaInstant(), freezeTime)
+        return repository.findNextEntry(Instant.now(clock), freezeTime)
     }
 
     protected open fun finishEntry(entry: E, success: Boolean, opCtx: OperationCtx) {
@@ -274,7 +266,7 @@ protected constructor(
     }
 
     protected open fun getFinishExpiration(entry: E): Instant {
-        return clock.now().toJavaInstant() + preserveAfterFinished
+        return Instant.now(clock).plus(preserveAfterFinished)
     }
 
     protected open fun rescheduleEntry(entry: E, error: Throwable?, rescheduleCause: String?, opCtx: OperationCtx) {
@@ -309,14 +301,14 @@ protected constructor(
 
     protected open fun getNextRetry(entry: E): Instant? {
         return retry.calculateNextRetry(
-            clock.now().toJavaInstant(),
+            Instant.now(clock),
             entry.entered.time,
             entry.attempts
         )
     }
 
     protected open fun getFailureExpiration(entry: E): Instant {
-        return clock.now().toJavaInstant() + preserveAfterGivenUp
+        return Instant.now(clock).plus(preserveAfterGivenUp)
     }
 
     protected open fun isPermanentError(error: Throwable?): Boolean {
@@ -333,7 +325,7 @@ protected constructor(
             true
         } else {
             val duration = (System.nanoTime() - state.startNanoTime)
-            if (duration.nanoseconds.toJavaDuration() >= maxRunTime) {
+            if (Duration.ofNanos(duration) >= maxRunTime) {
                 logger.warn("maximal allowed processing time exceeded, discontinuing this task run")
                 true
             } else {
@@ -430,7 +422,7 @@ protected constructor(
 
     protected open val isPaused: Boolean
         /** true if dispatching is paused  */
-        get() = pauseTm != null && requireNotNull(pauseTm) > clock.now().toJavaInstant()
+        get() = pauseTm != null && requireNotNull(pauseTm) > Instant.now(clock)
 
     /** Pauses queue processing until given time  */
     open fun pause(until: Instant?) {
@@ -453,18 +445,17 @@ protected constructor(
         private val randGen = Random()
 
         // Key queue performance parameters:
-        private val DEFAULT_TASK_DELAY =
-            30.seconds.toJavaDuration() // TBD RBe: longer default delay if we can awake the task on scheduling new entries
+        private val DEFAULT_TASK_DELAY = Duration.ofSeconds(30) // TBD RBe: longer default delay if we can awake the task on scheduling new entries
         private const val DEFAULT_MAX_ENTRIES_PER_RUN = 100
-        private val DEFAULT_MAX_TASK_RUN_TIME = 2.minutes.toJavaDuration()
+        private val DEFAULT_MAX_TASK_RUN_TIME = Duration.ofMinutes(2)
 
         /** Next entry processing shift preserving the entry outside of processing in case of task crash. */
-        private val DEFAULT_ENTRY_PROCESSING_FREEZE_TIME = 15.minutes.toJavaDuration()
+        private val DEFAULT_ENTRY_PROCESSING_FREEZE_TIME = Duration.ofMinutes(15)
 
-        private val DEFAULT_ENTRY_EXPIRATION_AFTER_FINISHED = 5.days.toJavaDuration()
-        private val DEFAULT_ENTRY_EXPIRATION_AFTER_GIVEN_UP = 14.days.toJavaDuration()
-        private val DEFAULT_PAUSE_DURATION = 30.seconds.toJavaDuration()
-        private val MINIMUM_INITIAL_TASK_DELAY = 20.seconds.toJavaDuration()
-        private val MAX_INITIAL_TASK_DELAY_ADDITION = 5000.milliseconds.toJavaDuration()
+        private val DEFAULT_ENTRY_EXPIRATION_AFTER_FINISHED = Duration.ofDays(5)
+        private val DEFAULT_ENTRY_EXPIRATION_AFTER_GIVEN_UP = Duration.ofDays(14)
+        private val DEFAULT_PAUSE_DURATION = Duration.ofSeconds(30)
+        private val MINIMUM_INITIAL_TASK_DELAY = Duration.ofSeconds(20)
+        private val MAX_INITIAL_TASK_DELAY_ADDITION = Duration.ofMillis(5000)
     }
 }

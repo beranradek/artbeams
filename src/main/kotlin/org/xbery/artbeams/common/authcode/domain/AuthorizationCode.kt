@@ -1,6 +1,6 @@
 package org.xbery.artbeams.common.authcode.domain
 
-import kotlinx.datetime.Instant
+import java.time.Instant
 
 /**
  * Code authorizing a user to perform some action.

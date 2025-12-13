@@ -12,6 +12,7 @@ import kotlin.collections.List
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.Path
@@ -32,6 +33,9 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_PRODUCT_COMPOSITE
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_PRODUCT_PRODUCT_ID
+import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_PRODUCT_USER_ID
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_48
 import org.xbery.artbeams.jooq.schema.keys.PRODUCT_FK
 import org.xbery.artbeams.jooq.schema.keys.USER_FK
@@ -129,6 +133,7 @@ open class UserProduct(
         override fun `as`(alias: Table<*>): UserProductPath = UserProductPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_USER_PRODUCT_COMPOSITE, IDX_USER_PRODUCT_PRODUCT_ID, IDX_USER_PRODUCT_USER_ID)
     override fun getPrimaryKey(): UniqueKey<UserProductRecord> = CONSTRAINT_48
     override fun getReferences(): List<ForeignKey<UserProductRecord, *>> = listOf(PRODUCT_FK, USER_FK)
 

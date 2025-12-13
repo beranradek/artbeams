@@ -1,6 +1,6 @@
 package org.xbery.artbeams.config.repository
 
-import kotlinx.datetime.Instant
+import java.time.Instant
 import java.math.BigDecimal
 import kotlin.reflect.KClass
 import kotlin.reflect.cast

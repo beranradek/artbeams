@@ -5,10 +5,12 @@ package org.xbery.artbeams.jooq.schema.tables
 
 
 import kotlin.collections.Collection
+import kotlin.collections.List
 
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Index
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.PlainSQL
@@ -25,6 +27,8 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLE_CATEGORY_ARTICLE_ID
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLE_CATEGORY_CATEGORY_ID
 import org.xbery.artbeams.jooq.schema.tables.records.ArticleCategoryRecord
 
 
@@ -94,6 +98,7 @@ open class ArticleCategory(
      */
     constructor(): this(DSL.name("article_category"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIndexes(): List<Index> = listOf(IDX_ARTICLE_CATEGORY_ARTICLE_ID, IDX_ARTICLE_CATEGORY_CATEGORY_ID)
     override fun `as`(alias: String): ArticleCategory = ArticleCategory(DSL.name(alias), this)
     override fun `as`(alias: Name): ArticleCategory = ArticleCategory(alias, this)
     override fun `as`(alias: Table<*>): ArticleCategory = ArticleCategory(alias.qualifiedName, this)

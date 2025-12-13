@@ -24,6 +24,7 @@ import org.xbery.artbeams.web.FreeProductController
 import java.io.ByteArrayOutputStream
 import jakarta.servlet.http.HttpServletRequest
 import org.xbery.artbeams.common.error.UnauthorizedException
+import org.xbery.artbeams.common.error.ConsentRequiredException
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.activitylog.service.UserActivityLogService
 import org.xbery.artbeams.activitylog.domain.ActionType
@@ -75,7 +76,7 @@ class UserProductController(
             val user = userService.requireByLogin(login)
 
             if (!consentService.hasValidConsent(login, ConsentType.NEWS)) {
-                throw UnauthorizedException("User with login $login has not confirmed the consent yet, product $productSlug cannot be downloaded")
+                throw ConsentRequiredException("User with login $login has not confirmed the consent yet, product $productSlug cannot be downloaded")
             }
 
             // Check an order (any order) of the product for given user exists

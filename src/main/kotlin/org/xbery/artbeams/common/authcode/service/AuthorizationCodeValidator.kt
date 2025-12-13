@@ -1,7 +1,7 @@
 package org.xbery.artbeams.common.authcode.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.datetime.Clock
+import java.time.Instant
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -43,7 +43,7 @@ class AuthorizationCodeValidator(
         val authCode = validateAuthorizationCode(decryptedCodePayload, purpose)
 
         // Update used time of the code
-        authorizationCodeRepository.updateCode(authCode.copy(used = Clock.System.now()))
+        authorizationCodeRepository.updateCode(authCode.copy(used = Instant.now()))
         return findCode(TokenPayload(authCode.code, authCode.purpose, authCode.userId))
     }
 
@@ -74,7 +74,7 @@ class AuthorizationCodeValidator(
                 msg
             )
         }
-        if (authorizationCode.validTo < Clock.System.now()) {
+        if (authorizationCode.validTo.isBefore(Instant.now())) {
             val msg = "Authorization code expired: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
                     "purpose=${tokenPayload.purpose}"
             logger.warn(

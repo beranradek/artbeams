@@ -33,9 +33,12 @@ import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_CREATED
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_CREATED_BY
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_ORDER_NUMBER
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_PAID_TIME
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_PAYMENT_METHOD
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_STATE
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3
 import org.xbery.artbeams.jooq.schema.keys.ORDER_FK
 import org.xbery.artbeams.jooq.schema.tables.OrderItems.OrderItemsPath
@@ -161,7 +164,7 @@ open class Orders(
         override fun `as`(alias: Table<*>): OrdersPath = OrdersPath(alias.qualifiedName, this)
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getIndexes(): List<Index> = listOf(IDX_ORDERS_ORDER_NUMBER, IDX_ORDERS_PAID_TIME, IDX_ORDERS_PAYMENT_METHOD)
+    override fun getIndexes(): List<Index> = listOf(IDX_ORDERS_CREATED, IDX_ORDERS_CREATED_BY, IDX_ORDERS_ORDER_NUMBER, IDX_ORDERS_PAID_TIME, IDX_ORDERS_PAYMENT_METHOD, IDX_ORDERS_STATE)
     override fun getPrimaryKey(): UniqueKey<OrdersRecord> = CONSTRAINT_C3
 
     private lateinit var _orderItems: OrderItemsPath

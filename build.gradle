@@ -53,8 +53,6 @@ dependencies {
     // Kotlin language
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") // mandatory as of Spring Framework 5
-    // It is generally recommended to use kotlinx.datetime multiplatform library when working with Kotlin.
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinDateTimeVersion"
 
     // Spring Boot: Thanks to Spring Boot Gradle Plugin, versions can be omitted
     // Support for Web MVC, Freemarker templates, database layer, security
@@ -89,7 +87,7 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-devtools")
 
     // Forms
-    implementation("net.formio:formio:1.7.0")
+    implementation("net.formio:formio:1.8.1")
 
     // Working with text/HTML
     implementation("org.apache.commons:commons-text:1.11.0")
@@ -205,16 +203,6 @@ jooq {
                                 includeExpression = ".*._time.*|created|modified|completed|finished|confirmed|valid_from|valid_to|used|consent|downloaded"
                                 includeTypes = ".*"
                             }
-                            //forcedType {
-                            //    userType = "kotlinx.datetime.LocalDate"
-                            //    converter = "org.xbery.artbeams.common.persistence.jooq.converter.LocalDateConverter"
-                            //    // A Java regex that must match target fully-qualified columns, attributes, parameters
-                            //    // for which converter is applied in generated code.
-                            //    // Use the pipe to separate several expressions.
-                            //    // Must match some used columns!
-                            //    includeExpression = ".*._date"
-                            //    includeTypes = ".*"
-                            //}
                         }
                     }
                     generate {
