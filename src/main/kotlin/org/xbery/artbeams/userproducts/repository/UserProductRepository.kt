@@ -4,8 +4,12 @@ import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
 import org.xbery.artbeams.jooq.schema.tables.references.USER_PRODUCT
+import org.xbery.artbeams.jooq.schema.tables.references.ORDER_ITEMS
+import org.xbery.artbeams.jooq.schema.tables.references.ORDERS
 import org.xbery.artbeams.userproducts.domain.UserProductDetail
 import org.xbery.artbeams.userproducts.domain.UserProductInfo
+import org.xbery.artbeams.orders.domain.OrderState
+import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
 
@@ -69,10 +73,16 @@ class UserProductRepository(
         )
             .from(USER_PRODUCT)
             .innerJoin(PRODUCTS).on(USER_PRODUCT.PRODUCT_ID.eq(PRODUCTS.ID))
+            .innerJoin(ORDER_ITEMS).on(ORDER_ITEMS.PRODUCT_ID.eq(PRODUCTS.ID))
+            .innerJoin(ORDERS).on(ORDER_ITEMS.ORDER_ID.eq(ORDERS.ID))
             .where(
                 USER_PRODUCT.USER_ID.eq(userId)
+                    .and(ORDERS.CREATED_BY.eq(userId))
+                    .and(
+                        ORDERS.STATE.`in`(OrderState.AFTER_PAYMENT_STATES).or(PRODUCTS.PRICE_REGULAR.le(BigDecimal.ZERO))
+                    )
             )
-            .orderBy(USER_PRODUCT.CREATED.desc()) // from newest to oldest
+            .orderBy(USER_PRODUCT.CREATED.desc())
             .fetch { record ->
                 UserProductInfo(
                     id = requireNotNull(record[USER_PRODUCT.ID]),
@@ -82,6 +92,7 @@ class UserProductRepository(
                     listingImage = record[PRODUCTS.LISTING_IMAGE]
                 )
             }
+            .distinctBy { it.id }
     }
 
     fun findUserProduct(userId: String, productSlug: String): UserProductDetail? {

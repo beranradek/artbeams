@@ -35,9 +35,6 @@
                     
                     <div class="mt-4">
                         <p><strong>Uživatel:</strong> ${user.fullName} (${user.login})</p>
-                        <#if user.email??>
-                            <p><strong>Email:</strong> ${user.email}</p>
-                        </#if>
                     </div>
                     
                     <form action="/clenska-sekce/muj-profil/smazat-ucet" method="post" class="mt-4">

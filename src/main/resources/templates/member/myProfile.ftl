@@ -20,7 +20,6 @@
 </form>
 
 <div class="mt-5 pt-4 border-top">
-    <h4 class="text-danger">Nebezpečná zóna</h4>
     <p class="text-muted">
         Smazání účtu je nevratná operace. Vaše osobní údaje budou anonymizovány v souladu s GDPR.
     </p>

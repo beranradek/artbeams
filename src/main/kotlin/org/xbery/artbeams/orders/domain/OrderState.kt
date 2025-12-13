@@ -44,4 +44,13 @@ enum class OrderState {
     fun isAfterPayment(): Boolean {
         return this == PAID || this == PROCESSING || this == SHIPPED || this == DELIVERED
     }
+
+    companion object {
+        val AFTER_PAYMENT_STATES = listOf(
+            PAID.name,
+            PROCESSING.name,
+            SHIPPED.name,
+            DELIVERED.name
+        )
+    }
 }
