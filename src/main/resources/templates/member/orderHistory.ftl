@@ -45,7 +45,7 @@
                       <tr>
                         <td>${item.productName}</td>
                         <td>${item.quantity}</td>
-                        <td>${item.price.amount} ${item.price.currency}</td>
+                        <td><#if item.price?? && item.price.amount??>${item.price.amount} ${item.price.currency}<#else>N/A</#if></td>
                         <td>
                           <#if item.downloaded??>
                             <span class="badge bg-success">
@@ -68,7 +68,7 @@
 
                 <div class="row mt-3">
                   <div class="col-md-6">
-                    <strong>Celková cena:</strong> ${order.price.amount} ${order.price.currency}
+                    <strong>Celková cena:</strong> <#if order.price?? && order.price.amount??>${order.price.amount} ${order.price.currency}<#else>N/A</#if>
                   </div>
                   <#if order.paidTime??>
                     <div class="col-md-6 text-end">

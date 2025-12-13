@@ -76,17 +76,17 @@ class UserProductController(
             val user = userService.requireByLogin(login)
 
             if (!consentService.hasValidConsent(login, ConsentType.NEWS)) {
-                throw ConsentRequiredException("User with login $login has not confirmed the consent yet, product $productSlug cannot be downloaded")
+                throw ConsentRequiredException("Uživatel $login zatím nepotvrdil souhlas s podmínkami, proto nemůže být produkt $productSlug zatím stažen.")
             }
 
             // Check an order (any order) of the product for given user exists
             val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
-            if (orderItems.isEmpty()) throw UnauthorizedException("User ${user.login} has not ordered product ${product.slug}")
+            if (orderItems.isEmpty()) throw UnauthorizedException("Uživatel ${user.login} si neobjednal produkt ${product.slug}")
             val orders = orderItems.map { orderService.requireByOrderId(it.orderId) }
-            if (orders.isEmpty()) throw UnauthorizedException("Order of the product ${product.slug} was not found for user ${user.login}")
+            if (orders.isEmpty()) throw UnauthorizedException("Objednávka produktu ${product.slug} nebyla nalezena pro uživatele ${user.login}")
             
             val completedOrders = orders.filter { it.state.isAfterPayment() || product.priceRegular.isZero() }
-            if (completedOrders.isEmpty()) throw UnauthorizedException("User ${user.login} has not paid for the product ${product.slug} that requires payment")
+            if (completedOrders.isEmpty()) throw UnauthorizedException("Uživatel ${user.login} nezaplatil za produkt ${product.slug}, který vyžaduje provedení platby.")
             val completedOrder = completedOrders.first()        
             val orderItem = orderItems.first()
 
