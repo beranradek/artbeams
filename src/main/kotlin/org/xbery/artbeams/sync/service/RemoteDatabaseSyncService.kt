@@ -100,6 +100,12 @@ class RemoteDatabaseSyncService(
                 remoteCategories.forEach { remoteRecord ->
                     val slug = remoteRecord.slug ?: return@forEach
                     val remoteCategoryId = remoteRecord.id ?: return@forEach
+                    
+                    // Skip empty records that would cause insert errors
+                    if (slug.isBlank() || remoteCategoryId.isBlank()) {
+                        logger.warn("Skipping category with empty slug or ID")
+                        return@forEach
+                    }
 
                     // Find existing local category by slug (not by ID)
                     val existingLocalCategory = localDsl.selectFrom(CATEGORIES)
@@ -108,14 +114,31 @@ class RemoteDatabaseSyncService(
 
                     if (existingLocalCategory == null) {
                         // Create new category with remote data (including remote ID)
-                        // Handle potential schema differences by only setting fields that exist in both
-                        localDsl.insertInto(CATEGORIES)
-                            .set(remoteRecord.into(CATEGORIES))
-                            .execute()
-                        categoriesCreated++
-                        // Map remote ID to itself (since we're using the remote ID as local ID for new categories)
-                        remoteCategoryIdToLocalId[remoteCategoryId] = remoteCategoryId
-                        logger.debug("Created category: $slug - ${remoteRecord.title}")
+                        try {
+                            // Manually map fields to ensure compatibility
+                            localDsl.insertInto(CATEGORIES)
+                                .set(CATEGORIES.ID, remoteCategoryId)
+                                .set(CATEGORIES.SLUG, slug)
+                                .set(CATEGORIES.TITLE, remoteRecord.title)
+                                .set(CATEGORIES.DESCRIPTION, remoteRecord.description)
+                                .set(CATEGORIES.VALID_FROM, remoteRecord.validFrom)
+                                .set(CATEGORIES.VALID_TO, remoteRecord.validTo)
+                                .set(CATEGORIES.CREATED, remoteRecord.created)
+                                .set(CATEGORIES.CREATED_BY, remoteRecord.createdBy)
+                                .set(CATEGORIES.MODIFIED, remoteRecord.modified)
+                                .set(CATEGORIES.MODIFIED_BY, remoteRecord.modifiedBy)
+                                .execute()
+                            categoriesCreated++
+                            // Map remote ID to itself (since we're using the remote ID as local ID for new categories)
+                            remoteCategoryIdToLocalId[remoteCategoryId] = remoteCategoryId
+                            logger.debug("Created category: $slug - ${remoteRecord.title}")
+                        } catch (e: Exception) {
+                            logger.error("Failed to insert category with slug '$slug' and ID '$remoteCategoryId': ${e.message}")
+                            logger.debug("Remote record: $remoteRecord")
+                            logger.debug("Remote record fields: ${remoteRecord.fields()}")
+                            logger.debug("Local table fields: ${CATEGORIES.fields()}")
+                            throw e
+                        }
                     } else {
                         // Update existing local category (keep local ID, update with remote data)
                         val localCategoryId = existingLocalCategory.id!!
@@ -153,7 +176,22 @@ class RemoteDatabaseSyncService(
                     if (existingLocalProduct == null) {
                         // Create new product with remote data (including remote ID)
                         localDsl.insertInto(PRODUCTS)
-                            .set(remoteRecord.into(PRODUCTS))
+                            .set(PRODUCTS.ID, remoteRecord.id)
+                            .set(PRODUCTS.SLUG, slug)
+                            .set(PRODUCTS.TITLE, remoteRecord.title)
+                            .set(PRODUCTS.SUBTITLE, remoteRecord.subtitle)
+                            .set(PRODUCTS.CREATED, remoteRecord.created)
+                            .set(PRODUCTS.CREATED_BY, remoteRecord.createdBy)
+                            .set(PRODUCTS.MODIFIED, remoteRecord.modified)
+                            .set(PRODUCTS.MODIFIED_BY, remoteRecord.modifiedBy)
+                            .set(PRODUCTS.FILENAME, remoteRecord.filename)
+                            .set(PRODUCTS.LISTING_IMAGE, remoteRecord.listingImage)
+                            .set(PRODUCTS.IMAGE, remoteRecord.image)
+                            .set(PRODUCTS.CONFIRMATION_MAILING_GROUP_ID, remoteRecord.confirmationMailingGroupId)
+                            .set(PRODUCTS.MAILING_GROUP_ID, remoteRecord.mailingGroupId)
+                            .set(PRODUCTS.PRICE_REGULAR, remoteRecord.priceRegular)
+                            .set(PRODUCTS.PRICE_DISCOUNTED, remoteRecord.priceDiscounted)
+                            .set(PRODUCTS.SIMPLE_SHOP_PRODUCT_ID, remoteRecord.simpleShopProductId)
                             .execute()
                         productsCreated++
                         logger.debug("Created product: $slug - ${remoteRecord.title}")
@@ -226,7 +264,23 @@ class RemoteDatabaseSyncService(
                     if (existingLocalArticle == null) {
                         // Create new article with remote data (including remote ID)
                         localDsl.insertInto(ARTICLES)
-                            .set(remoteRecord.into(ARTICLES))
+                            .set(ARTICLES.ID, remoteRecord.id)
+                            .set(ARTICLES.SLUG, slug)
+                            .set(ARTICLES.TITLE, remoteRecord.title)
+                            .set(ARTICLES.EXTERNAL_ID, remoteRecord.externalId)
+                            .set(ARTICLES.VALID_FROM, remoteRecord.validFrom)
+                            .set(ARTICLES.VALID_TO, remoteRecord.validTo)
+                            .set(ARTICLES.CREATED, remoteRecord.created)
+                            .set(ARTICLES.CREATED_BY, remoteRecord.createdBy)
+                            .set(ARTICLES.MODIFIED, remoteRecord.modified)
+                            .set(ARTICLES.MODIFIED_BY, remoteRecord.modifiedBy)
+                            .set(ARTICLES.IMAGE, remoteRecord.image)
+                            .set(ARTICLES.PEREX, remoteRecord.perex)
+                            .set(ARTICLES.BODY, remoteRecord.body)
+                            .set(ARTICLES.BODY_EDITED, remoteRecord.bodyEdited)
+                            .set(ARTICLES.EDITOR, remoteRecord.editor)
+                            .set(ARTICLES.KEYWORDS, remoteRecord.keywords)
+                            .set(ARTICLES.SHOW_ON_BLOG, remoteRecord.showOnBlog)
                             .execute()
                         localArticleId = remoteRecord.id!!
                         articlesCreated++
@@ -309,7 +363,14 @@ class RemoteDatabaseSyncService(
                     if (existingMedia == null) {
                         // Create new media record
                         localDsl.insertInto(MEDIA)
-                            .set(remoteRecord.into(MEDIA))
+                            .set(MEDIA.ID, remoteRecord.id)
+                            .set(MEDIA.FILENAME, filename)
+                            .set(MEDIA.CONTENT_TYPE, contentType)
+                            .set(MEDIA.SIZE, size)
+                            .set(MEDIA.DATA, remoteRecord.data)
+                            .set(MEDIA.PRIVATE_ACCESS, remoteRecord.privateAccess)
+                            .set(MEDIA.WIDTH, remoteRecord.width)
+                            .set(MEDIA.HEIGHT, remoteRecord.height)
                             .execute()
                         mediaCreated++
                         logger.debug("Created media: $filename (${contentType ?: "unknown"}, $size bytes)")
