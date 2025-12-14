@@ -318,3 +318,73 @@ body {
 .sidebar-offer-form-holder {
   max-width: 360px;
 }
+
+/* Search Autocomplete Styles */
+.search-autocomplete-results {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 50px; /* Account for search button */
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  max-height: 500px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 4px;
+}
+
+.search-suggestions {
+  padding: 8px 0;
+}
+
+.suggestion-group {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestion-group:last-child {
+  border-bottom: none;
+}
+
+.suggestion-group h6 {
+  padding: 4px 16px;
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 600;
+}
+
+.suggestion-item {
+  display: block;
+  padding: 8px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.15s;
+  cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+  background-color: #f5f5f5;
+  text-decoration: none;
+}
+
+.suggestion-item mark {
+  background-color: #fff3cd;
+  padding: 0 2px;
+}
+
+.suggestion-footer {
+  padding: 8px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+
+/* Make search form position relative for absolute positioning of results */
+form[role="search"] {
+  position: relative;
+}

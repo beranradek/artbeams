@@ -17,6 +17,7 @@ import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.evernote.service.EvernoteApi
 import org.xbery.artbeams.evernote.service.EvernoteImporter
 import org.xbery.artbeams.google.docs.GoogleDocsService
+import org.xbery.artbeams.search.service.SearchIndexer
 
 /**
  * @author Radek Beran
@@ -29,6 +30,7 @@ class ArticleServiceImpl(
     private val evernoteApi: EvernoteApi,
     private val evernoteImporter: EvernoteImporter,
     private val googleDocsService: GoogleDocsService,
+    private val searchIndexer: SearchIndexer,
 ) : ArticleService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -74,6 +76,10 @@ class ArticleServiceImpl(
                     }
                 }
             }
+
+            // Update search index
+            searchIndexer.indexArticle(updatedArticle)
+
             updatedArticle
         } catch (ex: Exception) {
             logger.error("Update of article ${edited.id} finished with error ${ex.message}", ex)

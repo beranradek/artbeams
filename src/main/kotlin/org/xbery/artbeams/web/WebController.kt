@@ -31,6 +31,7 @@ import org.xbery.artbeams.common.seo.StructuredDataGenerator
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
+import org.xbery.artbeams.search.service.SearchService
 
 /**
  * Common web routes.
@@ -44,7 +45,8 @@ class WebController(
         val productService: ProductService,
         val commentService: CommentService,
         val controllerComponents: ControllerComponents,
-        val resourceLoader: ResourceLoader
+        val resourceLoader: ResourceLoader,
+        private val searchService: SearchService
 ) : BaseController(controllerComponents), SitemapWriter {
 
     override fun articleService(): ArticleService = articleService
@@ -261,18 +263,30 @@ class WebController(
                 )
             } else {
                 val query: String? = request.getParameter("query")
-                val articles =
+                val results =
                         if (query == null || query.trim().length < 2) {
-                            listOf()
+                            emptyList()
                         } else {
-                            articleService.findByQuery(query, SearchLimit)
+                            searchService.search(query, SearchLimit)
                         }
+
+                // Group results by entity type
+                val articles = results
+                        .filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.ARTICLE }
+                val categories = results
+                        .filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.CATEGORY }
+                val products = results
+                        .filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.PRODUCT }
+
                 val model =
                         createBlogModel(
                                 request,
                                 FormData(SubscriptionFormData.Empty, ValidationResult.empty),
                                 "query" to query,
-                                "articles" to articles
+                                "articles" to articles,
+                                "categories" to categories,
+                                "products" to products,
+                                "totalResults" to results.size
                         )
                 ModelAndView("search", model)
             }
