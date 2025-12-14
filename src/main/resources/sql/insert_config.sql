@@ -38,3 +38,9 @@ INSERT INTO config (entry_key, entry_value) VALUES ('contact.email', '???');
 INSERT INTO config (entry_key, entry_value) VALUES ('simpleshop.api.baseUrl', 'https://api.simpleshop.cz/v2');
 INSERT INTO config (entry_key, entry_value) VALUES ('simpleshop.api.email', 'FILL IN YOUR SIMPLESHOP EMAIL');
 INSERT INTO config (entry_key, entry_value) VALUES ('simpleshop.api.key', 'FILL IN YOUR SIMPLESHOP API KEY');
+
+-- Admin notification email to new orders
+INSERT INTO config (entry_key, entry_value) VALUES ('admin.notification.email', 'info@???');
+
+-- Optional Google Analytics Tracking ID
+-- INSERT INTO config (entry_key, entry_value) VALUES ('ga.tracking.id', 'UA-XXXXXX-X');

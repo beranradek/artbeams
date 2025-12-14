@@ -17,6 +17,7 @@ import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.service.ProductService
+import org.xbery.artbeams.simpleshop.service.SimpleShopApiClient
 import org.xbery.artbeams.userproducts.service.UserProductService
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.UserService
@@ -37,7 +38,7 @@ class PaidProductController(
     private val orderService: OrderService,
     private val userProductService: UserProductService,
     private val appConfig: AppConfig,
-    private val simpleShopApiClient: org.xbery.artbeams.simpleshop.service.SimpleShopApiClient
+    private val simpleShopApiClient: SimpleShopApiClient
 ) : BaseController(controllerComponents) {
 
     /**

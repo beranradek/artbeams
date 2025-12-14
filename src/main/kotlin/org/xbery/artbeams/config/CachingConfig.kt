@@ -26,6 +26,7 @@ open class CachingConfig() {
             Article.CacheName, Category.CacheName, CategoryServiceImpl.ARTICLE_CATEGORIES_CACHE_NAME,
             Comment.CACHE_NAME,
             EntityAccessCount.CacheName,
-            AntispamQuiz.CacheName
+            AntispamQuiz.CacheName,
+            "searchConsoleMetrics", "searchConsolePages", "searchConsoleQueries", "searchConsoleSitemaps"
         )
 }

@@ -7,6 +7,7 @@ import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.orders.domain.Order
+import org.xbery.artbeams.prices.domain.Price
 import org.xbery.artbeams.users.repository.UserRepository
 import java.text.NumberFormat
 import java.util.*
@@ -39,15 +40,15 @@ class AdminNotificationService(
             val userName = user?.let { "${it.firstName} ${it.lastName}".trim().ifEmpty { it.login } } ?: "Unknown user"
             val userEmail = user?.email ?: "N/A"
 
-            val totalPrice = order.items.fold(org.xbery.artbeams.prices.domain.Price.ZERO) { acc, item ->
-                val itemTotal = org.xbery.artbeams.prices.domain.Price(item.price.price * item.quantity.toBigDecimal(), item.price.currency)
+            val totalPrice = order.items.fold(Price.ZERO) { acc, item ->
+                val itemTotal = Price(item.price.price * item.quantity.toBigDecimal(), item.price.currency)
                 acc + itemTotal
             }
-            val priceFormatted = totalPrice.format(Locale("cs", "CZ"))
+            val priceFormatted = totalPrice.format(Locale.of("cs", "CZ"))
 
             val itemsHtml = order.items.joinToString("") { item ->
-                val itemTotal = org.xbery.artbeams.prices.domain.Price(item.price.price * item.quantity.toBigDecimal(), item.price.currency)
-                val itemPrice = itemTotal.format(Locale("cs", "CZ"))
+                val itemTotal = Price(item.price.price * item.quantity.toBigDecimal(), item.price.currency)
+                val itemPrice = itemTotal.format(Locale.of("cs", "CZ"))
                 """
                 <tr>
                     <td style="padding: 8px; border-bottom: 1px solid #dee2e6;">Produkt ID: ${item.productId}</td>
@@ -69,7 +70,7 @@ class AdminNotificationService(
                 </head>
                 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 20px; margin-bottom: 20px;">
-                        <h2 style="margin-top: 0; color: #007bff;">📦 Nová objednávka</h2>
+                        <h2 style="margin-top: 0; color: #007bff;">Nová objednávka</h2>
                         <p style="margin-bottom: 0; font-size: 16px;">V systému byla vytvořena nová objednávka.</p>
                     </div>
 
@@ -130,7 +131,7 @@ class AdminNotificationService(
 
             mailSender.sendMailWithHtml(
                 recipientEmail = adminEmail,
-                subject = "🛒 Nová objednávka č. ${order.orderNumber}",
+                subject = "Nová objednávka č. ${order.orderNumber}",
                 htmlBody = htmlBody
             )
 

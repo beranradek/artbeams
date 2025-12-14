@@ -181,6 +181,9 @@
             <li class="nav-item" role="none">
               <a class="nav-link" href="/admin/config" role="menuitem" aria-label="Manage configuration">Config</a>
             </li>
+            <li class="nav-item" role="none">
+              <a class="nav-link" href="/admin/search-console" role="menuitem" aria-label="View search console metrics">Search Console</a>
+            </li>
           </ul>
   
           <#if _isRemoteDbConfigured?? && _isRemoteDbConfigured>
