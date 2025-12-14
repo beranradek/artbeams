@@ -67,9 +67,25 @@ class RemoteDatabaseSyncService(
         var mediaUpdated = 0
 
         try {
-            // Parse connection string to extract JDBC URL, username, and password
-            // Expected format: jdbc:postgresql://host:port/database?user=username&password=password
-            val connection = DriverManager.getConnection(connectionString)
+            // Support both postgres:// and jdbc:postgresql:// connection string formats
+            val connection = when {
+                connectionString.startsWith("postgres://") -> {
+                    // Parse postgres://user:password@host:port/database
+                    val withoutScheme = connectionString.removePrefix("postgres://")
+                    val (credentials, hostAndDb) = withoutScheme.split("@", limit = 2)
+                    val (user, pass) = credentials.split(":", limit = 2)
+                    val jdbcUrl = "jdbc:postgresql://$hostAndDb"
+                    DriverManager.getConnection(jdbcUrl, user, pass)
+                }
+                connectionString.startsWith("jdbc:postgresql://") -> {
+                    // Already in JDBC format, use as-is
+                    DriverManager.getConnection(connectionString)
+                }
+                else -> {
+                    // Assume it's already in correct format or try as-is
+                    DriverManager.getConnection(connectionString)
+                }
+            }
 
             connection.use { conn ->
                 val remoteDsl = DSL.using(conn, localDsl.dialect())
@@ -92,8 +108,9 @@ class RemoteDatabaseSyncService(
 
                     if (existingLocalCategory == null) {
                         // Create new category with remote data (including remote ID)
+                        // Handle potential schema differences by only setting fields that exist in both
                         localDsl.insertInto(CATEGORIES)
-                            .set(remoteRecord)
+                            .set(remoteRecord.into(CATEGORIES))
                             .execute()
                         categoriesCreated++
                         // Map remote ID to itself (since we're using the remote ID as local ID for new categories)
@@ -136,7 +153,7 @@ class RemoteDatabaseSyncService(
                     if (existingLocalProduct == null) {
                         // Create new product with remote data (including remote ID)
                         localDsl.insertInto(PRODUCTS)
-                            .set(remoteRecord)
+                            .set(remoteRecord.into(PRODUCTS))
                             .execute()
                         productsCreated++
                         logger.debug("Created product: $slug - ${remoteRecord.title}")
@@ -209,7 +226,7 @@ class RemoteDatabaseSyncService(
                     if (existingLocalArticle == null) {
                         // Create new article with remote data (including remote ID)
                         localDsl.insertInto(ARTICLES)
-                            .set(remoteRecord)
+                            .set(remoteRecord.into(ARTICLES))
                             .execute()
                         localArticleId = remoteRecord.id!!
                         articlesCreated++
@@ -292,7 +309,7 @@ class RemoteDatabaseSyncService(
                     if (existingMedia == null) {
                         // Create new media record
                         localDsl.insertInto(MEDIA)
-                            .set(remoteRecord)
+                            .set(remoteRecord.into(MEDIA))
                             .execute()
                         mediaCreated++
                         logger.debug("Created media: $filename (${contentType ?: "unknown"}, $size bytes)")
