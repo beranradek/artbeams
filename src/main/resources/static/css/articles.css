@@ -349,3 +349,80 @@ img {
 .fb-share-btn:hover {
   background: #145dbf;
 }
+
+/* Author page - rounded portrait images */
+.blog-main img[src*="#rounded"] {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.blog-main img[src*="#rounded-left"] {
+  border-radius: 50%;
+  object-fit: cover;
+  float: left;
+  margin-right: 2.5rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.blog-main img[src*="#rounded-right"] {
+  border-radius: 50%;
+  object-fit: cover;
+  float: right;
+  margin-left: 2.5rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.blog-main img[src*="#rounded-center"] {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 2rem auto;
+}
+
+/* Author section with green dot - inspired by Margit's design */
+.author-section {
+  margin-bottom: 3rem;
+  clear: both;
+  overflow: auto;
+}
+
+/* Green dot headings for author profile sections */
+.blog-main h3.profile-point {
+  margin-bottom: 1.5rem;
+  margin-top: 2.5rem;
+  font-size: 1.3rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.blog-main h3.profile-point::before {
+  content: "● ";
+  color: #7bb344;
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+/* Intro quote styling */
+.author-intro-quote {
+  text-align: center;
+  font-size: 1.15rem;
+  color: #666;
+  font-style: italic;
+  padding: 2rem 3rem;
+  margin: 2.5rem 0 3rem 0;
+  background: transparent;
+  border: none;
+  line-height: 1.8;
+}
+
+.author-intro-quote::before {
+  content: none;
+}
+
+/* Author content sections */
+.author-content {
+  line-height: 1.8;
+  color: #666;
+}

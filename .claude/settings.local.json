@@ -11,15 +11,12 @@
       "WebFetch(domain:download.opensuse.org)",
       "Bash(doublecmd:*)",
       "Bash(desktop-file-validate:*)",
-      "Bash(mount:*)",
-      "Bash(PGPASSWORD=artbeams_local_dev psql:*)",
       "Bash(awk:*)",
       "Bash(./gradlew bootRun:*)",
       "Bash(curl:*)",
       "Bash(lsof:*)",
       "Bash(xargs kill -9)",
       "Bash(./gradlew clean:*)",
-      "Bash(heroku:*)",
       "WebFetch(domain:docs.gradle.org)",
       "Bash(./gradlew:*)",
       "WebFetch(domain:github.com)",
@@ -34,20 +31,22 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "mcp__serena__insert_before_symbol",
-      "Bash(if [ -f application-local.yml ])",
-      "Bash(then grep -A 5 \"datasource:\" application-local.yml)",
-      "Bash(else echo \"application-local.yml not found\")",
-      "Bash(fi:*)",
       "mcp__serena__list_dir",
       "WebFetch(domain:platform.openai.com)",
       "mcp__serena__find_referencing_symbols",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__chromedev__list_pages",
+      "mcp__chromedev__navigate_page",
+      "mcp__chromedev__take_snapshot",
+      "mcp__chromedev__fill_form",
+      "mcp__chromedev__click",
+      "mcp__chromedev__press_key",
+      "mcp__chromedev__fill",
+      "mcp__chromedev__evaluate_script",
+      "mcp__chromedev__take_screenshot"
     ],
     "deny": [],
     "ask": []
   },
-  "enableAllProjectMcpServers": true,
-  "enabledMcpjsonServers": [
-    "serena"
-  ]
+  "enableAllProjectMcpServers": true
 }
