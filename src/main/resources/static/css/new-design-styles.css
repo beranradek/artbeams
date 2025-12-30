@@ -170,6 +170,13 @@ h6 {
   }
 }
 
+/* Restrict width for full-width articles (without sidebar) for better readability */
+main.container > .blog-main {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Mobile hamburger menu alignment */
 @media (max-width: 767.98px) {
   .navbar-collapse .navbar-nav {
