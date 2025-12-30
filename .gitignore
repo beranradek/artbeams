@@ -9,6 +9,7 @@ dist
 /.ai
 /.idea
 /.serena
+/.claude
 /*.iml
 /out
 /.idea_modules
