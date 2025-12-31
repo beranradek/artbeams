@@ -67,7 +67,7 @@
       "Step 4: Access http://localhost:8080/ and verify homepage loads",
       "Step 5: Stop application gracefully"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -80,7 +80,7 @@
       "Step 4: Verify product price is displayed (if applicable)",
       "Step 5: Verify product metadata is shown"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -92,7 +92,7 @@
       "Step 3: Verify image loads correctly if image path exists",
       "Step 4: Verify fallback behavior if no image exists"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -106,7 +106,7 @@
       "Step 5: Verify color scheme matches site design",
       "Step 6: Verify responsive design on different screen sizes"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -118,7 +118,7 @@
       "Step 3: Verify hero image displays member-section-image.webp if it exists",
       "Step 4: Verify fallback to /static/images/night-tree.webp if custom image doesn't exist"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -130,7 +130,7 @@
       "Step 3: Verify heading is properly styled and visible",
       "Step 4: Verify heading position is above the product cards"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -143,7 +143,7 @@
       "Step 4: Verify animations enhance the calming/night theme aesthetic",
       "Step 5: Take screenshot to verify visual appeal"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -156,7 +156,7 @@
       "Step 4: Verify fonts are NOT generic (Inter, Roboto, Arial, system fonts)",
       "Step 5: Verify font pairing creates cohesive aesthetic"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -170,7 +170,7 @@
       "Step 5: Verify colors are NOT cliched (purple gradients on white)",
       "Step 6: Take screenshots to verify color harmony"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -184,7 +184,7 @@
       "Step 5: Verify animations are CSS-based for performance",
       "Step 6: Verify animations create memorable experience"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -198,7 +198,7 @@
       "Step 5: Verify composition feels intentional and bold",
       "Step 6: Take screenshots to verify unique layout approach"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -212,7 +212,7 @@
       "Step 5: Verify creative effects like grain overlays or mesh gradients",
       "Step 6: Take screenshots to verify atmospheric quality"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -226,7 +226,7 @@
       "Step 5: Verify card design matches overall aesthetic",
       "Step 6: Take screenshots of hover states"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -241,7 +241,7 @@
       "Step 6: Verify mobile layout is functional and attractive",
       "Step 7: Test touch interactions on mobile"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   },
   {
@@ -259,7 +259,7 @@
       "Step 9: Verify NO generic AI aesthetics are present",
       "Step 10: Confirm overall impression is professional and production-ready"
     ],
-    "passes": false,
+    "passes": true,
     "reviewed": false
   }
 ]
