@@ -303,3 +303,32 @@ CREATE INDEX idx_user_activity_log_action_time ON user_activity_log (action_time
 CREATE INDEX idx_user_activity_log_action_type ON user_activity_log (action_type);
 CREATE INDEX idx_user_activity_log_entity ON user_activity_log (entity_type, entity_id);
 CREATE INDEX idx_user_activity_log_user_time ON user_activity_log (user_id, action_time DESC);
+
+-- Enable PostgreSQL extensions for full-text search
+CREATE EXTENSION IF NOT EXISTS pg_trgm;  -- Trigram matching for autocomplete
+CREATE EXTENSION IF NOT EXISTS unaccent; -- Remove diacritics
+
+-- Search index table for full-text search across articles, categories, and products
+CREATE TABLE search_index (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    entity_type VARCHAR(20) NOT NULL,  -- 'ARTICLE', 'CATEGORY', 'PRODUCT'
+    entity_id VARCHAR(40) NOT NULL,
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    keywords VARCHAR(1000),
+    slug VARCHAR(128),
+    search_vector tsvector,             -- Pre-computed FTS vector
+    metadata JSONB,                      -- Flexible metadata (image, perex, price, etc.)
+    valid_from timestamp,
+    valid_to timestamp,
+    created timestamp NOT NULL,
+    modified timestamp NOT NULL
+);
+
+-- Indexes for search performance
+CREATE INDEX idx_search_entity ON search_index(entity_type, entity_id);
+CREATE INDEX idx_search_fts ON search_index USING GIN(search_vector);
+CREATE INDEX idx_search_trigram_title ON search_index USING GIN(title gin_trgm_ops);
+CREATE INDEX idx_search_slug ON search_index(slug);
+CREATE INDEX idx_search_validity ON search_index(valid_from, valid_to);
+CREATE INDEX idx_search_modified ON search_index(modified DESC);

@@ -27,6 +27,7 @@ open class CachingConfig() {
             Comment.CACHE_NAME,
             EntityAccessCount.CacheName,
             AntispamQuiz.CacheName,
-            "searchConsoleMetrics", "searchConsolePages", "searchConsoleQueries", "searchConsoleSitemaps"
+            "searchConsoleMetrics", "searchConsolePages", "searchConsoleQueries", "searchConsoleSitemaps",
+            "searchSuggestions" // Search autocomplete suggestions cache
         )
 }

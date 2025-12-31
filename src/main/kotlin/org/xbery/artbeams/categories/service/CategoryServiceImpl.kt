@@ -11,6 +11,7 @@ import org.xbery.artbeams.categories.domain.EditedCategory
 import org.xbery.artbeams.categories.repository.CategoryRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.context.OperationCtx
+import org.xbery.artbeams.search.service.SearchIndexer
 
 /**
  * @author Radek Beran
@@ -18,7 +19,8 @@ import org.xbery.artbeams.common.context.OperationCtx
 @Service
 open class CategoryServiceImpl(
     private val categoryRepository: CategoryRepository,
-    private val articleCategoryRepository: ArticleCategoryRepository
+    private val articleCategoryRepository: ArticleCategoryRepository,
+    private val searchIndexer: SearchIndexer
 ) : CategoryService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -52,6 +54,10 @@ open class CategoryServiceImpl(
                 val category = categoryRepository.requireById(edited.id)
                 categoryRepository.update(category.updatedWith(edited, userId))
             }
+
+            // Update search index
+            updatedCategoryOpt?.let { searchIndexer.indexCategory(it) }
+
             updatedCategoryOpt
         } catch (ex: Exception) {
             logger.error("Update of category ${edited.id} finished with error ${ex.message}", ex)

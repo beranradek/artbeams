@@ -271,6 +271,8 @@ ${websiteJsonLd}
   <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
   <!-- Responsive Images JavaScript -->
   <script nonce="${_cspNonce}" src="/static/js/responsive-images.js"></script>
+  <!-- Search Autocomplete JavaScript -->
+  <script nonce="${_cspNonce}" src="/static/js/search-autocomplete.js"></script>
   <!-- reCaptcha -->
   <script async defer nonce="${_cspNonce}" data-type="lazy" data-src="https://www.google.com/recaptcha/api.js?render=${xlat['recaptcha.siteKey']}"></script>
 
