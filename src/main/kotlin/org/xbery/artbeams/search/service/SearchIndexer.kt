@@ -34,19 +34,12 @@ class SearchIndexer(
      * Index an article in the search index.
      */
     fun indexArticle(article: Article) {
-        try {
-            val existing = searchIndexRepository.findByEntity(EntityType.ARTICLE, article.id)
-            val entry = createArticleIndexEntry(article, existing?.id)
-
-            if (existing != null) {
-                searchIndexRepository.update(entry)
-                logger.debug("Updated search index for article: ${article.id}")
-            } else {
-                searchIndexRepository.create(entry)
-                logger.debug("Created search index for article: ${article.id}")
-            }
-        } catch (e: Exception) {
-            logger.error("Failed to index article ${article.id}: ${e.message}", e)
+        indexEntity(
+            entityType = EntityType.ARTICLE,
+            entityId = article.id,
+            entityName = "article"
+        ) { existingId ->
+            createArticleIndexEntry(article, existingId)
         }
     }
 
@@ -54,19 +47,12 @@ class SearchIndexer(
      * Index a category in the search index.
      */
     fun indexCategory(category: Category) {
-        try {
-            val existing = searchIndexRepository.findByEntity(EntityType.CATEGORY, category.id)
-            val entry = createCategoryIndexEntry(category, existing?.id)
-
-            if (existing != null) {
-                searchIndexRepository.update(entry)
-                logger.debug("Updated search index for category: ${category.id}")
-            } else {
-                searchIndexRepository.create(entry)
-                logger.debug("Created search index for category: ${category.id}")
-            }
-        } catch (e: Exception) {
-            logger.error("Failed to index category ${category.id}: ${e.message}", e)
+        indexEntity(
+            entityType = EntityType.CATEGORY,
+            entityId = category.id,
+            entityName = "category"
+        ) { existingId ->
+            createCategoryIndexEntry(category, existingId)
         }
     }
 
@@ -74,19 +60,37 @@ class SearchIndexer(
      * Index a product in the search index.
      */
     fun indexProduct(product: Product) {
+        indexEntity(
+            entityType = EntityType.PRODUCT,
+            entityId = product.id,
+            entityName = "product"
+        ) { existingId ->
+            createProductIndexEntry(product, existingId)
+        }
+    }
+
+    /**
+     * Common indexing logic to avoid code duplication.
+     */
+    private fun indexEntity(
+        entityType: EntityType,
+        entityId: String,
+        entityName: String,
+        entryCreator: (String?) -> SearchIndexEntry
+    ) {
         try {
-            val existing = searchIndexRepository.findByEntity(EntityType.PRODUCT, product.id)
-            val entry = createProductIndexEntry(product, existing?.id)
+            val existing = searchIndexRepository.findByEntity(entityType, entityId)
+            val entry = entryCreator(existing?.id)
 
             if (existing != null) {
                 searchIndexRepository.update(entry)
-                logger.debug("Updated search index for product: ${product.id}")
+                logger.debug("Updated search index for $entityName: $entityId")
             } else {
                 searchIndexRepository.create(entry)
-                logger.debug("Created search index for product: ${product.id}")
+                logger.debug("Created search index for $entityName: $entityId")
             }
         } catch (e: Exception) {
-            logger.error("Failed to index product ${product.id}: ${e.message}", e)
+            logger.error("Failed to index $entityName $entityId: ${e.message}", e)
         }
     }
 

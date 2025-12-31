@@ -9,7 +9,7 @@
       "Step 4: Run ./gradlew compileKotlin to verify no compilation errors"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -20,7 +20,7 @@
       "Step 3: Verify compilation succeeds"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -31,7 +31,7 @@
       "Step 3: Verify compilation succeeds"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -43,7 +43,7 @@
       "Step 4: Verify compilation succeeds"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -55,7 +55,7 @@
       "Step 4: Check build/libs for generated JAR file"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -68,7 +68,7 @@
       "Step 5: Stop application gracefully"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -81,7 +81,7 @@
       "Step 5: Verify product metadata is shown"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -93,7 +93,7 @@
       "Step 4: Verify fallback behavior if no image exists"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -107,7 +107,7 @@
       "Step 6: Verify responsive design on different screen sizes"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -119,7 +119,7 @@
       "Step 4: Verify fallback to /static/images/night-tree.webp if custom image doesn't exist"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -131,7 +131,7 @@
       "Step 4: Verify heading position is above the product cards"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -144,7 +144,7 @@
       "Step 5: Take screenshot to verify visual appeal"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -157,7 +157,7 @@
       "Step 5: Verify font pairing creates cohesive aesthetic"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -171,7 +171,7 @@
       "Step 6: Take screenshots to verify color harmony"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -185,7 +185,7 @@
       "Step 6: Verify animations create memorable experience"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -199,7 +199,7 @@
       "Step 6: Take screenshots to verify unique layout approach"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -213,7 +213,7 @@
       "Step 6: Take screenshots to verify atmospheric quality"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -227,7 +227,7 @@
       "Step 6: Take screenshots of hover states"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "functional",
@@ -242,7 +242,7 @@
       "Step 7: Test touch interactions on mobile"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   },
   {
     "category": "style",
@@ -260,6 +260,6 @@
       "Step 10: Confirm overall impression is professional and production-ready"
     ],
     "passes": true,
-    "reviewed": false
+    "reviewed": true
   }
 ]

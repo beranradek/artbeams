@@ -63,6 +63,8 @@ class SearchIndexRepository(
         val searchPattern = "%${query.trim()}%"
 
         // Use ILIKE for case-insensitive substring matching with trigram index
+        val prefixPattern = "${query.trim()}%"
+
         return dsl.select(
             SEARCH_INDEX.ENTITY_TYPE,
             SEARCH_INDEX.ENTITY_ID,
@@ -75,10 +77,10 @@ class SearchIndexRepository(
             .where(SEARCH_INDEX.TITLE.likeIgnoreCase(searchPattern))
             .and(validityCondition)
             .orderBy(
-                // Prefer exact prefix matches
+                // Prefer exact prefix matches - using parameterized pattern to prevent SQL injection
                 DSL.field("CASE WHEN {0} ILIKE {1} THEN 0 ELSE 1 END",
                     SEARCH_INDEX.TITLE,
-                    "${query.trim()}%"
+                    DSL.`val`(prefixPattern)
                 ),
                 // Then order by similarity (if pg_trgm installed)
                 SEARCH_INDEX.ENTITY_TYPE.asc(),
@@ -186,6 +188,7 @@ class SearchIndexRepository(
     private fun parseMetadata(jsonString: String?): Map<String, Any?> {
         return jsonString?.let {
             try {
+                @Suppress("UNCHECKED_CAST")
                 objectMapper.readValue(it, Map::class.java) as Map<String, Any?>
             } catch (e: Exception) {
                 emptyMap()
