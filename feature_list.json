@@ -1,0 +1,265 @@
+[
+  {
+    "category": "functional",
+    "description": "Fix compile errors: JOOQ classes missing for search_index table",
+    "steps": [
+      "Step 1: Run ./gradlew generateJooq to generate missing JOOQ classes",
+      "Step 2: Verify SearchIndexRecord class exists in build/generated-src/jooq",
+      "Step 3: Verify SEARCH_INDEX table constant exists",
+      "Step 4: Run ./gradlew compileKotlin to verify no compilation errors"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Fix compile errors: Missing AbstractMappingRepository import in SearchIndexRepository",
+    "steps": [
+      "Step 1: Check imports in SearchIndexRepository.kt",
+      "Step 2: Add missing import for AbstractMappingRepository from common.persistence.repository",
+      "Step 3: Verify compilation succeeds"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Fix compile errors: Missing NormalizedStringUtils in SearchIndexer",
+    "steps": [
+      "Step 1: Locate or create NormalizedStringUtils utility class",
+      "Step 2: Ensure proper import in SearchIndexer.kt",
+      "Step 3: Verify compilation succeeds"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Fix compile errors: Missing create/update methods in SearchIndexRepository",
+    "steps": [
+      "Step 1: Review SearchIndexRepository methods",
+      "Step 2: Add missing create() and update() methods following repository pattern",
+      "Step 3: Verify SearchIndexer can call these methods",
+      "Step 4: Verify compilation succeeds"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Application compiles and builds successfully",
+    "steps": [
+      "Step 1: Run ./gradlew clean build",
+      "Step 2: Verify no compilation errors",
+      "Step 3: Verify build artifacts are created",
+      "Step 4: Check build/libs for generated JAR file"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Application starts successfully with local profile",
+    "steps": [
+      "Step 1: Run ./gradlew bootRun --args='--spring.profiles.active=local'",
+      "Step 2: Verify application starts without errors",
+      "Step 3: Check logs for successful initialization",
+      "Step 4: Access http://localhost:8080/ and verify homepage loads",
+      "Step 5: Stop application gracefully"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Member section product detail page displays product information",
+    "steps": [
+      "Step 1: Navigate to member section product detail page",
+      "Step 2: Verify product title is displayed",
+      "Step 3: Verify product description is displayed",
+      "Step 4: Verify product price is displayed (if applicable)",
+      "Step 5: Verify product metadata is shown"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Member section product detail page displays product image",
+    "steps": [
+      "Step 1: Navigate to member section product detail page",
+      "Step 2: Verify Product#image field is rendered on the page",
+      "Step 3: Verify image loads correctly if image path exists",
+      "Step 4: Verify fallback behavior if no image exists"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section product detail page has professional visual design",
+    "steps": [
+      "Step 1: Navigate to member section product detail page",
+      "Step 2: Take screenshot of the page",
+      "Step 3: Verify layout is clean and professional",
+      "Step 4: Verify typography is readable and well-spaced",
+      "Step 5: Verify color scheme matches site design",
+      "Step 6: Verify responsive design on different screen sizes"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Member section landing page displays custom hero image",
+    "steps": [
+      "Step 1: Navigate to member section landing page",
+      "Step 2: Check if /media/member-section-image.webp exists",
+      "Step 3: Verify hero image displays member-section-image.webp if it exists",
+      "Step 4: Verify fallback to /static/images/night-tree.webp if custom image doesn't exist"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Member section landing page displays 'Moje produkty' heading",
+    "steps": [
+      "Step 1: Navigate to member section landing page",
+      "Step 2: Verify heading 'Moje produkty' is present above product listing",
+      "Step 3: Verify heading is properly styled and visible",
+      "Step 4: Verify heading position is above the product cards"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section landing page has attractive hero section with animations",
+    "steps": [
+      "Step 1: Navigate to member section landing page",
+      "Step 2: Verify hero section contains animated elements (stars/lights)",
+      "Step 3: Verify animations are smooth and non-intrusive",
+      "Step 4: Verify animations enhance the calming/night theme aesthetic",
+      "Step 5: Take screenshot to verify visual appeal"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section uses distinctive and memorable typography",
+    "steps": [
+      "Step 1: Navigate to member section pages",
+      "Step 2: Verify unique display font is used for headings",
+      "Step 3: Verify readable body font complements display font",
+      "Step 4: Verify fonts are NOT generic (Inter, Roboto, Arial, system fonts)",
+      "Step 5: Verify font pairing creates cohesive aesthetic"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section has cohesive color theme matching healthy sleep/relaxation aesthetic",
+    "steps": [
+      "Step 1: Navigate to member section pages",
+      "Step 2: Verify color palette evokes calm/night/winter themes",
+      "Step 3: Verify dominant colors with sharp accents are used",
+      "Step 4: Verify CSS variables are used for color consistency",
+      "Step 5: Verify colors are NOT cliched (purple gradients on white)",
+      "Step 6: Take screenshots to verify color harmony"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section has creative animations and micro-interactions",
+    "steps": [
+      "Step 1: Navigate to member section pages",
+      "Step 2: Verify page load animations with staggered reveals",
+      "Step 3: Verify hover states on product cards",
+      "Step 4: Verify scroll-triggered animations if applicable",
+      "Step 5: Verify animations are CSS-based for performance",
+      "Step 6: Verify animations create memorable experience"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section has unexpected and creative spatial composition",
+    "steps": [
+      "Step 1: Navigate to member section pages",
+      "Step 2: Verify layout breaks from conventional grid patterns",
+      "Step 3: Verify asymmetry, overlap, or diagonal flow is present",
+      "Step 4: Verify generous negative space or controlled density",
+      "Step 5: Verify composition feels intentional and bold",
+      "Step 6: Take screenshots to verify unique layout approach"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section has atmospheric backgrounds and visual depth",
+    "steps": [
+      "Step 1: Navigate to member section pages",
+      "Step 2: Verify backgrounds use textures, gradients, or patterns (not solid colors)",
+      "Step 3: Verify visual depth through layering or shadows",
+      "Step 4: Verify backgrounds match calming/night aesthetic",
+      "Step 5: Verify creative effects like grain overlays or mesh gradients",
+      "Step 6: Take screenshots to verify atmospheric quality"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section product cards have engaging visual effects",
+    "steps": [
+      "Step 1: Navigate to member section product listing",
+      "Step 2: Hover over product cards to see hover effects",
+      "Step 3: Verify cards have depth (shadows, borders, or elevation)",
+      "Step 4: Verify transition animations are smooth",
+      "Step 5: Verify card design matches overall aesthetic",
+      "Step 6: Take screenshots of hover states"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "functional",
+    "description": "Member section is responsive across device sizes",
+    "steps": [
+      "Step 1: Open member section on desktop viewport (1920px)",
+      "Step 2: Verify layout and all elements display correctly",
+      "Step 3: Resize to tablet viewport (768px)",
+      "Step 4: Verify responsive layout adapts appropriately",
+      "Step 5: Resize to mobile viewport (375px)",
+      "Step 6: Verify mobile layout is functional and attractive",
+      "Step 7: Test touch interactions on mobile"
+    ],
+    "passes": false,
+    "reviewed": false
+  },
+  {
+    "category": "style",
+    "description": "Member section creates unforgettable and distinctive user experience",
+    "steps": [
+      "Step 1: Navigate through entire member section user journey",
+      "Step 2: Evaluate overall aesthetic coherence and boldness",
+      "Step 3: Verify design has clear conceptual direction",
+      "Step 4: Verify design differentiates from generic web patterns",
+      "Step 5: Verify design executes vision with precision and refinement",
+      "Step 6: Verify design creates one memorable moment/feature",
+      "Step 7: Take comprehensive screenshots documenting the experience",
+      "Step 8: Verify design matches healthy sleep/relaxing nights theme",
+      "Step 9: Verify NO generic AI aesthetics are present",
+      "Step 10: Confirm overall impression is professional and production-ready"
+    ],
+    "passes": false,
+    "reviewed": false
+  }
+]
