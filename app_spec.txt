@@ -1,0 +1,184 @@
+# Specification of fixes and new features
+
+## Task one: Fix compile errors from new search suggestions feature
+
+(just instruct agent to compile and see the errors themselves)
+
+> Task :compileKotlin FAILED
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:7:51 Unresolved reference 'repository'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:8:54 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:9:57 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:25:5 'dsl' overrides nothing.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:26:5 'mapper' overrides nothing.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:27:5 'unmapper' overrides nothing.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:29:5 Unresolved reference 'AbstractMappingRepository'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:29:49 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:32:5 'table' overrides nothing.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:32:31 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:32:52 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:33:5 'idField' overrides nothing.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:33:44 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:39:13 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:40:20 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:41:18 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:42:14 Unresolved reference 'fetchOne'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:48:13 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:48:24 Argument type mismatch: actual type is 'Table<ERROR CLASS: Symbol not found for SearchIndexRecord>', but 'Table<uninferred R! (of fun <R : Record!> deleteFrom)>!' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:49:20 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:50:18 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:51:14 Unresolved reference 'execute'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:66:20 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:66:20 Not enough information to infer type argument for 'T1'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:66:20 Not enough information to infer type argument for 'T2'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:66:20 Not enough information to infer type argument for 'T3'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:66:20 Not enough information to infer type argument for 'T4'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:66:20 Not enough information to infer type argument for 'T5'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:66:20 Not enough information to infer type argument for 'T6'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:67:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:68:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:69:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:70:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:71:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:72:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:75:20 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:76:18 Argument type mismatch: actual type is 'Condition', but 'BigInteger' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:77:14 Unresolved reference 'orderBy'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:80:21 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:84:17 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:85:17 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:88:22 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:89:46 Argument type mismatch: actual type is 'MatchGroup?', but 'String?' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:89:53 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:91:56 Argument type mismatch: actual type is 'MatchGroup', but 'String' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:91:78 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:92:32 Argument type mismatch: actual type is 'MatchGroup', but 'String' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:92:54 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:93:29 Argument type mismatch: actual type is 'MatchGroup', but 'String' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:93:51 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:94:35 Argument type mismatch: actual type is 'MatchGroup?', but 'String?' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:94:42 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:95:28 Argument type mismatch: actual type is 'MatchGroup', but 'String' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:95:50 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:124:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Not enough information to infer type argument for 'T1'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Not enough information to infer type argument for 'T2'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Not enough information to infer type argument for 'T3'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Not enough information to infer type argument for 'T4'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Not enough information to infer type argument for 'T5'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Not enough information to infer type argument for 'T6'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:128:20 Not enough information to infer type argument for 'T7'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:129:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:130:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:131:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:132:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:133:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:134:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:135:13 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:142:21 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:147:14 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:147:14 Not enough information to infer type argument for 'T2'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:147:40 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:150:53 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:152:78 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:153:54 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:154:51 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:155:42 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:156:39 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:157:50 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:168:13 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:168:24 Argument type mismatch: actual type is 'Table<ERROR CLASS: Symbol not found for SearchIndexRecord>', but 'Table<uninferred R! (of fun <R : Record!> deleteFrom)>!' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:176:20 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:177:14 Unresolved reference 'fetchOne'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:180:9 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:180:9 Return type mismatch: expected 'Condition', actual 'BigInteger!'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:180:43 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:182:17 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt:183:25 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:9:54 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:16:1 Class 'SearchIndexMapper' is not abstract and does not implement abstract member:
+fun map(p0: R!): @Nullable() E?
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:18:18 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:20:5 'map' overrides nothing. Potential signatures for overriding:
+fun map(p0: ERROR CLASS: Symbol not found for SearchIndexRecord!): @Nullable() SearchIndexEntry?
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:20:30 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:21:24 Argument type mismatch: actual type is 'R? (of fun <T, R> T.let)', but 'K? (of fun <K> ELVIS_CALL)' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:21:31 Unresolved reference 'metadata'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:21:41 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:21:47 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:27:14 Cannot infer type for this parameter. Specify it explicitly.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:27:14 Argument type mismatch: actual type is 'Map<uninferred K (of fun <K, V> emptyMap), uninferred V (of fun <K, V> emptyMap)>', but 'K#2 (of fun <K> ELVIS_CALL)' was expected.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:30:40 Unresolved reference 'id'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:31:70 Unresolved reference 'entityType'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:32:46 Unresolved reference 'entityId'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:33:43 Unresolved reference 'title'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:34:34 Unresolved reference 'description'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:35:31 Unresolved reference 'keywords'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:36:27 Unresolved reference 'slug'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:37:35 Unresolved reference 'searchVector'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:39:32 Unresolved reference 'validFrom'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:40:30 Unresolved reference 'validTo'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:41:45 Unresolved reference 'created'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexMapper.kt:42:46 Unresolved reference 'modified'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexUnmapper.kt:7:54 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexUnmapper.kt:8:57 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexUnmapper.kt:17:38 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexUnmapper.kt:19:50 Unresolved reference 'SearchIndexRecord'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/repository/mapper/SearchIndexUnmapper.kt:20:22 Unresolved reference 'SEARCH_INDEX'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:11:39 Unresolved reference 'NormalizedStringUtils'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:43:39 Unresolved reference 'update'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:46:39 Unresolved reference 'create'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:63:39 Unresolved reference 'update'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:66:39 Unresolved reference 'create'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:83:39 Unresolved reference 'update'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:86:39 Unresolved reference 'create'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:124:43 Unresolved reference 'create'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:136:43 Unresolved reference 'create'.
+e: file:///home/radek/dev/artbeams/src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt:148:43 Unresolved reference 'create'.
+
+FAILURE: Build failed with an exception.
+
+## Task two: Improve userProduct.ftl served by UserProductController so this member section product detail page contains all necessary info about the product including its image (Product#image) and becomes visually nice product detail.
+
+## Task three: Improve memberSection.ftl served by MemberSectionController so it contains /media/member-section-image.webp (if this image exists) instead of hardcoded /static/images/night-tree.webp and contains heading "Moje produkty" above the product listing.
+
+## Task four: Improve both member section product listing and product detail pages by improving creatively the design and effects, so it is visually attractive and makes unforgettable experience.
+I like the "Animation for stars/lights in hero section" from new-hero-styles.css, so it can be used in the area above the member-section-image.webp,
+and you can think of other nice effects to make the pages visually appealing.
+Or you can redesign the entire pages creatively like from the scratch so their represent purpose of my pages: Healthy sleep, relaxing nights, nice calming night/winter colors, ... as you can see in existing CSS files.
+
+Follow these instructions about appealing design:
+
+### Design Thinking
+
+Before coding, understand the context and commit to a BOLD aesthetic direction:
+- **Purpose**: What problem does this interface solve? Who uses it?
+- **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
+- **Constraints**: Technical requirements (framework, performance, accessibility).
+- **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
+
+**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
+
+Then implement working code (HTML/CSS/JS, etc.) that is:
+- Production-grade and functional
+- Visually striking and memorable
+- Cohesive with a clear aesthetic point-of-view
+- Meticulously refined in every detail
+
+### Frontend Aesthetics Guidelines
+
+Focus on:
+- **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
+- **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
+- **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
+- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
+- **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
+
+NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
+
+Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
+
+**IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
+
+Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
