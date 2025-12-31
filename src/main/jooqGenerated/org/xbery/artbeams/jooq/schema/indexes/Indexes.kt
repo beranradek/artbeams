@@ -19,6 +19,7 @@ import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
+import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
 import org.xbery.artbeams.jooq.schema.tables.UserProduct
@@ -60,6 +61,10 @@ val IDX_ORDERS_STATE: Index = Internal.createIndex(DSL.name("idx_orders_state"),
 val IDX_PRODUCTS_SLUG: Index = Internal.createIndex(DSL.name("idx_products_slug"), Products.PRODUCTS, arrayOf(Products.PRODUCTS.SLUG), false)
 val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)
 val IDX_QUEUE_NEXT_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_queue_next_action_time"), Queue.QUEUE, arrayOf(Queue.QUEUE.NEXT_ACTION_TIME), false)
+val IDX_SEARCH_ENTITY: Index = Internal.createIndex(DSL.name("idx_search_entity"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.ENTITY_TYPE, SearchIndex.SEARCH_INDEX.ENTITY_ID), false)
+val IDX_SEARCH_MODIFIED: Index = Internal.createIndex(DSL.name("idx_search_modified"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.MODIFIED), false)
+val IDX_SEARCH_SLUG: Index = Internal.createIndex(DSL.name("idx_search_slug"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.SLUG), false)
+val IDX_SEARCH_VALIDITY: Index = Internal.createIndex(DSL.name("idx_search_validity"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.VALID_FROM, SearchIndex.SEARCH_INDEX.VALID_TO), false)
 val IDX_USER_ACCESS_UNIQUE: Index = Internal.createIndex(DSL.name("idx_user_access_unique"), UserAccess.USER_ACCESS, arrayOf(UserAccess.USER_ACCESS.ACCESS_DATE, UserAccess.USER_ACCESS.IP, UserAccess.USER_ACCESS.USER_AGENT, UserAccess.USER_ACCESS.ENTITY_TYPE, UserAccess.USER_ACCESS.ENTITY_ID), true)
 val IDX_USER_ACTIVITY_LOG_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_user_activity_log_action_time"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ACTION_TIME), false)
 val IDX_USER_ACTIVITY_LOG_ACTION_TYPE: Index = Internal.createIndex(DSL.name("idx_user_activity_log_action_type"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ACTION_TYPE), false)

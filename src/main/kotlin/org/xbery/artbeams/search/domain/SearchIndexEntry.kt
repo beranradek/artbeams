@@ -1,6 +1,7 @@
 package org.xbery.artbeams.search.domain
 
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.common.repository.IdentifiedEntity
 import java.time.Instant
 
 /**
@@ -9,7 +10,7 @@ import java.time.Instant
  * @author Radek Beran
  */
 data class SearchIndexEntry(
-    val id: String,
+    override val id: String,
     val entityType: EntityType,
     val entityId: String,
     val title: String,
@@ -22,7 +23,7 @@ data class SearchIndexEntry(
     val validTo: Instant?,
     val created: Instant,
     val modified: Instant
-) {
+) : IdentifiedEntity {
     companion object {
         val Empty = SearchIndexEntry(
             id = AssetAttributes.EMPTY_ID,

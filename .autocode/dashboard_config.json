@@ -1,0 +1,13 @@
+{
+  "commitLimit": 20,
+  "refreshRate": 2,
+  "theme": "auto",
+  "notifications": {
+    "browser_enabled": true,
+    "telegram_enabled": false,
+    "escalations": true,
+    "completions": true,
+    "errors": true,
+    "manager_decisions": true
+  }
+}

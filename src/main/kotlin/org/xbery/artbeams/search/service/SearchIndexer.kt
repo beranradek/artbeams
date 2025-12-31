@@ -8,7 +8,6 @@ import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.categories.domain.Category
 import org.xbery.artbeams.categories.repository.CategoryRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
-import org.xbery.artbeams.common.text.NormalizedStringUtils
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.repository.ProductRepository
 import org.xbery.artbeams.search.domain.EntityType

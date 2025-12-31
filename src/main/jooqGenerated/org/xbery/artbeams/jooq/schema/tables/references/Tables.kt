@@ -21,6 +21,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
+import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.Sequences
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
@@ -114,6 +115,11 @@ val QUEUE: Queue = Queue.QUEUE
  * The table <code>roles</code>.
  */
 val ROLES: Roles = Roles.ROLES
+
+/**
+ * The table <code>search_index</code>.
+ */
+val SEARCH_INDEX: SearchIndex = SearchIndex.SEARCH_INDEX
 
 /**
  * The table <code>sequences</code>.

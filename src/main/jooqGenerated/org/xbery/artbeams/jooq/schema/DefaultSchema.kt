@@ -26,6 +26,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
+import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.Sequences
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
@@ -133,6 +134,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val ROLES: Roles get() = Roles.ROLES
 
     /**
+     * The table <code>search_index</code>.
+     */
+    val SEARCH_INDEX: SearchIndex get() = SearchIndex.SEARCH_INDEX
+
+    /**
      * The table <code>sequences</code>.
      */
     val SEQUENCES: Sequences get() = Sequences.SEQUENCES
@@ -182,6 +188,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         Products.PRODUCTS,
         Queue.QUEUE,
         Roles.ROLES,
+        SearchIndex.SEARCH_INDEX,
         Sequences.SEQUENCES,
         UserAccess.USER_ACCESS,
         UserActivityLog.USER_ACTIVITY_LOG,

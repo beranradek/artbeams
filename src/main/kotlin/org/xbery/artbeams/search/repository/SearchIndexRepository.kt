@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.jooq.*
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
-import org.xbery.artbeams.common.persistence.jooq.repository.AbstractMappingRepository
+import org.xbery.artbeams.common.repository.AbstractMappingRepository
 import org.xbery.artbeams.jooq.schema.tables.records.SearchIndexRecord
 import org.xbery.artbeams.jooq.schema.tables.references.SEARCH_INDEX
 import org.xbery.artbeams.search.domain.EntityType
