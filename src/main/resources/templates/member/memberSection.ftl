@@ -44,7 +44,7 @@
       </#list>
     </div>
     <div class="col column-right">
-        <img src="/static/images/person-beside-bare-tree-at-night-3262249.webp" class="img-fluid illustration-image" alt="">
+        <img src="/static/images/night-tree.webp" class="img-fluid illustration-image" alt="">
     </div>
   </div>
 </div>

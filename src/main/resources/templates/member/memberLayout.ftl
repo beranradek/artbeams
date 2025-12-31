@@ -95,7 +95,7 @@
         background-color: rgb(248, 248, 248);
         background-repeat: no-repeat;
         background-size: cover;
-        min-height: 300px;
+        min-height: 340px;
         border-width: 1px;
         border-style: solid;
         border-color: rgb(230, 230, 230);
@@ -109,12 +109,12 @@
         outline-color: rgb(230, 230, 230);
       }
       .card-image {
-          min-height: 180px; /* Keep in sync with .card-title-desc top and .card-content min-height */
+          min-height: 220px; /* Keep in sync with .card-title-desc top and .card-content min-height */
           border-radius: 20px 20px 0 0;
           background-position: center center;
        }
       .card-title-desc {
-        top: 200px;
+        top: 240px;
         font-family: "Montserrat", sans-serif;
         display: flex;
         flex-direction: column;
