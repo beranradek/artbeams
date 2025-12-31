@@ -129,7 +129,7 @@ org.xbery.artbeams/
 
 - Automatic CSS minification during build
 - Combines Bootstrap + custom styles into `styles.css`
-- Source files: `bootstrap.min.css`, `common-styles.css`, `public-styles.css`
+- Source files: `bootstrap.min.css` and other minified common styles
 - CSS minification is handled by the `minifyCss` Gradle task.
 - The `minifyCss` task is automatically run before `processResources` (not directly by `build`).
 

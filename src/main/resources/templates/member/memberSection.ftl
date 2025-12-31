@@ -2,124 +2,21 @@
 <@layout.page>
 
 <style nonce="${_cspNonce}">
-/* Member Section Styling - Serene Winter Night Theme */
+/* Member Section Styling */
 
 :root {
     --member-night-sky: #0a1929;
     --member-deep-blue: #1a3b5c;
-    --member-frost-white: #f0f4f8;
-    --member-ice-blue: #c8dde8;
     --member-golden-light: #d4af37;
-    --member-warm-amber: #ffd89b;
-    --member-soft-glow: rgba(212, 175, 55, 0.15);
 }
 
-/* Hero Section with Animated Stars */
-.member-hero {
-    position: relative;
-    background: linear-gradient(180deg, var(--member-night-sky) 0%, var(--member-deep-blue) 100%);
-    border-radius: 24px;
-    overflow: hidden;
-    margin-bottom: 3rem;
-    min-height: 400px;
-}
-
-.member-hero-bg {
-    position: absolute;
-    inset: 0;
-    opacity: 0.3;
-    background-size: cover;
-    background-position: center;
-    border-radius: 24px;
-}
-
-.member-hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg,
-        rgba(10, 25, 41, 0.7) 0%,
-        rgba(26, 59, 92, 0.8) 100%);
-}
-
-.member-hero-content {
-    position: relative;
-    z-index: 10;
-    padding: 4rem 2rem;
-    text-align: center;
-    color: var(--member-frost-white);
-}
-
-.member-hero-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 4rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #ffffff;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    letter-spacing: -0.02em;
-}
-
-/* Animated stars in hero */
-.member-stars {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 5;
-}
-
-.star-twinkle {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background-color: var(--member-golden-light);
-    border-radius: 50%;
-    animation: twinkle-animation 3s infinite;
-    box-shadow: 0 0 4px var(--member-golden-light);
-}
-
-.star-twinkle:nth-child(odd) {
-    animation-delay: 1.5s;
-}
-
-.star-twinkle:nth-child(3n) {
-    animation-delay: 0.5s;
-    animation-duration: 4s;
-}
-
-.star-twinkle:nth-child(5n) {
-    width: 3px;
-    height: 3px;
-    animation-duration: 2.5s;
-}
-
-@keyframes twinkle-animation {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.3); }
-}
-
-/* Products Section */
-.products-section-title {
-    font-family: 'Crimson Text', serif;
+/* Main Heading */
+.main-heading {
     font-size: 2.5rem;
     font-weight: 600;
-    color: var(--member-deep-blue);
+    color: #000000;
     margin-bottom: 2rem;
-    text-align: center;
-    position: relative;
-    padding-bottom: 1rem;
-}
-
-.products-section-title::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--member-golden-light) 0%, var(--member-warm-amber) 100%);
-    border-radius: 2px;
+    margin-top: 2rem;
 }
 
 .member-container {
@@ -264,11 +161,7 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .member-hero-title {
-        font-size: 2.5rem;
-    }
-
-    .products-section-title {
+    .main-heading {
         font-size: 2rem;
     }
 
@@ -282,35 +175,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 </style>
 
-<!-- Hero Section with Stars Animation -->
 <div class="member-container">
-    <div class="member-hero">
-        <#-- Check if custom member section image exists, otherwise use default -->
-        <div class="member-hero-bg" style="background-image: url('<#if .data_model?keys?seq_contains('memberSectionImage')>${memberSectionImage}<#else>/static/images/night-tree.webp</#if>');"></div>
-        <div class="member-hero-overlay"></div>
+    <h1 class="main-heading">Moje produkty</h1>
 
-        <!-- Animated stars -->
-        <div class="member-stars">
-            <div class="star-twinkle" style="top: 15%; left: 10%;"></div>
-            <div class="star-twinkle" style="top: 25%; left: 30%;"></div>
-            <div class="star-twinkle" style="top: 35%; left: 70%;"></div>
-            <div class="star-twinkle" style="top: 45%; left: 15%;"></div>
-            <div class="star-twinkle" style="top: 55%; left: 85%;"></div>
-            <div class="star-twinkle" style="top: 20%; left: 50%;"></div>
-            <div class="star-twinkle" style="top: 65%; left: 40%;"></div>
-            <div class="star-twinkle" style="top: 75%; left: 65%;"></div>
-            <div class="star-twinkle" style="top: 10%; left: 80%;"></div>
-            <div class="star-twinkle" style="top: 70%; left: 20%;"></div>
-            <div class="star-twinkle" style="top: 40%; left: 45%;"></div>
-            <div class="star-twinkle" style="top: 60%; left: 75%;"></div>
-        </div>
-
-        <div class="member-hero-content">
-            <h1 class="member-hero-title">Moje produkty</h1>
-        </div>
-    </div>
-
-    <!-- Products Section -->
     <div class="member-layout-grid">
         <div>
             <#if userProducts?has_content>

@@ -42,7 +42,9 @@
           </#if>
         </ul>
         <form method="get" action="/search" class="d-flex" role="search">
-          <input type="search" name="query" class="form-control search-box me-2" placeholder="Hledat" aria-label="${xlat['search']}">
+          <div class="search-input-wrapper me-2">
+            <input type="search" name="query" class="form-control search-box" placeholder="Hledat" aria-label="${xlat['search']}">
+          </div>
           <button class="btn btn-primary-custom" type="submit"><span data-i18n-key="search">${xlat['search']}</span></button>
         </form>
    </div>

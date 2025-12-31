@@ -53,7 +53,7 @@
                             </span>
                           <#else>
                             <#if order.state.name() == "PAID" || order.state.name() == "SHIPPED">
-                              <a href="/clenska-sekce/${item.productId}" class="btn btn-sm btn-primary">
+                              <a href="/clenska-sekce/${item.productSlug}/download" class="btn btn-sm btn-primary">
                                 <i class="fas fa-download"></i> Stáhnout
                               </a>
                             <#else>

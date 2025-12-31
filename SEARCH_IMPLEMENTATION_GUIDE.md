@@ -57,7 +57,6 @@ This guide documents the complete implementation of the advanced search suggesti
 - **Location**: `src/main/resources/static/js/search-autocomplete.js`
 - Autocomplete component with debouncing (400ms)
 - Keyboard navigation support (Arrow keys, Enter, Escape)
-- **Location**: `src/main/resources/static/css/public-styles.css`
 - Autocomplete dropdown styling
 
 #### 10. Templates

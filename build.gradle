@@ -265,7 +265,7 @@ task minifyCss {
             // 1) Add bootstrap.min.css
             writer << file("$cssDir/bootstrap.min.css").getText("UTF-8") << "\n"
 
-            // 2) Minify and add common-styles.css a public-styles.css
+            // 2) Minify and add common styles
             ["new-design-styles.css", "new-hero-styles.css", "new-components.css", "responsive-images.css"].each { cssFile ->
                 file("$cssDir/$cssFile").withReader("UTF-8") { reader ->
                     def compressor = new CssCompressor(reader)

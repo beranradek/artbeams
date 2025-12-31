@@ -81,7 +81,8 @@ class OrderRepository(
             ORDER_ITEMS.PRODUCT_ID,
             ORDER_ITEMS.PRICE,
             ORDER_ITEMS.DOWNLOADED,
-            PRODUCTS.TITLE
+            PRODUCTS.TITLE,
+            PRODUCTS.SLUG
         )
             .from(ORDERS)
             .leftJoin(USERS).on(ORDERS.CREATED_BY.eq(USERS.ID))
@@ -98,6 +99,7 @@ class OrderRepository(
                     id = requireNotNull(record[ORDER_ITEMS.ID]),
                     productId = requireNotNull(record[ORDER_ITEMS.PRODUCT_ID]),
                     productName = requireNotNull(record[PRODUCTS.TITLE]),
+                    productSlug = requireNotNull(record[PRODUCTS.SLUG]),
                     quantity = requireNotNull(record[ORDER_ITEMS.QUANTITY]),
                     price = Price(requireNotNull(record[ORDER_ITEMS.PRICE]), Price.DEFAULT_CURRENCY),
                     downloaded = record[ORDER_ITEMS.DOWNLOADED]
@@ -182,7 +184,8 @@ class OrderRepository(
             ORDER_ITEMS.PRODUCT_ID,
             ORDER_ITEMS.PRICE,
             ORDER_ITEMS.DOWNLOADED,
-            PRODUCTS.TITLE
+            PRODUCTS.TITLE,
+            PRODUCTS.SLUG
         )
             .from(ORDERS)
             .leftJoin(USERS).on(ORDERS.CREATED_BY.eq(USERS.ID))
@@ -199,6 +202,7 @@ class OrderRepository(
                     id = requireNotNull(record[ORDER_ITEMS.ID]),
                     productId = requireNotNull(record[ORDER_ITEMS.PRODUCT_ID]),
                     productName = requireNotNull(record[PRODUCTS.TITLE]),
+                    productSlug = requireNotNull(record[PRODUCTS.SLUG]),
                     quantity = requireNotNull(record[ORDER_ITEMS.QUANTITY]),
                     price = Price(requireNotNull(record[ORDER_ITEMS.PRICE]), Price.DEFAULT_CURRENCY),
                     downloaded = record[ORDER_ITEMS.DOWNLOADED]
@@ -247,7 +251,8 @@ class OrderRepository(
             ORDER_ITEMS.PRODUCT_ID,
             ORDER_ITEMS.PRICE,
             ORDER_ITEMS.DOWNLOADED,
-            PRODUCTS.TITLE
+            PRODUCTS.TITLE,
+            PRODUCTS.SLUG
         )
             .from(ORDERS)
             .leftJoin(USERS).on(ORDERS.CREATED_BY.eq(USERS.ID))
@@ -270,6 +275,7 @@ class OrderRepository(
                     id = requireNotNull(record[ORDER_ITEMS.ID]),
                     productId = requireNotNull(record[ORDER_ITEMS.PRODUCT_ID]),
                     productName = requireNotNull(record[PRODUCTS.TITLE]),
+                    productSlug = requireNotNull(record[PRODUCTS.SLUG]),
                     quantity = requireNotNull(record[ORDER_ITEMS.QUANTITY]),
                     price = Price(requireNotNull(record[ORDER_ITEMS.PRICE]), Price.DEFAULT_CURRENCY),
                     downloaded = record[ORDER_ITEMS.DOWNLOADED]

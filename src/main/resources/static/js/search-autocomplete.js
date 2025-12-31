@@ -249,7 +249,15 @@
         // Create results container
         const resultsContainer = document.createElement('div');
         resultsContainer.className = 'search-autocomplete-results';
-        searchInput.parentElement.appendChild(resultsContainer);
+
+        // Append to the wrapper div (parent of search input)
+        const wrapper = searchInput.closest('.search-input-wrapper');
+        if (wrapper) {
+            wrapper.appendChild(resultsContainer);
+        } else {
+            // Fallback to old behavior if wrapper not found
+            searchInput.parentElement.appendChild(resultsContainer);
+        }
 
         // Initialize autocomplete
         new SearchAutocomplete(searchInput, resultsContainer);

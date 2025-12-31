@@ -10,6 +10,7 @@ data class OrderItemInfo(
     val id: String,
     val productId: String,
     val productName: String,
+    val productSlug: String,
     val quantity: Int,
     val price: Price,
     val downloaded: Instant?

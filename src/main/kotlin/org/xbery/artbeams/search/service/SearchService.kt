@@ -31,18 +31,20 @@ class SearchService(
     /**
      * Perform full-text search across all indexed entities.
      * Uses PostgreSQL's tsvector for comprehensive, ranked results.
+     * Falls back to prefix matching when Czech stemming is unavailable.
      */
     fun search(query: String, limit: Int = 50): List<SearchResult> {
         if (query.trim().isEmpty()) {
             return emptyList()
         }
 
-        // Try with 'czech' configuration if available, fallback to 'simple'
+        // Try with 'czech' configuration if available
         return try {
             searchIndexRepository.search(query.trim(), limit, "czech")
         } catch (e: Exception) {
-            // Fallback to simple configuration if czech is not available
-            searchIndexRepository.search(query.trim(), limit, "simple")
+            // Fallback to prefix-based search when stemming is not available
+            // This works better for languages with inflection (like Czech)
+            searchIndexRepository.searchWithPrefix(query.trim(), limit)
         }
     }
 

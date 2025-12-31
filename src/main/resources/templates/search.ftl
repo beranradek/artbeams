@@ -87,7 +87,7 @@
   </#if>
 
   <#-- No results message -->
-  <#if (!categories?? || categories?size == 0) && (!products?? || products?size == 0) && (!articles?? || articles?size == 0) && query?? && query?length >= 2>
+  <#if (!categories?? || categories?size == 0) && (!products?? || products?size == 0) && (!articles?? || articles?size == 0) && query?? && (query?length >= 2)>
     <div class="row mt-4">
       <div class="col-12">
         <div class="alert alert-info" role="alert">

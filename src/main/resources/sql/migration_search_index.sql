@@ -5,6 +5,15 @@
 CREATE EXTENSION IF NOT EXISTS pg_trgm;  -- Trigram matching for autocomplete
 CREATE EXTENSION IF NOT EXISTS unaccent; -- Remove diacritics
 
+-- Verify text search configuration exists (should be built-in)
+-- The 'simple' configuration is required for plainto_tsquery calls
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_ts_config WHERE cfgname = 'simple') THEN
+        RAISE EXCEPTION 'Text search configuration "simple" does not exist. Please ensure PostgreSQL is properly installed.';
+    END IF;
+END $$;
+
 -- Search index table for full-text search across articles, categories, and products
 CREATE TABLE IF NOT EXISTS search_index (
     id VARCHAR(40) NOT NULL PRIMARY KEY,

@@ -6,6 +6,7 @@
 
 :root {
     --product-dark-navy: #0f1e2e;
+    --product-white: white;
     --product-deep-blue: #1a3b5c;
     --product-frost: #e8f1f8;
     --product-ice: #c8dde8;
@@ -24,7 +25,7 @@
 /* Hero Section with Product Image */
 .product-hero {
     position: relative;
-    background: linear-gradient(135deg, var(--product-dark-navy) 0%, var(--product-deep-blue) 100%);
+    /* background: linear-gradient(135deg, var(--product-white) 0%, var(--product-white) 100%); */
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(15, 30, 46, 0.4);
@@ -45,29 +46,6 @@
     position: relative;
 }
 
-.product-image {
-    width: 100%;
-    height: auto;
-    border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    transform: perspective(1000px) rotateY(-5deg);
-    transition: transform 0.5s ease;
-}
-
-.product-image:hover {
-    transform: perspective(1000px) rotateY(0deg) scale(1.02);
-}
-
-.product-image-glow {
-    position: absolute;
-    inset: -20px;
-    background: radial-gradient(circle at center, var(--product-warm-glow) 0%, transparent 70%);
-    opacity: 0.3;
-    filter: blur(30px);
-    z-index: -1;
-    animation: pulse-glow 4s ease-in-out infinite;
-}
-
 @keyframes pulse-glow {
     0%, 100% { opacity: 0.2; }
     50% { opacity: 0.4; }
@@ -83,8 +61,8 @@
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: 1rem;
-    color: #ffffff;
-    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    color: black;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
     letter-spacing: -0.02em;
 }
 
@@ -93,7 +71,7 @@
     font-size: 1.5rem;
     font-weight: 400;
     line-height: 1.5;
-    color: var(--product-ice);
+    color: var(--product-deep-blue);
     margin-bottom: 2rem;
     font-style: italic;
 }
@@ -223,12 +201,6 @@
         padding: 2rem;
     }
 
-    .product-image {
-        transform: none;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
     .product-title {
         font-size: 2.5rem;
     }
@@ -280,8 +252,7 @@
         <div class="product-hero-inner">
             <#if userProduct.image??>
                 <div class="product-image-wrapper">
-                    <div class="product-image-glow"></div>
-                    <img src="${userProduct.image}" alt="${userProduct.title}" class="product-image">
+                    <img src="${userProduct.image}" alt="${userProduct.title}">
                 </div>
             </#if>
 

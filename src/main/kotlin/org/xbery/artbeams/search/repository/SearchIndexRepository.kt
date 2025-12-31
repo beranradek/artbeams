@@ -112,10 +112,11 @@ class SearchIndexRepository(
         val validityCondition = validityCondition(Instant.now())
 
         // Create tsquery from user input using plainto_tsquery for safety
+        // Cast ftsConfig to regconfig type for PostgreSQL
         val tsQuery = DSL.function(
             "plainto_tsquery",
             Object::class.java,
-            DSL.`val`(ftsConfig),
+            DSL.field("{0}::regconfig", ftsConfig),
             DSL.`val`(query.trim())
         )
 
@@ -159,6 +160,60 @@ class SearchIndexRepository(
                     slug = requireNotNull(record[SEARCH_INDEX.SLUG]),
                     metadata = metadata,
                     rank = record["rank"] as? Double
+                )
+            }
+    }
+
+    /**
+     * Perform prefix-based search using ILIKE pattern matching.
+     * Useful fallback when text search configuration doesn't support stemming.
+     * Works well for inflected languages (like Czech) without stemming dictionaries.
+     */
+    fun searchWithPrefix(query: String, limit: Int = 50): List<SearchResult> {
+        if (query.trim().isEmpty()) {
+            return emptyList()
+        }
+
+        val validityCondition = validityCondition(Instant.now())
+        val searchPattern = "%${query.trim()}%"
+
+        return dsl.select(
+            SEARCH_INDEX.ENTITY_TYPE,
+            SEARCH_INDEX.ENTITY_ID,
+            SEARCH_INDEX.TITLE,
+            SEARCH_INDEX.DESCRIPTION,
+            SEARCH_INDEX.KEYWORDS,
+            SEARCH_INDEX.SLUG,
+            SEARCH_INDEX.METADATA
+        )
+            .from(table)
+            .where(
+                SEARCH_INDEX.TITLE.likeIgnoreCase(searchPattern)
+                    .or(SEARCH_INDEX.DESCRIPTION.likeIgnoreCase(searchPattern))
+                    .or(SEARCH_INDEX.KEYWORDS.likeIgnoreCase(searchPattern))
+            )
+            .and(validityCondition)
+            .orderBy(
+                // Prefer title matches over description/keywords
+                DSL.field("CASE WHEN {0} ILIKE {1} THEN 0 ELSE 1 END",
+                    SEARCH_INDEX.TITLE,
+                    DSL.`val`(searchPattern)
+                ),
+                SEARCH_INDEX.ENTITY_TYPE.asc(),
+                SEARCH_INDEX.MODIFIED.desc()
+            )
+            .limit(limit)
+            .fetch { record ->
+                val metadata = parseMetadata(record[SEARCH_INDEX.METADATA])
+                SearchResult(
+                    entityType = EntityType.fromString(requireNotNull(record[SEARCH_INDEX.ENTITY_TYPE])),
+                    entityId = requireNotNull(record[SEARCH_INDEX.ENTITY_ID]),
+                    title = requireNotNull(record[SEARCH_INDEX.TITLE]),
+                    description = record[SEARCH_INDEX.DESCRIPTION],
+                    keywords = record[SEARCH_INDEX.KEYWORDS],
+                    slug = requireNotNull(record[SEARCH_INDEX.SLUG]),
+                    metadata = metadata,
+                    rank = null // No ranking for ILIKE-based search
                 )
             }
     }

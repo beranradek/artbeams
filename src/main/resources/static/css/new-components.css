@@ -303,3 +303,80 @@
   left: 0;
   font-size: 1.2em;
 }
+
+/* Search Autocomplete Styles */
+
+/* Ensure navbar and form don't clip the suggestions */
+.navbar,
+.navbar-collapse,
+form[role="search"] {
+  overflow: visible !important;
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.search-autocomplete-results {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 400px;
+  background: white;
+  border: 2px solid #2b5989;
+  border-radius: 6px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  max-height: 500px;
+  overflow-y: auto;
+  z-index: 10000;
+}
+
+.search-suggestions {
+  padding: 8px 0;
+}
+
+.suggestion-group {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestion-group:last-child {
+  border-bottom: none;
+}
+
+.suggestion-group h6 {
+  padding: 4px 16px;
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 600;
+}
+
+.suggestion-item {
+  display: block;
+  padding: 8px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.15s;
+  cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+  background-color: #f5f5f5;
+  text-decoration: none;
+}
+
+.suggestion-item mark {
+  background-color: #fff3cd;
+  padding: 0 2px;
+}
+
+.suggestion-footer {
+  padding: 8px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}

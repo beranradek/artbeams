@@ -16,7 +16,7 @@
 
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 
-  <!-- Only one CSS file composed from Bootstrap, common-styles and public-styles: -->
+  <!-- Only one CSS file composed from Bootstrap and other common styles: -->
   <!-- Boostrap template is based on https://getbootstrap.com/docs/5.3/examples/navbar-static/ and some regular non-sticky footer -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
