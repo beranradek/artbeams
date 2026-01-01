@@ -34,6 +34,3 @@ Vždy se snaž být nápomocný, konkrétní a dodržuj pravidla českého jazyk
 ON CONFLICT (entry_key) DO UPDATE SET entry_value = EXCLUDED.entry_value;
 
 -- Note: The AI agent requires OPENAI_API_KEY environment variable to be set
--- You can also configure it in application.yml:
--- openai:
---   api-key: your-api-key-here
