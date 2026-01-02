@@ -1,10 +1,10 @@
 <#macro faqAccordion faqItems>
 <!-- FAQ Section -->
-<section class="py-4 px-4 bg-background">
+<section class="faq-section y-box-spacing px-4 bg-background">
   <div class="max-w-4xl mx-auto">
-    <h2 class="text-4xl font-bold text-primary-custom text-center mb-16">Nejčastější dotazy</h2>
+    <h2 class="text-4xl font-bold text-primary-custom text-center">Nejčastější dotazy</h2>
     
-    <div class="faq-accordion space-y-4">
+    <div class="faq-accordion">
       <#list faqItems as item>
         <div class="faq-item border border-border rounded-lg overflow-hidden">
           <button class="faq-question w-full text-left px-6 py-4 bg-background hover:bg-muted transition-colors duration-200" 

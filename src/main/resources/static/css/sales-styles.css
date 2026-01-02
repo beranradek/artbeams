@@ -87,6 +87,7 @@
     background: var(--background);
     position: relative;
     overflow: hidden;
+    margin-top: 2.5rem;
     margin-bottom: 2rem;
 }
 
@@ -128,6 +129,11 @@
     }
 }
 
+.faq-section {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
 /* Parallax sections */
 .parallax-section {
   background-attachment: fixed;
@@ -136,6 +142,8 @@
   background-repeat: no-repeat;
   position: relative;
   min-height: 60vh;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .parallax-overlay {
@@ -162,11 +170,11 @@
 }
 
 /* Section spacing */
+.y-box-spacing { padding-top: 2rem; padding-bottom: 0.5rem; }
 .py-20 { padding-top: 5rem; padding-bottom: 2rem; }
 .py-1 { padding-top: 1rem; padding-bottom: 0.5rem; }
 .py-2 { padding-top: 2rem; padding-bottom: 1rem; }
 .py-3 { padding-top: 3rem; padding-bottom: 2rem; }
-.py-4 { padding-top: 4rem; padding-bottom: 2rem; margin-bottom: 1rem; }
 .px-4 { padding-left: 1rem; padding-right: 1rem; }
 .mb-16 { margin-bottom: 4rem; }
 .mb-8 { margin-bottom: 2rem; }

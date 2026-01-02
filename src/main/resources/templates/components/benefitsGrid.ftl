@@ -1,6 +1,6 @@
 <#macro benefitsGrid benefits features>
 <!-- Benefits Section -->
-<section class="py-4 px-4 bg-background">
+<section class="y-box-spacing px-4 bg-background">
   <div class="max-w-6xl mx-auto">
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-primary-custom-custom mb-6">Co vám e-book přinese</h2>

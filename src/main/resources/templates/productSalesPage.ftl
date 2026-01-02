@@ -51,9 +51,7 @@
   </section>
 
   <!-- Parallax Image Section 1 -->
-  <section 
-    class="parallax-section parallax-bg-starry"
-  >
+  <section class="parallax-section parallax-bg-starry">
     <div class="parallax-overlay"></div>
     <div class="parallax-content h-full flex items-center justify-center">
       <div class="text-center text-white mt-48">
@@ -64,7 +62,7 @@
   </section>
 
   <!-- Problem Section -->
-  <section class="py-4 px-4 bg-background">
+  <section class="y-box-spacing px-4 bg-background">
     <div class="max-w-4xl mx-auto space-y-8">
       <h2>Zbavte se únavy a získejte zpět svůj život!</h2>
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
@@ -100,7 +98,7 @@
   </section>
 
   <!-- Bedroom Gallery Section -->
-  <section class="py-4 px-4 bg-gradient-peaceful">
+  <section class="y-box-spacing px-4 bg-gradient-peaceful">
     <div class="max-w-6xl mx-auto">
       <div class="grid md:grid-cols-2 gap-8 mb-16">
         <img
@@ -117,7 +115,7 @@
     </div>
   </section>
 
-  <section class="py-4 px-4 bg-background">
+  <section class="y-box-spacing px-4 bg-background">
     <div class="max-w-4xl mx-auto space-y-8">
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
         <p class="text-xl font-semibold text-primary-custom">
@@ -203,9 +201,7 @@
   ] />
 
   <!-- Parallax Image Section 2 -->
-  <section 
-    class="parallax-section parallax-bg-bedroom"
-  >
+  <section class="parallax-section parallax-bg-bedroom">
     <div class="parallax-overlay"></div>
     <div class="parallax-content h-full flex items-center justify-center">
       <div class="text-center text-white mt-48">
@@ -216,7 +212,7 @@
   </section>
 
   <!-- Visual Section -->
-  <section class="py-4 px-4 bg-background">
+  <section class="y-box-spacing px-4 bg-background">
     <div class="max-w-6xl mx-auto">
       <h2 class="text-4xl font-bold text-primary-custom text-center mb-16">Představte si, jaké to bude, až...</h2>
       
@@ -308,7 +304,7 @@
 
   <!-- Final CTA -->
   <#--
-  <section class="py-4 px-4 bg-background" id="order">
+  <section class="y-box-spacing px-4 bg-background" id="order">
     <div class="max-w-4xl mx-auto text-center">
       <div class="final-cta-card">
         <div class="text-center mb-8">
@@ -325,7 +321,7 @@
   </section>
   -->
 
-<section class="bg-background centered">
+<section class="bg-background centered y-box-spacing">
   <div class="centered">
     <p class="text-xl offer-highlight">
       <#-- Začněte svou cestu ke kvalitnímu spánku ještě dnes -->
