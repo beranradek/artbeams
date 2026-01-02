@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
+import org.springframework.context.ApplicationContext
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
+import org.xbery.artbeams.articles.agent.ArticleEditingAgent
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.domain.EditedArticle
 import org.xbery.artbeams.articles.service.ArticleService
@@ -33,6 +35,7 @@ class ArticleAdminController(
     private val articleService: ArticleService,
     private val categoryRepository: CategoryRepository,
     private val articleImageRepository: ArticleImageRepository,
+    private val applicationContext: ApplicationContext,
     common: ControllerComponents
 ) : BaseController(common) {
     private val tplBasePath: String = "admin/articles"
@@ -125,8 +128,25 @@ class ArticleAdminController(
         // Fetch categories codebook
         val categories: List<Category> = categoryRepository.findCategories()
         val model = createModel(
-            request, "editForm" to editForm, "errorMessage" to errorMessage, "categories" to categories
+            request,
+            "editForm" to editForm,
+            "errorMessage" to errorMessage,
+            "categories" to categories,
+            "articleAgentAvailable" to isArticleAgentAvailable()
         )
         return ModelAndView("$tplBasePath/articleEdit", model)
+    }
+
+    /**
+     * Checks if ArticleEditingAgent bean is available in the application context.
+     * The agent is only available when openai.enabled=true configuration property is set.
+     */
+    private fun isArticleAgentAvailable(): Boolean {
+        return try {
+            applicationContext.getBean(ArticleEditingAgent::class.java)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }

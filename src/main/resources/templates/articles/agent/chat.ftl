@@ -105,7 +105,7 @@
 </div>
 
 <#-- Load CSS and JavaScript -->
-<link rel="stylesheet" href="/static/css/article-agent.css?v=${.now?long}">
-<link rel="stylesheet" href="/static/css/image-agent.css?v=${.now?long}">
-<script nonce="${_cspNonce}" src="/static/js/article-agent.js?v=${.now?long}"></script>
-<script nonce="${_cspNonce}" src="/static/js/image-agent.js?v=${.now?long}"></script>
+<link rel="stylesheet" href="/static/css/article-agent.css?v=${.now?long?c}">
+<link rel="stylesheet" href="/static/css/image-agent.css?v=${.now?long?c}">
+<script nonce="${_cspNonce}" src="/static/js/article-agent.js?v=${.now?long?c}"></script>
+<script nonce="${_cspNonce}" src="/static/js/image-agent.js?v=${.now?long?c}"></script>

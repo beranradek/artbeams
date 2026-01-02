@@ -96,10 +96,12 @@
 </form>
 
 <#-- AI Agent for article editing -->
+<#if articleAgentAvailable!false>
 <#include "/articles/agent/chat.ftl">
 <div class="article-agent-icon" onclick="window.ArticleAgent.openChat()" title="AI Asistent pro editaci článků">
     <i class="fas fa-robot"></i>
 </div>
+</#if>
 
 <script nonce="${_cspNonce}" src="/static/js/markdown-it.js?v190420"></script>
 <#--
