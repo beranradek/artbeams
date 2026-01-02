@@ -1,6 +1,6 @@
 <#macro faqAccordion faqItems>
 <!-- FAQ Section -->
-<section class="py-20 px-4 bg-background">
+<section class="py-4 px-4 bg-background">
   <div class="max-w-4xl mx-auto">
     <h2 class="text-4xl font-bold text-primary-custom text-center mb-16">Nejčastější dotazy</h2>
     

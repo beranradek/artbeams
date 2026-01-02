@@ -3,6 +3,8 @@ package org.xbery.artbeams.comments.controller
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import io.mockk.every
+import io.mockk.mockk
 import net.formio.validation.ValidationContext
 
 /**
@@ -154,11 +156,8 @@ class CommentValidatorTest : StringSpec({
  * Helper function to create a ValidationContext for testing.
  */
 private fun createValidationContext(value: String): ValidationContext<String> {
-    return object : ValidationContext<String> {
-        override fun getValidatedValue(): String = value
-        override fun getElementName(): String = "comment"
-        override fun getPropertyName(): String = "comment"
-        override fun getRootClass(): Class<*> = String::class.java
-        override fun getRootPropertyPath(): String = "comment"
+    return mockk<ValidationContext<String>> {
+        every { validatedValue } returns value
+        every { elementName } returns "comment"
     }
 }

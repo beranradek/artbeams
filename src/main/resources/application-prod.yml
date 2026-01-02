@@ -3,4 +3,7 @@
 # Templates configuration
 spring.freemarker.cache: true
 
+# OpenAI Agent configuration
+openai.enabled: true
+
 # admin.allowed-ip: 89.177.133.190

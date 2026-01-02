@@ -64,7 +64,7 @@
   </section>
 
   <!-- Problem Section -->
-  <section class="py-20 px-4 bg-background">
+  <section class="py-4 px-4 bg-background">
     <div class="max-w-4xl mx-auto space-y-8">
       <h2>Zbavte se únavy a získejte zpět svůj život!</h2>
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
@@ -100,7 +100,7 @@
   </section>
 
   <!-- Bedroom Gallery Section -->
-  <section class="py-20 px-4 bg-gradient-peaceful">
+  <section class="py-4 px-4 bg-gradient-peaceful">
     <div class="max-w-6xl mx-auto">
       <div class="grid md:grid-cols-2 gap-8 mb-16">
         <img
@@ -117,7 +117,7 @@
     </div>
   </section>
 
-  <section class="py-20 px-4 bg-background">
+  <section class="py-4 px-4 bg-background">
     <div class="max-w-4xl mx-auto space-y-8">
       <div class="text-lg text-foreground-muted space-y-6 leading-relaxed">
         <p class="text-xl font-semibold text-primary-custom">
@@ -216,7 +216,7 @@
   </section>
 
   <!-- Visual Section -->
-  <section class="py-20 px-4 bg-background">
+  <section class="py-4 px-4 bg-background">
     <div class="max-w-6xl mx-auto">
       <h2 class="text-4xl font-bold text-primary-custom text-center mb-16">Představte si, jaké to bude, až...</h2>
       
@@ -261,35 +261,33 @@
     </div>
   </section>
 
-  <#--
   <@testimonials.testimonialCarousel [
     {
-      "name": "Anna Svobodová",
-      "text": "Díky tomuto e-booku konečně spím celou noc. Už tři měsíce se nebouzím unavená!",
-      "photo": "testimonial-anna.jpg"
+      "name": "Anna Spoel",
+      "text": "Kniha Prakticky pruvodce hlubokym spankem naplnila moje ocakavania. Je to komplexny pohlad na spanok a jednoduche sposoby, ako ho zlepsit a teda zit este kvalitnejsi zivot. Kniha je vhodna tak pre zaciatocnikov, ktori o spanku zatial vela nevedia, ako aj pre tych, ktori na jeho vylepseni pracuju a uz si co- to nastudovali. Informacie su podane ako kombinacia vedecky podlozenych faktov a vlastnej skusenosti. Autor nepretlaca svoj nazor, ponuka moznosti a svoje skusenosti a necha na citatela, aby si vybral svoju cestu. Odporucam kazdemu, kto tuzi mat ucelene informacie o moznostiach zlepsenia spanku na jednom mieste.",
+      "photo": "testimonial-anna-spoel.jpg"
     },
     {
-      "name": "Pavel Novák", 
-      "text": "Praktické návody, které skutečně fungují. Můj spánek se zlepšil během týdne.",
-      "photo": "testimonial-pavel.jpg"
+      "name": "Ivana Krátká",
+      "text": "Radek se ve svém e-booku věnuje tématu, \"které přece každý zná\" - spánku, ale věnuje se mu velmi erudovaně, srozumitelně, ve všech souvislostech, vychází z vědeckých poznatků i z vlastních zkušeností. Nikdy by mě nenapadlo, na co všechno má dobrý spánek vliv a jak může zlepšit kvalitu života! Autor podrobně popisuje mnoho možností, jak si zajistit dobrý spánek a tím i lepší život. Některé dodržuji už mnoho let, ale určitě se budu touto prací  ještě dále inspirovat. Především omezím práci na počítači ve večerních hodinách. Nejen k zamyšlení je i kapitola věnovaná zdravému životnímu stylu a potřebným živinám. Velmi praktické jsou i odkazy přímo v textu na zmiňované prostředky, nahrávky, cvičení... E-book doporučuji všem, kdo mají jakýkoliv problém se spánkem, ale i všem ostatním, kteří si myslí, že spí dobře. Každý si v něm určitě najde ještě něco navíc.",
+      "photo": "testimonial-ivana-kratka.jpg"
     },
     {
-      "name": "Marie Dvořáková",
-      "text": "Jednoduché techniky, které lze snadno aplikovat. Energie během dne je neuvěřitelná.",
-      "photo": "testimonial-marie.jpg"
+      "name": "Jana Schee",
+      "text": "Váš E-book jsem přečetla jedním dechem. Moc oceňuji odbornost textu, který zároveň zůstává velmi čtivý a srozumitelný. Dále kladně hodnotím komplexnost informací včetně vyčerpávajícího (v dobrém!) výčtu doplňků stravy, potravin a všemožných vychytávek pro zkvalitnění spánku včetně doporučení konkrétbích produktů. Líbí se mi zaměření se na specifika spánku v různých fázích života (dospívání, stáří...). Klientům, kteří by spánek řešili, bych E-book doporučila ke koupi. Moc se mi líbí jednotné grafické zpracování, které je i velmi přehledné.",
+      "photo": "testimonial-jana-schee.jpg"
     },
     {
-      "name": "Tomáš Krejčí",
-      "text": "Konečně mám energii na věci, které mě baví. Spánek se stal mým nejlepším přítelem.",
-      "photo": "testimonial-anna.jpg"
+      "name": "Lenka Vagnerová",
+      "text": "Pokud hledáte praktického a zároveň lidsky psaného průvodce, který vám pomůže zlepšit kvalitu spánku, tak ebook \"Praktický průvodce hlubokým spánkem\" je přesně to, co potřebujete mít! Radek se například věnuje světlu a jeho vlivu na člověka v různých podobách, jak s tím pracovat, jaké jsou možnosti, co se jemu osvědčilo. Nebo, jak efektivně nastavit prostředí, kde spíme - na co se zaměřit. Jaké vitamíny, minerály nebo bylinky mohou spánek skutečně naladit s ohledem na věk případného uživatele. Jako někdo, kdo nemá rád hluk například když cestuji, jsem ocenila praktické rady, jak správně používat špunty do uší tak, aby nevadily a nebolely v uších, jaké druhy jsou nejlepší. Velmi zajímavá byla i pasáž o vlivu štítné žlázy na spánek. Některá doporučení jsem aplikovala už v praxi, a nechci to zakřiknout, ale funguje to. Knižku jednoznačně doporučuji!",
+      "photo": "testimonial-lenka-vagnerova.jpg"
     },
     {
-      "name": "Jana Procházková",
-      "text": "Myslela jsem, že špatný spánek je můj osud. Díky tomuto návodu vím, že se to dá změnit.",
-      "photo": "testimonial-marie.jpg"
+      "name": "Lucie Červeková",
+      "text": "Přečetla jsem si ebook a dozvěděla jsem se nové věci které mě obohatili a věřím, že v tomto směru posunou. Kompletní prehledne podrobne shrnutí. Propracovani do detailu špunty do uší... také ohledně posledního jídla a pití před spaním. Informace o vitaminech byla pro mě zcela nova a zajímavá. Děkuji vám.",
+      "photo": "testimonial-lucie-cervekova.jpg"
     }
   ] />
-  -->
 
   <@faq.faqAccordion [
     {
@@ -310,7 +308,7 @@
 
   <!-- Final CTA -->
   <#--
-  <section class="py-20 px-4 bg-background" id="order">
+  <section class="py-4 px-4 bg-background" id="order">
     <div class="max-w-4xl mx-auto text-center">
       <div class="final-cta-card">
         <div class="text-center mb-8">

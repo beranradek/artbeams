@@ -1,6 +1,6 @@
 <#macro authorSection>
 <!-- About Author Section -->
-<section class="py-20 px-4 bg-gradient-peaceful">
+<section class="py-4 px-4 bg-gradient-peaceful">
   <div class="max-w-4xl mx-auto">
     <div class="text-center mb-16">
       <h2 class="text-4xl font-bold text-primary-custom mb-8">Proč vám mohu pomoci?</h2>
