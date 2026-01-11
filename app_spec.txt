@@ -1,5 +1,9 @@
 New features to implement
 
+# Using application code, set admin users' password back to local value
+
+Set it to the hash of value adminadmin as stated by README.md.
+
 # Configure kotlin linter in application build
 
 So we can check lint errors after each autocoding session,
@@ -7,6 +11,14 @@ or before releases and also fix some automatically.
 
 # Arrow position in testimonial carousel
 
-In testimonial carousel, user images were moved from bottom to top, but the arrow of main bubble remained at bottom, please move it to top as well, so that the bubble arrow points to user image.
+In page http://localhost:8080/produkt/prakticky-pruvodce-hlubokym-spankem,
+article body
+http://localhost:8080/admin/articles/61851a18-9350-4b0e-9fe6-2e5b321ddafb/edit,
+there is an testimonialCarousel component:
+src/main/resources/templates/components/testimonialCarousel.ftl
+
+In testimonial carousel, user images were moved from bottom to top,
+but the arrow of main bubble remained at bottom.
+Please move it to top as well, so that the bubble arrow points to user image.
 
 See PRPs/improvements_2026_01_11/testimonial_carousel.png
