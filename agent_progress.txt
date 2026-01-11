@@ -1,0 +1,39 @@
+# Agent Progress Notes
+
+## Session 1 - 2026-01-11 - Initial Setup
+
+### Application Overview
+- **Entry point**: `org.xbery.artbeams.Application` (Spring Boot main class)
+- **Main directories**: `src/main/kotlin/org/xbery/artbeams/` feature-based packages
+- **Run command**: `./gradlew bootRun --args='--spring.profiles.active=local'`
+- **Build**: `./gradlew clean build`
+- **Tests**: `./gradlew test` (Kotest + MockK)
+- **Dependencies**: `build.gradle` with `gradle.properties` for versions
+- **DB schema**: `src/main/resources/sql/create_tables.sql`
+- **JOOQ generation**: `./gradlew generateJooq`
+
+### Key Files for New Features
+- **Admin actions**: `src/main/kotlin/org/xbery/artbeams/admin/web/AdminActionsController.kt`
+- **User/Password**: `src/main/kotlin/org/xbery/artbeams/users/` packages
+- **Password hashing**: `org.xbery.artbeams.common.security.credential.Pbkdf2PasswordHash`
+- **Default admin**: `src/main/kotlin/org/xbery/artbeams/ApplicationStartup.kt` (creates admin/adminadmin)
+- **Testimonial CSS**: `src/main/resources/static/css/sales-styles.css` (speech-bubble class)
+- **Testimonial FTL**: `src/main/resources/templates/components/testimonialCarousel.ftl`
+
+### Implementation Pathway
+1. **Admin password reset**: Add action to AdminActionsController using Pbkdf2PasswordHash
+2. **Kotlin linter**: Add ktlint plugin to build.gradle, exclude jooqGenerated files
+3. **Carousel arrow**: Modify speech-bubble::after CSS, change bottom to top, flip border
+
+### Session Accomplishments
+- Analyzed existing codebase structure and tech stack
+- Created 3 epics with 4 tasks in `.autocode/tasks.jsonl`
+- Set up task dependencies (linter docs depends on linter config)
+- Created `.autocode/user_escalations.json`
+- Reviewed existing start.sh, stop.sh, restart.sh (already complete)
+
+### Recommendations for Future Sessions
+- Task ac-ca46 (admin password reset) is highest priority, can start immediately
+- Tasks ac-4882 and ac-e5f6 are independent, can run in parallel
+- After ac-4882 completes, ac-6ddd can proceed (dependency)
+- Always run `./gradlew clean build` after CSS changes to regenerate minified styles.css
