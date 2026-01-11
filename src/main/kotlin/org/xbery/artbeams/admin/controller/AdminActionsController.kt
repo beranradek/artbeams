@@ -1,5 +1,6 @@
 package org.xbery.artbeams.admin.controller
 
+import jakarta.annotation.PreDestroy
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
@@ -9,6 +10,7 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.search.service.SearchIndexer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 /**
  * Admin actions controller for various administrative operations.
@@ -23,6 +25,22 @@ class AdminActionsController(
 ) : BaseController(common) {
 
     private val backgroundExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+
+    @PreDestroy
+    fun cleanup() {
+        logger.info("Shutting down AdminActionsController background executor")
+        backgroundExecutor.shutdown()
+        try {
+            if (!backgroundExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                logger.warn("Executor did not terminate in time, forcing shutdown")
+                backgroundExecutor.shutdownNow()
+            }
+        } catch (e: InterruptedException) {
+            logger.error("Interrupted during executor shutdown", e)
+            backgroundExecutor.shutdownNow()
+            Thread.currentThread().interrupt()
+        }
+    }
 
     /**
      * Trigger a full reindex of the search index in the background.
