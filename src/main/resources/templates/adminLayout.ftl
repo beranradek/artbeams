@@ -186,20 +186,39 @@
             </li>
           </ul>
   
-          <#if _isRemoteDbConfigured?? && _isRemoteDbConfigured>
-          <a href="/admin/sync/confirm" class="btn btn-primary my-2 my-sm-0 mx-2" aria-label="Synchronize remote database">
-            <i class="fas fa-sync-alt" aria-hidden="true"></i> <span>Sync remote DB</span>
-          </a>
-          </#if>
+          <#-- Actions dropdown menu -->
+          <div class="dropdown mx-2">
+            <button class="btn btn-warning dropdown-toggle" type="button" id="actionsDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions menu">
+              <i class="fas fa-cog" aria-hidden="true"></i> Actions
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="actionsDropdown">
+              <#if _isRemoteDbConfigured?? && _isRemoteDbConfigured>
+              <li>
+                <a class="dropdown-item" href="/admin/sync/confirm" aria-label="Synchronize remote database">
+                  <i class="fas fa-sync-alt" aria-hidden="true"></i> Sync remote DB
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              </#if>
+              <li>
+                <a class="dropdown-item action-reload-config" href="#" aria-label="Reload configuration from database">
+                  <i class="fas fa-redo" aria-hidden="true"></i> Reload config
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item action-reload-localisations" href="#" aria-label="Reload localisations from database">
+                  <i class="fas fa-language" aria-hidden="true"></i> Reload localisations
+                </a>
+              </li>
+            </ul>
+          </div>
 
-          <form class="form-inline my-2 my-lg-0 form-config-reload" action="/admin/config/reload" method="POST" aria-label="Reload configuration">
+          <#-- Hidden forms for POST actions triggered via JavaScript -->
+          <form id="form-config-reload" class="d-none" action="/admin/config/reload" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit" aria-label="Reload configuration from database">Reload config</button>
           </form>
-
-          <form class="form-inline my-2 my-lg-0 form-localisations-reload" action="/admin/localisations/reload" method="POST" aria-label="Reload localisations">
+          <form id="form-localisations-reload" class="d-none" action="/admin/localisations/reload" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit" aria-label="Reload localisations from database">Reload localisations</button>
           </form>
   
           <ul class="navbar-nav mr-4" role="menubar">
@@ -239,11 +258,34 @@
         </#if>
       </footer>
 
-    <!-- Bootstrap core JavaScript -->
-    <script nonce="${_cspNonce}" src="/static/js/bootstrap.min.js"></script>
+    <!-- Bootstrap core JavaScript (bundle includes Popper for dropdowns) -->
+    <script nonce="${_cspNonce}" src="/static/js/bootstrap.bundle.min.js"></script>
 
     <!-- Admin Keyboard Shortcuts -->
     <script nonce="${_cspNonce}" src="/static/js/admin-keyboard-shortcuts.js"></script>
+
+    <!-- Actions dropdown handlers -->
+    <script nonce="${_cspNonce}">
+      document.addEventListener('DOMContentLoaded', function() {
+        // Handle Reload config action
+        const reloadConfigLink = document.querySelector('.action-reload-config');
+        if (reloadConfigLink) {
+          reloadConfigLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('form-config-reload').submit();
+          });
+        }
+
+        // Handle Reload localisations action
+        const reloadLocalisationsLink = document.querySelector('.action-reload-localisations');
+        if (reloadLocalisationsLink) {
+          reloadLocalisationsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('form-localisations-reload').submit();
+          });
+        }
+      });
+    </script>
   </body>
 </html>
 </#macro>
