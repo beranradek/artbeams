@@ -23,7 +23,8 @@ class LoginActivityHandler(
     private val userRepository: UserRepository
 ) : SavedRequestAwareAuthenticationSuccessHandler() {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    // Note: Using a different name than the parent class's 'logger' field to avoid hiding
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun onAuthenticationSuccess(
         request: HttpServletRequest,
@@ -48,12 +49,12 @@ class LoginActivityHandler(
                     ipAddress = request.remoteAddr,
                     userAgent = request.getHeader("User-Agent")
                 )
-                logger.debug("Logged login activity for user: $username")
+                log.debug("Logged login activity for user: $username")
             } else {
-                logger.warn("User not found for login: $username (userId: $userId)")
+                log.warn("User not found for login: $username (userId: $userId)")
             }
         } catch (e: Exception) {
-            logger.error("Failed to log login activity", e)
+            log.error("Failed to log login activity", e)
             // Don't fail the login if activity logging fails
         }
 

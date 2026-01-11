@@ -26,6 +26,7 @@ internal interface AbstractRecordFetcher<R : Record> {
      * @param mapper mapper of records to entities
      * @return result list of entities including pagination settings with filled total count of records
      */
+    @Suppress("UNCHECKED_CAST")
     fun <REC: Record, E, F> findByCriteria(
         fields: List<SelectFieldOrAsterisk>,
         whereCondition: Condition?,
@@ -116,6 +117,7 @@ internal interface AbstractRecordFetcher<R : Record> {
      * @param mapper mapper of records to entities
      * @return result list of entities
      */
+    @Suppress("UNCHECKED_CAST")
     fun <REC: Record, E, F> findByCriteriaWithLimit(
         fields: List<SelectFieldOrAsterisk>,
         whereCondition: Condition?,

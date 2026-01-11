@@ -44,6 +44,7 @@ object CharUtils {
      * if more, extra elements are ignored).
      * @return new map containing the same key-value pairs as given array
      */
+    @Suppress("UNCHECKED_CAST")
     fun <K, V> toMap(array: Array<Array<Any>>): Map<K, V> {
         val retval: MutableMap<K, V> = HashMap()
         for (pair in array) {
@@ -64,6 +65,7 @@ object CharUtils {
      * @return new map (LinkedHashMap implementation)
      * containing the same key-value pairs as given array
      */
+    @Suppress("UNCHECKED_CAST")
     fun <K, V> toOrderedMap(array: Array<Array<Any>>): Map<K, V> {
         val retval: MutableMap<K, V> = LinkedHashMap()
         for (pair in array) {

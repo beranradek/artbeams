@@ -55,6 +55,7 @@ open class GoogleSearchConsoleService(
     /**
      * Fetches overall search performance metrics for the specified date range.
      */
+    @Suppress("UNCHECKED_CAST")
     @Cacheable(value = ["searchConsoleMetrics"], key = "#startDate + '-' + #endDate")
     open fun getSearchMetrics(startDate: LocalDate, endDate: LocalDate): SearchConsoleMetrics {
         logger.info("Fetching Search Console metrics from $startDate to $endDate")
@@ -138,6 +139,7 @@ open class GoogleSearchConsoleService(
     /**
      * Fetches top performing pages for the specified date range.
      */
+    @Suppress("UNCHECKED_CAST")
     @Cacheable(value = ["searchConsolePages"], key = "#startDate + '-' + #endDate + '-' + #limit")
     open fun getTopPages(startDate: LocalDate, endDate: LocalDate, limit: Int = 10): List<SearchConsolePageMetrics> {
         logger.info("Fetching top $limit pages from $startDate to $endDate")
@@ -197,6 +199,7 @@ open class GoogleSearchConsoleService(
     /**
      * Fetches top performing queries for the specified date range.
      */
+    @Suppress("UNCHECKED_CAST")
     @Cacheable(value = ["searchConsoleQueries"], key = "#startDate + '-' + #endDate + '-' + #limit")
     open fun getTopQueries(startDate: LocalDate, endDate: LocalDate, limit: Int = 10): List<SearchConsoleQueryMetrics> {
         logger.info("Fetching top $limit queries from $startDate to $endDate")
@@ -256,6 +259,7 @@ open class GoogleSearchConsoleService(
     /**
      * Fetches sitemap submission status.
      */
+    @Suppress("UNCHECKED_CAST")
     @Cacheable(value = ["searchConsoleSitemaps"])
     open fun getSitemaps(): List<SearchConsoleSitemapStatus> {
         logger.info("Fetching sitemap status")
