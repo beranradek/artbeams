@@ -145,11 +145,11 @@ ${websiteJsonLd}
   <link href="/static/css/styles.css?v1" type="text/css" rel="stylesheet">
 
   <#-- Custom icon system CSS (deferred for better performance) -->
-  <link id="custom-icons-css" href="/static/css/custom-icons.css?v1" type="text/css" rel="stylesheet" media="print" />
+  <link id="custom-icons-css" href="/static/css/custom-icons.css?v2" type="text/css" rel="stylesheet" media="print" />
 
   <#-- Fallback for browsers without JavaScript -->
   <noscript>
-    <link href="/static/css/custom-icons.css?v1" type="text/css" rel="stylesheet" />
+    <link href="/static/css/custom-icons.css?v2" type="text/css" rel="stylesheet" />
   </noscript>
 
   <#if pageStyles?has_content>

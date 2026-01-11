@@ -6,6 +6,7 @@
     height: 1em;
     fill: currentColor;
     vertical-align: middle;
+    flex-shrink: 0; /* Prevent icons from shrinking in flex containers */
 }
 
 /* Icon sizes - only apply when explicitly using these classes */
