@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS search_index (
     keywords VARCHAR(1000),
     slug VARCHAR(128),
     search_vector tsvector,             -- Pre-computed FTS vector
-    metadata JSONB,                      -- Flexible metadata (image, perex, price, etc.)
+    metadata TEXT,                       -- Flexible metadata as JSON string
     valid_from timestamp,
     valid_to timestamp,
     created timestamp NOT NULL,
@@ -38,6 +38,24 @@ CREATE INDEX IF NOT EXISTS idx_search_trigram_title ON search_index USING GIN(ti
 CREATE INDEX IF NOT EXISTS idx_search_slug ON search_index(slug);
 CREATE INDEX IF NOT EXISTS idx_search_validity ON search_index(valid_from, valid_to);
 CREATE INDEX IF NOT EXISTS idx_search_modified ON search_index(modified DESC);
+
+-- Trigger function to automatically generate search_vector on insert/update
+CREATE OR REPLACE FUNCTION search_index_update_vector() RETURNS trigger AS $$
+BEGIN
+    NEW.search_vector := to_tsvector('simple',
+        COALESCE(NEW.title, '') || ' ' ||
+        COALESCE(NEW.description, '') || ' ' ||
+        COALESCE(NEW.keywords, '')
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Drop trigger if exists and recreate
+DROP TRIGGER IF EXISTS search_index_vector_trigger ON search_index;
+CREATE TRIGGER search_index_vector_trigger
+    BEFORE INSERT OR UPDATE ON search_index
+    FOR EACH ROW EXECUTE FUNCTION search_index_update_vector();
 
 -- Initial population of search index from existing data
 -- This will be done by the application's SearchIndexer service
