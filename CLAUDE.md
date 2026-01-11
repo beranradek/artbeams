@@ -27,6 +27,23 @@ Application is then available on: http://localhost:8080/
 ./gradlew test --tests "org.xbery.artbeams.comments.service.SpamDetectorTest"
 ```
 
+### Linting
+```bash
+# Check Kotlin code style (ktlint)
+./gradlew ktlintCheck
+
+# Auto-fix code style issues
+./gradlew ktlintFormat
+
+# Generate baseline for existing violations (to suppress existing issues)
+./gradlew ktlintGenerateBaseline
+```
+
+**Notes:**
+- JOOQ generated files (`src/main/jooqGenerated/**`) are excluded from linting
+- Run `ktlintCheck` after coding sessions and before commits/releases
+- Use `ktlintFormat` to auto-fix most style issues
+
 ### Database
 - Uses PostgreSQL with JOOQ for type-safe SQL queries
 - Database schema in `src/main/resources/sql/create_tables.sql`
