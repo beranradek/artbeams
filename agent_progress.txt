@@ -1,0 +1,37 @@
+# Agent Progress Log
+
+## Session 1 - 2026-01-11 - Initialization
+
+### Current Application State
+- ArtBeams is a Kotlin/Spring Boot CMS with PostgreSQL/JOOQ
+- Main entry: Application.kt, run with `./gradlew bootRun --args='--spring.profiles.active=local'`
+- Admin interface at /admin with existing actions: Sync remote DB, Reload config, Reload localisations
+- Search indexing via SearchIndexer.reindexAll() triggered by SearchReindexJob (scheduled nightly at 2AM)
+- CSS build: `./gradlew minifyCss` combines CSS files into styles.css
+- Testing: `./gradlew test` with Kotest/MockK
+
+### Key Directories for New Features
+- src/main/resources/templates/adminLayout.ftl - Admin navbar with action buttons (lines 189-203)
+- src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt - reindexAll() method
+- src/main/resources/static/css/sales-styles.css - Testimonial dots (.testimonial-dot line 259)
+- src/main/resources/templates/components/testimonialCarousel.ftl - Carousel component
+- src/main/resources/templates/productSalesPage.ftl - Icon usage (lines 219-250)
+
+### Features to Implement (from app_spec.txt)
+1. Admin Actions dropdown menu consolidating Sync DB, Reload config, Reload localisations
+2. New Reindex all action in admin menu
+3. Fix inconsistent bullet/check icon sizes on product page
+4. Fix elliptical testimonial carousel dots
+
+### Accomplished This Session
+- Analyzed existing codebase structure and identified relevant files
+- Created task structure with 3 epics and 5 tasks using ac CLI
+- Established task dependencies (dropdown menu blocks reindex action)
+- Created .autocode/user_escalations.json
+- Existing start.sh, stop.sh, restart.sh scripts are adequate
+
+### Recommendations for Future Sessions
+- Start with ac-4660 (Actions dropdown menu) as it's priority 1 and blocks other work
+- CSS tasks (ac-67a3, ac-a781, ac-27c8) can be done in parallel - all priority 2
+- Test CSS changes with `./gradlew minifyCss` then browser refresh
+- See CLAUDE.md for development commands and architecture details
