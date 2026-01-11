@@ -210,6 +210,12 @@
                   <i class="fas fa-language" aria-hidden="true"></i> Reload localisations
                 </a>
               </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item action-reindex-all" href="#" aria-label="Rebuild search index in background">
+                  <i class="fas fa-search" aria-hidden="true"></i> Reindex all
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -220,7 +226,10 @@
           <form id="form-localisations-reload" class="d-none" action="/admin/localisations/reload" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
           </form>
-  
+          <form id="form-reindex-all" class="d-none" action="/admin/actions/reindex" method="POST">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+          </form>
+
           <ul class="navbar-nav mr-4" role="menubar">
             <li class="nav-item" role="none">
               <a class="nav-link" href="/" role="menuitem" aria-label="View public website">Public web</a>
@@ -282,6 +291,15 @@
           reloadLocalisationsLink.addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('form-localisations-reload').submit();
+          });
+        }
+
+        // Handle Reindex all action
+        const reindexAllLink = document.querySelector('.action-reindex-all');
+        if (reindexAllLink) {
+          reindexAllLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('form-reindex-all').submit();
           });
         }
       });
