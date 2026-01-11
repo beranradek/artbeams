@@ -216,6 +216,12 @@
                   <i class="fas fa-search" aria-hidden="true"></i> Reindex all
                 </a>
               </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item action-reset-admin-password" href="#" aria-label="Reset admin password to default">
+                  <i class="fas fa-key" aria-hidden="true"></i> Reset admin password
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -227,6 +233,9 @@
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
           </form>
           <form id="form-reindex-all" class="d-none" action="/admin/actions/reindex" method="POST">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+          </form>
+          <form id="form-reset-admin-password" class="d-none" action="/admin/actions/reset-admin-password" method="POST">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
           </form>
 
@@ -300,6 +309,17 @@
           reindexAllLink.addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('form-reindex-all').submit();
+          });
+        }
+
+        // Handle Reset admin password action
+        const resetAdminPasswordLink = document.querySelector('.action-reset-admin-password');
+        if (resetAdminPasswordLink) {
+          resetAdminPasswordLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to reset the admin password to the default value (adminadmin)?')) {
+              document.getElementById('form-reset-admin-password').submit();
+            }
           });
         }
       });
