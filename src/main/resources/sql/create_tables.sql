@@ -304,11 +304,9 @@ CREATE INDEX idx_user_activity_log_action_type ON user_activity_log (action_type
 CREATE INDEX idx_user_activity_log_entity ON user_activity_log (entity_type, entity_id);
 CREATE INDEX idx_user_activity_log_user_time ON user_activity_log (user_id, action_time DESC);
 
--- Enable PostgreSQL extensions for full-text search
-CREATE EXTENSION IF NOT EXISTS pg_trgm;  -- Trigram matching for autocomplete
-CREATE EXTENSION IF NOT EXISTS unaccent; -- Remove diacritics
-
 -- Search index table for full-text search across articles, categories, and products
+-- Note: This file is used by JOOQ for code generation (H2 simulation).
+-- PostgreSQL-specific features (tsvector, GIN indexes, triggers) are in migration_search_index.sql
 CREATE TABLE search_index (
     id VARCHAR(40) NOT NULL PRIMARY KEY,
     entity_type VARCHAR(20) NOT NULL,  -- 'ARTICLE', 'CATEGORY', 'PRODUCT'
@@ -317,7 +315,7 @@ CREATE TABLE search_index (
     description TEXT,
     keywords VARCHAR(1000),
     slug VARCHAR(128),
-    search_vector tsvector,              -- Pre-computed FTS vector (auto-populated by trigger)
+    search_vector TEXT,                  -- tsvector in PostgreSQL, TEXT for JOOQ compatibility
     metadata TEXT,                       -- Flexible metadata as JSON string
     valid_from timestamp,
     valid_to timestamp,
@@ -327,26 +325,11 @@ CREATE TABLE search_index (
 
 -- Indexes for search performance
 CREATE INDEX idx_search_entity ON search_index(entity_type, entity_id);
-CREATE INDEX idx_search_fts ON search_index USING GIN(search_vector);
-CREATE INDEX idx_search_trigram_title ON search_index USING GIN(title gin_trgm_ops);
+-- PostgreSQL-specific GIN indexes are in migration_search_index.sql:
+-- CREATE INDEX idx_search_fts ON search_index USING GIN(search_vector);
+-- CREATE INDEX idx_search_trigram_title ON search_index USING GIN(title gin_trgm_ops);
 CREATE INDEX idx_search_slug ON search_index(slug);
 CREATE INDEX idx_search_validity ON search_index(valid_from, valid_to);
 CREATE INDEX idx_search_modified ON search_index(modified DESC);
 
--- Trigger function to automatically generate search_vector on insert/update
-CREATE OR REPLACE FUNCTION search_index_update_vector() RETURNS trigger AS $$
-BEGIN
-    NEW.search_vector := to_tsvector('simple',
-        COALESCE(NEW.title, '') || ' ' ||
-        COALESCE(NEW.description, '') || ' ' ||
-        COALESCE(NEW.keywords, '')
-    );
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger to auto-populate search_vector
-DROP TRIGGER IF EXISTS search_index_vector_trigger ON search_index;
-CREATE TRIGGER search_index_vector_trigger
-    BEFORE INSERT OR UPDATE ON search_index
-    FOR EACH ROW EXECUTE FUNCTION search_index_update_vector();
+-- PostgreSQL trigger for auto-populating search_vector is in migration_search_index.sql
