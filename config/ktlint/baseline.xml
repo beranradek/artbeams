@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="src/main/kotlin/org/xbery/artbeams/activitylog/repository/UserActivityLogRepository.kt">
+        <error line="19" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/admin/notification/AdminNotificationService.kt">
+        <error line="12" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminController.kt">
+        <error line="9" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/articles/admin/ArticleForm.kt">
+        <error line="9" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/articles/agent/ArticleEditingAgentController.kt">
+        <error line="8" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/articles/agent/ImageGeneratingAgentController.kt">
+        <error line="9" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/articles/domain/Article.kt">
+        <error line="80" column="19" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/articles/repository/ArticleRepository.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/categories/admin/CategoryAdminController.kt">
+        <error line="36" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/categories/admin/CategoryForm.kt">
+        <error line="8" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/categories/domain/Category.kt">
+        <error line="7" column="1" source="standard:no-wildcard-imports" />
+        <error line="43" column="19" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/categories/domain/EditedCategory.kt">
+        <error line="4" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/comments/admin/CommentAdminController.kt">
+        <error line="4" column="1" source="standard:no-wildcard-imports" />
+        <error line="23" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/Locales.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/access/domain/EntityAccessCount.kt">
+        <error line="17" column="19" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/antispam/domain/AntispamQuiz.kt">
+        <error line="21" column="19" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/api/AbstractJsonApi.kt">
+        <error line="6" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/assets/domain/AssetAttributes.kt">
+        <error line="5" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/assets/domain/EditedTimeValidity.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/controller/BaseController.kt">
+        <error line="8" column="1" source="standard:no-wildcard-imports" />
+        <error line="21" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/CharUtils.kt">
+        <error line="99" column="21" source="standard:property-naming" />
+        <error line="100" column="21" source="standard:property-naming" />
+        <error line="101" column="21" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/DNSLookup.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/EmailValidator.kt">
+        <error line="24" column="1" source="standard:no-wildcard-imports" />
+        <error line="323" column="66" source="standard:if-else-wrapping" />
+        <error line="361" column="81" source="standard:if-else-wrapping" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/EmailValidatorBuilder.kt">
+        <error line="2" column="1" source="standard:no-wildcard-imports" />
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/I18N.kt">
+        <error line="4" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/entity/Email.kt">
+        <error line="27" column="5" source="standard:value-parameter-comment" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/lists/Disposable.kt">
+        <error line="5" column="1" source="standard:no-wildcard-imports" />
+        <error line="1466" column="151" source="standard:max-line-length" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/lists/Suggestions.kt">
+        <error line="51" column="151" source="standard:max-line-length" />
+        <error line="148" column="151" source="standard:max-line-length" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/emailvalidator/lists/TopLevelDomain.kt">
+        <error line="5" column="1" source="standard:no-wildcard-imports" />
+        <error line="1598" column="151" source="standard:max-line-length" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/freemarker/FreeMarkerConfig.kt">
+        <error line="1" column="1" source="standard:filename" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/freemarker/Java8ObjectWrapper.kt">
+        <error line="7" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/mailer/service/AbstractTemplateMailer.kt">
+        <error line="1" column="1" source="standard:filename" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/pdf/PdfSigner.kt">
+        <error line="17" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/queue/AbstractQueueProcessor.kt">
+        <error line="15" column="1" source="standard:no-wildcard-imports" />
+        <error line="439" column="151" source="standard:max-line-length" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/queue/persistence/AbstractSqlQueueEntryRepository.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/repository/AbstractMappingRepository.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/repository/AbstractRecordFetcher.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/repository/AbstractRecordStorage.kt">
+        <error line="3" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/security/AESEncryption.kt">
+        <error line="6" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/common/security/credential/Pbkdf2PasswordHash.kt">
+        <error line="9" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/config/SecurityConfig.kt">
+        <error line="79" column="151" source="standard:max-line-length" />
+        <error line="80" column="151" source="standard:max-line-length" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/config/admin/ConfigAdminController.kt">
+        <error line="9" column="1" source="standard:no-wildcard-imports" />
+        <error line="32" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/consents/admin/ConsentAdminController.kt">
+        <error line="25" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/consents/domain/Consent.kt">
+        <error line="19" column="34" source="standard:value-parameter-comment" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/consents/service/ConsentService.kt">
+        <error line="9" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/evernote/service/EvernoteApi.kt">
+        <error line="29" column="17" source="standard:property-naming" />
+        <error line="33" column="17" source="standard:property-naming" />
+        <error line="34" column="17" source="standard:property-naming" />
+        <error line="35" column="17" source="standard:property-naming" />
+        <error line="36" column="17" source="standard:property-naming" />
+        <error line="37" column="17" source="standard:property-naming" />
+        <error line="38" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/google/docs/GoogleDocsService.kt">
+        <error line="5" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/localisation/admin/LocalisationAdminController.kt">
+        <error line="11" column="1" source="standard:no-wildcard-imports" />
+        <error line="32" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/mailing/webhook/MailerLiteWebhookController.kt">
+        <error line="7" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/members/service/MemberSectionMailerImpl.kt">
+        <error line="36" column="2" source="standard:no-trailing-spaces" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/orders/admin/CreateOrderForm.kt">
+        <error line="24" column="2" source="standard:no-trailing-spaces" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/orders/admin/OrderAdminController.kt">
+        <error line="8" column="1" source="standard:no-wildcard-imports" />
+        <error line="29" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/orders/admin/service/OrderCreatingAdminService.kt">
+        <error line="36" column="2" source="standard:no-trailing-spaces" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/orders/repository/OrderRepository.kt">
+        <error line="16" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/prices/domain/Price.kt">
+        <error line="6" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/search/domain/SearchResult.kt">
+        <error line="16" column="23" source="standard:value-parameter-comment" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/search/repository/SearchIndexRepository.kt">
+        <error line="4" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/simpleshop/service/SimpleShopApiClient.kt">
+        <error line="15" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/sync/admin/SyncAdminController.kt">
+        <error line="23" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/userproducts/repository/UserProductRepository.kt">
+        <error line="14" column="1" source="standard:no-wildcard-imports" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/users/admin/UserAdminController.kt">
+        <error line="39" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/users/service/UserSubscriptionServiceImpl.kt">
+        <error line="16" column="1" source="standard:no-wildcard-imports" />
+        <error line="28" column="150" source="standard:max-line-length" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/web/WebController.kt">
+        <error line="59" column="17" source="standard:property-naming" />
+        <error line="60" column="17" source="standard:property-naming" />
+        <error line="61" column="17" source="standard:property-naming" />
+    </file>
+    <file name="src/main/kotlin/org/xbery/artbeams/web/filter/ContentSecurityPolicyServletFilter.kt">
+        <error line="6" column="1" source="standard:no-wildcard-imports" />
+    </file>
+</baseline>
