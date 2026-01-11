@@ -474,6 +474,10 @@
 .h-20 { height: 5rem; }
 .w-3 { width: 0.75rem; }
 .h-3 { height: 0.75rem; }
+.w-6 { width: 1.5rem; }
+.h-6 { height: 1.5rem; }
+.w-8 { width: 2rem; }
+.h-8 { height: 2rem; }
 .w-full { width: 100%; }
 .h-64 { height: 16rem; }
 .mx-auto { margin-left: auto; margin-right: auto; }

@@ -157,7 +157,7 @@ ${websiteJsonLd}
   </#if>
 
   <#if pageStyles2?has_content>
-    <link href="${pageStyles2}" type="text/css" rel="stylesheet">
+    <link href="${pageStyles2}?v=2" type="text/css" rel="stylesheet">
   </#if>
 
   <#-- In-site editing for admin users -->
