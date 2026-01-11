@@ -1,0 +1,43 @@
+New features to implement
+
+# Special highlighted Actions menu in administration with actions in submenu
+
+At http://localhost:8080/admin, there are actions Sync remote DB, Reload config, Reload localisations.
+Group the together under common Actions menu in administration with actions in submenu.
+
+# Add Reindex all action to Actions menu in administration
+
+See SearchReindexJob (reindexAll is called there already).
+Return / log info about reindexing started, but run reindexing in background.
+
+# Improve icons in product page for "Prakticky pruvodce spankem"
+
+In page http://localhost:8080/produkt/prakticky-pruvodce-hlubokym-spankem,
+there are inconsistently-sized bullet check icons in list:
+"Co konkrétně získáte:
+ Konečně pořádně vyspíte a probudíte se plní energie. Už žádná ranní únava nebo pocit, že potřebujete další šálek kávy, abyste přežili den.
+
+ Naučíte se, jak snadno usínat, i když máte stresující den. Získáte metody a techniky, které Vám pomohou rychle přepnout z hektického režimu do klidového stavu.
+
+ ... a more"
+
+Some are too small, smaller than others. See the screenshot PRPs/improvements_2026_01_11/small_bullets.png.
+The bullets are obviously styled with CSS and part of article body
+http://localhost:8080/admin/articles/61851a18-9350-4b0e-9fe6-2e5b321ddafb/edit
+
+The very same problem is also in listing:
+"Představte si, jaké to bude, až...
+ Každé ráno vstanete svěží a odpočatí
+ Už žádné kruhy pod očima, nekonečné zívání nebo pocit, že noc byla krátká. Vaše tělo i mysl budou plné energie, připravené zvládnout jakýkoli den. Přestanete se cítit unavení a podráždění. Místo toho budete klidní, vyrovnaní a budete mít prostor věnovat se svým blízkým i svým snům s radostí a nadšením."
+
+with different bullet icons such as "icon w-8 h-8 text-gentle-red mt-1" - with nested very tiny "icon-heart"
+You can check markup of article page.
+You your browser tools.
+
+In testimonial carousel, there are dots for navigation under testimonials:
+src/main/resources/templates/components/testimonialCarousel.ftl
+See PRPs/improvements_2026_01_11/testimonial_carousel.png
+
+These dots are elliptical with not nice shadow borders. Make the circles round, with more subtle shadow border.
+
+ See the screenshot PRPs/improvements_2026_01_11/small_bullets2.png.
