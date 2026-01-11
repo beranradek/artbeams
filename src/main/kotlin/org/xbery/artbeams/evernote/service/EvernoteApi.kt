@@ -23,18 +23,18 @@ import java.util.regex.Pattern
  * @author Radek Beran
  */
 @Component
-open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
+open class EvernoteApi(
+    private val evernoteConfig: EvernoteConfig
+) {
     private val Logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
+
     // TODO RBe: Move constants to configuration
     private val NOTES_LIMIT: Int = 50
-    private
-    val USER_STORE_URL: String = "https://www.evernote.com/edam/user"
-    private
-    val USER_AGENT: String = "Evernote/CMS (Java) " + Constants.EDAM_VERSION_MAJOR + "." + Constants.EDAM_VERSION_MINOR
+    private val USER_STORE_URL: String = "https://www.evernote.com/edam/user"
+    private val USER_AGENT: String = "Evernote/CMS (Java) " + Constants.EDAM_VERSION_MAJOR + "." + Constants.EDAM_VERSION_MINOR
     private val CLIENT_NAME: String = "CMS (Java)"
-    private
-    val BR_INSIDE_DIVS: Pattern = Pattern.compile("<div[^>]*><br[^>]*></div>")
+    private val BR_INSIDE_DIVS: Pattern = Pattern.compile("<div[^>]*><br[^>]*></div>")
     private val DIV_END_START: Pattern = Pattern.compile("</div><div[^>]*>")
 
     // See https://dev.evernote.com/doc/reference/NoteStore.html#Fn_NoteStore_updateNote
@@ -46,30 +46,34 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         // \R  matches any line separator
         val evernoteContent: String =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\"><en-note>" +
-                    (if (content.isEmpty()) "" else content.replace(ReturnRegex, "<br />")) + "</en-note>"
+                (if (content.isEmpty()) "" else content.replace(ReturnRegex, "<br />")) + "</en-note>"
         note.content = evernoteContent
         note.updated = Instant.now().toEpochMilli()
         noteStoreClient.updateNote(evernoteConfig.getDeveloperToken(), note)
         Logger.info("$opName - finished")
     }
 
-    private fun findNoteByGuid(noteGuid: String, noteStoreClient: Client): Note {
-        return noteStoreClient.getNote(
-            evernoteConfig.getDeveloperToken(),
-            noteGuid, true, true, false, false
-        )
-    }
+    private fun findNoteByGuid(noteGuid: String, noteStoreClient: Client): Note = noteStoreClient.getNote(
+        evernoteConfig.getDeveloperToken(),
+        noteGuid,
+        true,
+        true,
+        false,
+        false
+    )
 
-    private fun findNoteOptByGuid(noteGuid: String, noteStoreClient: Client): Note? {
-        return try {
-            noteStoreClient.getNote(
-                evernoteConfig.getDeveloperToken(),
-                noteGuid, true, true, false, false
-            )
-        } catch (_: EDAMNotFoundException) {
-            Logger.warn("Note not found in Evernote by guid $noteGuid")
-            null
-        }
+    private fun findNoteOptByGuid(noteGuid: String, noteStoreClient: Client): Note? = try {
+        noteStoreClient.getNote(
+            evernoteConfig.getDeveloperToken(),
+            noteGuid,
+            true,
+            true,
+            false,
+            false
+        )
+    } catch (_: EDAMNotFoundException) {
+        Logger.warn("Note not found in Evernote by guid $noteGuid")
+        null
     }
 
     /**
@@ -165,7 +169,9 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         val userStore = UserStore.Client(userStoreProtocol, userStoreProtocol)
         val versionOk = userStore.checkVersion(CLIENT_NAME, Constants.EDAM_VERSION_MAJOR, Constants.EDAM_VERSION_MINOR)
         if (!versionOk) {
-            throw IllegalStateException("Incompatible Evernote client protocol version. ${ Constants.EDAM_VERSION_MAJOR }.${ Constants.EDAM_VERSION_MINOR } expected.")
+            throw IllegalStateException(
+                "Incompatible Evernote client protocol version. ${ Constants.EDAM_VERSION_MAJOR }.${ Constants.EDAM_VERSION_MINOR } expected."
+            )
         }
 
         // Get the URL used to interact with the contents of the user's account
@@ -173,9 +179,9 @@ open class EvernoteApi(private val evernoteConfig: EvernoteConfig) {
         // will be returned along with the auth token in the final OAuth request.
         // In that case, you don't need to make this call.
         val developerToken = evernoteConfig.getDeveloperToken()
-            if (developerToken.trim().isEmpty()) {
-                throw  IllegalStateException("Invalid Evernote developer token: $developerToken")
-            }
+        if (developerToken.trim().isEmpty()) {
+            throw IllegalStateException("Invalid Evernote developer token: $developerToken")
+        }
         val noteStoreUrl = userStore.getNoteStoreUrl(developerToken)
         // Set up the NoteStore client
         val noteStoreTrans = THttpClient(noteStoreUrl)

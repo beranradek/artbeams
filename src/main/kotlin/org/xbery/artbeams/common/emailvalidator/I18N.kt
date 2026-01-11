@@ -26,7 +26,7 @@ object I18N {
     }
 
     @JvmStatic
-	fun getTranslation(key: String, bundle: ResourceBundle, vararg params: Any?): String {
+    fun getTranslation(key: String, bundle: ResourceBundle, vararg params: Any?): String {
         if (bundle.containsKey(key)) {
             return MessageFormat.format(bundle.getString(key), *params)
         } else {

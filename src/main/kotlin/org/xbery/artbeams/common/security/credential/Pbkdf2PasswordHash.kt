@@ -41,9 +41,7 @@ class Pbkdf2PasswordHash(
      * @param iterations the number of iterations to use in the hash
      * @return the new password credential serialized to JSON string
      */
-    fun encodeToSerializedCredential(rawPassword: String, iterations: Int): String {
-        return encodeToCredential(rawPassword, iterations).toSerialized()
-    }
+    fun encodeToSerializedCredential(rawPassword: String, iterations: Int): String = encodeToCredential(rawPassword, iterations).toSerialized()
 
     /**
      * Verifies the raw password against the stored credential.
@@ -53,14 +51,12 @@ class Pbkdf2PasswordHash(
      * string using [PasswordCredential.fromSerialized]
      * @return true if the raw password matches the stored credential
      */
-    fun verify(rawPassword: String, credential: PasswordCredential): Boolean {
-        return encodedPassword(
-            rawPassword,
-            credential.credentialData.hashIterations,
-            credential.secretData.salt,
-            keySize(credential)
-        ) == credential.secretData.value
-    }
+    fun verify(rawPassword: String, credential: PasswordCredential): Boolean = encodedPassword(
+        rawPassword,
+        credential.credentialData.hashIterations,
+        credential.secretData.salt,
+        keySize(credential)
+    ) == credential.secretData.value
 
     private fun keySize(credential: PasswordCredential): Int {
         try {

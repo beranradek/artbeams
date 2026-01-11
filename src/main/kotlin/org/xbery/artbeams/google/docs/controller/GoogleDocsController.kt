@@ -1,6 +1,5 @@
 package org.xbery.artbeams.google.docs.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -16,6 +15,7 @@ import org.xbery.artbeams.google.auth.GoogleApiAuth
 import org.xbery.artbeams.google.docs.GoogleDocsService
 import java.net.URI
 import java.nio.charset.StandardCharsets
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * API for firing authorization of application, so it can access Google Documents.
@@ -28,7 +28,8 @@ import java.nio.charset.StandardCharsets
 class GoogleDocsController(
     private val googleDocsService: GoogleDocsService,
     private val googleAuth: GoogleApiAuth,
-    private val common: ControllerComponents): BaseController(common) {
+    private val common: ControllerComponents
+) : BaseController(common) {
 
     /**
      * Redirects to Google authorization URL if not authorized.

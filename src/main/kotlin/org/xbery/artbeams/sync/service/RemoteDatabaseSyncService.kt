@@ -100,7 +100,7 @@ class RemoteDatabaseSyncService(
                 remoteCategories.forEach { remoteRecord ->
                     val slug = remoteRecord.slug ?: return@forEach
                     val remoteCategoryId = remoteRecord.id ?: return@forEach
-                    
+
                     // Skip empty records that would cause insert errors
                     if (slug.isBlank() || remoteCategoryId.isBlank()) {
                         logger.warn("Skipping category with empty slug or ID")
@@ -108,7 +108,8 @@ class RemoteDatabaseSyncService(
                     }
 
                     // Find existing local category by slug (not by ID)
-                    val existingLocalCategory = localDsl.selectFrom(CATEGORIES)
+                    val existingLocalCategory = localDsl
+                        .selectFrom(CATEGORIES)
                         .where(CATEGORIES.SLUG.eq(slug))
                         .fetchOne()
 
@@ -116,7 +117,8 @@ class RemoteDatabaseSyncService(
                         // Create new category with remote data (including remote ID)
                         try {
                             // Manually map fields to ensure compatibility
-                            localDsl.insertInto(CATEGORIES)
+                            localDsl
+                                .insertInto(CATEGORIES)
                                 .set(CATEGORIES.ID, remoteCategoryId)
                                 .set(CATEGORIES.SLUG, slug)
                                 .set(CATEGORIES.TITLE, remoteRecord.title)
@@ -142,7 +144,8 @@ class RemoteDatabaseSyncService(
                     } else {
                         // Update existing local category (keep local ID, update with remote data)
                         val localCategoryId = existingLocalCategory.id!!
-                        localDsl.update(CATEGORIES)
+                        localDsl
+                            .update(CATEGORIES)
                             .set(CATEGORIES.VALID_FROM, remoteRecord.validFrom)
                             .set(CATEGORIES.VALID_TO, remoteRecord.validTo)
                             .set(CATEGORIES.CREATED, remoteRecord.created)
@@ -169,13 +172,15 @@ class RemoteDatabaseSyncService(
                     val slug = remoteRecord.slug ?: return@forEach
 
                     // Find existing local product by slug (not by ID)
-                    val existingLocalProduct = localDsl.selectFrom(PRODUCTS)
+                    val existingLocalProduct = localDsl
+                        .selectFrom(PRODUCTS)
                         .where(PRODUCTS.SLUG.eq(slug))
                         .fetchOne()
 
                     if (existingLocalProduct == null) {
                         // Create new product with remote data (including remote ID)
-                        localDsl.insertInto(PRODUCTS)
+                        localDsl
+                            .insertInto(PRODUCTS)
                             .set(PRODUCTS.ID, remoteRecord.id)
                             .set(PRODUCTS.SLUG, slug)
                             .set(PRODUCTS.TITLE, remoteRecord.title)
@@ -197,7 +202,8 @@ class RemoteDatabaseSyncService(
                         logger.debug("Created product: $slug - ${remoteRecord.title}")
                     } else {
                         // Update existing local product (keep local ID, update with remote data)
-                        localDsl.update(PRODUCTS)
+                        localDsl
+                            .update(PRODUCTS)
                             .set(PRODUCTS.CREATED, remoteRecord.created)
                             .set(PRODUCTS.CREATED_BY, remoteRecord.createdBy)
                             .set(PRODUCTS.MODIFIED, remoteRecord.modified)
@@ -256,14 +262,16 @@ class RemoteDatabaseSyncService(
                     val slug = remoteRecord.slug ?: return@forEach
 
                     // Find existing local article by slug (not by ID)
-                    val existingLocalArticle = localDsl.selectFrom(ARTICLES)
+                    val existingLocalArticle = localDsl
+                        .selectFrom(ARTICLES)
                         .where(ARTICLES.SLUG.eq(slug))
                         .fetchOne()
 
                     val localArticleId: String
                     if (existingLocalArticle == null) {
                         // Create new article with remote data (including remote ID)
-                        localDsl.insertInto(ARTICLES)
+                        localDsl
+                            .insertInto(ARTICLES)
                             .set(ARTICLES.ID, remoteRecord.id)
                             .set(ARTICLES.SLUG, slug)
                             .set(ARTICLES.TITLE, remoteRecord.title)
@@ -288,7 +296,8 @@ class RemoteDatabaseSyncService(
                     } else {
                         // Update existing local article (keep local ID, update with remote data)
                         localArticleId = existingLocalArticle.id!!
-                        localDsl.update(ARTICLES)
+                        localDsl
+                            .update(ARTICLES)
                             .set(ARTICLES.EXTERNAL_ID, remoteRecord.externalId)
                             .set(ARTICLES.VALID_FROM, remoteRecord.validFrom)
                             .set(ARTICLES.VALID_TO, remoteRecord.validTo)
@@ -314,7 +323,8 @@ class RemoteDatabaseSyncService(
                     syncedArticleIds.add(localArticleId)
 
                     // Sync article categories (using local article ID and mapped local category IDs)
-                    val remoteCategoryIds = remoteDsl.select(ARTICLE_CATEGORY.CATEGORY_ID)
+                    val remoteCategoryIds = remoteDsl
+                        .select(ARTICLE_CATEGORY.CATEGORY_ID)
                         .from(ARTICLE_CATEGORY)
                         .where(ARTICLE_CATEGORY.ARTICLE_ID.eq(remoteRecord.id))
                         .fetch()
@@ -336,7 +346,8 @@ class RemoteDatabaseSyncService(
                 // Remove external IDs from all synced articles to prevent accidental Google Docs updates
                 if (syncedArticleIds.isNotEmpty()) {
                     logger.info("Removing external IDs from ${syncedArticleIds.size} synced articles")
-                    localDsl.update(ARTICLES)
+                    localDsl
+                        .update(ARTICLES)
                         .setNull(ARTICLES.EXTERNAL_ID)
                         .where(ARTICLES.ID.`in`(syncedArticleIds))
                         .execute()
@@ -352,17 +363,19 @@ class RemoteDatabaseSyncService(
                     val size = remoteRecord.size
 
                     // Check if media exists with the same filename, content_type, and size
-                    val existingMedia = localDsl.selectFrom(MEDIA)
+                    val existingMedia = localDsl
+                        .selectFrom(MEDIA)
                         .where(
-                            MEDIA.FILENAME.eq(filename)
+                            MEDIA.FILENAME
+                                .eq(filename)
                                 .and(MEDIA.CONTENT_TYPE.eq(contentType))
                                 .and(MEDIA.SIZE.eq(size))
-                        )
-                        .fetchOne()
+                        ).fetchOne()
 
                     if (existingMedia == null) {
                         // Create new media record
-                        localDsl.insertInto(MEDIA)
+                        localDsl
+                            .insertInto(MEDIA)
                             .set(MEDIA.ID, remoteRecord.id)
                             .set(MEDIA.FILENAME, filename)
                             .set(MEDIA.CONTENT_TYPE, contentType)
@@ -376,7 +389,8 @@ class RemoteDatabaseSyncService(
                         logger.debug("Created media: $filename (${contentType ?: "unknown"}, $size bytes)")
                     } else {
                         // Update existing media record (keep the existing id)
-                        localDsl.update(MEDIA)
+                        localDsl
+                            .update(MEDIA)
                             .set(MEDIA.DATA, remoteRecord.data)
                             .set(MEDIA.PRIVATE_ACCESS, remoteRecord.privateAccess)
                             .set(MEDIA.WIDTH, remoteRecord.width)

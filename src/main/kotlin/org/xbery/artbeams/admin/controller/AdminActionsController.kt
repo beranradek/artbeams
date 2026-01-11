@@ -1,7 +1,5 @@
 package org.xbery.artbeams.admin.controller
 
-import jakarta.annotation.PreDestroy
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,6 +12,8 @@ import org.xbery.artbeams.users.repository.UserRepository
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import jakarta.annotation.PreDestroy
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Admin actions controller for various administrative operations.

@@ -1,16 +1,15 @@
 package org.xbery.artbeams.users.security
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
 import org.xbery.artbeams.activitylog.domain.ActionType
 import org.xbery.artbeams.activitylog.domain.EntityType
 import org.xbery.artbeams.activitylog.service.UserActivityLogService
 import org.xbery.artbeams.users.repository.UserRepository
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * Custom authentication success handler that logs user login activities.
@@ -37,7 +36,7 @@ class LoginActivityHandler(
             // Principal format is "userId:login" from LoginVerificationServiceImpl
             val userId = principal.substringBefore(":")
             val username = principal.substringAfter(":")
-            
+
             val user = userRepository.findById(userId)
 
             if (user != null) {

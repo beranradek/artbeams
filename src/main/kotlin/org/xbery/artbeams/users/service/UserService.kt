@@ -12,12 +12,19 @@ import org.xbery.artbeams.users.password.domain.PasswordSetupData
  */
 interface UserService {
     fun saveUser(edited: EditedUser, ctx: OperationCtx): User
+
     fun saveMyProfile(profile: MyProfile, ctx: OperationCtx): User?
+
     fun setPassword(passwordSetupData: PasswordSetupData, ctx: OperationCtx): User
+
     fun findCurrentUserLogin(): String?
+
     fun requireByLogin(login: String): User
+
     fun findByLogin(login: String): User?
+
     fun findById(userId: String): User?
+
     fun updateUser(user: User): User
 
     /**

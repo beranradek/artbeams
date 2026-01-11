@@ -23,9 +23,13 @@ internal class MailgunMailSenderLiteMailingApiTest {
         assertNotNull(response.data.id)
     }
 
-    object TestMailingApiConfig: MailingApiConfig(TestAppConfig(mapOf(
-        "mailerlite.api.baseUrl" to "https://connect.mailerlite.com",
-        "mailerlite.api.token" to "FILL IN API TOKEN",
-        "mailerlite.subscriber.group1" to "FILL IN SUBSCRIBER GROUP ID"
-    )))
+    object TestMailingApiConfig : MailingApiConfig(
+        TestAppConfig(
+            mapOf(
+                "mailerlite.api.baseUrl" to "https://connect.mailerlite.com",
+                "mailerlite.api.token" to "FILL IN API TOKEN",
+                "mailerlite.subscriber.group1" to "FILL IN SUBSCRIBER GROUP ID"
+            )
+        )
+    )
 }

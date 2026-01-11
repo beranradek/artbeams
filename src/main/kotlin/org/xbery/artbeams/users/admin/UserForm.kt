@@ -14,7 +14,8 @@ import org.xbery.artbeams.users.domain.EditedUser
 open class UserForm {
     companion object {
         val definition: FormMapping<EditedUser> =
-            Forms.basic(EditedUser::class.java, "user")
+            Forms
+                .basic(EditedUser::class.java, "user")
                 .field<String>("id", Field.HIDDEN)
                 .field<String>("login", Field.EMAIL)
                 .field<String>("password", Field.PASSWORD)

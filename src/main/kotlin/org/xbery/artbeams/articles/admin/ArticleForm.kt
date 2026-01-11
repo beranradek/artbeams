@@ -26,7 +26,7 @@ open class ArticleForm {
                 .field(Forms.field<Date?>("validTo", Field.DATE_TIME).pattern(FormUtils.DATE_TIME_PATTERN).build())
                 .field<String>(
                     "keywords",
-                    Field.TEXT,
+                    Field.TEXT
                 ).field<Boolean>("showOnBlog", Field.CHECK_BOX)
                 .field<List<String>>("categories", Field.DROP_DOWN_CHOICE)
                 .build(FormUtils.CZ_CONFIG)

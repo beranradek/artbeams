@@ -54,12 +54,10 @@ object AgentJobResponse {
      * @param message Optional success message
      * @return Map containing jobId and message
      */
-    fun buildCreationResponse(jobId: String, message: String = "Job created successfully"): Map<String, Any> {
-        return mapOf(
-            "jobId" to jobId,
-            "message" to message
-        )
-    }
+    fun buildCreationResponse(jobId: String, message: String = "Job created successfully"): Map<String, Any> = mapOf(
+        "jobId" to jobId,
+        "message" to message
+    )
 
     /**
      * Builds an error response.
@@ -67,7 +65,5 @@ object AgentJobResponse {
      * @param errorMessage The error message to include
      * @return Map containing error message
      */
-    fun buildErrorResponse(errorMessage: String): Map<String, Any> {
-        return mapOf("error" to errorMessage)
-    }
+    fun buildErrorResponse(errorMessage: String): Map<String, Any> = mapOf("error" to errorMessage)
 }

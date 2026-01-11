@@ -1,7 +1,6 @@
 package org.xbery.artbeams.common.authcode.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.time.Instant
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
 import org.xbery.artbeams.common.authcode.domain.TokenPayload
@@ -13,6 +12,7 @@ import org.xbery.artbeams.common.security.SecureTokens
 import org.xbery.artbeams.common.security.SecureTokens.DEFAULT_CHARACTER_SOURCE
 import org.xbery.artbeams.common.security.SecureTokens.DEFAULT_TOKEN_LENGTH
 import org.xbery.artbeams.config.repository.AppConfig
+import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
@@ -51,8 +51,11 @@ class AuthorizationCodeGenerator(
             logger.info("Authorization code for purpose $purpose and user $userId was encrypted")
             return encryptedCode
         } catch (ex: Exception) {
-            logger.error("Error during generating and encrypting authorization code " +
-                "for purpose $purpose and user $userId: ${ex.message}", ex)
+            logger.error(
+                "Error during generating and encrypting authorization code " +
+                    "for purpose $purpose and user $userId: ${ex.message}",
+                ex
+            )
             throw ex
         }
     }
@@ -93,21 +96,16 @@ class AuthorizationCodeGenerator(
         return AESEncryption.encryptPasswordBased(payloadString, secretKey)
     }
 
-    protected fun getCodeValidityDuration(purpose: String): Duration {
-        return appConfig.findConfigOrDefault(
+    protected fun getCodeValidityDuration(purpose: String): Duration = appConfig
+        .findConfigOrDefault(
             Long::class,
             "$purpose.code.validity",
             DEFAULT_AUTHORIZATION_CODE_VALIDITY.inWholeSeconds
         ).seconds
-    }
 
-    protected fun getEncryptionSecret(): String {
-        return appConfig.requireConfig("encryptionSecret")
-    }
+    protected fun getEncryptionSecret(): String = appConfig.requireConfig("encryptionSecret")
 
-    protected fun getEncryptionSalt(): String {
-        return appConfig.requireConfig("encryptionSalt")
-    }
+    protected fun getEncryptionSalt(): String = appConfig.requireConfig("encryptionSalt")
 
     protected fun createObjectMapper(): ObjectMapper = ObjectMappers.DEFAULT_MAPPER
 

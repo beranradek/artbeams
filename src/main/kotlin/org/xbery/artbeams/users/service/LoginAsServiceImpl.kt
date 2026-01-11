@@ -1,6 +1,5 @@
 package org.xbery.artbeams.users.service
 
-import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -8,6 +7,7 @@ import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.users.domain.CommonRoles
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Implementation of [LoginAsService].
@@ -17,7 +17,8 @@ import org.xbery.artbeams.users.repository.RoleRepository
 class LoginAsServiceImpl(
     private val roleRepository: RoleRepository,
     private val loginVerificationService: LoginVerificationService
-) : AbstractLoginService(), LoginAsService {
+) : AbstractLoginService(),
+    LoginAsService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun loginAsUser(currentUser: User, asUser: User, request: HttpServletRequest) {

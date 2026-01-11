@@ -62,17 +62,15 @@ class SearchApiController(
         val imageUrl: String?
     )
 
-    private fun SearchSuggestion.toDto(): SearchSuggestionDto {
-        return SearchSuggestionDto(
-            entityType = this.entityType.name,
-            entityId = this.entityId,
-            title = this.title,
-            description = this.description,
-            slug = this.slug,
-            url = this.getUrl(),
-            typeName = this.getEntityTypeName(),
-            imageUrl = this.metadata["image"] as? String
-                ?: this.metadata["listingImage"] as? String
-        )
-    }
+    private fun SearchSuggestion.toDto(): SearchSuggestionDto = SearchSuggestionDto(
+        entityType = this.entityType.name,
+        entityId = this.entityId,
+        title = this.title,
+        description = this.description,
+        slug = this.slug,
+        url = this.getUrl(),
+        typeName = this.getEntityTypeName(),
+        imageUrl = this.metadata["image"] as? String
+            ?: this.metadata["listingImage"] as? String
+    )
 }

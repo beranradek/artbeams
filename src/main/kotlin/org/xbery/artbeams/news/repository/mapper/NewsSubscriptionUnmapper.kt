@@ -2,9 +2,9 @@ package org.xbery.artbeams.news.repository.mapper
 
 import org.jooq.RecordUnmapper
 import org.springframework.stereotype.Component
-import org.xbery.artbeams.news.domain.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.records.NewsSubscriptionRecord
 import org.xbery.artbeams.jooq.schema.tables.references.NEWS_SUBSCRIPTION
+import org.xbery.artbeams.news.domain.NewsSubscription
 
 /**
  * @author Radek Beran

@@ -1,6 +1,5 @@
 package org.xbery.artbeams.comments.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
@@ -9,6 +8,7 @@ import org.xbery.artbeams.comments.service.CommentService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.overview.Pagination
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Comments administration routes.
@@ -40,13 +40,13 @@ class CommentAdminController(
         } else {
             null
         }
-        
+
         val resultPage = if (searchTerm.isNullOrBlank() && state == null) {
             commentService.findComments(pagination)
         } else {
             commentService.searchComments(searchTerm, state, pagination)
         }
-        
+
         val model = createModel(
             request,
             "resultPage" to resultPage,

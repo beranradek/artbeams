@@ -7,4 +7,10 @@ import java.time.Instant
  *
  * @author Radek Beran
  */
-data class Note(val guid: String, val title: String, val body: String, val created: Instant, val updated: Instant)
+data class Note(
+    val guid: String,
+    val title: String,
+    val body: String,
+    val created: Instant,
+    val updated: Instant
+)

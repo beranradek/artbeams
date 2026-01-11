@@ -5,7 +5,9 @@ import org.xbery.artbeams.common.file.FileNames
 /**
  * @author Radek Beran
  */
-enum class ImageFormat(val contentType: String) {
+enum class ImageFormat(
+    val contentType: String
+) {
 
     WEBP("image/webp"),
     JPG("image/jpeg"),

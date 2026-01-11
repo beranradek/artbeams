@@ -35,7 +35,9 @@ import java.io.StringReader
  * @author Radek Beran
  */
 @Service
-open class GoogleApiAuth(private val appConfig: AppConfig) {
+open class GoogleApiAuth(
+    private val appConfig: AppConfig
+) {
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -143,7 +145,7 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
     fun getCredentials(scopes: List<String>): Credential {
         val flow = buildOAuth2AuthorizationCodeFlow(scopes)
         val credential = flow.loadCredential(applicationUserId)
-        
+
         // Check if access token is expired or about to expire (within 5 minutes)
         if (credential != null && credential.expiresInSeconds != null && credential.expiresInSeconds < 300L) {
             if (credential.refreshToken != null) {
@@ -167,33 +169,31 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
                 logger.warn("Access token expired but no refresh token available, re-authorization required")
             }
         }
-        
+
         return credential
     }
-    
+
     /**
      * Explicitly refreshes the access token using the refresh token.
      * Returns true if refresh was successful.
      */
-    fun refreshAccessToken(scopes: List<String>): Boolean {
-        return try {
-            val credential = getCredentials(scopes)
-            if (credential.refreshToken != null) {
-                val refreshed = credential.refreshToken()
-                if (refreshed) {
-                    logger.info("Access token manually refreshed, new expiration: ${credential.expiresInSeconds}s")
-                } else {
-                    logger.warn("Manual token refresh returned false")
-                }
-                refreshed
+    fun refreshAccessToken(scopes: List<String>): Boolean = try {
+        val credential = getCredentials(scopes)
+        if (credential.refreshToken != null) {
+            val refreshed = credential.refreshToken()
+            if (refreshed) {
+                logger.info("Access token manually refreshed, new expiration: ${credential.expiresInSeconds}s")
             } else {
-                logger.warn("No refresh token available, cannot refresh access token")
-                false
+                logger.warn("Manual token refresh returned false")
             }
-        } catch (e: IOException) {
-            logger.error("Error during manual token refresh: ${e.message}", e)
+            refreshed
+        } else {
+            logger.warn("No refresh token available, cannot refresh access token")
             false
         }
+    } catch (e: IOException) {
+        logger.error("Error during manual token refresh: ${e.message}", e)
+        false
     }
 
     /**
@@ -224,7 +224,7 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
                 authCodeServerReceiver?.error = "invalid_authorization_code"
                 return
             }
-            
+
             if (authCodeServerReceiver != null) {
                 val receiver = requireNotNull(authCodeServerReceiver)
                 receiver.code = code
@@ -242,7 +242,7 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
             authCodeServerReceiver?.error = error
         }
     }
-    
+
     /**
      * Validates Google OAuth2 authorization code format.
      * Authorization codes should be:
@@ -254,14 +254,14 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
         if (code.length < 60 || code.length > 400) {
             return false
         }
-        
+
         // Valid characters: alphanumeric, _, -, %, digits after %
         // Pattern allows URL-encoded characters like %2F, %20, etc.
         val validPattern = Regex("^[A-Za-z0-9_\\-/%]+$")
         if (!validPattern.matches(code)) {
             return false
         }
-        
+
         // Check URL encoding is valid (% followed by two hex digits)
         val urlEncodingPattern = Regex("%[0-9A-Fa-f]{2}")
         val percentPositions = code.withIndex().filter { it.value == '%' }.map { it.index }
@@ -274,7 +274,7 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
                 return false
             }
         }
-        
+
         return true
     }
 
@@ -306,10 +306,10 @@ open class GoogleApiAuth(private val appConfig: AppConfig) {
         logger.info("Directory to store Google auth tokens for this application: $tokensDirectoryPath")
 
         val clientSecrets = GoogleClientSecrets.load(jsonFactory, StringReader(getGoogleOAuthClientJson()))
-        return GoogleAuthorizationCodeFlow.Builder(httpTransport, jsonFactory, clientSecrets, scopes)
+        return GoogleAuthorizationCodeFlow
+            .Builder(httpTransport, jsonFactory, clientSecrets, scopes)
             .setDataStoreFactory(FileDataStoreFactory(File(tokensDirectoryPath)))
             .setAccessType(resourceAccessType)
             .build()
     }
 }
-

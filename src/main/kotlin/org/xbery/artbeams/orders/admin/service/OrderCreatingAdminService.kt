@@ -21,13 +21,13 @@ interface OrderCreatingAdminService {
      * @return tuple with result (success/failure) and error message if failed
      */
     fun createOrder(createData: CreateOrderData): Pair<Boolean, String?>
-    
+
     /**
      * Gets list of all users for the form.
      * @return list of users
      */
     fun findAllUsers(): List<User>
-    
+
     /**
      * Gets list of all products for the form.
      * @return list of products

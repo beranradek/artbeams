@@ -1,6 +1,5 @@
 package org.xbery.artbeams.users.service
 
-import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -12,6 +11,7 @@ import org.xbery.artbeams.activitylog.service.UserActivityLogService
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Implementation of [LoginService].
@@ -23,7 +23,8 @@ open class LoginServiceImpl(
     private val roleRepository: RoleRepository,
     private val cmsAuthenticationProvider: CmsAuthenticationProvider,
     private val activityLogService: UserActivityLogService
-) : AbstractLoginService(), LoginService {
+) : AbstractLoginService(),
+    LoginService {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     override fun loginUser(user: User, plainPassword: String, request: HttpServletRequest) {

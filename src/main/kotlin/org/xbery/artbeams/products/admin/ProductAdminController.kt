@@ -1,6 +1,5 @@
 package org.xbery.artbeams.products.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -22,6 +21,7 @@ import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.repository.ProductRepository
 import org.xbery.artbeams.products.service.ProductService
 import org.xbery.artbeams.simpleshop.service.SimpleShopSyncService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Product administration routes.
@@ -61,17 +61,16 @@ class ProductAdminController(
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
-    fun editForm(request: HttpServletRequest, @PathVariable id: String?): Any {
-        return if (id == null || AssetAttributes.EMPTY_ID == id) {
-            renderEditForm(request, Product.Empty.toEdited(), ValidationResult.empty, null)
-        } else {
-            val product = productRepository.requireById(id)
-            renderEditForm(
-                request, product.toEdited(),
-                ValidationResult.empty,
-                null
-            )
-        }
+    fun editForm(request: HttpServletRequest, @PathVariable id: String?): Any = if (id == null || AssetAttributes.EMPTY_ID == id) {
+        renderEditForm(request, Product.Empty.toEdited(), ValidationResult.empty, null)
+    } else {
+        val product = productRepository.requireById(id)
+        renderEditForm(
+            request,
+            product.toEdited(),
+            ValidationResult.empty,
+            null
+        )
     }
 
     @PostMapping("/save")
@@ -97,40 +96,36 @@ class ProductAdminController(
     }
 
     @PostMapping("/{id}/sync-from-simpleshop")
-    fun syncFromSimpleShop(request: HttpServletRequest, @PathVariable id: String): Any {
-        return try {
-            val product = productRepository.requireById(id)
-            val ctx = requestToOperationCtx(request)
-            val result = simpleShopSyncService.syncProduct(product, ctx)
+    fun syncFromSimpleShop(request: HttpServletRequest, @PathVariable id: String): Any = try {
+        val product = productRepository.requireById(id)
+        val ctx = requestToOperationCtx(request)
+        val result = simpleShopSyncService.syncProduct(product, ctx)
 
-            if (result.success) {
-                logger.info("Product synced successfully: ${result.message}")
-                redirect("/admin/products/$id/edit?syncSuccess=true&message=${result.message}&fields=${result.updatedFields.joinToString(",")}")
-            } else {
-                logger.warn("Product sync failed: ${result.message}")
-                redirect("/admin/products/$id/edit?syncError=true&message=${result.message}")
-            }
-        } catch (ex: Exception) {
-            logger.error("Error syncing product: ${ex.message}", ex)
-            redirect("/admin/products/$id/edit?syncError=true&message=${ex.message}")
+        if (result.success) {
+            logger.info("Product synced successfully: ${result.message}")
+            redirect("/admin/products/$id/edit?syncSuccess=true&message=${result.message}&fields=${result.updatedFields.joinToString(",")}")
+        } else {
+            logger.warn("Product sync failed: ${result.message}")
+            redirect("/admin/products/$id/edit?syncError=true&message=${result.message}")
         }
+    } catch (ex: Exception) {
+        logger.error("Error syncing product: ${ex.message}", ex)
+        redirect("/admin/products/$id/edit?syncError=true&message=${ex.message}")
     }
 
     @PostMapping("/sync-all-from-simpleshop")
-    fun syncAllFromSimpleShop(request: HttpServletRequest): Any {
-        return try {
-            val ctx = requestToOperationCtx(request)
-            val results = simpleShopSyncService.syncAllProducts(ctx)
+    fun syncAllFromSimpleShop(request: HttpServletRequest): Any = try {
+        val ctx = requestToOperationCtx(request)
+        val results = simpleShopSyncService.syncAllProducts(ctx)
 
-            val successCount = results.count { it.success }
-            val updatedCount = results.count { it.updatedFields.isNotEmpty() }
+        val successCount = results.count { it.success }
+        val updatedCount = results.count { it.updatedFields.isNotEmpty() }
 
-            logger.info("Bulk sync completed: $successCount/${results.size} successful, $updatedCount updated")
-            redirect("/admin/products?syncSuccess=true&total=${results.size}&success=$successCount&updated=$updatedCount")
-        } catch (ex: Exception) {
-            logger.error("Error during bulk sync: ${ex.message}", ex)
-            redirect("/admin/products?syncError=true&message=${ex.message}")
-        }
+        logger.info("Bulk sync completed: $successCount/${results.size} successful, $updatedCount updated")
+        redirect("/admin/products?syncSuccess=true&total=${results.size}&success=$successCount&updated=$updatedCount")
+    } catch (ex: Exception) {
+        logger.error("Error during bulk sync: ${ex.message}", ex)
+        redirect("/admin/products?syncError=true&message=${ex.message}")
     }
 
     private fun renderEditForm(
@@ -141,9 +136,11 @@ class ProductAdminController(
     ): Any {
         val editForm = editFormDef.fill(FormData(edited, validationResult))
         val model = createModel(
-            request, "editForm"
-                    to editForm, "errorMessage"
-                    to errorMessage
+            request,
+            "editForm"
+                to editForm,
+            "errorMessage"
+                to errorMessage
         )
         return ModelAndView("$tplBasePath/productEdit", model)
     }

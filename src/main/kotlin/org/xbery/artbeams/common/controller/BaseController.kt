@@ -3,7 +3,6 @@ package org.xbery.artbeams.common.controller
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
-import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.*
@@ -20,12 +19,15 @@ import org.xbery.artbeams.news.controller.NewsSubscriptionForm
 import org.xbery.artbeams.news.controller.NewsSubscriptionFormData
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 import java.util.*
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Base controller for all pages.
  * @author Radek Beran
  */
-abstract class BaseController(private val common: ControllerComponents) {
+abstract class BaseController(
+    private val common: ControllerComponents
+) {
 
     val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -107,7 +109,7 @@ abstract class BaseController(private val common: ControllerComponents) {
         logger.error("Error during processing the request: ${operationEx.message}", operationEx)
         val status = statusCodeToHttpStatus(operationEx.statusCode)
         val model = createModel(
-            request, 
+            request,
             "status" to status.value(),
             "errorCode" to operationEx.errorCode.code,
             "errorMessage" to operationEx.message
@@ -119,37 +121,33 @@ abstract class BaseController(private val common: ControllerComponents) {
      * Try to process given block of code generating a response (response entity or MVC model and view).
      * If an exception occurs, it will be transformed to common error response.
      */
-    fun tryOrErrorResponse(request: HttpServletRequest, block: () -> Any): Any {
-        return try {
-            block()
-        } catch (e: IllegalArgumentException) {
-            errorResponse(request, OperationException(CommonErrorCode.INVALID_INPUT, e.message ?: "", StatusCode.BAD_INPUT, e))
-        } catch (e: IllegalFormatException) {
-            errorResponse(request, OperationException(CommonErrorCode.INVALID_INPUT, e.message ?: "", StatusCode.BAD_INPUT, e))
-        } catch (e: IllegalAccessException) {
-            errorResponse(request, OperationException(CommonErrorCode.UNAUTHORIZED_ACCESS, e.message ?: "", StatusCode.UNAUTHORIZED, e))
-        } catch (e: OperationException) {
-            errorResponse(request, e)
-        } catch (e: Exception) {
-            errorResponse(request, OperationException(CommonErrorCode.INTERNAL_ERROR, e.message ?: "", StatusCode.INTERNAL_ERROR, e))
-        }
+    fun tryOrErrorResponse(request: HttpServletRequest, block: () -> Any): Any = try {
+        block()
+    } catch (e: IllegalArgumentException) {
+        errorResponse(request, OperationException(CommonErrorCode.INVALID_INPUT, e.message ?: "", StatusCode.BAD_INPUT, e))
+    } catch (e: IllegalFormatException) {
+        errorResponse(request, OperationException(CommonErrorCode.INVALID_INPUT, e.message ?: "", StatusCode.BAD_INPUT, e))
+    } catch (e: IllegalAccessException) {
+        errorResponse(request, OperationException(CommonErrorCode.UNAUTHORIZED_ACCESS, e.message ?: "", StatusCode.UNAUTHORIZED, e))
+    } catch (e: OperationException) {
+        errorResponse(request, e)
+    } catch (e: Exception) {
+        errorResponse(request, OperationException(CommonErrorCode.INTERNAL_ERROR, e.message ?: "", StatusCode.INTERNAL_ERROR, e))
     }
 
-    protected fun statusCodeToHttpStatus(statusCode: StatusCode): HttpStatusCode {
-        return when (statusCode) {
-            StatusCode.EXPECTED -> HttpStatus.OK
-            StatusCode.NOT_FOUND -> HttpStatus.NOT_FOUND
-            StatusCode.UNAUTHORIZED -> HttpStatus.UNAUTHORIZED
-            StatusCode.BAD_INPUT -> HttpStatus.BAD_REQUEST
-            StatusCode.LOCKED -> HttpStatus.LOCKED
-            StatusCode.CONFLICT -> HttpStatus.CONFLICT
-            StatusCode.FORBIDDEN -> HttpStatus.FORBIDDEN
-            StatusCode.BAD_GATEWAY -> HttpStatus.BAD_GATEWAY
-            StatusCode.SERVICE_UNAVAILABLE -> HttpStatus.SERVICE_UNAVAILABLE
-            StatusCode.MOVED_PERMANENTLY -> HttpStatus.MOVED_PERMANENTLY
-            StatusCode.SEE_OTHER -> HttpStatus.SEE_OTHER
-            StatusCode.INTERNAL_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR
-        }
+    protected fun statusCodeToHttpStatus(statusCode: StatusCode): HttpStatusCode = when (statusCode) {
+        StatusCode.EXPECTED -> HttpStatus.OK
+        StatusCode.NOT_FOUND -> HttpStatus.NOT_FOUND
+        StatusCode.UNAUTHORIZED -> HttpStatus.UNAUTHORIZED
+        StatusCode.BAD_INPUT -> HttpStatus.BAD_REQUEST
+        StatusCode.LOCKED -> HttpStatus.LOCKED
+        StatusCode.CONFLICT -> HttpStatus.CONFLICT
+        StatusCode.FORBIDDEN -> HttpStatus.FORBIDDEN
+        StatusCode.BAD_GATEWAY -> HttpStatus.BAD_GATEWAY
+        StatusCode.SERVICE_UNAVAILABLE -> HttpStatus.SERVICE_UNAVAILABLE
+        StatusCode.MOVED_PERMANENTLY -> HttpStatus.MOVED_PERMANENTLY
+        StatusCode.SEE_OTHER -> HttpStatus.SEE_OTHER
+        StatusCode.INTERNAL_ERROR -> HttpStatus.INTERNAL_SERVER_ERROR
     }
 
     protected fun getFullUrl(request: HttpServletRequest): String {
@@ -164,14 +162,16 @@ abstract class BaseController(private val common: ControllerComponents) {
 
     protected fun getUrlBase(request: HttpServletRequest): String {
         val port: Int = request.serverPort
-        return request.scheme + "://" + request.serverName + (if (port != 80 && port != 443) {
-            ":$port"
-        } else "") + request.contextPath
+        return request.scheme + "://" + request.serverName + (
+            if (port != 80 && port != 443) {
+                ":$port"
+            } else {
+                ""
+            }
+        ) + request.contextPath
     }
 
-    protected fun getReferrerUrl(request: HttpServletRequest): String {
-        return request.getHeader(HttpHeaders.REFERER)
-    }
+    protected fun getReferrerUrl(request: HttpServletRequest): String = request.getHeader(HttpHeaders.REFERER)
 
     protected fun redirectToReferrerWitParam(
         request: HttpServletRequest,
@@ -184,9 +184,11 @@ abstract class BaseController(private val common: ControllerComponents) {
 
     fun requestToOperationCtx(request: HttpServletRequest): OperationCtx = common.getOperationCtx(request)
 
-    private fun processTemplateIntoString(template: freemarker.template.Template, model: Any): String {
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model)
-    }
+    private fun processTemplateIntoString(template: freemarker.template.Template, model: Any): String = FreeMarkerTemplateUtils
+        .processTemplateIntoString(
+            template,
+            model
+        )
 
     companion object {
         val newsSubscriptionFormDef: FormMapping<NewsSubscriptionFormData> = NewsSubscriptionForm.definition

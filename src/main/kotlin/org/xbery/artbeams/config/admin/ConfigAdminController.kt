@@ -1,6 +1,5 @@
 package org.xbery.artbeams.config.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -16,6 +15,7 @@ import org.xbery.artbeams.config.domain.EditedConfig
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.config.repository.ConfigRepository
 import org.xbery.artbeams.config.service.ConfigService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Config administration routes.
@@ -98,9 +98,11 @@ open class ConfigAdminController(
     ): Any {
         val editForm: FormMapping<EditedConfig> = editFormDef.fill(FormData<EditedConfig>(edited, validationResult))
         val model = createModel(
-            request, "editForm"
-            to editForm, "errorMessage"
-            to errorMessage
+            request,
+            "editForm"
+                to editForm,
+            "errorMessage"
+                to errorMessage
         )
         return ModelAndView("$TplBasePath/configEdit", model)
     }

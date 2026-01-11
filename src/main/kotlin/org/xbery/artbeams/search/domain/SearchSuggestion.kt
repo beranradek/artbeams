@@ -16,22 +16,18 @@ data class SearchSuggestion(
     /**
      * Get URL path for this suggestion based on entity type.
      */
-    fun getUrl(): String {
-        return when (entityType) {
-            EntityType.ARTICLE -> "/$slug"
-            EntityType.CATEGORY -> "/kategorie/$slug"
-            EntityType.PRODUCT -> "/produkt/$slug"
-        }
+    fun getUrl(): String = when (entityType) {
+        EntityType.ARTICLE -> "/$slug"
+        EntityType.CATEGORY -> "/kategorie/$slug"
+        EntityType.PRODUCT -> "/produkt/$slug"
     }
 
     /**
      * Get localized entity type name for display.
      */
-    fun getEntityTypeName(): String {
-        return when (entityType) {
-            EntityType.ARTICLE -> "Článek"
-            EntityType.CATEGORY -> "Rubrika"
-            EntityType.PRODUCT -> "Produkt"
-        }
+    fun getEntityTypeName(): String = when (entityType) {
+        EntityType.ARTICLE -> "Článek"
+        EntityType.CATEGORY -> "Rubrika"
+        EntityType.PRODUCT -> "Produkt"
     }
 }

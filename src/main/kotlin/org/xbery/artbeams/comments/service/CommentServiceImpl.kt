@@ -47,36 +47,35 @@ class CommentServiceImpl(
         ipAddress: String,
         userAgent: String,
         ctx: OperationCtx
-    ): Comment {
-        return try {
-            val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
-            val updatedComment = if (edited.id == AssetAttributes.EMPTY_ID) {
-                var comment =
-                    approvedOrWaiting(Comment.EMPTY.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent))
-                comment = commentRepository.create(comment)
-                // Only send notification if comment is approved (not spam)
-                if (comment.state == CommentState.APPROVED) {
-                    sendNewCommentNotification(comment)
-                }
-                comment
-            } else {
-                val comment = commentRepository.requireById(edited.id)
-                commentRepository.update(approvedOrWaiting(comment.updatedWith(edited, userId)))
+    ): Comment = try {
+        val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
+        val updatedComment = if (edited.id == AssetAttributes.EMPTY_ID) {
+            var comment =
+                approvedOrWaiting(Comment.EMPTY.updatedWith(edited, userId).copy(ip = ipAddress, userAgent = userAgent))
+            comment = commentRepository.create(comment)
+            // Only send notification if comment is approved (not spam)
+            if (comment.state == CommentState.APPROVED) {
+                sendNewCommentNotification(comment)
             }
-            updatedComment
-        } catch (ex: Exception) {
-            logger.error("Update of comment ${edited.id} finished with error ${ex.message}", ex)
-            throw ex
+            comment
+        } else {
+            val comment = commentRepository.requireById(edited.id)
+            commentRepository.update(approvedOrWaiting(comment.updatedWith(edited, userId)))
         }
+        updatedComment
+    } catch (ex: Exception) {
+        logger.error("Update of comment ${edited.id} finished with error ${ex.message}", ex)
+        throw ex
     }
 
-    override fun findComments(pagination: Pagination): ResultPage<Comment> {
-        return commentRepository.findComments(pagination)
-    }
+    override fun findComments(pagination: Pagination): ResultPage<Comment> = commentRepository.findComments(pagination)
 
-    override fun searchComments(searchTerm: String?, state: CommentState?, pagination: Pagination): ResultPage<Comment> {
-        return commentRepository.searchComments(searchTerm, state, pagination)
-    }
+    override fun searchComments(searchTerm: String?, state: CommentState?, pagination: Pagination): ResultPage<Comment> = commentRepository
+        .searchComments(
+            searchTerm,
+            state,
+            pagination
+        )
 
     @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
     override fun deleteComment(id: String): Boolean {
@@ -144,11 +143,13 @@ class CommentServiceImpl(
 
                                 <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #2c5aa0; margin: 20px 0;">
                                     <p style="margin: 0;"><strong>Komentar:</strong></p>
-                                    <p style="margin: 10px 0 0 0;">${normalizationHelper.removeDiacriticalMarks(comment.comment).replace("\n", "<br>")}</p>
+                                    <p style="margin: 10px 0 0 0;">${normalizationHelper.removeDiacriticalMarks(
+                            comment.comment
+                        ).replace("\n", "<br>")}</p>
                                 </div>
 
                                 <p style="margin-top: 20px;">
-                                    <a href="${articleUrl}" style="background-color: #2c5aa0; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                                    <a href="$articleUrl" style="background-color: #2c5aa0; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
                                         Zobrazit clanek a komentar
                                     </a>
                                 </p>
@@ -176,5 +177,4 @@ class CommentServiceImpl(
         }
     }
 
-    
 }

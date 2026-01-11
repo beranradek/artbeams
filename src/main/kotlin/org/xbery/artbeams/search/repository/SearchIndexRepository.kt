@@ -27,8 +27,10 @@ class SearchIndexRepository(
     override val unmapper: SearchIndexUnmapper,
     private val objectMapper: ObjectMapper
 ) : AbstractMappingRepository<SearchIndexEntry, SearchIndexRecord>(
-    dsl, mapper, unmapper
-) {
+        dsl,
+        mapper,
+        unmapper
+    ) {
     override val table: Table<SearchIndexRecord> = SEARCH_INDEX
     override val idField: Field<String?> = SEARCH_INDEX.ID
 
@@ -36,7 +38,8 @@ class SearchIndexRepository(
      * Find search index entry by entity type and ID.
      */
     fun findByEntity(entityType: EntityType, entityId: String): SearchIndexEntry? =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(SEARCH_INDEX.ENTITY_TYPE.eq(entityType.name))
             .and(SEARCH_INDEX.ENTITY_ID.eq(entityId))
             .fetchOne(mapper)
@@ -45,7 +48,8 @@ class SearchIndexRepository(
      * Delete search index entry by entity type and ID.
      */
     fun deleteByEntity(entityType: EntityType, entityId: String): Int =
-        dsl.deleteFrom(table)
+        dsl
+            .deleteFrom(table)
             .where(SEARCH_INDEX.ENTITY_TYPE.eq(entityType.name))
             .and(SEARCH_INDEX.ENTITY_ID.eq(entityId))
             .execute()
@@ -65,28 +69,28 @@ class SearchIndexRepository(
         // Use ILIKE for case-insensitive substring matching with trigram index
         val prefixPattern = "${query.trim()}%"
 
-        return dsl.select(
-            SEARCH_INDEX.ENTITY_TYPE,
-            SEARCH_INDEX.ENTITY_ID,
-            SEARCH_INDEX.TITLE,
-            SEARCH_INDEX.DESCRIPTION,
-            SEARCH_INDEX.SLUG,
-            SEARCH_INDEX.METADATA
-        )
-            .from(table)
+        return dsl
+            .select(
+                SEARCH_INDEX.ENTITY_TYPE,
+                SEARCH_INDEX.ENTITY_ID,
+                SEARCH_INDEX.TITLE,
+                SEARCH_INDEX.DESCRIPTION,
+                SEARCH_INDEX.SLUG,
+                SEARCH_INDEX.METADATA
+            ).from(table)
             .where(SEARCH_INDEX.TITLE.likeIgnoreCase(searchPattern))
             .and(validityCondition)
             .orderBy(
                 // Prefer exact prefix matches - using parameterized pattern to prevent SQL injection
-                DSL.field("CASE WHEN {0} ILIKE {1} THEN 0 ELSE 1 END",
+                DSL.field(
+                    "CASE WHEN {0} ILIKE {1} THEN 0 ELSE 1 END",
                     SEARCH_INDEX.TITLE,
                     DSL.`val`(prefixPattern)
                 ),
                 // Then order by similarity (if pg_trgm installed)
                 SEARCH_INDEX.ENTITY_TYPE.asc(),
                 SEARCH_INDEX.TITLE.asc()
-            )
-            .limit(limit)
+            ).limit(limit)
             .fetch { record ->
                 val metadata = parseMetadata(record[SEARCH_INDEX.METADATA])
                 SearchSuggestion(
@@ -121,32 +125,32 @@ class SearchIndexRepository(
         )
 
         // Calculate rank using ts_rank_cd (cover density ranking)
-        val rankField = DSL.function(
-            "ts_rank_cd",
-            Double::class.java,
-            SEARCH_INDEX.SEARCH_VECTOR,
-            tsQuery
-        ).`as`("rank")
+        val rankField = DSL
+            .function(
+                "ts_rank_cd",
+                Double::class.java,
+                SEARCH_INDEX.SEARCH_VECTOR,
+                tsQuery
+            ).`as`("rank")
 
-        return dsl.select(
-            SEARCH_INDEX.ENTITY_TYPE,
-            SEARCH_INDEX.ENTITY_ID,
-            SEARCH_INDEX.TITLE,
-            SEARCH_INDEX.DESCRIPTION,
-            SEARCH_INDEX.KEYWORDS,
-            SEARCH_INDEX.SLUG,
-            SEARCH_INDEX.METADATA,
-            rankField
-        )
-            .from(table)
+        return dsl
+            .select(
+                SEARCH_INDEX.ENTITY_TYPE,
+                SEARCH_INDEX.ENTITY_ID,
+                SEARCH_INDEX.TITLE,
+                SEARCH_INDEX.DESCRIPTION,
+                SEARCH_INDEX.KEYWORDS,
+                SEARCH_INDEX.SLUG,
+                SEARCH_INDEX.METADATA,
+                rankField
+            ).from(table)
             .where(
                 DSL.condition(
                     "{0} @@ {1}",
                     SEARCH_INDEX.SEARCH_VECTOR,
                     tsQuery
                 )
-            )
-            .and(validityCondition)
+            ).and(validityCondition)
             .orderBy(rankField.desc(), SEARCH_INDEX.MODIFIED.desc())
             .limit(limit)
             .fetch { record ->
@@ -177,32 +181,32 @@ class SearchIndexRepository(
         val validityCondition = validityCondition(Instant.now())
         val searchPattern = "%${query.trim()}%"
 
-        return dsl.select(
-            SEARCH_INDEX.ENTITY_TYPE,
-            SEARCH_INDEX.ENTITY_ID,
-            SEARCH_INDEX.TITLE,
-            SEARCH_INDEX.DESCRIPTION,
-            SEARCH_INDEX.KEYWORDS,
-            SEARCH_INDEX.SLUG,
-            SEARCH_INDEX.METADATA
-        )
-            .from(table)
+        return dsl
+            .select(
+                SEARCH_INDEX.ENTITY_TYPE,
+                SEARCH_INDEX.ENTITY_ID,
+                SEARCH_INDEX.TITLE,
+                SEARCH_INDEX.DESCRIPTION,
+                SEARCH_INDEX.KEYWORDS,
+                SEARCH_INDEX.SLUG,
+                SEARCH_INDEX.METADATA
+            ).from(table)
             .where(
-                SEARCH_INDEX.TITLE.likeIgnoreCase(searchPattern)
+                SEARCH_INDEX.TITLE
+                    .likeIgnoreCase(searchPattern)
                     .or(SEARCH_INDEX.DESCRIPTION.likeIgnoreCase(searchPattern))
                     .or(SEARCH_INDEX.KEYWORDS.likeIgnoreCase(searchPattern))
-            )
-            .and(validityCondition)
+            ).and(validityCondition)
             .orderBy(
                 // Prefer title matches over description/keywords
-                DSL.field("CASE WHEN {0} ILIKE {1} THEN 0 ELSE 1 END",
+                DSL.field(
+                    "CASE WHEN {0} ILIKE {1} THEN 0 ELSE 1 END",
                     SEARCH_INDEX.TITLE,
                     DSL.`val`(searchPattern)
                 ),
                 SEARCH_INDEX.ENTITY_TYPE.asc(),
                 SEARCH_INDEX.MODIFIED.desc()
-            )
-            .limit(limit)
+            ).limit(limit)
             .fetch { record ->
                 val metadata = parseMetadata(record[SEARCH_INDEX.METADATA])
                 SearchResult(
@@ -228,26 +232,26 @@ class SearchIndexRepository(
      * Get count of indexed entities by type.
      */
     fun countByEntityType(entityType: EntityType): Long =
-        dsl.selectCount()
+        dsl
+            .selectCount()
             .from(table)
             .where(SEARCH_INDEX.ENTITY_TYPE.eq(entityType.name))
             .fetchOne(0, Long::class.java) ?: 0L
 
     private fun validityCondition(validityDate: Instant): Condition =
-        SEARCH_INDEX.VALID_FROM.isNull.or(SEARCH_INDEX.VALID_FROM.lessOrEqual(validityDate))
+        SEARCH_INDEX.VALID_FROM.isNull
+            .or(SEARCH_INDEX.VALID_FROM.lessOrEqual(validityDate))
             .and(
                 SEARCH_INDEX.VALID_TO.isNull
                     .or(SEARCH_INDEX.VALID_TO.greaterOrEqual(validityDate))
             )
 
-    private fun parseMetadata(jsonString: String?): Map<String, Any?> {
-        return jsonString?.let {
-            try {
-                @Suppress("UNCHECKED_CAST")
-                objectMapper.readValue(it, Map::class.java) as Map<String, Any?>
-            } catch (e: Exception) {
-                emptyMap()
-            }
-        } ?: emptyMap()
-    }
+    private fun parseMetadata(jsonString: String?): Map<String, Any?> = jsonString?.let {
+        try {
+            @Suppress("UNCHECKED_CAST")
+            objectMapper.readValue(it, Map::class.java) as Map<String, Any?>
+        } catch (e: Exception) {
+            emptyMap()
+        }
+    } ?: emptyMap()
 }

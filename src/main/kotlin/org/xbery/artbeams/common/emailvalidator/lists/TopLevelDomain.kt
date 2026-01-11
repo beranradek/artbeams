@@ -2,7 +2,6 @@ package org.xbery.artbeams.common.emailvalidator.lists
 
 import java.io.ByteArrayOutputStream
 import java.net.URI
-import java.net.URL
 import java.util.*
 
 /**
@@ -1589,7 +1588,6 @@ object TopLevelDomain {
         domains.add("music")
         domains.add("kids")
     }
-
 
     @Throws(Exception::class)
     private fun check() {

@@ -34,7 +34,7 @@ open class DataClassInstantiator : Instantiator {
         val genericParamTypes = constructorArgs.map { it.type.javaType }
         val argNames = getConstructorArgNames(objClass, constructorArgs)
 
-        return object: ConstructionDescription {
+        return object : ConstructionDescription {
             override fun getConstructedClass(): Class<*> = objClass
 
             override fun getGenericParamTypes(): Array<Type> = genericParamTypes.toTypedArray()
@@ -59,7 +59,7 @@ open class DataClassInstantiator : Instantiator {
             for (annotation in constructorArg.annotations) {
                 if (annotation is ArgumentName) {
                     argName = annotation.value
-                    break;
+                    break
                 }
             }
             if (argName == null || argName.isEmpty()) {
@@ -68,7 +68,9 @@ open class DataClassInstantiator : Instantiator {
             if (argName != null && argName.isNotEmpty()) {
                 argNames.add(argName)
             } else {
-                throw IllegalArgumentException("Cannot determine name of constructor argument of class: ${objClass.name}, index of argument: $argIndex")
+                throw IllegalArgumentException(
+                    "Cannot determine name of constructor argument of class: ${objClass.name}, index of argument: $argIndex"
+                )
             }
         }
         return argNames.toList()

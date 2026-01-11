@@ -1,6 +1,5 @@
 package org.xbery.artbeams.users.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,6 +10,7 @@ import org.xbery.artbeams.members.controller.MemberSectionController
 import org.xbery.artbeams.users.service.LoginAsService
 import org.xbery.artbeams.users.service.LoginService
 import org.xbery.artbeams.users.service.UserService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * @author Radek Beran

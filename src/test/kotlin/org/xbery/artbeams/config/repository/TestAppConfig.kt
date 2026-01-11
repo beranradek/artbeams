@@ -1,7 +1,7 @@
 package org.xbery.artbeams.config.repository
 
-import java.time.Instant
 import java.math.BigDecimal
+import java.time.Instant
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 import kotlin.time.Duration
@@ -9,7 +9,9 @@ import kotlin.time.Duration
 /**
  * @author Radek Beran
  */
-class TestAppConfig(private val config: Map<String, String>): AppConfig {
+class TestAppConfig(
+    private val config: Map<String, String>
+) : AppConfig {
 
     override fun requireConfig(key: String): String {
         val value = getAllConfigEntries()[key]

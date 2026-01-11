@@ -2,7 +2,6 @@ package org.xbery.artbeams.common.context
 
 import java.time.Instant
 
-
 /**
  * Stamp of origin of some information.
  * This simple data object is used to group fields
@@ -15,7 +14,6 @@ data class OriginStamp(
      * Time when the information was stored in the system.
      */
     val time: Instant,
-
     /**
      * Source system responsible for the information.
      * It is recommended to use short upper-case constants.
@@ -23,7 +21,6 @@ data class OriginStamp(
      * It is possible to leave this value unset.
      */
     val origin: String,
-
     /**
      * User/actor responsible for the information.
      * A typical value is login or some identifier of a user.

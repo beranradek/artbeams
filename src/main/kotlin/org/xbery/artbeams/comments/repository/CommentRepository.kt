@@ -25,8 +25,10 @@ class CommentRepository(
     override val mapper: CommentMapper,
     override val unmapper: CommentUnmapper
 ) : AssetRepository<Comment, CommentsRecord>(
-    dsl, mapper, unmapper
-) {
+        dsl,
+        mapper,
+        unmapper
+    ) {
     override val table: Table<CommentsRecord> = COMMENTS
     override val idField: Field<String?> = COMMENTS.ID
 
@@ -56,7 +58,9 @@ class CommentRepository(
         if (!searchTerm.isNullOrBlank()) {
             val searchPattern = "%${searchTerm.lowercase()}%"
             conditions.add(
-                DSL.lower(COMMENTS.USERNAME).like(searchPattern)
+                DSL
+                    .lower(COMMENTS.USERNAME)
+                    .like(searchPattern)
                     .or(DSL.lower(COMMENTS.EMAIL).like(searchPattern))
                     .or(DSL.lower(COMMENTS.COMMENT).like(searchPattern))
             )
@@ -87,15 +91,15 @@ class CommentRepository(
      * @return
      */
     fun findApprovedByEntityId(entityId: String): List<Comment> =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(COMMENTS.ENTITY_ID.eq(entityId), COMMENTS.STATE.eq(CommentState.APPROVED.name))
             .orderBy(COMMENTS.CREATED)
             .fetch(mapper)
 
-    fun updateState(id: String, state: CommentState): Boolean {
-        return dsl.update(COMMENTS)
-            .set(COMMENTS.STATE, state.name)
-            .where(COMMENTS.ID.eq(id))
-            .execute() > 0
-    }
+    fun updateState(id: String, state: CommentState): Boolean = dsl
+        .update(COMMENTS)
+        .set(COMMENTS.STATE, state.name)
+        .where(COMMENTS.ID.eq(id))
+        .execute() > 0
 }

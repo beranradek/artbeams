@@ -12,13 +12,11 @@ import org.xbery.artbeams.jooq.schema.tables.records.EntityAccessCountRecord
 @Component
 class EntityAccessCountMapper : RecordMapper<EntityAccessCountRecord, EntityAccessCount> {
 
-    override fun map(record: EntityAccessCountRecord): EntityAccessCount {
-        return EntityAccessCount(
-            entityKey = EntityKey(
-                requireNotNull(record.entityType),
-                requireNotNull(record.entityId)
-            ),
-            count = requireNotNull(record.accessCount)
-        )
-    }
+    override fun map(record: EntityAccessCountRecord): EntityAccessCount = EntityAccessCount(
+        entityKey = EntityKey(
+            requireNotNull(record.entityType),
+            requireNotNull(record.entityId)
+        ),
+        count = requireNotNull(record.accessCount)
+    )
 }

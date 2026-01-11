@@ -30,7 +30,7 @@ class ArticleServiceImpl(
     private val evernoteApi: EvernoteApi,
     private val evernoteImporter: EvernoteImporter,
     private val googleDocsService: GoogleDocsService,
-    private val searchIndexer: SearchIndexer,
+    private val searchIndexer: SearchIndexer
 ) : ArticleService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -42,7 +42,7 @@ class ArticleServiceImpl(
     @CacheEvict(value = [ Article.CacheName ], allEntries = true)
     override fun saveArticle(
         edited: EditedArticle,
-        ctx: OperationCtx,
+        ctx: OperationCtx
     ): Article? =
         try {
             val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
@@ -56,8 +56,8 @@ class ArticleServiceImpl(
                         article.updatedWith(
                             edited,
                             htmlBody,
-                            userId,
-                        ),
+                            userId
+                        )
                     )
                 }
             articleCategoryRepository.updateArticleCategories(updatedArticle.id, edited.categories)
@@ -88,7 +88,7 @@ class ArticleServiceImpl(
 
     override fun findEditedArticle(
         id: String,
-        updateWithExternalData: Boolean,
+        updateWithExternalData: Boolean
     ): EditedArticle {
         val article = articleRepository.requireById(id)
         val articleUpdatedWithExternalData =
@@ -121,12 +121,12 @@ class ArticleServiceImpl(
 
     override fun findByCategoryId(
         categoryId: String,
-        limit: Int,
+        limit: Int
     ): List<Article> = articleRepository.findByCategoryId(categoryId, limit)
 
     override fun findByQuery(
         query: String,
-        limit: Int,
+        limit: Int
     ): List<Article> = articleRepository.findByQuery(query, limit)
 
     private fun findArticleCategories(articleId: String): List<String> =

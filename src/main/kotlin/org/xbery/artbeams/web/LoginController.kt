@@ -1,7 +1,5 @@
 package org.xbery.artbeams.web
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -11,13 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * Controller handling login and logout requests.
  * @author Radek Beran
  */
 @Controller
-open class LoginController(private val common: ControllerComponents) : BaseController(common) {
+open class LoginController(
+    private val common: ControllerComponents
+) : BaseController(common) {
 
     @GetMapping(value = ["/login"], produces = [MediaType.TEXT_HTML_VALUE])
     fun loginForm(request: HttpServletRequest): Any {

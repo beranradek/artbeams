@@ -12,29 +12,19 @@ object CharUtils {
      * #
      */
     @Suppress("unused")
-    fun isNumberSign(ch: Char): Boolean {
-        return ch.code == 35
-    }
+    fun isNumberSign(ch: Char): Boolean = ch.code == 35
 
     @Suppress("unused")
-    fun isDollarSign(ch: Char): Boolean {
-        return ch.code == 36
-    }
+    fun isDollarSign(ch: Char): Boolean = ch.code == 36
 
     @Suppress("unused")
-    fun isPercentSign(ch: Char): Boolean {
-        return ch.code == 37
-    }
+    fun isPercentSign(ch: Char): Boolean = ch.code == 37
 
     @Suppress("unused")
-    fun isAmpersand(ch: Char): Boolean {
-        return ch.code == 38
-    }
+    fun isAmpersand(ch: Char): Boolean = ch.code == 38
 
     @Suppress("unused")
-    fun isDomainAllowedCharacter(ch: Char): Boolean {
-        return isAsciiDigit(ch) || isNumber(ch) || isDot(ch) || isHyphen(ch)
-    }
+    fun isDomainAllowedCharacter(ch: Char): Boolean = isAsciiDigit(ch) || isNumber(ch) || isDot(ch) || isHyphen(ch)
 
     /**
      * Constructs map from given array.
@@ -125,178 +115,134 @@ object CharUtils {
         return cost[len0 - 1]
     }
 
-
     //*******************************************************************************************/
     //*** detekce znaku **** http://www.ascii.cl/htmlcodes.htm **********************************/
     //*******************************************************************************************/
+
     /**
      * mezera/space
      */
-    fun isSpace(ch: Char): Boolean {
-        return ch.code == 32
-    }
+    fun isSpace(ch: Char): Boolean = ch.code == 32
 
     /**
      * ! vykricnik ASCII 33
      */
-    private fun isExclamationPoint(ch: Char): Boolean {
-        return ch.code == 33
-    }
+    private fun isExclamationPoint(ch: Char): Boolean = ch.code == 33
 
     /**
      * "
      */
-    fun isDoubleQuote(ch: Char): Boolean {
-        return ch.code == 34
-    }
+    fun isDoubleQuote(ch: Char): Boolean = ch.code == 34
 
     /**
      * (
      */
-    private fun isOpeningParenthesis(ch: Char): Boolean {
-        return ch.code == 40
-    }
+    private fun isOpeningParenthesis(ch: Char): Boolean = ch.code == 40
 
     /**
      * )
      */
-    private fun isClosingParenthesis(ch: Char): Boolean {
-        return ch.code == 41
-    }
+    private fun isClosingParenthesis(ch: Char): Boolean = ch.code == 41
 
-    private fun isAsterisk(ch: Char): Boolean {
-        return ch.code == 42
-    }
+    private fun isAsterisk(ch: Char): Boolean = ch.code == 42
 
-    private fun isPlusSign(ch: Char): Boolean {
-        return ch.code == 43
-    }
+    private fun isPlusSign(ch: Char): Boolean = ch.code == 43
 
     /**
      * ,
      */
-    private fun isComma(ch: Char): Boolean {
-        return ch.code == 44
-    }
+    private fun isComma(ch: Char): Boolean = ch.code == 44
 
     /**
      * Character - (minus, hyphen, spojovnik) (ASCII: 45)
      */
-    fun isHyphen(ch: Char): Boolean {
-        return ch.code == 45
-    }
+    fun isHyphen(ch: Char): Boolean = ch.code == 45
 
     /**
      * Character . (dot, period, full stop, tecka) (ASCII: 46)
      */
-    fun isDot(ch: Char): Boolean {
-        return ch.code == 46
-    }
+    fun isDot(ch: Char): Boolean = ch.code == 46
 
-    private fun isSlash(ch: Char): Boolean {
-        return ch.code == 47
-    }
+    private fun isSlash(ch: Char): Boolean = ch.code == 47
 
     /**
      * Digits 0 to 9 (ASCII: 48-57)
      */
-    fun isNumber(ch: Char): Boolean {
-        return ch.code in 48..57
-    }
+    fun isNumber(ch: Char): Boolean = ch.code in 48..57
 
-    private fun isColon(ch: Char): Boolean {
-        return ch.code == 58
-    }
+    private fun isColon(ch: Char): Boolean = ch.code == 58
 
-    private fun isSemicolon(ch: Char): Boolean {
-        return ch.code == 59
-    }
+    private fun isSemicolon(ch: Char): Boolean = ch.code == 59
 
-    private fun isLessThanSign(ch: Char): Boolean {
-        return ch.code == 60
-    }
+    private fun isLessThanSign(ch: Char): Boolean = ch.code == 60
 
-    private fun isEqualSign(ch: Char): Boolean {
-        return ch.code == 61
-    }
+    private fun isEqualSign(ch: Char): Boolean = ch.code == 61
 
-    private fun isGreaterThanSign(ch: Char): Boolean {
-        return ch.code == 62
-    }
+    private fun isGreaterThanSign(ch: Char): Boolean = ch.code == 62
 
-    private fun isQuestionMark(ch: Char): Boolean {
-        return ch.code == 63
-    }
+    private fun isQuestionMark(ch: Char): Boolean = ch.code == 63
 
-    fun isAt(ch: Char): Boolean {
-        return ch.code == 64
-    }
+    fun isAt(ch: Char): Boolean = ch.code == 64
 
     /**
      * (a-z) (ASCII: 65-90)
      */
-    private fun isAsciiLowerCaseDigit(ch: Char): Boolean {
-        return ch.code in 65..90
-    }
+    private fun isAsciiLowerCaseDigit(ch: Char): Boolean = ch.code in 65..90
 
-    private fun isOpeningBracket(ch: Char): Boolean {
-        return ch.code == 91
-    }
+    private fun isOpeningBracket(ch: Char): Boolean = ch.code == 91
 
-    fun isBackSlash(ch: Char): Boolean {
-        return ch.code == 92
-    }
+    fun isBackSlash(ch: Char): Boolean = ch.code == 92
 
-    private fun isClosingBracket(ch: Char): Boolean {
-        return ch.code == 93
-    }
+    private fun isClosingBracket(ch: Char): Boolean = ch.code == 93
 
     /**
      * (A-Z) (ASCII: 97-122)
      */
-    private fun isAsciiUpperCaseDigit(ch: Char): Boolean {
-        return ch.code in 97..122
-    }
+    private fun isAsciiUpperCaseDigit(ch: Char): Boolean = ch.code in 97..122
 
     /**
      * (a–z, A–Z) (ASCII: 65-90, 97-122)
      */
-    fun isAsciiDigit(ch: Char): Boolean {
-        return isAsciiLowerCaseDigit(ch) || isAsciiUpperCaseDigit(ch)
-    }
-
+    fun isAsciiDigit(ch: Char): Boolean = isAsciiLowerCaseDigit(ch) || isAsciiUpperCaseDigit(ch)
 
     /**
      * Characters !#$%&'*+-/=?^_`{|}~ (ASCII: 33, 35-39, 42, 43, 45, 47, 61, 63, 94-96, 123-126)
      */
     fun isNameSpecialCharacter(ch: Char): Boolean {
-        return isHyphen(ch) //'-'
-                || isExclamationPoint(ch) //'!'
-                || (ch.code in 35..39) //#$%&' 35-39
-                || isAsterisk(ch) //'*'
-                || isPlusSign(ch) //'+'
-                || isSlash(ch) //'/'
-                || isEqualSign(ch) //'='
-                || isQuestionMark(ch) //'?'
-                || (ch.code in 94..96) //^_` 94-96
-                || (ch.code in 123..126) //{|}~ 123-126
+        return isHyphen(ch) ||
+            //'-'
+            isExclamationPoint(ch) ||
+            //'!'
+            (ch.code in 35..39) ||
+            //#$%&' 35-39
+            isAsterisk(ch) ||
+            //'*'
+            isPlusSign(ch) ||
+            //'+'
+            isSlash(ch) ||
+            //'/'
+            isEqualSign(ch) ||
+            //'='
+            isQuestionMark(ch) ||
+            //'?'
+            (ch.code in 94..96) ||
+            //^_` 94-96
+            (ch.code in 123..126) //{|}~ 123-126
     }
 
     /**
      * space and "(),:;<>@[\]  (ASCII: 34, 40-41, 44, 58-59, 60, 62, 64, 91-93)
      */
-    fun isNameQuotedSpecialCharacter(ch: Char): Boolean {
-        return isSpace(ch)
-                || isOpeningParenthesis(ch)
-                || isClosingParenthesis(ch)
-                || isComma(ch)
-                || isColon(ch)
-                || isSemicolon(ch)
-                || isLessThanSign(ch)
-                || isGreaterThanSign(ch)
-                || isAt(ch)
-                || isOpeningBracket(ch)
-                || isBackSlash(ch)
-                || isClosingBracket(ch)
-    }
+    fun isNameQuotedSpecialCharacter(ch: Char): Boolean = isSpace(ch) ||
+        isOpeningParenthesis(ch) ||
+        isClosingParenthesis(ch) ||
+        isComma(ch) ||
+        isColon(ch) ||
+        isSemicolon(ch) ||
+        isLessThanSign(ch) ||
+        isGreaterThanSign(ch) ||
+        isAt(ch) ||
+        isOpeningBracket(ch) ||
+        isBackSlash(ch) ||
+        isClosingBracket(ch)
 }

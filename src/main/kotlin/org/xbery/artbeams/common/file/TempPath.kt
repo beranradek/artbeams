@@ -8,7 +8,10 @@ import java.nio.file.Path
  *
  * @author Radek Beran
  */
-class TempPath(val path: Path, private val deleteOnClose: Boolean = true) : AutoCloseable {
+class TempPath(
+    val path: Path,
+    private val deleteOnClose: Boolean = true
+) : AutoCloseable {
     override fun close() {
         if (deleteOnClose) {
             Files.delete(path)

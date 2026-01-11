@@ -17,17 +17,22 @@ import org.xbery.artbeams.common.antispam.domain.AntispamQuiz
  */
 @EnableCaching
 @Configuration
-open class CachingConfig() {
+open class CachingConfig {
 
     @Bean
     @Primary
     open fun cacheManager(): ConcurrentMapCacheManager =
         ConcurrentMapCacheManager(
-            Article.CacheName, Category.CacheName, CategoryServiceImpl.ARTICLE_CATEGORIES_CACHE_NAME,
+            Article.CacheName,
+            Category.CacheName,
+            CategoryServiceImpl.ARTICLE_CATEGORIES_CACHE_NAME,
             Comment.CACHE_NAME,
             EntityAccessCount.CacheName,
             AntispamQuiz.CacheName,
-            "searchConsoleMetrics", "searchConsolePages", "searchConsoleQueries", "searchConsoleSitemaps",
+            "searchConsoleMetrics",
+            "searchConsolePages",
+            "searchConsoleQueries",
+            "searchConsoleSitemaps",
             "searchSuggestions" // Search autocomplete suggestions cache
         )
 }

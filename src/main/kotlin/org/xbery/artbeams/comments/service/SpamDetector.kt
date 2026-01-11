@@ -1,10 +1,9 @@
 package org.xbery.artbeams.comments.service
 
 import org.slf4j.LoggerFactory
-import org.xbery.artbeams.common.html.HtmlUtils
+import org.springframework.stereotype.Component
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.config.repository.AppConfig
-import org.springframework.stereotype.Component
 import java.util.regex.Pattern
 
 /**
@@ -13,18 +12,18 @@ import java.util.regex.Pattern
  * @author AI
  */
 @Component
-open class SpamDetector(private val appConfig: AppConfig) {
+open class SpamDetector(
+    private val appConfig: AppConfig
+) {
     private val normalizationHelper = NormalizationHelper()
     private val logger = LoggerFactory.getLogger(this.javaClass)
-    
-    open fun isSpam(comment: String, userName: String, email: String): Boolean {
-        return containsSuspiciousPatterns(comment) ||
-               containsSuspiciousEmail(email) ||
-               containsSuspiciousUsername(userName) ||
-               containsSuspiciousContent(comment) ||
-               containsSuspiciousLinks(comment) ||
-               isNonCzechContent(comment)
-    }
+
+    open fun isSpam(comment: String, userName: String, email: String): Boolean = containsSuspiciousPatterns(comment) ||
+        containsSuspiciousEmail(email) ||
+        containsSuspiciousUsername(userName) ||
+        containsSuspiciousContent(comment) ||
+        containsSuspiciousLinks(comment) ||
+        isNonCzechContent(comment)
 
     protected open fun containsSuspiciousPatterns(comment: String): Boolean {
         // Check for common spam patterns
@@ -42,9 +41,9 @@ open class SpamDetector(private val appConfig: AppConfig) {
         // Check for disposable email domains and suspicious patterns
         val domain = email.substringAfter('@').lowercase()
         val spam = DISPOSABLE_EMAIL_DOMAINS.any { it in domain } ||
-               SUSPICIOUS_EMAIL_PATTERNS.any { pattern ->
-                   pattern.matcher(email).find()
-               }
+            SUSPICIOUS_EMAIL_PATTERNS.any { pattern ->
+                pattern.matcher(email).find()
+            }
         if (spam) {
             logger.info("Spam: Suspicious email: $email")
         }
@@ -86,7 +85,7 @@ open class SpamDetector(private val appConfig: AppConfig) {
         }
         return spam
     }
-    
+
     /**
      * Detects if content is likely not in Czech language.
      * This is a simple heuristic that checks for Czech diacritical marks.
@@ -97,10 +96,10 @@ open class SpamDetector(private val appConfig: AppConfig) {
         if (comment.length < 50) {
             return false
         }
-        
+
         // Count Czech characters
         val czechCharCount = comment.count { it.lowercaseChar() in CZECH_CHARS }
-        
+
         // If the comment is long and has very few Czech characters, it's probably not Czech
         // The threshold is set to 2% of the text - adjust as needed
         val spam = czechCharCount < comment.length * 0.02
@@ -113,7 +112,7 @@ open class SpamDetector(private val appConfig: AppConfig) {
     companion object {
         // Czech specific characters
         private val CZECH_CHARS = setOf('á', 'č', 'ď', 'é', 'ě', 'í', 'ň', 'ó', 'ř', 'š', 'ť', 'ú', 'ů', 'ý', 'ž')
-        
+
         // Common spam patterns
         private val SPAM_PATTERNS = listOf(
             Pattern.compile("\\b(?:viagra|cialis|levitra|pharmacy|pills)\\b"),
@@ -126,8 +125,13 @@ open class SpamDetector(private val appConfig: AppConfig) {
 
         // Disposable email domains
         private val DISPOSABLE_EMAIL_DOMAINS = setOf(
-            "tempmail.com", "mailinator.com", "guerrillamail.com", "yopmail.com",
-            "throwawaymail.com", "10minutemail.com", "temp-mail.org"
+            "tempmail.com",
+            "mailinator.com",
+            "guerrillamail.com",
+            "yopmail.com",
+            "throwawaymail.com",
+            "10minutemail.com",
+            "temp-mail.org"
         )
 
         // Suspicious email patterns
@@ -158,4 +162,4 @@ open class SpamDetector(private val appConfig: AppConfig) {
             Pattern.compile("\\b(?:bit\\.ly|goo\\.gl|tinyurl\\.com|t\\.co)\\b")
         )
     }
-} 
+}

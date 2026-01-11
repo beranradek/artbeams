@@ -36,7 +36,5 @@ class ContactService(
     /**
      * Returns contact email to send contact form requests to.
      */
-    fun getContactEmail(): String {
-        return appConfig.requireConfig("contact.email")
-    }
+    fun getContactEmail(): String = appConfig.requireConfig("contact.email")
 }

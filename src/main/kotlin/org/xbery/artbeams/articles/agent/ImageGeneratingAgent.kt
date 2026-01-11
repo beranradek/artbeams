@@ -45,14 +45,14 @@ class ImageGeneratingAgent(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     // Temporary image storage with TTL - images are auto-cleaned after X minutes of inactivity
-    private val tempImages: Cache<String, TempGeneratedImage> = Caffeine.newBuilder()
+    private val tempImages: Cache<String, TempGeneratedImage> = Caffeine
+        .newBuilder()
         .expireAfterAccess(20, TimeUnit.MINUTES)
         .maximumSize(100)
         .removalListener<String, TempGeneratedImage> { _, image, _ ->
             // Delete temp file when evicted from cache
             image?.let { cleanupTempFile(it) }
-        }
-        .build()
+        }.build()
 
     companion object {
         const val MODEL_ENV_VAR = "OPENAI_IMAGE_MODEL"
@@ -79,7 +79,8 @@ class ImageGeneratingAgent(
 
             // Build image generation params
             // Note: gpt-image-1 does not support responseFormat parameter - it always returns base64-encoded images
-            val params = ImageGenerateParams.builder()
+            val params = ImageGenerateParams
+                .builder()
                 .model(ImageModel.of(modelName))
                 .prompt(DEFAULT_PROMPT_PREFIX + prompt)
                 .n(1) // Generate 1 image
@@ -95,7 +96,7 @@ class ImageGeneratingAgent(
             if (imageData.isEmpty) {
                 throw IllegalStateException("No image data returned from OpenAI API")
             }
-            
+
             val firstImage = imageData.get().firstOrNull()
                 ?: throw IllegalStateException("No image data returned from OpenAI API")
 
@@ -106,7 +107,9 @@ class ImageGeneratingAgent(
             logger.info("Image generated successfully, decoding base64 data")
 
             // Decode base64 to bytes
-            val imageBytes = java.util.Base64.getDecoder().decode(base64Data)
+            val imageBytes = java.util.Base64
+                .getDecoder()
+                .decode(base64Data)
 
             // Store temporarily
             val tempImageId = storeTempImage(imageBytes, prompt)
@@ -153,9 +156,7 @@ class ImageGeneratingAgent(
     /**
      * Retrieves temporary image data by ID.
      */
-    fun getTempImage(tempImageId: String): TempGeneratedImage? {
-        return tempImages.getIfPresent(tempImageId)
-    }
+    fun getTempImage(tempImageId: String): TempGeneratedImage? = tempImages.getIfPresent(tempImageId)
 
     /**
      * Reads temporary image bytes for serving to the client.
@@ -253,11 +254,10 @@ class ImageGeneratingAgent(
     /**
      * Sanitizes a string for use in a filename.
      */
-    private fun sanitizeForFilename(str: String): String {
-        return str.replace(Regex("[^a-zA-Z0-9-_]"), "-")
-            .replace(Regex("-+"), "-")
-            .trim('-')
-    }
+    private fun sanitizeForFilename(str: String): String = str
+        .replace(Regex("[^a-zA-Z0-9-_]"), "-")
+        .replace(Regex("-+"), "-")
+        .trim('-')
 
     /**
      * Generates a random alphanumeric string of given length.

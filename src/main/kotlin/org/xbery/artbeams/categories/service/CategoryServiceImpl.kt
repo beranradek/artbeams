@@ -45,24 +45,22 @@ open class CategoryServiceImpl(
     }
 
     @CacheEvict(value = [Category.CacheName, ARTICLE_CATEGORIES_CACHE_NAME], allEntries = true)
-    override fun saveCategory(edited: EditedCategory, ctx: OperationCtx): Category? {
-        return try {
-            val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
-            val updatedCategoryOpt: Category? = if (edited.id == AssetAttributes.EMPTY_ID) {
-                categoryRepository.create(Category.Empty.updatedWith(edited, userId))
-            } else {
-                val category = categoryRepository.requireById(edited.id)
-                categoryRepository.update(category.updatedWith(edited, userId))
-            }
-
-            // Update search index
-            updatedCategoryOpt?.let { searchIndexer.indexCategory(it) }
-
-            updatedCategoryOpt
-        } catch (ex: Exception) {
-            logger.error("Update of category ${edited.id} finished with error ${ex.message}", ex)
-            throw ex
+    override fun saveCategory(edited: EditedCategory, ctx: OperationCtx): Category? = try {
+        val userId = ctx.loggedUser?.id ?: AssetAttributes.EMPTY_ID
+        val updatedCategoryOpt: Category? = if (edited.id == AssetAttributes.EMPTY_ID) {
+            categoryRepository.create(Category.Empty.updatedWith(edited, userId))
+        } else {
+            val category = categoryRepository.requireById(edited.id)
+            categoryRepository.update(category.updatedWith(edited, userId))
         }
+
+        // Update search index
+        updatedCategoryOpt?.let { searchIndexer.indexCategory(it) }
+
+        updatedCategoryOpt
+    } catch (ex: Exception) {
+        logger.error("Update of category ${edited.id} finished with error ${ex.message}", ex)
+        throw ex
     }
 
     @Cacheable(Category.CacheName)

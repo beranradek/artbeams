@@ -13,7 +13,5 @@ class SyncControllerAdvice(
     private val syncService: RemoteDatabaseSyncService
 ) {
     @ModelAttribute("_isRemoteDbConfigured")
-    fun isRemoteDbConfigured(): Boolean {
-        return syncService.isRemoteDbConfigured()
-    }
+    fun isRemoteDbConfigured(): Boolean = syncService.isRemoteDbConfigured()
 }

@@ -9,9 +9,9 @@ import org.xbery.artbeams.activitylog.domain.EntityType
 import org.xbery.artbeams.activitylog.domain.UserActivityLog
 import org.xbery.artbeams.activitylog.repository.mapper.UserActivityLogMapper
 import org.xbery.artbeams.activitylog.repository.mapper.UserActivityLogUnmapper
-import org.xbery.artbeams.common.repository.AbstractMappingRepository
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.common.overview.ResultPage
+import org.xbery.artbeams.common.repository.AbstractMappingRepository
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog.Companion.USER_ACTIVITY_LOG
 import org.xbery.artbeams.jooq.schema.tables.records.UserActivityLogRecord
 import java.time.Clock
@@ -30,8 +30,10 @@ class UserActivityLogRepository(
     override val unmapper: UserActivityLogUnmapper,
     private val clock: Clock
 ) : AbstractMappingRepository<UserActivityLog, UserActivityLogRecord>(
-    dsl, mapper, unmapper
-) {
+        dsl,
+        mapper,
+        unmapper
+    ) {
     override val table: Table<UserActivityLogRecord> = USER_ACTIVITY_LOG
     override val idField: Field<String?> = USER_ACTIVITY_LOG.ID
 
@@ -89,15 +91,13 @@ class UserActivityLogRepository(
     /**
      * Finds recent activity for a user.
      */
-    fun findRecentUserActivity(userId: String, limit: Int = 50): List<UserActivityLog> {
-        return dsl
-            .selectFrom(USER_ACTIVITY_LOG)
-            .where(USER_ACTIVITY_LOG.USER_ID.eq(userId))
-            .orderBy(USER_ACTIVITY_LOG.ACTION_TIME.desc())
-            .limit(limit)
-            .fetch()
-            .map(mapper::map)
-    }
+    fun findRecentUserActivity(userId: String, limit: Int = 50): List<UserActivityLog> = dsl
+        .selectFrom(USER_ACTIVITY_LOG)
+        .where(USER_ACTIVITY_LOG.USER_ID.eq(userId))
+        .orderBy(USER_ACTIVITY_LOG.ACTION_TIME.desc())
+        .limit(limit)
+        .fetch()
+        .map(mapper::map)
 
     /**
      * Logs a user activity.

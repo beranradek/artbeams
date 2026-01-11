@@ -14,26 +14,24 @@ import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
 @Component
 class CommentMapper : RecordMapper<CommentsRecord, Comment> {
 
-    override fun map(record: CommentsRecord): Comment {
-        return Comment(
-            common = AssetAttributes(
-                id = requireNotNull(record.id),
-                created = requireNotNull(record.created),
-                createdBy = requireNotNull(record.createdBy),
-                modified = requireNotNull(record.modified),
-                modifiedBy = requireNotNull(record.modifiedBy)
-            ),
-            parentId = record.parentId,
-            state = CommentState.valueOf(requireNotNull(record.state)),
-            comment = requireNotNull(record.comment),
-            userName = requireNotNull(record.username),
-            email = requireNotNull(record.email),
-            entityKey = EntityKey(
-                entityType = requireNotNull(record.entityType),
-                entityId = requireNotNull(record.entityId)
-            ),
-            ip = requireNotNull(record.ip),
-            userAgent = requireNotNull(record.userAgent)
-        )
-    }
+    override fun map(record: CommentsRecord): Comment = Comment(
+        common = AssetAttributes(
+            id = requireNotNull(record.id),
+            created = requireNotNull(record.created),
+            createdBy = requireNotNull(record.createdBy),
+            modified = requireNotNull(record.modified),
+            modifiedBy = requireNotNull(record.modifiedBy)
+        ),
+        parentId = record.parentId,
+        state = CommentState.valueOf(requireNotNull(record.state)),
+        comment = requireNotNull(record.comment),
+        userName = requireNotNull(record.username),
+        email = requireNotNull(record.email),
+        entityKey = EntityKey(
+            entityType = requireNotNull(record.entityType),
+            entityId = requireNotNull(record.entityId)
+        ),
+        ip = requireNotNull(record.ip),
+        userAgent = requireNotNull(record.userAgent)
+    )
 }

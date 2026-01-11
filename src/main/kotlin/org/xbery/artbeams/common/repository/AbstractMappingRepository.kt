@@ -2,7 +2,6 @@ package org.xbery.artbeams.common.repository
 
 import org.jooq.*
 import org.xbery.artbeams.common.error.NotFoundException
-import org.xbery.artbeams.jooq.schema.tables.references.COMMENTS
 
 /**
  * Abstract implementation of repository that uses JOOQ mapper and unmapper.
@@ -25,7 +24,8 @@ abstract class AbstractMappingRepository<T : IdentifiedEntity, R : UpdatableReco
 
     open fun update(entity: T): T {
         val record = unmapper.unmap(entity)
-        val updatedCount = dsl.update(table)
+        val updatedCount = dsl
+            .update(table)
             .set(record)
             .where(idField.eq(entity.id))
             .execute()
@@ -37,25 +37,27 @@ abstract class AbstractMappingRepository<T : IdentifiedEntity, R : UpdatableReco
     }
 
     open fun findById(id: String): T? =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(idField.eq(id))
             .fetchOne(mapper)
 
     open fun findAll(): List<T> =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .fetch(mapper)
 
     open fun requireById(id: String): T =
         findById(id) ?: throw NotFoundException("Entity with ID $id was not found")
 
-    open fun deleteById(id: String): Boolean {
-        return dsl.deleteFrom(table)
-            .where(idField.eq(id))
-            .execute() > 0
-    }
+    open fun deleteById(id: String): Boolean = dsl
+        .deleteFrom(table)
+        .where(idField.eq(id))
+        .execute() > 0
 
     open fun deleteByIds(ids: Collection<String>): Int {
-        val deleted = dsl.deleteFrom(table)
+        val deleted = dsl
+            .deleteFrom(table)
             .where(idField.`in`(ids))
             .execute()
         return deleted

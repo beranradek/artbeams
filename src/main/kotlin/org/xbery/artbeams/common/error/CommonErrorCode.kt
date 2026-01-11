@@ -5,7 +5,9 @@ package org.xbery.artbeams.common.error
  *
  * @author Radek Beran
  */
-enum class CommonErrorCode(override val code: String) : ErrorCode {
+enum class CommonErrorCode(
+    override val code: String
+) : ErrorCode {
     NOT_FOUND("not-found"),
     INVALID_INPUT("invalid-input"),
     INTERNAL_ERROR("internal-error"),

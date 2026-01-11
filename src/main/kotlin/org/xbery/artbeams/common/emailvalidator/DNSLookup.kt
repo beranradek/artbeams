@@ -53,18 +53,16 @@ object DNSLookup {
         return servers
     }
 
-
     /**
      * @return list of IP adresses for domain
      */
-	fun getIPAddresses(hostname: String?): List<String> {
+    fun getIPAddresses(hostname: String?): List<String> {
         val ipAddresses: MutableList<String> = ArrayList()
         try {
             val idc = InitialDirContext(env)
             val attrs = idc.getAttributes(hostname, ADDR_ATTRIBS)
             val ipv4 = attrs[ADDR_ATTRIB_IPV4]
             val ipv6 = attrs[ADDR_ATTRIB_IPV6]
-
 
             if (ipv4 != null) {
                 for (i in 0..<ipv4.size()) {

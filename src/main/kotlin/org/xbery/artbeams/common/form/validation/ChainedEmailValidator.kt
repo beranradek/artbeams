@@ -34,8 +34,6 @@ class ChainedEmailValidator : AbstractValidator<String>() {
         val INSTANCE = ChainedEmailValidator()
         private val EMAIL_VALIDATOR = EmailValidatorBuilder().build()
 
-        fun isValidEmail(email: String): Boolean {
-            return EmailValidation.isEmail(email) && EMAIL_VALIDATOR.validate(email).isValid
-        }
+        fun isValidEmail(email: String): Boolean = EmailValidation.isEmail(email) && EMAIL_VALIDATOR.validate(email).isValid
     }
 }

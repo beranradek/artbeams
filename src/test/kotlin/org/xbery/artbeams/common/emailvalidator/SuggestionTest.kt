@@ -11,18 +11,20 @@ import java.util.stream.Stream
  */
 class SuggestionTest {
     @TestFactory
-    fun suggestionsTest(): Stream<DynamicTest> {
-        return DynamicTest.stream(
-            testData.iterator(),
-            { testData -> "Testing " + testData.input },
-            { testData ->
-                val validator = EmailValidatorBuilder().build()
-                val validationResult: EmailValidationResult = validator.validate(PREFIX + testData.input)
-                Assertions.assertEquals(testData.expected, validationResult.email.suggestion)
-            })
-    }
+    fun suggestionsTest(): Stream<DynamicTest> = DynamicTest.stream(
+        testData.iterator(),
+        { testData -> "Testing " + testData.input },
+        { testData ->
+            val validator = EmailValidatorBuilder().build()
+            val validationResult: EmailValidationResult = validator.validate(PREFIX + testData.input)
+            Assertions.assertEquals(testData.expected, validationResult.email.suggestion)
+        }
+    )
 
-    internal class TestData(val input: String, val expected: String?)
+    internal class TestData(
+        val input: String,
+        val expected: String?
+    )
 
     companion object {
         private const val PREFIX = "test@"

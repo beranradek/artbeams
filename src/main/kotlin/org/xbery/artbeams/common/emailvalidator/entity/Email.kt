@@ -78,7 +78,5 @@ class Email(
         }
     }
 
-    override fun hashCode(): Int {
-        return email.hashCode()
-    }
+    override fun hashCode(): Int = email.hashCode()
 }

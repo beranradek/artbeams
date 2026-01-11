@@ -10,9 +10,7 @@ import org.xbery.artbeams.jooq.schema.tables.references.QUEUE
  * @author Radek Beran
  */
 abstract class AbstractQueueEntryMapper<R : org.jooq.Record, E : AbstractQueueEntry> : RecordMapper<R, E> {
-    override fun map(record: R): E {
-        return mapRecordToEntity(record, createQueueEntry())
-    }
+    override fun map(record: R): E = mapRecordToEntity(record, createQueueEntry())
 
     abstract fun createQueueEntry(): E
 
@@ -28,19 +26,27 @@ abstract class AbstractQueueEntryMapper<R : org.jooq.Record, E : AbstractQueueEn
 
         val processedTime = record.get(QUEUE.PROCESSED_TIME)
         val processedOrigin = record.get(QUEUE.PROCESSED_ORIGIN)
-        entity.processed = if (processedTime != null && processedOrigin != null) OriginStamp(
-            processedTime,
-            processedOrigin,
+        entity.processed = if (processedTime != null && processedOrigin != null) {
+            OriginStamp(
+                processedTime,
+                processedOrigin,
+                null
+            )
+        } else {
             null
-        ) else null
+        }
 
         val lastAttemptTime = record.get(QUEUE.LAST_ATTEMPT_TIME)
         val lastAttemptOrigin = record.get(QUEUE.LAST_ATTEMPT_ORIGIN)
-        entity.lastAttempt = if (lastAttemptTime != null && lastAttemptOrigin != null) OriginStamp(
-            lastAttemptTime,
-            lastAttemptOrigin,
+        entity.lastAttempt = if (lastAttemptTime != null && lastAttemptOrigin != null) {
+            OriginStamp(
+                lastAttemptTime,
+                lastAttemptOrigin,
+                null
+            )
+        } else {
             null
-        ) else null
+        }
 
         entity.lastResult = record.get(QUEUE.LAST_RESULT)
         entity.expiration = record.get(QUEUE.EXPIRATION_TIME)

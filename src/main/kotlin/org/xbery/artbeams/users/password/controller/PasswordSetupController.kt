@@ -13,9 +13,7 @@ import org.springframework.web.servlet.ModelAndView
 import org.xbery.artbeams.common.authcode.service.AuthorizationCodeValidator
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
-import org.xbery.artbeams.common.error.NotFoundException
 import org.xbery.artbeams.common.error.UnauthorizedException
-import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.security.SecureTokens
 import org.xbery.artbeams.members.controller.MemberSectionController
 import org.xbery.artbeams.users.password.controller.PasswordSetupController.Companion.PASSWORD_SETUP_PATH
@@ -41,43 +39,45 @@ open class PasswordSetupController(
     private val passwordSetupFormDef: FormMapping<PasswordSetupData> = PasswordSetupForm.definition
 
     @GetMapping
-    fun passwordSetupForm(@RequestParam(SecureTokens.TOKEN_PARAM_NAME, required = false) token: String?, request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            if (token.isNullOrEmpty()) {
-                throw UnauthorizedException("Authorization code is missing")
-            }
-            val authCode =
-                authorizationCodeValidator.validateEncryptedAuthorizationCode(token, PasswordSetupData.TOKEN_PURPOSE)
-            // We stored user login into the token
-            val user = userService.requireByLogin(authCode.userId)
-            renderForm(request, PasswordSetupData(user.login, token, "", ""), ValidationResult.empty)
+    fun passwordSetupForm(
+        @RequestParam(
+            SecureTokens.TOKEN_PARAM_NAME,
+            required = false
+        ) token: String?,
+        request: HttpServletRequest
+    ): Any = tryOrErrorResponse(request) {
+        if (token.isNullOrEmpty()) {
+            throw UnauthorizedException("Authorization code is missing")
         }
+        val authCode =
+            authorizationCodeValidator.validateEncryptedAuthorizationCode(token, PasswordSetupData.TOKEN_PURPOSE)
+        // We stored user login into the token
+        val user = userService.requireByLogin(authCode.userId)
+        renderForm(request, PasswordSetupData(user.login, token, "", ""), ValidationResult.empty)
     }
 
     @PostMapping
-    fun save(request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            val params = ServletRequestParams(request)
-            val formData = passwordSetupFormDef.bind(params)
-            if (!formData.isValid) {
-                renderForm(request, formData.data, formData.validationResult)
-            } else {
-                val passwordSetupData = formData.data
-                val authCode = authorizationCodeValidator.validateEncryptedAuthorizationCode(passwordSetupData.token, PasswordSetupData.TOKEN_PURPOSE)
-                val login = passwordSetupData.login
-                if (authCode.userId != login) {
-                    throw UnauthorizedException("Authorization code is not valid for user $login")
-                }
-                userService.setPassword(
-                    passwordSetupData,
-                    requestToOperationCtx(request)
-                )
-
-                // Automatically log the user in
-                val password = passwordSetupData.password
-                userService.findByLogin(login)?.let { loginService.loginUser(it, password, request) }
-                redirect(MemberSectionController.MEMBER_SECTION_PATH)
+    fun save(request: HttpServletRequest): Any = tryOrErrorResponse(request) {
+        val params = ServletRequestParams(request)
+        val formData = passwordSetupFormDef.bind(params)
+        if (!formData.isValid) {
+            renderForm(request, formData.data, formData.validationResult)
+        } else {
+            val passwordSetupData = formData.data
+            val authCode = authorizationCodeValidator.validateEncryptedAuthorizationCode(passwordSetupData.token, PasswordSetupData.TOKEN_PURPOSE)
+            val login = passwordSetupData.login
+            if (authCode.userId != login) {
+                throw UnauthorizedException("Authorization code is not valid for user $login")
             }
+            userService.setPassword(
+                passwordSetupData,
+                requestToOperationCtx(request)
+            )
+
+            // Automatically log the user in
+            val password = passwordSetupData.password
+            userService.findByLogin(login)?.let { loginService.loginUser(it, password, request) }
+            redirect(MemberSectionController.MEMBER_SECTION_PATH)
         }
     }
 

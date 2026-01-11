@@ -1,11 +1,11 @@
 package org.xbery.artbeams.common.agent
 
-import jakarta.annotation.PreDestroy
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import jakarta.annotation.PreDestroy
 
 /**
  * Shared executor service for processing AI agent jobs in background.

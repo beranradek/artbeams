@@ -25,13 +25,11 @@ class OpenAIClientConfig {
      * Expects OPENAI_API_KEY environment variable to be set.
      */
     @Bean
-    fun openAIClient(): OpenAIClient {
-        return try {
-            logger.info("Initializing shared OpenAI client from environment")
-            OpenAIOkHttpClient.fromEnv()
-        } catch (e: Exception) {
-            logger.error("Failed to initialize OpenAI client. Make sure OPENAI_API_KEY environment variable is set.", e)
-            throw IllegalStateException("OpenAI client initialization failed. Please configure OPENAI_API_KEY environment variable.", e)
-        }
+    fun openAIClient(): OpenAIClient = try {
+        logger.info("Initializing shared OpenAI client from environment")
+        OpenAIOkHttpClient.fromEnv()
+    } catch (e: Exception) {
+        logger.error("Failed to initialize OpenAI client. Make sure OPENAI_API_KEY environment variable is set.", e)
+        throw IllegalStateException("OpenAI client initialization failed. Please configure OPENAI_API_KEY environment variable.", e)
     }
 }

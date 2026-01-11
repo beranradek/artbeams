@@ -1,7 +1,6 @@
 package org.xbery.artbeams.common.controller
 
 import freemarker.template.Configuration
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.access.service.UserAccessService
 import org.xbery.artbeams.common.context.OperationCtx
@@ -11,6 +10,7 @@ import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.service.LoginService
 import java.time.Instant
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Common controller components.
@@ -18,18 +18,16 @@ import java.time.Instant
  */
 @Service
 open class ControllerComponents(
-  val loginService: LoginService,
-  val userAccessService: UserAccessService,
-  val localisationRepository: LocalisationRepository,
-  val configService: ConfigService,
-  val freemarkerConfig: Configuration
+    val loginService: LoginService,
+    val userAccessService: UserAccessService,
+    val localisationRepository: LocalisationRepository,
+    val configService: ConfigService,
+    val freemarkerConfig: Configuration
 ) {
-  open fun getLoggedUser(request: HttpServletRequest): User? {
-    return loginService.getLoggedUser(request)
-  }
+    open fun getLoggedUser(request: HttpServletRequest): User? = loginService.getLoggedUser(request)
 
-  open fun getOperationCtx(request: HttpServletRequest): OperationCtx {
-    val user = loginService.getLoggedUser(request)
-    return OperationCtx(user, OriginStamp(Instant.now(), request.requestURI, user?.login))
-  }
+    open fun getOperationCtx(request: HttpServletRequest): OperationCtx {
+        val user = loginService.getLoggedUser(request)
+        return OperationCtx(user, OriginStamp(Instant.now(), request.requestURI, user?.login))
+    }
 }

@@ -21,7 +21,8 @@ class MailerLiteMailingApi(
     @Qualifier(MailingApiConfig.FEATURE_NAME)
     restTemplate: RestTemplate,
     private val mailingApiConfig: MailingApiConfig
-) : AbstractJsonApi(MailingApiConfig.FEATURE_NAME, restTemplate), MailingApi {
+) : AbstractJsonApi(MailingApiConfig.FEATURE_NAME, restTemplate),
+    MailingApi {
 
     // NOTE: Reaction on Unsubscribe from MailerLite subscription group
     // is supported by MailerLiteWebhookController.

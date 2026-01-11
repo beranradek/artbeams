@@ -26,7 +26,7 @@ class MemberSectionMailerImpl(
             "memberLoginUrl" to memberLoginUrl,
             "forgottenPasswordUrl" to forgottenPasswordUrl,
             "webName" to (appConfig.findConfig("web.name") ?: ""),
-            "senderName" to (appConfig.findConfig("mailer.sender.name") ?: ""),
+            "senderName" to (appConfig.findConfig("mailer.sender.name") ?: "")
         )
         val subject = appConfig.requireConfig("mailer.member.section.subject")
         val templateId = appConfig.requireConfig("mailer.member.section.template")

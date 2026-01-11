@@ -19,7 +19,6 @@ import org.xbery.artbeams.members.controller.MemberSectionController.Companion.M
 import org.xbery.artbeams.web.FreeProductController.Companion.ORDER_SUB_PATH
 import org.xbery.artbeams.web.filter.ContentSecurityPolicyServletFilter
 
-
 /**
  * <p>Spring security configuration. Defines secured paths of application and authentication manager implementation.
  *
@@ -37,57 +36,56 @@ class SecurityConfig(
     @Bean
     @Throws(Exception::class)
     fun adminSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        http.authorizeHttpRequests { request ->
+        http
+            .authorizeHttpRequests { request ->
                 request.requestMatchers(*ResourcePaths).permitAll()
-            }
-            .authorizeHttpRequests { request ->
-                request.requestMatchers(AntPathRequestMatcher("/admin/**"))
+            }.authorizeHttpRequests { request ->
+                request
+                    .requestMatchers(AntPathRequestMatcher("/admin/**"))
                     .hasAuthority("admin")
-            }
-            .authorizeHttpRequests { request ->
-                request.requestMatchers(AntPathRequestMatcher(MemberSectionController.MEMBER_SECTION_PATH + "/**"))
+            }.authorizeHttpRequests { request ->
+                request
+                    .requestMatchers(AntPathRequestMatcher(MemberSectionController.MEMBER_SECTION_PATH + "/**"))
                     .hasAuthority("member")
-            }
-            .authorizeHttpRequests { request ->
+            }.authorizeHttpRequests { request ->
                 request.anyRequest().permitAll()
-            }
-            .formLogin { formLoginConfigurer ->
+            }.formLogin { formLoginConfigurer ->
                 formLoginConfigurer
                     .loginPage("/login")
                     .successHandler(loginActivityHandler)
                     .permitAll()
-            }
-            .logout { logoutConfigurer ->
+            }.logout { logoutConfigurer ->
                 logoutConfigurer
                     .permitAll()
-            }
-            .exceptionHandling { it.accessDeniedPage("/accessDenied") }
+            }.exceptionHandling { it.accessDeniedPage("/accessDenied") }
             .headers { headersCustomizer ->
-                headersCustomizer.xssProtection {}
+                headersCustomizer
+                    .xssProtection {}
                     .addHeaderWriter { request, response ->
-                    // For Content Security Policy header configuration,
-                    // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
-                    // and https://www.baeldung.com/spring-security-csp
-                    // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
-                    val requestPath = request.requestURI
-                    if (!requestPath.startsWith(MEMBER_SECTION_PATH) &&
-                        !requestPath.startsWith(ADMIN_SECTION_PATH) &&
-                        !requestPath.endsWith(ORDER_SUB_PATH) &&
-                        !response.containsHeader(CSP_HEADER_NAME)) {
-                        val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
-                        // sha256 is included for style element added additionally by Facebook's sdk.js
-                        response.setHeader(
-                            CSP_HEADER_NAME,
-                                    "style-src 'self' connect.facebook.net www.facebook.com www.google.com fonts.googleapis.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
+                        // For Content Security Policy header configuration,
+                        // see also https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+                        // and https://www.baeldung.com/spring-security-csp
+                        // and https://developer.chrome.com/docs/lighthouse/best-practices/csp-xss/
+                        val requestPath = request.requestURI
+                        if (!requestPath.startsWith(MEMBER_SECTION_PATH) &&
+                            !requestPath.startsWith(ADMIN_SECTION_PATH) &&
+                            !requestPath.endsWith(ORDER_SUB_PATH) &&
+                            !response.containsHeader(CSP_HEADER_NAME)
+                        ) {
+                            val nonce = request.getAttribute(ContentSecurityPolicyServletFilter.CSP_NONCE_ATTRIBUTE)
+                            // sha256 is included for style element added additionally by Facebook's sdk.js
+                            response.setHeader(
+                                CSP_HEADER_NAME,
+                                "style-src 'self' connect.facebook.net www.facebook.com www.google.com fonts.googleapis.com staticxx.facebook.com 'sha256-0e93a8aa26cafc1b188686d61e7537f0fcb3b794a30d9b91fe616c02254dee49' 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
                                     "script-src 'self' connect.facebook.net www.facebook.com www.google.com www.recaptcha.net staticxx.facebook.com 'nonce-$nonce' 'strict-dynamic' https: 'unsafe-inline'; " +
                                     "font-src 'self' fonts.gstatic.com cdnjs.cloudflare.com cdn.jsdelivr.net data:; " +
                                     "object-src 'none'; " +
                                     "form-action 'self'; " +
                                     "base-uri 'self'; " +
                                     "frame-src www.facebook.com web.facebook.com www.google.com www.recaptcha.net"
-                        )
+                            )
+                        }
                     }
-                }
             }
 
         // For Content Security Policy header configuration, see also ContentSecurityPolicyServletFilter.
@@ -111,14 +109,14 @@ class SecurityConfig(
             headersCustomizer.addHeaderWriter(notResourcesHeaderWriter)
         }
         // This is needed for generating _csrf.token that is stored in HTTP session also for public POST forms like commentAdd:
-        http.sessionManagement { sessionManagementCustomizer ->
-            sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-        }
-        .csrf { csrfCustomizer ->
-            // Allowing CSRF requests for future public API
-            // CORS headers should be configured for future public API
-            csrfCustomizer.ignoringRequestMatchers("/api/**")
-        }
+        http
+            .sessionManagement { sessionManagementCustomizer ->
+                sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+            }.csrf { csrfCustomizer ->
+                // Allowing CSRF requests for future public API
+                // CORS headers should be configured for future public API
+                csrfCustomizer.ignoringRequestMatchers("/api/**")
+            }
 
         return http.build()
     }

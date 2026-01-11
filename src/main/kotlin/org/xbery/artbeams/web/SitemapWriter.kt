@@ -23,7 +23,9 @@ interface SitemapWriter {
 
     fun writeSitemap(urlBase: String, writer: PrintWriter) {
         writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-        writer.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">")
+        writer.println(
+            "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">"
+        )
 
         // Homepage URL
         writer.println(buildUrl(urlBase, null))
@@ -44,7 +46,8 @@ interface SitemapWriter {
         for (article in articles) {
             writer.println(
                 buildUrl(
-                    urlBase + "/" + article.slug, article.modified
+                    urlBase + "/" + article.slug,
+                    article.modified
                 )
             )
         }

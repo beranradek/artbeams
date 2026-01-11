@@ -1,6 +1,5 @@
 package org.xbery.artbeams.common.antispam.recaptcha.service
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
@@ -10,6 +9,7 @@ import org.xbery.artbeams.common.antispam.recaptcha.config.RecaptchaConfig
 import org.xbery.artbeams.common.antispam.recaptcha.domain.RecaptchaResult
 import org.xbery.artbeams.common.antispam.recaptcha.domain.RecaptchaVerifyResponse
 import org.xbery.artbeams.common.api.AbstractJsonApi
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Recaptcha service for verifying reCAPTCHA token (success of response)
@@ -38,7 +38,8 @@ class RecaptchaService(
     }
 
     private fun verify(token: String, ipAddress: String): RecaptchaResult {
-        val uri = UriComponentsBuilder.fromUriString("https://www.google.com/recaptcha/api/siteverify")
+        val uri = UriComponentsBuilder
+            .fromUriString("https://www.google.com/recaptcha/api/siteverify")
             // The shared key between your site and reCAPTCHA.
             .queryParam("secret", recaptchaConfig.getSecretKey())
             // The user response token provided by the reCAPTCHA client-side integration on your site.

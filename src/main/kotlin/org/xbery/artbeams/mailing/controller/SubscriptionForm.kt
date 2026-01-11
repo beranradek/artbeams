@@ -14,13 +14,15 @@ import org.xbery.artbeams.common.form.validation.ChainedEmailValidator
 open class SubscriptionForm {
     companion object {
         val definition: FormMapping<SubscriptionFormData> =
-            Forms.basic(SubscriptionFormData::class.java, "subscription")
-                .field(Forms.field<String>("email", Field.EMAIL)
-                    .validator(RequiredValidator())
-                    .validator(ChainedEmailValidator.INSTANCE)
-                    .build()
-                )
-                .field<String>("name", Field.TEXT)
+            Forms
+                .basic(SubscriptionFormData::class.java, "subscription")
+                .field(
+                    Forms
+                        .field<String>("email", Field.EMAIL)
+                        .validator(RequiredValidator())
+                        .validator(ChainedEmailValidator.INSTANCE)
+                        .build()
+                ).field<String>("name", Field.TEXT)
                 .build(FormUtils.CZ_CONFIG)
     }
 }

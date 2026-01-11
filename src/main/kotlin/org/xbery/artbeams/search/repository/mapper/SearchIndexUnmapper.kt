@@ -3,9 +3,9 @@ package org.xbery.artbeams.search.repository.mapper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.jooq.RecordUnmapper
 import org.springframework.stereotype.Component
-import org.xbery.artbeams.search.domain.SearchIndexEntry
 import org.xbery.artbeams.jooq.schema.tables.records.SearchIndexRecord
 import org.xbery.artbeams.jooq.schema.tables.references.SEARCH_INDEX
+import org.xbery.artbeams.search.domain.SearchIndexEntry
 
 /**
  * Maps SearchIndexEntry domain object to database record.

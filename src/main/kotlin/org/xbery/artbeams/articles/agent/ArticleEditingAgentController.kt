@@ -1,8 +1,5 @@
 package org.xbery.artbeams.articles.agent
 
-import jakarta.annotation.PreDestroy
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.http.HttpStatus
@@ -18,6 +15,9 @@ import org.xbery.artbeams.common.agent.JobStatus
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import java.util.concurrent.ConcurrentHashMap
+import jakarta.annotation.PreDestroy
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpSession
 
 /**
  * Controller for AI-powered article editing agent.

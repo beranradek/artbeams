@@ -12,9 +12,7 @@ data class Price(
     val price: BigDecimal,
     val currency: String
 ) {
-    fun isZero(): Boolean {
-        return price.compareTo(BigDecimal.ZERO) == 0
-    }
+    fun isZero(): Boolean = price.compareTo(BigDecimal.ZERO) == 0
 
     operator fun plus(other: Price): Price {
         if (this.currency != other.currency) {
@@ -29,9 +27,7 @@ data class Price(
         return currencyInstance.format(price)
     }
 
-    override fun toString(): String {
-        return format(Locales.DEFAULT_LOCALE)
-    }
+    override fun toString(): String = format(Locales.DEFAULT_LOCALE)
 
     companion object {
         const val DEFAULT_CURRENCY = "CZK" // used also in QR code parameters

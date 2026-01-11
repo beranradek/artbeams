@@ -10,8 +10,6 @@ enum class EntityType {
     PRODUCT;
 
     companion object {
-        fun fromString(value: String): EntityType {
-            return valueOf(value.uppercase())
-        }
+        fun fromString(value: String): EntityType = valueOf(value.uppercase())
     }
 }

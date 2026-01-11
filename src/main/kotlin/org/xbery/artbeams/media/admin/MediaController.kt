@@ -1,6 +1,5 @@
 package org.xbery.artbeams.media.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
@@ -19,14 +18,17 @@ import org.xbery.artbeams.media.domain.ImageFormat
 import org.xbery.artbeams.media.repository.MediaRepository
 import java.nio.channels.Channels
 import java.util.concurrent.TimeUnit
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Image upload/serving controller.
  * @author Radek Beran
  */
 @Controller
-open class MediaController(private val mediaRepository: MediaRepository, common: ControllerComponents) :
-    BaseController(common) {
+open class MediaController(
+    private val mediaRepository: MediaRepository,
+    common: ControllerComponents
+) : BaseController(common) {
     private val tplBasePath: String = "admin/media"
 
     private val mediaFileUploadFormDef: FormMapping<UploadedMediaFile> = MediaFileUploadForm.definition
@@ -37,15 +39,13 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
         @RequestParam("search", required = false) searchTerm: String?,
         @RequestParam("contentType", required = false) contentTypeFilter: String?,
         @RequestParam("privateAccess", required = false) privateAccessFilter: Boolean?
-    ): Any {
-        return listFilesWithVariables(
-            request,
-            variablesForMediaFileUploadForm(UploadedMediaFile.Empty, ValidationResult.empty, null),
-            searchTerm,
-            contentTypeFilter,
-            privateAccessFilter
-        )
-    }
+    ): Any = listFilesWithVariables(
+        request,
+        variablesForMediaFileUploadForm(UploadedMediaFile.Empty, ValidationResult.empty, null),
+        searchTerm,
+        contentTypeFilter,
+        privateAccessFilter
+    )
 
     @PostMapping("/admin/media/upload")
     fun uploadFile(request: HttpServletRequest): Any {
@@ -107,45 +107,54 @@ open class MediaController(private val mediaRepository: MediaRepository, common:
     }
 
     @PostMapping("/admin/media/{filename}/delete")
-    fun deleteFile(request: HttpServletRequest, @PathVariable filename: String, @RequestParam(value = "size", required = false) size: String?): Any {
-        return try {
-            val success: Boolean = mediaRepository.deleteFile(filename, size)
-            if (success) {
-                logger.info("Media file: $filename (size: $size) was successfully deleted.")
-                redirect("/admin/media")
-            } else {
-                logger.error("Media file: $filename (size: $size) was not deleted by DB query.")
-                internalServerError(request)
-            }
-        } catch (ex: Exception) {
-            logger.error("Failed to delete media file: $filename (size: $size)", ex)
+    fun deleteFile(
+        request: HttpServletRequest, @PathVariable filename: String,
+        @RequestParam(
+            value = "size",
+            required = false
+        ) size: String?
+    ): Any = try {
+        val success: Boolean = mediaRepository.deleteFile(filename, size)
+        if (success) {
+            logger.info("Media file: $filename (size: $size) was successfully deleted.")
+            redirect("/admin/media")
+        } else {
+            logger.error("Media file: $filename (size: $size) was not deleted by DB query.")
             internalServerError(request)
         }
+    } catch (ex: Exception) {
+        logger.error("Failed to delete media file: $filename (size: $size)", ex)
+        internalServerError(request)
     }
 
     // Allow all characters at the end of path (regex addon for filename variable):
     @GetMapping("/media/{filename:.+}")
-    fun findFile(request: HttpServletRequest, @PathVariable filename: String?, @RequestParam(value = "size", required = false) size: String?): Any {
-        return if (filename != null) {
-            val fileData = mediaRepository.findFile(filename, size)
-            if (fileData != null) {
-                if (fileData.privateAccess) {
-                    unauthorized(request)
-                } else {
-                    val mediaType = fileData.getMediaType()
-                    // Caching file on the client for 30 days (images rarely change)
-                    ResponseEntity.ok()
-                        .contentType(mediaType)
-                        .contentLength(fileData.size)
-                        .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())
-                        .body(fileData.data)
-                }
+    fun findFile(
+        request: HttpServletRequest, @PathVariable filename: String?,
+        @RequestParam(
+            value = "size",
+            required = false
+        ) size: String?
+    ): Any = if (filename != null) {
+        val fileData = mediaRepository.findFile(filename, size)
+        if (fileData != null) {
+            if (fileData.privateAccess) {
+                unauthorized(request)
             } else {
-                notFound(request)
+                val mediaType = fileData.getMediaType()
+                // Caching file on the client for 30 days (images rarely change)
+                ResponseEntity
+                    .ok()
+                    .contentType(mediaType)
+                    .contentLength(fileData.size)
+                    .cacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic())
+                    .body(fileData.data)
             }
         } else {
             notFound(request)
         }
+    } else {
+        notFound(request)
     }
 
     private fun variablesForMediaFileUploadForm(

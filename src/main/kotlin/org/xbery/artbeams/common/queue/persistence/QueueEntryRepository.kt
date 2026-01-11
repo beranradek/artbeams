@@ -25,7 +25,6 @@ interface QueueEntryRepository<E : AbstractQueueEntry> {
      */
     fun deleteExpiredEntries(now: Instant): Int
 
-
     /**
      * Dequeue the next entry scheduled for an action and shift its time to the future.
      *

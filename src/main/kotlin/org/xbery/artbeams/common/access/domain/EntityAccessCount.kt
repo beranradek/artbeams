@@ -8,16 +8,16 @@ import java.io.Serializable
  * @author Radek Beran
  */
 data class EntityAccessCount(
-    /* Unique key of an accessed entity. */
+    // Unique key of an accessed entity.
     val entityKey: EntityKey,
-    /* Count of accesses. */
+    // Count of accesses.
     val count: Int
 ) : Serializable {
     companion object {
         const val CacheName = "entityAccessCounts"
         val Empty = EntityAccessCount(
-                EntityKey.Empty,
-                0
+            EntityKey.Empty,
+            0
         )
     }
 }

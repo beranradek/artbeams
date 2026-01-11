@@ -54,9 +54,7 @@ abstract class AbstractJsonApi(
         uriVariables: Map<String, Any>,
         requestData: Any?,
         responseClass: Class<T>
-    ): T {
-        return fromJson(exchangeEntity(method, uri, uriVariables, createRequestEntity(requestData)), responseClass)
-    }
+    ): T = fromJson(exchangeEntity(method, uri, uriVariables, createRequestEntity(requestData)), responseClass)
 
     /**
      * Sends HTTP request with given request entity.
@@ -72,9 +70,7 @@ abstract class AbstractJsonApi(
         uriVariables: Map<String, Any>,
         requestEntity: HttpEntity<*>,
         responseClass: Class<T>
-    ): T {
-        return fromJson(exchangeEntity(method, uri, uriVariables, requestEntity), responseClass)
-    }
+    ): T = fromJson(exchangeEntity(method, uri, uriVariables, requestEntity), responseClass)
 
     /**
      * Sends HTTP request with given request entity. Returns response entity.
@@ -87,25 +83,27 @@ abstract class AbstractJsonApi(
         method: HttpMethod,
         uri: String,
         uriVariables: Map<String, Any>,
-        requestEntity: HttpEntity<*>,
-    ): ResponseEntity<String> {
-        return try {
-            val response = restTemplate.exchange(uri, method, requestEntity, String::class.java, uriVariables)
-            logger.info("Successful call to " + uri +
-                    " with status code " + response.statusCode +
-                    ", response: " + response.body)
-            response
-        } catch (e: HttpStatusCodeException) {
-            logger.error("Unsuccessful call to " + uri +
-                    " with status code " + e.statusCode +
-                    ", message " + e.mostSpecificCause.message +
-                    ", response: " + e.responseBodyAsString,
-                e.mostSpecificCause)
-            throw e
-        } catch (e: RestClientException) {
-            logger.error("Error while calling " + uri + ": " + e.mostSpecificCause.message, e.mostSpecificCause)
-            throw e
-        }
+        requestEntity: HttpEntity<*>
+    ): ResponseEntity<String> = try {
+        val response = restTemplate.exchange(uri, method, requestEntity, String::class.java, uriVariables)
+        logger.info(
+            "Successful call to " + uri +
+                " with status code " + response.statusCode +
+                ", response: " + response.body
+        )
+        response
+    } catch (e: HttpStatusCodeException) {
+        logger.error(
+            "Unsuccessful call to " + uri +
+                " with status code " + e.statusCode +
+                ", message " + e.mostSpecificCause.message +
+                ", response: " + e.responseBodyAsString,
+            e.mostSpecificCause
+        )
+        throw e
+    } catch (e: RestClientException) {
+        logger.error("Error while calling " + uri + ": " + e.mostSpecificCause.message, e.mostSpecificCause)
+        throw e
     }
 
     /**
@@ -115,6 +113,6 @@ abstract class AbstractJsonApi(
      * @param entity HTTP response entity
      * @param cls    java type of the response
      * @return response converted from JSON
-    </T> */
+     </T> */
     protected open fun <T> fromJson(entity: HttpEntity<String>, cls: Class<T>): T = objectMapper.readValue(entity.body, cls)
 }

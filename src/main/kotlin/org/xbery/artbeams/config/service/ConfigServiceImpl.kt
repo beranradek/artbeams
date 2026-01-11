@@ -19,13 +19,21 @@ open class ConfigServiceImpl(
     private val appConfig: AppConfig
 ) : ConfigService {
     protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    
+
     private val sensitiveKeyPatterns = listOf(
-        "secret", "secretkey", "password", "salt", "token", 
-        "google.oauth.client.json", "api.key", "apikey",
-        "client.secret", "private.key", "privatekey"
+        "secret",
+        "secretkey",
+        "password",
+        "salt",
+        "token",
+        "google.oauth.client.json",
+        "api.key",
+        "apikey",
+        "client.secret",
+        "private.key",
+        "privatekey"
     )
-    
+
     private fun isSensitiveKey(key: String): Boolean {
         val lowerKey = key.lowercase()
         return sensitiveKeyPatterns.any { pattern ->
@@ -36,7 +44,7 @@ open class ConfigServiceImpl(
     override fun findConfigs(pagination: Pagination, search: String?): ResultPage<Config> {
         logger.info("Finding configs with pagination: offset=${pagination.offset}, limit=${pagination.limit}, search=$search")
         val resultPage = configRepository.findConfigs(pagination, search)
-        
+
         // Mask sensitive values for admin display
         val maskedConfigs = resultPage.records.map { config ->
             if (isSensitiveKey(config.entryKey)) {
@@ -45,13 +53,13 @@ open class ConfigServiceImpl(
                 config
             }
         }
-        
+
         return ResultPage(maskedConfigs, resultPage.pagination)
     }
 
     override fun findByKey(entryKey: String): Config? {
         val config = configRepository.findByKey(entryKey)
-        return config?.let { 
+        return config?.let {
             if (isSensitiveKey(it.entryKey)) {
                 it.copy(entryValue = "*****")
             } else {
@@ -60,34 +68,30 @@ open class ConfigServiceImpl(
         }
     }
 
-    override fun saveConfig(edited: EditedConfig): Config {
-        return try {
-            val config = Config(edited.entryKey, edited.entryValue)
-            val savedConfig = if (edited.originalKey.isEmpty()) {
-                // New config
-                configRepository.create(config)
-            } else {
-                // Update existing config
-                configRepository.update(edited.originalKey, config)
-            }
-            // Reload cache after save
-            appConfig.reloadConfigEntries()
-            savedConfig
-        } catch (ex: Exception) {
-            logger.error("Save of config ${edited.entryKey} finished with error ${ex.message}", ex)
-            throw ex
+    override fun saveConfig(edited: EditedConfig): Config = try {
+        val config = Config(edited.entryKey, edited.entryValue)
+        val savedConfig = if (edited.originalKey.isEmpty()) {
+            // New config
+            configRepository.create(config)
+        } else {
+            // Update existing config
+            configRepository.update(edited.originalKey, config)
         }
+        // Reload cache after save
+        appConfig.reloadConfigEntries()
+        savedConfig
+    } catch (ex: Exception) {
+        logger.error("Save of config ${edited.entryKey} finished with error ${ex.message}", ex)
+        throw ex
     }
 
-    override fun deleteConfig(entryKey: String): Boolean {
-        return try {
-            val result = configRepository.deleteByKey(entryKey)
-            // Reload cache after delete
-            appConfig.reloadConfigEntries()
-            result
-        } catch (ex: Exception) {
-            logger.error("Delete of config $entryKey finished with error ${ex.message}", ex)
-            throw ex
-        }
+    override fun deleteConfig(entryKey: String): Boolean = try {
+        val result = configRepository.deleteByKey(entryKey)
+        // Reload cache after delete
+        appConfig.reloadConfigEntries()
+        result
+    } catch (ex: Exception) {
+        logger.error("Delete of config $entryKey finished with error ${ex.message}", ex)
+        throw ex
     }
 }

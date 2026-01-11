@@ -41,7 +41,8 @@ class SimpleShopApiClient(
             val url = "${config.getApiBaseUrl()}/product/$productId/"
             val authHeader = createBasicAuthHeader(config.getEmail()!!, config.getApiKey()!!)
 
-            val request = HttpRequest.newBuilder()
+            val request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(url))
                 .header("Authorization", authHeader)
                 .header("Accept", "application/json")

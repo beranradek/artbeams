@@ -14,7 +14,8 @@ import org.xbery.artbeams.common.form.validation.ChainedEmailValidator
 open class CommentForm {
     companion object {
         val definition: FormMapping<EditedComment> =
-            Forms.basic(EditedComment::class.java, "comment")
+            Forms
+                .basic(EditedComment::class.java, "comment")
                 .field<String>("id", Field.HIDDEN)
                 .field<String>("entityId", Field.HIDDEN)
                 .field(Forms.field<String>("comment", Field.TEXT).validator(CommentValidator.INSTANCE))

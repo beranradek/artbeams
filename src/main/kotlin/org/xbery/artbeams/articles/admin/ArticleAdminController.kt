@@ -1,6 +1,5 @@
 package org.xbery.artbeams.articles.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.validation.ValidationResult
@@ -24,6 +23,7 @@ import org.xbery.artbeams.error.OperationException
 import org.xbery.artbeams.google.error.GoogleErrorCode
 import org.xbery.artbeams.media.repository.ArticleImageRepository
 import java.nio.channels.Channels
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Article administration routes.
@@ -51,9 +51,11 @@ class ArticleAdminController(
         val pagination = Pagination(offset, limit)
         val resultPage = articleService.findArticles(pagination)
         val model = createModel(
-            request, "resultPage"
-                    to resultPage, "emptyId"
-                    to AssetAttributes.EMPTY_ID
+            request,
+            "resultPage"
+                to resultPage,
+            "emptyId"
+                to AssetAttributes.EMPTY_ID
         )
         return ModelAndView("$tplBasePath/articleList", model)
     }
@@ -102,7 +104,7 @@ class ArticleAdminController(
                     if (article != null) {
                         if (params.getParamValue("save") != null) {
                             // Save without leave
-                            redirect("/admin/articles/${article.id}/edit?${paramSaveWithinEditor}=1")
+                            redirect("/admin/articles/${article.id}/edit?$paramSaveWithinEditor=1")
                         } else {
                             redirect("/admin/articles")
                         }
@@ -141,12 +143,10 @@ class ArticleAdminController(
      * Checks if ArticleEditingAgent bean is available in the application context.
      * The agent is only available when openai.enabled=true configuration property is set.
      */
-    private fun isArticleAgentAvailable(): Boolean {
-        return try {
-            applicationContext.getBean(ArticleEditingAgent::class.java)
-            true
-        } catch (e: Exception) {
-            false
-        }
+    private fun isArticleAgentAvailable(): Boolean = try {
+        applicationContext.getBean(ArticleEditingAgent::class.java)
+        true
+    } catch (e: Exception) {
+        false
     }
 }

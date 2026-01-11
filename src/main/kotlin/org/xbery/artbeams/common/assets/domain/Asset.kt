@@ -9,7 +9,9 @@ import java.time.Instant
  *
  * @author Radek Beran
  */
-abstract class Asset : Serializable, IdentifiedEntity {
+abstract class Asset :
+    Serializable,
+    IdentifiedEntity {
     abstract val common: AssetAttributes
     override val id: String get() = common.id
     val created: Instant get() = common.created

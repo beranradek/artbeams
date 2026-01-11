@@ -12,14 +12,10 @@ interface QueueEntryId<E : AbstractQueueEntry> {
     /**
      * Retrieve a descriptive ID of an entry.
      */
-    fun getEntryId(entry: E): Any {
-        return entry.id
-    }
+    fun getEntryId(entry: E): Any = entry.id
 
     /**
      * Return a name describing entries used.
      */
-    fun getEntryName(entry: E): String {
-        return "entry"
-    }
+    fun getEntryName(entry: E): String = "entry"
 }

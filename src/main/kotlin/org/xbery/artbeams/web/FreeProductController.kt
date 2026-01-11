@@ -1,6 +1,5 @@
 package org.xbery.artbeams.web
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -44,6 +43,7 @@ import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.users.service.UserSubscriptionService
 import java.io.ByteArrayOutputStream
 import java.time.Instant
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Free product and base product routes.
@@ -86,10 +86,14 @@ class FreeProductController(
                 val data = formData.data
                 val recaptchaResult = recaptchaService.verifyRecaptcha(request)
                 if (!recaptchaResult.success) {
-                    logger.warn("Captcha token was incorrect, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
+                    logger.warn(
+                        "Captcha token was incorrect, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}"
+                    )
                     subscriptionFormResponse(FormErrors.formDataWithCaptchaInvalidError(formData), request)
                 } else {
-                    logger.info("Captcha token was correct, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}")
+                    logger.info(
+                        "Captcha token was correct, score=${recaptchaResult.score}, for subscription for email=${data.email}, name=${data.name}"
+                    )
                     try {
                         // We should not register the user until he confirms the subscription from email,
                         // so he does not occupy registration to real owner of the email address.
@@ -102,7 +106,7 @@ class FreeProductController(
                         )
                         ajaxRedirect("/produkt/$slug/potvrzeni")
                     } catch (ex: Exception) {
-                        logger.error("Error while subscribing user ${data.email}/${data.name} to product ${slug}: ${ex.message}", ex)
+                        logger.error("Error while subscribing user ${data.email}/${data.name} to product $slug: ${ex.message}", ex)
                         subscriptionFormResponse(FormErrors.formDataWithInternalError(formData), request)
                     }
                 }
@@ -176,74 +180,70 @@ class FreeProductController(
      * Serves binary data of product to user identified by email in the request.
      */
     @GetMapping("/produkt/{slug}/download")
-    fun serveProductData(request: HttpServletRequest, @PathVariable slug: String): Any {
-        return tryOrErrorResponse(request) {
-            val product = productService.requireBySlug(slug)
-            // Allow this not fully secured download only for free products (with zero regular prices)
-            // For paid products, secure download is available only from member section.
-            if (!product.priceRegular.isZero()) {
-                throw IllegalStateException("Product $slug is not free and cannot be downloaded via this route.")
-            }
-
-            val productFileName = requireFound(product.fileName) { "Product $slug has no file name" }
-            val email = requireAuthorized(findEmailInRequest(request)) { "Email is missing" }
-
-            // User must exist and must confirm the consent before he/she can download the product
-            val user = userService.requireByLogin(email)
-            if (!consentService.hasValidConsent(email, ConsentType.NEWS)) {
-                throw UnauthorizedException("User with email $email has not confirmed the consent")
-            }
-
-            // Update user with full name from request if it is present (and not set in user entity yet)
-            updateUserWithFullName(request, user)
-
-            // Check an order of the product for given user exists
-            val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
-            if (orderItems.isEmpty()) throw UnauthorizedException("User ${user.login} has not ordered product ${product.slug}")
-            val orderItem = orderItems.first()
-
-            val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
-                "File $productFileName was not found"
-            }
-            val mediaType = fileData.getMediaType()
-            val documentOutputStream = if (MediaType.APPLICATION_PDF == mediaType) {
-                writeMetadataToPdf(request, product, user, fileData)
-            } else {
-                val os = ByteArrayOutputStream()
-                os.write(fileData.data)
-                os
-            }
-
-            orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
-
-            // Update order state to SHIPPED since product has been downloaded by user
-            orderService.updateOrderState(orderItem.orderId, OrderState.SHIPPED)
-            logger.info("Order ${orderItem.orderId} state updated to SHIPPED after user downloaded free product ${product.slug}")
-
-            sendProductDownloadedNotification(product, user)
-
-            ResponseEntity.ok()
-                .contentType(mediaType)
-                .contentLength(documentOutputStream.size().toLong())
-                .cacheControl(CacheControl.noStore()) // prevent browsers and proxies to cache the request
-                .header(
-                    HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename=" + fileData.filename
-                )
-                .body(documentOutputStream.toByteArray())
+    fun serveProductData(request: HttpServletRequest, @PathVariable slug: String): Any = tryOrErrorResponse(request) {
+        val product = productService.requireBySlug(slug)
+        // Allow this not fully secured download only for free products (with zero regular prices)
+        // For paid products, secure download is available only from member section.
+        if (!product.priceRegular.isZero()) {
+            throw IllegalStateException("Product $slug is not free and cannot be downloaded via this route.")
         }
+
+        val productFileName = requireFound(product.fileName) { "Product $slug has no file name" }
+        val email = requireAuthorized(findEmailInRequest(request)) { "Email is missing" }
+
+        // User must exist and must confirm the consent before he/she can download the product
+        val user = userService.requireByLogin(email)
+        if (!consentService.hasValidConsent(email, ConsentType.NEWS)) {
+            throw UnauthorizedException("User with email $email has not confirmed the consent")
+        }
+
+        // Update user with full name from request if it is present (and not set in user entity yet)
+        updateUserWithFullName(request, user)
+
+        // Check an order of the product for given user exists
+        val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
+        if (orderItems.isEmpty()) throw UnauthorizedException("User ${user.login} has not ordered product ${product.slug}")
+        val orderItem = orderItems.first()
+
+        val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
+            "File $productFileName was not found"
+        }
+        val mediaType = fileData.getMediaType()
+        val documentOutputStream = if (MediaType.APPLICATION_PDF == mediaType) {
+            writeMetadataToPdf(request, product, user, fileData)
+        } else {
+            val os = ByteArrayOutputStream()
+            os.write(fileData.data)
+            os
+        }
+
+        orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
+
+        // Update order state to SHIPPED since product has been downloaded by user
+        orderService.updateOrderState(orderItem.orderId, OrderState.SHIPPED)
+        logger.info("Order ${orderItem.orderId} state updated to SHIPPED after user downloaded free product ${product.slug}")
+
+        sendProductDownloadedNotification(product, user)
+
+        ResponseEntity
+            .ok()
+            .contentType(mediaType)
+            .contentLength(documentOutputStream.size().toLong())
+            .cacheControl(CacheControl.noStore()) // prevent browsers and proxies to cache the request
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=" + fileData.filename
+            ).body(documentOutputStream.toByteArray())
     }
 
     /**
      * GET product detail HTML page.
      */
     @GetMapping("/produkt/{slug}")
-    fun productDetail(request: HttpServletRequest, @PathVariable slug: String): Any {
-        return tryOrErrorResponse(request) {
-            val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
-            val viewName = if (product.price.isZero()) "productArticle" else "productSalesPage"
-            renderProductArticle(request, product, product.slug, true, viewName)
-        }
+    fun productDetail(request: HttpServletRequest, @PathVariable slug: String): Any = tryOrErrorResponse(request) {
+        val product = requireFound(productService.findBySlug(slug)) { "Product $slug was not found" }
+        val viewName = if (product.price.isZero()) "productArticle" else "productSalesPage"
+        renderProductArticle(request, product, product.slug, true, viewName)
     }
 
     private fun writeMetadataToPdf(
@@ -353,7 +353,7 @@ class FreeProductController(
                 val body =
                     normalizationHelper.removeDiacriticalMarks(
                         "User ${user.firstName} ${user.lastName}/${user.login} " +
-                                "has downloaded product ${product.title}."
+                            "has downloaded product ${product.title}."
                     )
                 mailSender.sendMailWithText(productAuthor.login, subject, body)
             }

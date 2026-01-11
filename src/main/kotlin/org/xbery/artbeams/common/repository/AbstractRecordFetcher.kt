@@ -27,7 +27,7 @@ internal interface AbstractRecordFetcher<R : Record> {
      * @return result list of entities including pagination settings with filled total count of records
      */
     @Suppress("UNCHECKED_CAST")
-    fun <REC: Record, E, F> findByCriteria(
+    fun <REC : Record, E, F> findByCriteria(
         fields: List<SelectFieldOrAsterisk>,
         whereCondition: Condition?,
         orderByField: OrderField<F>,
@@ -118,7 +118,7 @@ internal interface AbstractRecordFetcher<R : Record> {
      * @return result list of entities
      */
     @Suppress("UNCHECKED_CAST")
-    fun <REC: Record, E, F> findByCriteriaWithLimit(
+    fun <REC : Record, E, F> findByCriteriaWithLimit(
         fields: List<SelectFieldOrAsterisk>,
         whereCondition: Condition?,
         orderByField: OrderField<F>,
@@ -142,13 +142,21 @@ internal interface AbstractRecordFetcher<R : Record> {
         dsl.selectFrom(table).where(field.eq(fieldValue)).fetchOne(mapper)
 
     fun <T, E> findOneBy(field: Field<T>, fieldValue: T, entityClass: Class<E>): E? =
-        dsl.selectFrom(table).where(field.eq(fieldValue)).fetchOne()?.into(entityClass)
+        dsl
+            .selectFrom(table)
+            .where(field.eq(fieldValue))
+            .fetchOne()
+            ?.into(entityClass)
 
     fun <T, E> findBy(field: Field<T>, fieldValue: T, mapper: RecordMapper<R, E>): List<E> =
         dsl.selectFrom(table).where(field.eq(fieldValue)).fetch(mapper)
 
     fun <T, E> findBy(field: Field<T>, fieldValue: T, entityClass: Class<E>): List<E> =
-        dsl.selectFrom(table).where(field.eq(fieldValue)).fetch().into(entityClass)
+        dsl
+            .selectFrom(table)
+            .where(field.eq(fieldValue))
+            .fetch()
+            .into(entityClass)
 
     fun <E> findAll(mapper: RecordMapper<R, E>): List<E> =
         dsl.selectFrom(table).fetch(mapper)

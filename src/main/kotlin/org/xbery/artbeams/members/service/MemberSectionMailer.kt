@@ -8,7 +8,7 @@ package org.xbery.artbeams.members.service
 interface MemberSectionMailer {
     /**
      * Sends email with member section login information after payment.
-     * 
+     *
      * @param username user login/email to send mail to
      */
     fun sendMemberSectionLoginMail(username: String)

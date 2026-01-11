@@ -79,23 +79,24 @@ class MediaRepository(
             } else {
                 ImageFormat.fromFileName(filename)
             }
-            ) ?: ImageFormat.WEBP
+        ) ?: ImageFormat.WEBP
 
         val targetFileName = FileNames.replaceOrAddExtension(filename, imageFormat.name.lowercase())
         val targetContentType = imageFormat.contentType
 
-        return TempFiles.createTempFilePath("uploaded-media-file-", "-$filename")
+        return TempFiles
+            .createTempFilePath("uploaded-media-file-", "-$filename")
             .use { inputFileTempPath ->
                 // Save original file to temp location for processing
                 Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
 
                 // Generate and store each responsive variant
                 responsiveWidths.forEach { width ->
-                    TempFiles.createTempFilePath(
-                        "uploaded-media-file-responsive-",
-                        "-$width-$filename"
-                    )
-                        .use { transformedImageTempPath ->
+                    TempFiles
+                        .createTempFilePath(
+                            "uploaded-media-file-responsive-",
+                            "-$width-$filename"
+                        ).use { transformedImageTempPath ->
                             try {
                                 imageTransformer.transform(
                                     inputFileTempPath.path,
@@ -145,34 +146,35 @@ class MediaRepository(
         }
         return TempFiles.createTempFilePath("uploaded-media-file-", "-$filename").use { inputFileTempPath ->
             Files.copy(inputStream, inputFileTempPath.path, StandardCopyOption.REPLACE_EXISTING)
-            TempFiles.createTempFilePath(
-                "uploaded-media-file-transformed-",
-                "-$targetFormat-$targetWidth-$filename"
-            ).use { transformedImageTempPath ->
-                val imageFormat = (
+            TempFiles
+                .createTempFilePath(
+                    "uploaded-media-file-transformed-",
+                    "-$targetFormat-$targetWidth-$filename"
+                ).use { transformedImageTempPath ->
+                    val imageFormat = (
                         if (targetFormat != null && targetFormat.isNotEmpty()) {
                             ImageFormat.fromFormatName(targetFormat)
                         } else {
                             ImageFormat.fromFileName(filename)
                         }
-                ) ?: ImageFormat.WEBP
-                val targetFileName = FileNames.replaceOrAddExtension(filename, imageFormat.name.lowercase())
-                val targetContentType = imageFormat.contentType
-                imageTransformer.transform(
-                    inputFileTempPath.path,
-                    transformedImageTempPath.path,
-                    imageFormat,
-                    targetWidth = targetWidth
-                )
-                val transformedImageTempFile = transformedImageTempPath.path.toFile()
-                storeFile(
-                    FileInputStream(transformedImageTempFile),
-                    targetFileName,
-                    transformedImageTempFile.length(),
-                    targetContentType,
-                    privateAccess
-                )
-            }
+                    ) ?: ImageFormat.WEBP
+                    val targetFileName = FileNames.replaceOrAddExtension(filename, imageFormat.name.lowercase())
+                    val targetContentType = imageFormat.contentType
+                    imageTransformer.transform(
+                        inputFileTempPath.path,
+                        transformedImageTempPath.path,
+                        imageFormat,
+                        targetWidth = targetWidth
+                    )
+                    val transformedImageTempFile = transformedImageTempPath.path.toFile()
+                    storeFile(
+                        FileInputStream(transformedImageTempFile),
+                        targetFileName,
+                        transformedImageTempFile.length(),
+                        targetContentType,
+                        privateAccess
+                    )
+                }
         }
     }
 
@@ -191,9 +193,16 @@ class MediaRepository(
         var result: Boolean
         dataSource.connection.use { conn ->
             val ps: PreparedStatement =
-                conn.prepareStatement("INSERT INTO media (id, filename, content_type, size, data, private_access, width, height) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+                conn.prepareStatement(
+                    "INSERT INTO media (id, filename, content_type, size, data, private_access, width, height) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                )
             try {
-                ps.setString(1, java.util.UUID.randomUUID().toString())
+                ps.setString(
+                    1,
+                    java.util.UUID
+                        .randomUUID()
+                        .toString()
+                )
                 ps.setString(2, filename)
                 ps.setString(3, contentType)
                 ps.setLong(4, size)
@@ -232,14 +241,23 @@ class MediaRepository(
         val width = widthOpt ?: 0
         var result: Boolean
         dataSource.connection.use { conn ->
-            conn.prepareStatement("DELETE FROM media WHERE filename = ?" + (if (width > 0) { " AND width = ?" } else { "" })).use { ps ->
-                ps.setString(1, filename)
-                if (width > 0) {
-                    ps.setInt(2, width)
+            conn
+                .prepareStatement(
+                    "DELETE FROM media WHERE filename = ?" + (
+                        if (width > 0) {
+                            " AND width = ?"
+                        } else {
+                            ""
+                        }
+                    )
+                ).use { ps ->
+                    ps.setString(1, filename)
+                    if (width > 0) {
+                        ps.setInt(2, width)
+                    }
+                    val updatedCount: Int = ps.executeUpdate()
+                    result = updatedCount == 1
                 }
-                val updatedCount: Int = ps.executeUpdate()
-                result = updatedCount == 1
-            }
         }
         return result
     }
@@ -290,7 +308,8 @@ class MediaRepository(
     open fun listFiles(): List<FileData> {
         val files = mutableListOf<FileData>()
         dataSource.connection.use { conn ->
-            conn.prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media ORDER BY filename")
+            conn
+                .prepareStatement("SELECT filename, content_type, size, private_access, width, height FROM media ORDER BY filename")
                 .use { ps ->
                     ps.executeQuery().use { rs ->
                         while (rs.next()) {
@@ -431,31 +450,31 @@ class MediaRepository(
      * @param size
      * @return
      */
-    private fun selectFile(files: List<FileData>, size: String?): FileData? {
-        return if (files.isEmpty()) null else {
-            val width = size?.let { s -> Parsers.parseIntOpt(s) }
-            if (width == null) {
-                files.firstOrNull()
+    private fun selectFile(files: List<FileData>, size: String?): FileData? = if (files.isEmpty()) {
+        null
+    } else {
+        val width = size?.let { s -> Parsers.parseIntOpt(s) }
+        if (width == null) {
+            files.firstOrNull()
+        } else {
+            var file = files.find { f -> f.width != null && f.width == width }
+            if (file != null) {
+                file
             } else {
-                var file = files.find { f -> f.width != null && f.width == width }
-                if (file != null) {
-                    file
-                } else {
-                    val minWidth = width / 2
-                    val maxWidth = width * 2
-                    file = files.find { f -> f.width != null && (f.width in minWidth..maxWidth) }
-                    file
-                        ?: if (files.all { f -> f.width != null && f.width > width }) {
-                            // All images are bigger than requested size, choose the smallest
-                            files.minByOrNull { f -> f.width!! }
-                        } else if (files.all { f -> f.width != null && f.width < width }) {
-                            // All images are smaller than requested size, choose the biggest
-                            files.maxByOrNull { f -> f.width!! }
-                        } else {
-                            file = files.find { f -> f.width != null && f.width > width }
-                            file ?: files.firstOrNull()
-                        }
-                }
+                val minWidth = width / 2
+                val maxWidth = width * 2
+                file = files.find { f -> f.width != null && (f.width in minWidth..maxWidth) }
+                file
+                    ?: if (files.all { f -> f.width != null && f.width > width }) {
+                        // All images are bigger than requested size, choose the smallest
+                        files.minByOrNull { f -> f.width!! }
+                    } else if (files.all { f -> f.width != null && f.width < width }) {
+                        // All images are smaller than requested size, choose the biggest
+                        files.maxByOrNull { f -> f.width!! }
+                    } else {
+                        file = files.find { f -> f.width != null && f.width > width }
+                        file ?: files.firstOrNull()
+                    }
             }
         }
     }

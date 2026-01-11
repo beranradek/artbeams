@@ -17,7 +17,7 @@ import net.formio.validation.validators.AbstractValidator
  */
 class PasswordValidator<T : ValidatedPasswordData>(
     private val minLength: Int = DEFAULT_MIN_PASSWORD_LENGTH,
-    private val minStrength: Int = DEFAULT_MIN_PASSWORD_STRENGTH,
+    private val minStrength: Int = DEFAULT_MIN_PASSWORD_STRENGTH
 ) : AbstractValidator<T>() {
 
     override fun <U : T> validate(ctx: ValidationContext<U>): MutableList<InterpolatedMessage> {

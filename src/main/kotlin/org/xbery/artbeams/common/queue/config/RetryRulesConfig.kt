@@ -65,25 +65,24 @@ open class RetryRulesConfig {
      * @return recommended time for the next retry attempt,
      * or null if no further attempts should be made.
      */
-    fun calculateNextRetry(now: Instant, age: Instant?, attempts: Int): Instant? {
-        return if (age == null) {
-            now.plus(unknownAgeRetry)
-        } else {
-            val maxDuration = rules
-                .filter { it.until != null }
-                .maxByOrNull { requireNotNull(it.until) }?.until
+    fun calculateNextRetry(now: Instant, age: Instant?, attempts: Int): Instant? = if (age == null) {
+        now.plus(unknownAgeRetry)
+    } else {
+        val maxDuration = rules
+            .filter { it.until != null }
+            .maxByOrNull { requireNotNull(it.until) }
+            ?.until
 
-            // event has reached its maximum duration or maximum attempts
-            val entryWaitTime = Duration.between(now, age)
-            val moreThanMaxAttempts = maxAttempts != null && attempts > requireNotNull(maxAttempts)
-            if (maxDuration == null || maxDuration < entryWaitTime || moreThanMaxAttempts) {
-                val infiniteRule = rules.firstOrNull { it.until == null }
-                infiniteRule?.let { now.plus(requireNotNull(it.delay)) }
-            } else {
-                val sortedRules = rules.sortedBy { it.until }
-                val rule = sortedRules.firstOrNull { requireNotNull(it.until) >= (Duration.between(now, age)) }
-                rule?.let { now + requireNotNull(it.delay) }
-            }
+        // event has reached its maximum duration or maximum attempts
+        val entryWaitTime = Duration.between(now, age)
+        val moreThanMaxAttempts = maxAttempts != null && attempts > requireNotNull(maxAttempts)
+        if (maxDuration == null || maxDuration < entryWaitTime || moreThanMaxAttempts) {
+            val infiniteRule = rules.firstOrNull { it.until == null }
+            infiniteRule?.let { now.plus(requireNotNull(it.delay)) }
+        } else {
+            val sortedRules = rules.sortedBy { it.until }
+            val rule = sortedRules.firstOrNull { requireNotNull(it.until) >= (Duration.between(now, age)) }
+            rule?.let { now + requireNotNull(it.delay) }
         }
     }
 

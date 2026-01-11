@@ -21,17 +21,20 @@ class ArticleCategoryRepository(
     override val table: Table<ArticleCategoryRecord> = ARTICLE_CATEGORY
 
     fun findArticleCategoryIdsByArticleId(articleId: String): List<String> =
-        dsl.select(ARTICLE_CATEGORY.CATEGORY_ID)
+        dsl
+            .select(ARTICLE_CATEGORY.CATEGORY_ID)
             .from(ARTICLE_CATEGORY)
             .where(ARTICLE_CATEGORY.ARTICLE_ID.eq(articleId))
             .fetch { r -> requireNotNull(r[ARTICLE_CATEGORY.CATEGORY_ID]) }
 
     fun updateArticleCategories(articleId: String, categoryIds: List<String>) {
-        dsl.deleteFrom(ARTICLE_CATEGORY)
+        dsl
+            .deleteFrom(ARTICLE_CATEGORY)
             .where(ARTICLE_CATEGORY.ARTICLE_ID.eq(articleId))
             .execute()
         for (categoryId in categoryIds) {
-            dsl.insertInto(ARTICLE_CATEGORY)
+            dsl
+                .insertInto(ARTICLE_CATEGORY)
                 .set(ARTICLE_CATEGORY.ARTICLE_ID, articleId)
                 .set(ARTICLE_CATEGORY.CATEGORY_ID, categoryId)
                 .execute()

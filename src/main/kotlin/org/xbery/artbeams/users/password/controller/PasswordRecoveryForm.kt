@@ -16,12 +16,14 @@ import org.xbery.artbeams.users.password.domain.PasswordRecoveryData
 open class PasswordRecoveryForm {
     companion object {
         val definition: FormMapping<PasswordRecoveryData> =
-            Forms.basic(PasswordRecoveryData::class.java, "passwordRecovery")
-                .field(Forms.field<String>("email", Field.EMAIL)
-                    .validator(RequiredValidator())
-                    .validator(ChainedEmailValidator.INSTANCE)
-                    .build()
-                )
-                .build(FormUtils.CZ_CONFIG)
+            Forms
+                .basic(PasswordRecoveryData::class.java, "passwordRecovery")
+                .field(
+                    Forms
+                        .field<String>("email", Field.EMAIL)
+                        .validator(RequiredValidator())
+                        .validator(ChainedEmailValidator.INSTANCE)
+                        .build()
+                ).build(FormUtils.CZ_CONFIG)
     }
 }

@@ -49,9 +49,7 @@ object Base62TestInputs {
         return arr
     }
 
-    private fun createZeroesByteArray(size: Int): ByteArray {
-        return ByteArray(size)
-    }
+    private fun createZeroesByteArray(size: Int): ByteArray = ByteArray(size)
 
     private fun createPseudoRandomByteArray(seed: Int, size: Int): ByteArray {
         val arr: ByteArray = ByteArray(size)

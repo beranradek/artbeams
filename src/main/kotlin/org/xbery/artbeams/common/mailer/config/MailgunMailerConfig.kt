@@ -10,13 +10,12 @@ import org.springframework.stereotype.Component
 import org.xbery.artbeams.config.repository.AppConfig
 import java.util.concurrent.TimeUnit
 
-
 /**
  * Configuration of Mailer.
  * @author Radek Beran
  */
 @Component
-open class MailgunMailerConfig (
+open class MailgunMailerConfig(
     private val appConfig: AppConfig
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -37,7 +36,8 @@ open class MailgunMailerConfig (
     fun mailgunMessagesApi(): MailgunMessagesApi {
         // Configured EU/US geographical base URL of service
         try {
-            val api = MailgunClient.config(getApiBaseUrl(), getApiKey())
+            val api = MailgunClient
+                .config(getApiBaseUrl(), getApiKey())
                 .logLevel(feign.Logger.Level.BASIC)
                 .retryer(feign.Retryer.Default())
                 .logger(feign.Logger.ErrorLogger())

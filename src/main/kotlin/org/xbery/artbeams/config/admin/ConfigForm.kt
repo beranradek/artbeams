@@ -8,7 +8,8 @@ import org.xbery.artbeams.config.domain.EditedConfig
 
 open class ConfigForm {
     companion object {
-        val definition: FormMapping<EditedConfig> = Forms.basic(EditedConfig::class.java, "config")
+        val definition: FormMapping<EditedConfig> = Forms
+            .basic(EditedConfig::class.java, "config")
             .field<String>("originalKey", Field.HIDDEN)
             .field<String>("entryKey", Field.TEXT)
             .field<String>("entryValue", Field.TEXT)

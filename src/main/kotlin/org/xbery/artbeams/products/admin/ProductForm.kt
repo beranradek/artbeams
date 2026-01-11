@@ -14,7 +14,8 @@ import java.math.BigDecimal
 open class ProductForm {
     companion object {
         val definition: FormMapping<EditedProduct> =
-            Forms.basic(EditedProduct::class.java, "product")
+            Forms
+                .basic(EditedProduct::class.java, "product")
                 .field<String>("id", Field.HIDDEN)
                 .field<String>("slug", Field.TEXT)
                 .field<String>("title", Field.TEXT)

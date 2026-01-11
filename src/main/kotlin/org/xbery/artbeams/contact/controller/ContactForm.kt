@@ -16,18 +16,21 @@ import org.xbery.artbeams.contact.domain.ContactRequest
 open class ContactForm {
     companion object {
         val definition: FormMapping<ContactRequest> =
-            Forms.basic(ContactRequest::class.java, "contact")
+            Forms
+                .basic(ContactRequest::class.java, "contact")
                 .field<String>("name", Field.TEXT)
-                .field(Forms.field<String>("email", Field.EMAIL)
-                    .validator(RequiredValidator())
-                    .validator(ChainedEmailValidator.INSTANCE)
-                    .build()
-                )
-                .field(Forms.field<String>("phone", Field.TEXT)
-                    .validator(PhoneValidator.getInstance())
-                    .build()
-                )
-                .field<String>("message", Field.TEXT)
+                .field(
+                    Forms
+                        .field<String>("email", Field.EMAIL)
+                        .validator(RequiredValidator())
+                        .validator(ChainedEmailValidator.INSTANCE)
+                        .build()
+                ).field(
+                    Forms
+                        .field<String>("phone", Field.TEXT)
+                        .validator(PhoneValidator.getInstance())
+                        .build()
+                ).field<String>("message", Field.TEXT)
                 .build(FormUtils.CZ_CONFIG)
     }
 }

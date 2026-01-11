@@ -17,12 +17,14 @@ import java.time.Instant
  *
  * @author Radek Beran
  */
-abstract class AbstractSqlQueueEntryRepository<R: UpdatableRecord<R>, E : AbstractQueueEntry>(
+abstract class AbstractSqlQueueEntryRepository<R : UpdatableRecord<R>, E : AbstractQueueEntry>(
     override val table: Table<R>,
     protected val queueEntryMapper: AbstractQueueEntryMapper<R, E>,
     protected val queueEntryUnmapper: AbstractQueueEntryUnmapper<E, R>,
     override val dsl: DSLContext
-) : QueueEntryRepository<E>, AbstractRecordFetcher<R>, AbstractRecordStorage<E, R> {
+) : QueueEntryRepository<E>,
+    AbstractRecordFetcher<R>,
+    AbstractRecordStorage<E, R> {
 
     protected val logger: Logger = LoggerFactory.getLogger(table.name)
 
@@ -36,13 +38,15 @@ abstract class AbstractSqlQueueEntryRepository<R: UpdatableRecord<R>, E : Abstra
         val next = if (shift == null) null else now.plus(shift)
         check(next == null || next > now) { "time shift must be positive" }
 
-        val entryId = dsl.selectFrom(table)
+        val entryId = dsl
+            .selectFrom(table)
             .where(findNextEntryCondition(now))
             .orderBy(nextActionTimeField)
             .fetchOne(idField)
 
         return entryId?.let {
-            val updatedCount = dsl.update(table)
+            val updatedCount = dsl
+                .update(table)
                 .set(nextActionTimeField, next)
                 .set(attemptsField, attemptsField + 1)
                 .where(idField.eq(it))
@@ -69,9 +73,8 @@ abstract class AbstractSqlQueueEntryRepository<R: UpdatableRecord<R>, E : Abstra
         return requireNotNull(insertedEntry) { "Entry not found: ${entry.id}" }
     }
 
-    override fun deleteExpiredEntries(now: Instant): Int {
-        return dsl.deleteFrom(table)
-            .where(expirationTimeField.lessOrEqual(now))
-            .execute()
-    }
+    override fun deleteExpiredEntries(now: Instant): Int = dsl
+        .deleteFrom(table)
+        .where(expirationTimeField.lessOrEqual(now))
+        .execute()
 }

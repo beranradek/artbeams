@@ -20,7 +20,9 @@ import java.util.*
  * Signs PDF document by adding customer's metadata, invisible pixels and applying protection policy.
  */
 @Component
-class PdfSigner(private val appConfig: AppConfig) {
+class PdfSigner(
+    private val appConfig: AppConfig
+) {
 
     /**
      * Adds user metadata to the PDF document and includes an invisible pixel and user information.
@@ -86,7 +88,8 @@ class PdfSigner(private val appConfig: AppConfig) {
         // Load the lock image
         val lockImage = PDImageXObject.createFromByteArray(
             document,
-            inputStreamToByteArray(getLockImageStream()), SECURED_LOCK_IMAGE_NAME
+            inputStreamToByteArray(getLockImageStream()),
+            SECURED_LOCK_IMAGE_NAME
         )
 
         // Create a content stream for the new page
@@ -133,8 +136,8 @@ class PdfSigner(private val appConfig: AppConfig) {
             y -= 20f // Move down for the statement paragraph
             val statementText =
                 "Prohlášení: Tento materiál je informačním produktem. Jakékoliv šíření nebo poskytování " +
-                        "třetím osobám bez souhlasu autora je zakázáno a je porušením autorského zákona, které může být stíháno. " +
-                        "Děkuji za pochopení a respektování tohoto sdělení."
+                    "třetím osobám bez souhlasu autora je zakázáno a je porušením autorského zákona, které může být stíháno. " +
+                    "Děkuji za pochopení a respektování tohoto sdělení."
             addWrappedText(contentStream, statementText, font, 10f, x, y, maxWidth)
         }
     }
@@ -216,7 +219,8 @@ class PdfSigner(private val appConfig: AppConfig) {
 //    }
 
     private fun getLockImageStream(): InputStream =
-        requireNotNull(javaClass.getResourceAsStream(SECURED_LOCK_IMAGE_NAME)) { // placed in /src/main/resources
+        requireNotNull(javaClass.getResourceAsStream(SECURED_LOCK_IMAGE_NAME)) {
+            // placed in /src/main/resources
             "Lock image was not found"
         }
 

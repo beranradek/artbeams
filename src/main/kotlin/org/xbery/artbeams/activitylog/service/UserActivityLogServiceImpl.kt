@@ -5,7 +5,6 @@ import org.xbery.artbeams.activitylog.domain.ActionType
 import org.xbery.artbeams.activitylog.domain.EntityType
 import org.xbery.artbeams.activitylog.domain.UserActivityLog
 import org.xbery.artbeams.activitylog.repository.UserActivityLogRepository
-import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.common.overview.ResultPage
 import java.time.Instant
@@ -27,13 +26,9 @@ class UserActivityLogServiceImpl(
         entityType: EntityType?,
         startTime: Instant?,
         endTime: Instant?
-    ): ResultPage<UserActivityLog> {
-        return repository.findActivityLogs(pagination, userId, actionType, entityType, startTime, endTime)
-    }
+    ): ResultPage<UserActivityLog> = repository.findActivityLogs(pagination, userId, actionType, entityType, startTime, endTime)
 
-    override fun findRecentUserActivity(userId: String, limit: Int): List<UserActivityLog> {
-        return repository.findRecentUserActivity(userId, limit)
-    }
+    override fun findRecentUserActivity(userId: String, limit: Int): List<UserActivityLog> = repository.findRecentUserActivity(userId, limit)
 
     override fun logActivity(
         userId: String,
@@ -43,7 +38,5 @@ class UserActivityLogServiceImpl(
         ipAddress: String?,
         userAgent: String?,
         details: String?
-    ): UserActivityLog {
-        return repository.logActivity(userId, actionType, entityType, entityId, ipAddress, userAgent, details)
-    }
+    ): UserActivityLog = repository.logActivity(userId, actionType, entityType, entityId, ipAddress, userAgent, details)
 }

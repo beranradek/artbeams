@@ -9,10 +9,6 @@ import java.time.ZoneId
  *
  * @author Radek Beran
  */
-fun Instant?.toDbDateTime(): LocalDateTime? {
-    return this?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
-}
+fun Instant?.toDbDateTime(): LocalDateTime? = this?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
 
-fun LocalDateTime?.fromDbDateTime(): Instant? {
-    return this?.atZone(ZoneId.systemDefault())?.toInstant()
-}
+fun LocalDateTime?.fromDbDateTime(): Instant? = this?.atZone(ZoneId.systemDefault())?.toInstant()

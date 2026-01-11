@@ -1,6 +1,5 @@
 package org.xbery.artbeams.orders.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -14,6 +13,7 @@ import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.orders.admin.service.OrderCreatingAdminService
 import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Order administration routes.
@@ -54,13 +54,11 @@ class OrderAdminController(
     }
 
     @GetMapping("/create")
-    fun createForm(request: HttpServletRequest): Any {
-        return renderCreateForm(
-            request, 
-            orderCreatingAdminService.prepareNewOrderData(), 
-            ValidationResult.empty
-        )
-    }
+    fun createForm(request: HttpServletRequest): Any = renderCreateForm(
+        request,
+        orderCreatingAdminService.prepareNewOrderData(),
+        ValidationResult.empty
+    )
 
     @PostMapping("/create")
     fun create(request: HttpServletRequest): Any {
@@ -72,7 +70,7 @@ class OrderAdminController(
         } else {
             val createData: CreateOrderData = formData.data
             val (success, errorMessage) = orderCreatingAdminService.createOrder(createData)
-            
+
             if (success) {
                 redirect("/admin/orders")
             } else {
@@ -128,7 +126,7 @@ class OrderAdminController(
         request: HttpServletRequest
     ): Any {
         orderService.updateOrderNotes(id, notes)
-        return redirect("/admin/orders/${id}")
+        return redirect("/admin/orders/$id")
     }
 
     @DeleteMapping("/{id}")

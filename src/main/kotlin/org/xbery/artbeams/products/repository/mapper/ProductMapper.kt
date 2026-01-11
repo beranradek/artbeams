@@ -13,34 +13,32 @@ import org.xbery.artbeams.products.domain.Product
 @Component
 class ProductMapper : RecordMapper<ProductsRecord, Product> {
 
-    override fun map(record: ProductsRecord): Product {
-        return Product(
-            common = AssetAttributes(
-                id = requireNotNull(record.id),
-                created = requireNotNull(record.created),
-                createdBy = requireNotNull(record.createdBy),
-                modified = requireNotNull(record.modified),
-                modifiedBy = requireNotNull(record.modifiedBy)
-            ),
-            slug = requireNotNull(record.slug),
-            title = requireNotNull(record.title),
-            subtitle = record.subtitle,
-            fileName = record.filename,
-            listingImage = record.listingImage,
-            image = record.image,
-            confirmationMailingGroupId = record.confirmationMailingGroupId,
-            mailingGroupId = record.mailingGroupId,
-            priceRegular = Price(
-                price = requireNotNull(record.priceRegular),
+    override fun map(record: ProductsRecord): Product = Product(
+        common = AssetAttributes(
+            id = requireNotNull(record.id),
+            created = requireNotNull(record.created),
+            createdBy = requireNotNull(record.createdBy),
+            modified = requireNotNull(record.modified),
+            modifiedBy = requireNotNull(record.modifiedBy)
+        ),
+        slug = requireNotNull(record.slug),
+        title = requireNotNull(record.title),
+        subtitle = record.subtitle,
+        fileName = record.filename,
+        listingImage = record.listingImage,
+        image = record.image,
+        confirmationMailingGroupId = record.confirmationMailingGroupId,
+        mailingGroupId = record.mailingGroupId,
+        priceRegular = Price(
+            price = requireNotNull(record.priceRegular),
+            currency = Price.DEFAULT_CURRENCY
+        ),
+        priceDiscounted = record.priceDiscounted?.let {
+            Price(
+                price = requireNotNull(it),
                 currency = Price.DEFAULT_CURRENCY
-            ),
-            priceDiscounted = record.priceDiscounted?.let {
-                Price(
-                    price = requireNotNull(it),
-                    currency = Price.DEFAULT_CURRENCY
-                )
-            },
-            simpleShopProductId = record.simpleShopProductId
-        )
-    }
+            )
+        },
+        simpleShopProductId = record.simpleShopProductId
+    )
 }

@@ -1454,7 +1454,6 @@ object Disposable {
         "your-mail.com"
     )
 
-
     @Throws(Exception::class)
     private fun check() {
         val excluded = listOf("poczta.onet.pl")
@@ -1479,7 +1478,8 @@ object Disposable {
         while (scanner.hasNext()) {
             val line = scanner.nextLine()
             if (!line.startsWith("#")) {
-                if (!disposableList.contains(line.lowercase(Locale.getDefault())) && !excluded.contains(
+                if (!disposableList.contains(line.lowercase(Locale.getDefault())) &&
+                    !excluded.contains(
                         line.lowercase(
                             Locale.getDefault()
                         )

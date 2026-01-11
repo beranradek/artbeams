@@ -8,20 +8,16 @@ data class Config(
     val entryKey: String,
     val entryValue: String
 ) {
-    fun updatedWith(edited: EditedConfig): Config {
-        return this.copy(
-            entryKey = edited.entryKey,
-            entryValue = edited.entryValue
-        )
-    }
+    fun updatedWith(edited: EditedConfig): Config = this.copy(
+        entryKey = edited.entryKey,
+        entryValue = edited.entryValue
+    )
 
-    fun toEdited(): EditedConfig {
-        return EditedConfig(
-            originalKey = this.entryKey,
-            entryKey = this.entryKey,
-            entryValue = this.entryValue
-        )
-    }
+    fun toEdited(): EditedConfig = EditedConfig(
+        originalKey = this.entryKey,
+        entryKey = this.entryKey,
+        entryValue = this.entryValue
+    )
 
     companion object {
         val Empty: Config = Config("", "")

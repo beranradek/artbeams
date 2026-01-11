@@ -10,7 +10,9 @@ import java.net.URLEncoder
  * @author Radek Beran
  */
 @Component
-class WebLinkBuilder(private val appConfig: AppConfig) {
+class WebLinkBuilder(
+    private val appConfig: AppConfig
+) {
 
     fun buildWebLink(relativePath: String, urlParams: Map<String, String>): String {
         val urlWithPath = appConfig.findConfig("web.baseUrl") + relativePath

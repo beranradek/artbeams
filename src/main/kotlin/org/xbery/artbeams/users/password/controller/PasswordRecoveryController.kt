@@ -1,6 +1,5 @@
 package org.xbery.artbeams.users.password.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -18,6 +17,7 @@ import org.xbery.artbeams.common.error.logger
 import org.xbery.artbeams.common.form.FormErrors
 import org.xbery.artbeams.users.password.domain.PasswordRecoveryData
 import org.xbery.artbeams.users.password.recovery.service.PasswordRecoveryService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Password recovery form.
@@ -35,37 +35,33 @@ open class PasswordRecoveryController(
     private val passwordRecoveryFormDef: FormMapping<PasswordRecoveryData> = PasswordRecoveryForm.definition
 
     @GetMapping
-    fun passwordRecoveryForm(request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            renderForm(request, FormData(PasswordRecoveryData(""), ValidationResult.empty))
-        }
+    fun passwordRecoveryForm(request: HttpServletRequest): Any = tryOrErrorResponse(request) {
+        renderForm(request, FormData(PasswordRecoveryData(""), ValidationResult.empty))
     }
 
     @PostMapping
-    fun passwordRecoveryFormSubmit(request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            val params = ServletRequestParams(request)
-            val formData = passwordRecoveryFormDef.bind(params)
-            if (!formData.isValid) {
-                logger.warn("Invalid password recovery form data: ${formData.validationResult}")
-                renderForm(request, formData)
+    fun passwordRecoveryFormSubmit(request: HttpServletRequest): Any = tryOrErrorResponse(request) {
+        val params = ServletRequestParams(request)
+        val formData = passwordRecoveryFormDef.bind(params)
+        if (!formData.isValid) {
+            logger.warn("Invalid password recovery form data: ${formData.validationResult}")
+            renderForm(request, formData)
+        } else {
+            val recaptchaResult = recaptchaService.verifyRecaptcha(request)
+            if (!recaptchaResult.success) {
+                val ipAddress: String = request.remoteAddr
+                val userAgent: String = request.getHeader(HttpHeaders.USER_AGENT)
+                logger.warn(
+                    "Captcha token was incorrect, score=${recaptchaResult.score}, " +
+                        "for password recovery, email=${formData.data.email}, " +
+                        "IP=$ipAddress, User-Agent=$userAgent"
+                )
+                renderForm(request, FormErrors.formDataWithCaptchaInvalidError(formData))
             } else {
-                val recaptchaResult = recaptchaService.verifyRecaptcha(request)
-                if (!recaptchaResult.success) {
-                    val ipAddress: String = request.remoteAddr
-                    val userAgent: String = request.getHeader(HttpHeaders.USER_AGENT)
-                    logger.warn(
-                        "Captcha token was incorrect, score=${recaptchaResult.score}, " +
-                            "for password recovery, email=${formData.data.email}, " +
-                            "IP=${ipAddress}, User-Agent=$userAgent"
-                    )
-                    renderForm(request, FormErrors.formDataWithCaptchaInvalidError(formData))
-                } else {
-                    logger.info("Valid password recovery form data, email=${formData.data.email}")
-                    val passwordRecoveryData = formData.data
-                    passwordRecoveryService.requestPasswordRecovery(passwordRecoveryData.email, request.remoteAddr)
-                    redirect("$PASSWORD_RECOVERY_PATH/sent")
-                }
+                logger.info("Valid password recovery form data, email=${formData.data.email}")
+                val passwordRecoveryData = formData.data
+                passwordRecoveryService.requestPasswordRecovery(passwordRecoveryData.email, request.remoteAddr)
+                redirect("$PASSWORD_RECOVERY_PATH/sent")
             }
         }
     }

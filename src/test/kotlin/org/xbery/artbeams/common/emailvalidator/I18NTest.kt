@@ -3,7 +3,8 @@ package org.xbery.artbeams.common.emailvalidator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.xbery.artbeams.common.emailvalidator.I18N.getTranslation
-import java.util.*
+import java.util.Locale
+import java.util.ResourceBundle
 
 /**
  * Created by TPa on 10.07.18.

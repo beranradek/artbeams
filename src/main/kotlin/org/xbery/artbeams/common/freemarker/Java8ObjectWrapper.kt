@@ -13,11 +13,9 @@ import java.util.*
 class Java8ObjectWrapper : DefaultObjectWrapper {
     constructor(incompatibleImprovements: Version?) : super(incompatibleImprovements)
 
-    override fun handleUnknownType(obj: Any?): TemplateModel {
-        return if (obj is Instant) {
-            super.wrap(Date.from(obj))
-        } else {
-            super.handleUnknownType(obj)
-        }
+    override fun handleUnknownType(obj: Any?): TemplateModel = if (obj is Instant) {
+        super.wrap(Date.from(obj))
+    } else {
+        super.handleUnknownType(obj)
     }
 }

@@ -42,17 +42,14 @@ class OrderServiceImpl(
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun generateOrderNumber(): String
-        = orderNumberGenerator.generateOrderNumber()
+    override fun generateOrderNumber(): String = orderNumberGenerator.generateOrderNumber()
 
-    override fun createOrderOfProduct(userId: String, product: Product): Order {
-        return createOrderOfProduct(
-            userId,
-            product,
-            orderNumberGenerator.generateOrderNumber(),
-            OrderState.CREATED
-        )
-    }
+    override fun createOrderOfProduct(userId: String, product: Product): Order = createOrderOfProduct(
+        userId,
+        product,
+        orderNumberGenerator.generateOrderNumber(),
+        OrderState.CREATED
+    )
 
     override fun createOrderOfProduct(userId: String, product: Product, orderNumber: String, orderState: OrderState): Order {
         val commonAttributes = AssetAttributes.EMPTY.updatedWith(userId)
@@ -110,11 +107,9 @@ class OrderServiceImpl(
     override fun findOrdersByUserId(userId: String): List<OrderInfo> =
         orderRepository.findOrdersByUserId(userId)
 
-    override fun findOrder(orderId: String): OrderInfo {
-        return requireFound(
-            orderRepository.findOrders().find { it.id == orderId }
-        ) { "Order with ID $orderId not found" }
-    }
+    override fun findOrder(orderId: String): OrderInfo = requireFound(
+        orderRepository.findOrders().find { it.id == orderId }
+    ) { "Order with ID $orderId not found" }
 
     override fun requireByOrderNumber(orderNumber: String): Order {
         val order = orderRepository.requireByOrderNumber(orderNumber)
@@ -149,7 +144,8 @@ class OrderServiceImpl(
                     ?: productService.findProducts().find { it.id == orderItem.productId }
 
                 product?.mailingGroupId?.let { mailingGroupId ->
-                    val userName = "${user.firstName ?: ""} ${user.lastName ?: ""}".trim()
+                    val userName = "${user.firstName ?: ""} ${user.lastName ?: ""}"
+                        .trim()
                         .ifEmpty { user.login }
 
                     mailingApi.subscribeToGroup(
@@ -216,9 +212,11 @@ class OrderServiceImpl(
         return result
     }
 
-    override fun findOrderItemsOfUserAndProduct(userId: String, productId: String): List<OrderItem> {
-        return orderItemRepository.findAllOrderItemsOfUserAndProduct(userId, productId)
-    }
+    override fun findOrderItemsOfUserAndProduct(userId: String, productId: String): List<OrderItem> = orderItemRepository
+        .findAllOrderItemsOfUserAndProduct(
+            userId,
+            productId
+        )
 
     override fun updateOrderItemDownloaded(orderItemId: String, downloaded: Instant?): OrderItem {
         val orderItem = orderItemRepository.requireById(orderItemId)

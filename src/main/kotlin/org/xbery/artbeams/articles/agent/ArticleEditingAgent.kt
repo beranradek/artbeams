@@ -68,7 +68,8 @@ class ArticleEditingAgent(
 
     // Conversation history storage with TTL and size limits, keyed by session ID
     // Thread-safe with automatic expiration after 2 hours of inactivity
-    private val conversationHistories: Cache<String, ConversationHistory> = Caffeine.newBuilder()
+    private val conversationHistories: Cache<String, ConversationHistory> = Caffeine
+        .newBuilder()
         .expireAfterAccess(2, TimeUnit.HOURS)
         .maximumSize(1000)
         .build()
@@ -262,8 +263,10 @@ class ArticleEditingAgent(
                 try {
                     ChatModel.of(modelName)
                 } catch (e: Exception) {
-                    logger.warn("Invalid model name '$modelName' from $MODEL_ENV_VAR, " +
-                        "using default: ${DEFAULT_MODEL.value()}. Original message: ${e.message}")
+                    logger.warn(
+                        "Invalid model name '$modelName' from $MODEL_ENV_VAR, " +
+                            "using default: ${DEFAULT_MODEL.value()}. Original message: ${e.message}"
+                    )
                     DEFAULT_MODEL
                 }
             } else {
@@ -271,7 +274,8 @@ class ArticleEditingAgent(
             }
 
             // Build params with conversation history
-            val builder = ChatCompletionCreateParams.builder()
+            val builder = ChatCompletionCreateParams
+                .builder()
                 .model(model)
                 .maxCompletionTokens(30000)
 
@@ -376,7 +380,8 @@ class ArticleEditingAgent(
         val parts = mutableListOf<ChatCompletionContentPart>()
 
         // Add text part
-        val textPart = ChatCompletionContentPartText.builder()
+        val textPart = ChatCompletionContentPartText
+            .builder()
             .text(text)
             .build()
         parts.add(ChatCompletionContentPart.ofText(textPart))
@@ -389,14 +394,15 @@ class ArticleEditingAgent(
                     val mimeType = file.contentType
                     val dataUrl = "data:$mimeType;base64,$base64Image"
 
-                    val imagePart = ChatCompletionContentPartImage.builder()
+                    val imagePart = ChatCompletionContentPartImage
+                        .builder()
                         .imageUrl(
-                            ChatCompletionContentPartImage.ImageUrl.builder()
+                            ChatCompletionContentPartImage.ImageUrl
+                                .builder()
                                 .url(dataUrl)
                                 .detail(ChatCompletionContentPartImage.ImageUrl.Detail.AUTO)
                                 .build()
-                        )
-                        .build()
+                        ).build()
 
                     parts.add(ChatCompletionContentPart.ofImageUrl(imagePart))
                     logger.info("Added image file to message: ${file.filename} (${file.size} bytes)")
@@ -418,11 +424,13 @@ class ArticleEditingAgent(
     private fun isImageFile(file: UploadedFileData): Boolean {
         val contentType = file.contentType.lowercase()
         return contentType.startsWith("image/") &&
-               (contentType.contains("jpeg") ||
-                contentType.contains("jpg") ||
-                contentType.contains("png") ||
-                contentType.contains("gif") ||
-                contentType.contains("webp"))
+            (
+                contentType.contains("jpeg") ||
+                    contentType.contains("jpg") ||
+                    contentType.contains("png") ||
+                    contentType.contains("gif") ||
+                    contentType.contains("webp")
+            )
     }
 
     /**
@@ -446,7 +454,11 @@ class ArticleEditingAgent(
      */
     fun extractArticleContent(response: String): String? {
         val pattern = Regex("```(?:markdown)?\\s*\\n([\\s\\S]*?)\\n```")
-        return pattern.find(response)?.groupValues?.get(1)?.trim()
+        return pattern
+            .find(response)
+            ?.groupValues
+            ?.get(1)
+            ?.trim()
     }
 
     /**

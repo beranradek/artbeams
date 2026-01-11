@@ -25,13 +25,13 @@ data class Article(
     val body: String,
     val keywords: String,
     val showOnBlog: Boolean,
-    val editor: String,
+    val editor: String
 ) : Asset(),
     ValidityAsset {
     fun updatedWith(
         edited: EditedArticle,
         htmlBody: String,
-        userId: String,
+        userId: String
     ): Article =
         this.copy(
             common = this.common.updatedWith(userId),
@@ -45,7 +45,7 @@ data class Article(
             body = htmlBody,
             keywords = edited.keywords,
             showOnBlog = edited.showOnBlog,
-            editor = edited.editor,
+            editor = edited.editor
         )
 
     fun toEdited(categories: List<String>): EditedArticle {
@@ -72,7 +72,7 @@ data class Article(
             },
             this.keywords,
             this.showOnBlog,
-            categories,
+            categories
         )
     }
 
@@ -91,7 +91,7 @@ data class Article(
                 "",
                 "",
                 true,
-                "markdown",
+                "markdown"
             )
         val EmptyEdited: EditedArticle = Empty.toEdited(ArrayList<String>())
     }

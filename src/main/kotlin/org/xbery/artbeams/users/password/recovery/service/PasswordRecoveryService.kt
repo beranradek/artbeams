@@ -24,7 +24,8 @@ class PasswordRecoveryService(
         val user = userRepository.findByLogin(email)
         if (user == null) {
             val msg = "User with login does not exist. [login=$email, ipAddress=$ipAddress]"
-            logger.atInfo()
+            logger
+                .atInfo()
                 .setMessage(msg)
                 .addKeyValue("login", email)
                 .addKeyValue("ipAddress", ipAddress)
@@ -40,10 +41,8 @@ class PasswordRecoveryService(
         return PasswordRecoveryMailData(login, authToken)
     }
 
-    private fun generateToken(login: String): String {
-        return codeGenerator.generateEncryptedAuthorizationCode(
-            PasswordSetupData.TOKEN_PURPOSE, // re-using password setup logic
-            login
-        )
-    }
+    private fun generateToken(login: String): String = codeGenerator.generateEncryptedAuthorizationCode(
+        PasswordSetupData.TOKEN_PURPOSE, // re-using password setup logic
+        login
+    )
 }

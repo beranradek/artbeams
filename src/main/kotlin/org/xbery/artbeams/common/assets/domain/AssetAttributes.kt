@@ -24,15 +24,15 @@ data class AssetAttributes(
                 this.id
             },
             created = if (this.created == EMPTY_DATE) {
-                    now
-                } else {
-                    this.created
-                },
+                now
+            } else {
+                this.created
+            },
             createdBy = if (this.createdBy == EMPTY_ID) {
-                    userId
-                } else {
-                    this.createdBy
-                },
+                userId
+            } else {
+                this.createdBy
+            },
             modified = now,
             modifiedBy = userId
         )
@@ -40,6 +40,7 @@ data class AssetAttributes(
 
     companion object {
         fun newId() = UUID.randomUUID().toString()
+
         const val EMPTY_ID = "0"
         val EMPTY_DATE: Instant = Instant.EPOCH
         val EMPTY = AssetAttributes(EMPTY_ID, EMPTY_DATE, EMPTY_ID, EMPTY_DATE, EMPTY_ID)

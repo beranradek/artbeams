@@ -4,7 +4,6 @@ import com.blueconic.browscap.BrowsCapField
 import com.blueconic.browscap.Capabilities
 import com.blueconic.browscap.UserAgentParser
 import com.blueconic.browscap.UserAgentService
-import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
@@ -23,6 +22,7 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.parser.Parsers
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * @author Radek Beran
@@ -65,24 +65,20 @@ class UserAccessServiceImpl(
         entityKey: EntityKey,
         ipAddress: String,
         userAgent: String
-    ): CompletableFuture<Any> {
-        return CompletableFuture.supplyAsync {
-            try {
-                val userAccess = UserAccess(AssetAttributes.newId(), Instant.now(), ipAddress, userAgent, entityKey)
-                userAccessRepository.create(userAccess)
-            } catch (_: Exception) {
-                // This could be for e.g. also org.postgresql.util.PSQLException...
-                // There is no easy cross-platform way how to identify duplicate key exception
-                // case _: SQLIntegrityConstraintViolationException =>
-                // Non-unique access for given day, access will not be stored for the second time
-            }
+    ): CompletableFuture<Any> = CompletableFuture.supplyAsync {
+        try {
+            val userAccess = UserAccess(AssetAttributes.newId(), Instant.now(), ipAddress, userAgent, entityKey)
+            userAccessRepository.create(userAccess)
+        } catch (_: Exception) {
+            // This could be for e.g. also org.postgresql.util.PSQLException...
+            // There is no easy cross-platform way how to identify duplicate key exception
+            // case _: SQLIntegrityConstraintViolationException =>
+            // Non-unique access for given day, access will not be stored for the second time
         }
     }
 
     @Cacheable(EntityAccessCount.CacheName)
-    override fun findCountOfVisits(entityKey: EntityKey): Int {
-        return entityAccessCountRepository.findByEntityKey(entityKey)?.count ?: 0
-    }
+    override fun findCountOfVisits(entityKey: EntityKey): Int = entityAccessCountRepository.findByEntityKey(entityKey)?.count ?: 0
 
     // Cron pattern: second, minute, hour, day, month, weekday
     @Scheduled(cron = "0 1 0 * * *", zone = APP_ZONE_ID)
@@ -92,13 +88,17 @@ class UserAccessServiceImpl(
         logger.info("$operationMsg - started")
         val currentTime = Instant.now()
         val accesses = userAccessRepository.filterAccessTimeLessThanEqual(currentTime)
-        val entitiesToCountIncrements: Map<EntityKey, Int> = accesses.groupBy { it.entityKey }
+        val entitiesToCountIncrements: Map<EntityKey, Int> = accesses
+            .groupBy { it.entityKey }
             .mapValues { access -> access.value.size }
         val entityKeys: List<EntityKey> = entitiesToCountIncrements.keys.toList()
         val entityAccessCounts = entityAccessCountRepository.findByEntityTypesAndIds(entityKeys)
         val entityKeysToCounts: Map<EntityKey, EntityAccessCount?> =
-            entityAccessCounts.groupBy { it.entityKey }
-                .mapValues { entityAccess -> entityAccess.value.firstOrNull() /* only one exists */ }
+            entityAccessCounts
+                .groupBy { it.entityKey }
+                .mapValues { entityAccess ->
+                    entityAccess.value.firstOrNull() // only one exists
+                }
         for ((entityKey, countIncrement) in entitiesToCountIncrements) {
             // Get current aggregated count
             val currentEntityAccessCount = entityKeysToCounts[entityKey]

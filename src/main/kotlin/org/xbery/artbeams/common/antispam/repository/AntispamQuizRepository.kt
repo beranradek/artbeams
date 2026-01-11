@@ -30,9 +30,7 @@ class AntispamQuizRepository(
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
     @Cacheable(AntispamQuiz.CacheName)
-    override fun findAll(): List<AntispamQuiz> {
-        return super.findAll()
-    }
+    override fun findAll(): List<AntispamQuiz> = super.findAll()
 
     /**
      * Returns randomly selected antispam quiz.
@@ -49,7 +47,8 @@ class AntispamQuizRepository(
     }
 
     fun findByQuestion(question: String): AntispamQuiz? =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(ANTISPAM_QUIZ.QUESTION.eq(question))
             .fetchOne(mapper)
 

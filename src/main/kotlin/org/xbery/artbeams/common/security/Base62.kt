@@ -9,7 +9,9 @@ import kotlin.math.ln
  *
  * @author Sebastian Ruhleder, sebastian@seruco.io (original author)
  */
-class Base62 private constructor(private val alphabet: ByteArray) {
+class Base62 private constructor(
+    private val alphabet: ByteArray
+) {
     private var lookup: ByteArray
 
     init {
@@ -131,10 +133,9 @@ class Base62 private constructor(private val alphabet: ByteArray) {
     /**
      * Estimates the length of the output in bytes.
      */
-    private fun estimateOutputLength(inputLength: Int, sourceBase: Int, targetBase: Int): Int {
-        return ceil((ln(sourceBase.toDouble()) / ln(targetBase.toDouble())) * inputLength)
-            .toInt()
-    }
+    private fun estimateOutputLength(inputLength: Int, sourceBase: Int, targetBase: Int): Int = ceil(
+        (ln(sourceBase.toDouble()) / ln(targetBase.toDouble())) * inputLength
+    ).toInt()
 
     /**
      * Reverses a byte array.
@@ -306,26 +307,20 @@ class Base62 private constructor(private val alphabet: ByteArray) {
          *
          * @return a [Base62] instance.
          */
-        fun createInstance(): Base62 {
-            return createInstanceWithGmpCharacterSet()
-        }
+        fun createInstance(): Base62 = createInstanceWithGmpCharacterSet()
 
         /**
          * Creates a [Base62] instance using the GMP-style character set.
          *
          * @return a [Base62] instance.
          */
-        fun createInstanceWithGmpCharacterSet(): Base62 {
-            return Base62(CharacterSets.GMP)
-        }
+        fun createInstanceWithGmpCharacterSet(): Base62 = Base62(CharacterSets.GMP)
 
         /**
          * Creates a [Base62] instance using the inverted character set.
          *
          * @return a [Base62] instance.
          */
-        fun createInstanceWithInvertedCharacterSet(): Base62 {
-            return Base62(CharacterSets.INVERTED)
-        }
+        fun createInstanceWithInvertedCharacterSet(): Base62 = Base62(CharacterSets.INVERTED)
     }
 }

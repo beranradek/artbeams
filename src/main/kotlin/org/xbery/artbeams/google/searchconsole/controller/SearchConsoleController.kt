@@ -1,6 +1,5 @@
 package org.xbery.artbeams.google.searchconsole.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -10,6 +9,7 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.google.searchconsole.GoogleSearchConsoleService
 import java.time.LocalDate
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Controller for Google Search Console integration.

@@ -11,19 +11,11 @@ import java.time.LocalDateTime
  */
 internal class InstantConverter : Converter<LocalDateTime, Instant> {
 
-    override fun from(databaseObject: LocalDateTime?): Instant? {
-        return databaseObject.fromDbDateTime()
-    }
+    override fun from(databaseObject: LocalDateTime?): Instant? = databaseObject.fromDbDateTime()
 
-    override fun to(userObject: Instant?): LocalDateTime? {
-        return userObject.toDbDateTime()
-    }
+    override fun to(userObject: Instant?): LocalDateTime? = userObject.toDbDateTime()
 
-    override fun fromType(): Class<LocalDateTime> {
-        return LocalDateTime::class.java
-    }
+    override fun fromType(): Class<LocalDateTime> = LocalDateTime::class.java
 
-    override fun toType(): Class<Instant> {
-        return Instant::class.java
-    }
+    override fun toType(): Class<Instant> = Instant::class.java
 }

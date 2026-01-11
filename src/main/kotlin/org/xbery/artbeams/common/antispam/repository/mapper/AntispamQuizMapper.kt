@@ -11,10 +11,8 @@ import org.xbery.artbeams.jooq.schema.tables.records.AntispamQuizRecord
 @Component
 class AntispamQuizMapper : RecordMapper<AntispamQuizRecord, AntispamQuiz> {
 
-    override fun map(record: AntispamQuizRecord): AntispamQuiz {
-        return AntispamQuiz(
-            question = requireNotNull(record.question),
-            answer = requireNotNull(record.answer)
-        )
-    }
+    override fun map(record: AntispamQuizRecord): AntispamQuiz = AntispamQuiz(
+        question = requireNotNull(record.question),
+        answer = requireNotNull(record.answer)
+    )
 }

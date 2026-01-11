@@ -49,9 +49,12 @@ object AESEncryption {
      * @param iv
      * @return
      */
-    fun encryptPasswordBased(plainText: String, key: SecretKey, iv: IvParameterSpec = DEFAULT_INIT_VECTOR_SPEC): String {
-        return encrypt(PASSWORD_BASED_ALGORITHM, plainText, key, iv)
-    }
+    fun encryptPasswordBased(plainText: String, key: SecretKey, iv: IvParameterSpec = DEFAULT_INIT_VECTOR_SPEC): String = encrypt(
+        PASSWORD_BASED_ALGORITHM,
+        plainText,
+        key,
+        iv
+    )
 
     /**
      * AES-decrypt given ciphered string using given secret and (random) initialization vector.
@@ -60,9 +63,12 @@ object AESEncryption {
      * @param iv initial vector used for encryption/decryption
      * @return
      */
-    fun decryptPasswordBased(cipherText: String, key: SecretKey, iv: IvParameterSpec = DEFAULT_INIT_VECTOR_SPEC): String {
-        return decrypt(PASSWORD_BASED_ALGORITHM, cipherText, key, iv)
-    }
+    fun decryptPasswordBased(cipherText: String, key: SecretKey, iv: IvParameterSpec = DEFAULT_INIT_VECTOR_SPEC): String = decrypt(
+        PASSWORD_BASED_ALGORITHM,
+        cipherText,
+        key,
+        iv
+    )
 
     /**
      * Generates AES secret key based on given password and salt (password-based key derivation function like PBKDF2).

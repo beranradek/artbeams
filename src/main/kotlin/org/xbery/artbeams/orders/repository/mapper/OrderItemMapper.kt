@@ -13,23 +13,21 @@ import org.xbery.artbeams.prices.domain.Price
 @Component
 class OrderItemMapper : RecordMapper<OrderItemsRecord, OrderItem> {
 
-    override fun map(record: OrderItemsRecord): OrderItem {
-        return OrderItem(
-            common = AssetAttributes(
-                id = requireNotNull(record.id),
-                created = requireNotNull(record.created),
-                createdBy = requireNotNull(record.createdBy),
-                modified = requireNotNull(record.modified),
-                modifiedBy = requireNotNull(record.modifiedBy)
-            ),
-            orderId = requireNotNull(record.orderId),
-            productId = requireNotNull(record.productId),
-            quantity = requireNotNull(record.quantity),
-            price = Price(
-                price = requireNotNull(record.price),
-                currency = Price.DEFAULT_CURRENCY
-            ),
-            downloaded = record.downloaded
-        )
-    }
+    override fun map(record: OrderItemsRecord): OrderItem = OrderItem(
+        common = AssetAttributes(
+            id = requireNotNull(record.id),
+            created = requireNotNull(record.created),
+            createdBy = requireNotNull(record.createdBy),
+            modified = requireNotNull(record.modified),
+            modifiedBy = requireNotNull(record.modifiedBy)
+        ),
+        orderId = requireNotNull(record.orderId),
+        productId = requireNotNull(record.productId),
+        quantity = requireNotNull(record.quantity),
+        price = Price(
+            price = requireNotNull(record.price),
+            currency = Price.DEFAULT_CURRENCY
+        ),
+        downloaded = record.downloaded
+    )
 }

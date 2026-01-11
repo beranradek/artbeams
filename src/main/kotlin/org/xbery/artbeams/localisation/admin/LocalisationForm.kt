@@ -8,7 +8,8 @@ import org.xbery.artbeams.localisation.domain.EditedLocalisation
 
 open class LocalisationForm {
     companion object {
-        val definition: FormMapping<EditedLocalisation> = Forms.basic(EditedLocalisation::class.java, "localisation")
+        val definition: FormMapping<EditedLocalisation> = Forms
+            .basic(EditedLocalisation::class.java, "localisation")
             .field<String>("originalKey", Field.HIDDEN)
             .field<String>("entryKey", Field.TEXT)
             .field<String>("entryValue", Field.TEXT)

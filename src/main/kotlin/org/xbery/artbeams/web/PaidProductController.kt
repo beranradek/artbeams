@@ -75,12 +75,16 @@ class PaidProductController(
                             latestOrderItem?.orderId?.let { orderId ->
                                 orderService.requireByOrderId(orderId).orderNumber
                             }
-                        } else null
+                        } else {
+                            null
+                        }
                     } catch (e: Exception) {
                         logger.warn("Could not find order for user ${currentUser.login} and product ${product.slug}", e)
                         null
                     }
-                } else null
+                } else {
+                    null
+                }
             } ?: "123456" // Fallback to default if order number cannot be determined
 
             renderProductArticle(
@@ -107,7 +111,7 @@ class PaidProductController(
         @PathVariable slug: String,
         @RequestParam("mail") mail: String,
         @RequestParam("cislo_objednavky") orderNumber: String,
-        @RequestParam("state") state: String,
+        @RequestParam("state") state: String
     ): Any {
         checkInvoicingSystemSecret(state)
         val product = productService.requireBySlug(slug)
@@ -125,18 +129,22 @@ class PaidProductController(
 
                 // Validate product name/title matches
                 val productMatches = simpleShopProduct.name == product.slug ||
-                                    simpleShopProduct.title?.contains(product.title, ignoreCase = true) == true
+                    simpleShopProduct.title?.contains(product.title, ignoreCase = true) == true
                 if (!productMatches) {
-                    logger.warn("SimpleShop product validation: Product name/title mismatch. " +
-                               "Expected slug='${product.slug}' or title containing '${product.title}', " +
-                               "but got name='${simpleShopProduct.name}', title='${simpleShopProduct.title}'")
+                    logger.warn(
+                        "SimpleShop product validation: Product name/title mismatch. " +
+                            "Expected slug='${product.slug}' or title containing '${product.title}', " +
+                            "but got name='${simpleShopProduct.name}', title='${simpleShopProduct.title}'"
+                    )
                 }
 
                 // Validate price matches (if available in SimpleShop)
                 simpleShopProduct.price?.let { simpleShopPrice ->
                     if (simpleShopPrice.compareTo(product.price.price) != 0) {
-                        logger.warn("SimpleShop product validation: Price mismatch. " +
-                                   "Expected ${product.price.price}, but SimpleShop has $simpleShopPrice")
+                        logger.warn(
+                            "SimpleShop product validation: Price mismatch. " +
+                                "Expected ${product.price.price}, but SimpleShop has $simpleShopPrice"
+                        )
                     }
                 }
 
@@ -169,7 +177,7 @@ class PaidProductController(
         @PathVariable slug: String,
         @RequestParam("mail") mail: String,
         @RequestParam("cislo_objednavky") orderNumber: String,
-        @RequestParam("state") state: String,
+        @RequestParam("state") state: String
     ): Any {
         checkInvoicingSystemSecret(state)
         val product = productService.requireBySlug(slug)
@@ -190,7 +198,7 @@ class PaidProductController(
         @PathVariable slug: String,
         @RequestParam("mail") mail: String,
         @RequestParam("cislo_objednavky") orderNumber: String,
-        @RequestParam("state") state: String,
+        @RequestParam("state") state: String
     ): Any {
         checkInvoicingSystemSecret(state)
         val product = productService.requireBySlug(slug)

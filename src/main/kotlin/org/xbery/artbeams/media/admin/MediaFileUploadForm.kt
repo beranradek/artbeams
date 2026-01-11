@@ -14,7 +14,8 @@ import org.xbery.artbeams.common.form.FormUtils
 open class MediaFileUploadForm {
 
     companion object {
-        val definition: FormMapping<UploadedMediaFile> = Forms.basic(UploadedMediaFile::class.java, "mediaFile")
+        val definition: FormMapping<UploadedMediaFile> = Forms
+            .basic(UploadedMediaFile::class.java, "mediaFile")
             .field<UploadedFile>("file", Field.FILE_UPLOAD)
             .field<String?>("format", Field.DROP_DOWN_CHOICE)
             .field<Int?>("width", Field.TEXT)

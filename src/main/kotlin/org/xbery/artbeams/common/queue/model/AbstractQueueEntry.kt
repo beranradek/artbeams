@@ -35,7 +35,5 @@ abstract class AbstractQueueEntry {
      */
     var expiration: Instant? = null
 
-    override fun toString(): String {
-        return "${this::class::simpleName}(id='$id')"
-    }
+    override fun toString(): String = "${this::class::simpleName}(id='$id')"
 }

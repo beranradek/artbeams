@@ -16,16 +16,14 @@ class FileData(
     val width: Int?,
     val height: Int?
 ) {
-    fun getMediaType(): MediaType {
-        return if (this.contentType.isNotEmpty()) {
-            if (this.contentType.contains("/")) {
-                val parts = this.contentType.split("/")
-                MediaType(parts[0], parts[1])
-            } else {
-                MediaType(this.contentType)
-            }
+    fun getMediaType(): MediaType = if (this.contentType.isNotEmpty()) {
+        if (this.contentType.contains("/")) {
+            val parts = this.contentType.split("/")
+            MediaType(parts[0], parts[1])
         } else {
-            MediaType.APPLICATION_OCTET_STREAM
+            MediaType(this.contentType)
         }
+    } else {
+        MediaType.APPLICATION_OCTET_STREAM
     }
 }

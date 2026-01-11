@@ -3,7 +3,6 @@ package org.xbery.artbeams.products.domain
 import org.xbery.artbeams.common.assets.domain.Asset
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.prices.domain.Price
-import java.math.BigDecimal
 
 /**
  * Product entity.
@@ -37,15 +36,15 @@ data class Product(
 
     fun updatedWith(edited: EditedProduct, userId: String): Product {
         // Create updated priceRegular from the edited amount or keep the current one if null
-        val updatedPriceRegular = edited.priceRegularAmount?.let { 
-            Price(it, Price.DEFAULT_CURRENCY) 
+        val updatedPriceRegular = edited.priceRegularAmount?.let {
+            Price(it, Price.DEFAULT_CURRENCY)
         } ?: this.priceRegular
-        
+
         // Create updated priceDiscounted from the edited amount or set to null if amount is null
-        val updatedPriceDiscounted = edited.priceDiscountedAmount?.let { 
-            Price(it, Price.DEFAULT_CURRENCY) 
+        val updatedPriceDiscounted = edited.priceDiscountedAmount?.let {
+            Price(it, Price.DEFAULT_CURRENCY)
         }
-        
+
         return this.copy(
             common = this.common.updatedWith(userId),
             slug = edited.slug,
@@ -62,27 +61,35 @@ data class Product(
         )
     }
 
-    fun toEdited(): EditedProduct {
-        return EditedProduct(
-            this.id,
-            this.slug,
-            this.title,
-            this.subtitle,
-            this.fileName,
-            this.listingImage,
-            this.image,
-            this.confirmationMailingGroupId,
-            this.mailingGroupId,
-            this.priceRegular.price,
-            this.priceDiscounted?.price,
-            this.simpleShopProductId
-        )
-    }
+    fun toEdited(): EditedProduct = EditedProduct(
+        this.id,
+        this.slug,
+        this.title,
+        this.subtitle,
+        this.fileName,
+        this.listingImage,
+        this.image,
+        this.confirmationMailingGroupId,
+        this.mailingGroupId,
+        this.priceRegular.price,
+        this.priceDiscounted?.price,
+        this.simpleShopProductId
+    )
 
     companion object {
         val Empty = Product(
-            AssetAttributes.EMPTY, "", "New product",
-            null, null, null, null, null, null, Price.ZERO, null, null
+            AssetAttributes.EMPTY,
+            "",
+            "New product",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            Price.ZERO,
+            null,
+            null
         )
     }
 }

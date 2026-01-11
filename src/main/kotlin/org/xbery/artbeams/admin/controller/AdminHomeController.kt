@@ -11,7 +11,9 @@ import org.xbery.artbeams.common.controller.ControllerComponents
  * @author Radek Beran
  */
 @Controller
-class AdminHomeController(common: ControllerComponents) : BaseController(common) {
+class AdminHomeController(
+    common: ControllerComponents
+) : BaseController(common) {
     @GetMapping(ADMIN_SECTION_PATH)
     fun admin(): Any = redirect("$ADMIN_SECTION_PATH/articles")
 

@@ -12,14 +12,10 @@ data class Pagination(
     val totalCount: Long? = null
 ) {
     /** Returns new pagination with the given updated total count. */
-    fun withTotalCount(count: Long): Pagination {
-        return this.copy(totalCount = count)
-    }
+    fun withTotalCount(count: Long): Pagination = this.copy(totalCount = count)
 
     /** Returns new pagination with the given updated offset. */
-    fun withOffset(offset: Int): Pagination {
-        return this.copy(offset = offset)
-    }
+    fun withOffset(offset: Int): Pagination = this.copy(offset = offset)
 
     /** Offset for next page. */
     val nextOffset: Int = this.offset + this.limit
@@ -35,9 +31,7 @@ data class Pagination(
             return prevOffset
         }
 
-    fun isFirstPage(): Boolean {
-        return this.offset <= 0
-    }
+    fun isFirstPage(): Boolean = this.offset <= 0
 
     fun isLastPage(): Boolean {
         var next = false
@@ -66,7 +60,5 @@ data class Pagination(
             return cnt
         }
 
-    override fun toString(): String {
-        return "Pagination [offset=" + this.offset + ", limit=" + this.limit + ", totalCount=" + this.totalCount + "]"
-    }
+    override fun toString(): String = "Pagination [offset=" + this.offset + ", limit=" + this.limit + ", totalCount=" + this.totalCount + "]"
 }

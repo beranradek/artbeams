@@ -17,13 +17,15 @@ import org.xbery.artbeams.common.mailer.config.MailgunMailerConfig
 @Service
 open class MailgunMailSender(
     private val mailerConfig: MailgunMailerConfig,
-    private val mailgunMessagesApi: MailgunMessagesApi) {
+    private val mailgunMessagesApi: MailgunMessagesApi
+) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     open fun sendMailWithTemplate(recipientEmail: String, subject: String, templateId: String, templateVariables: Map<String, Any>) {
         logger.info("Sending email $subject to $recipientEmail")
         try {
-            val message = Message.builder()
+            val message = Message
+                .builder()
                 .from(mailerConfig.getFrom())
                 .replyTo(mailerConfig.getReplyTo())
                 .to(recipientEmail)
@@ -48,7 +50,8 @@ open class MailgunMailSender(
     open fun sendMailWithText(recipientEmail: String, subject: String, body: String, replyTo: String? = null) {
         logger.info("Sending email $subject to $recipientEmail")
         try {
-            val message = Message.builder()
+            val message = Message
+                .builder()
                 .from(mailerConfig.getFrom())
                 .replyTo(replyTo ?: mailerConfig.getReplyTo())
                 .to(recipientEmail)
@@ -72,7 +75,8 @@ open class MailgunMailSender(
     open fun sendMailWithHtml(recipientEmail: String, subject: String, htmlBody: String, replyTo: String? = null) {
         logger.info("Sending HTML email $subject to $recipientEmail")
         try {
-            val message = Message.builder()
+            val message = Message
+                .builder()
                 .from(mailerConfig.getFrom())
                 .replyTo(replyTo ?: mailerConfig.getReplyTo())
                 .to(recipientEmail)
@@ -94,19 +98,22 @@ open class MailgunMailSender(
     }
 
     private fun logMailerException(subject: String, recipientEmail: String, ex: FeignException) {
-        logger.error("Error while sending email $subject to $recipientEmail by calling ${mailerConfig.getApiBaseUrl()}.\n" +
+        logger.error(
+            "Error while sending email $subject to $recipientEmail by calling ${mailerConfig.getApiBaseUrl()}.\n" +
                 "Response status: ${ex.status()}, headers: ${
                     ex.responseHeaders().map {
                         it.key + ": " + it.value.joinToString(", ")
                     }
-                }, message: ${ex.message}", ex
+                }, message: ${ex.message}",
+            ex
         )
     }
 
     private fun logMailerException(subject: String, recipientEmail: String, ex: Exception) {
         logger.error(
             "Error while sending email $subject to $recipientEmail by calling ${mailerConfig.getApiBaseUrl()}, " +
-                "message: ${ex.message}", ex
+                "message: ${ex.message}",
+            ex
         )
     }
 }

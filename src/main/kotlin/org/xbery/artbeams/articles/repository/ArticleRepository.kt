@@ -25,8 +25,10 @@ class ArticleRepository(
     override val mapper: ArticleMapper,
     override val unmapper: ArticleUnmapper
 ) : AssetRepository<Article, ArticlesRecord>(
-    dsl, mapper, unmapper
-) {
+        dsl,
+        mapper,
+        unmapper
+    ) {
     override val table: Table<ArticlesRecord> = ARTICLES
     override val idField: Field<String?> = ARTICLES.ID
 
@@ -54,12 +56,14 @@ class ArticleRepository(
     fun findByCategoryId(categoryId: String, limit: Int): List<Article> {
         val validityDate = Instant.now()
         val whereCondition =
-            ARTICLES.ID.`in`(
-                dsl.select(ARTICLE_CATEGORY.ARTICLE_ID)
-                    .from(ARTICLE_CATEGORY)
-                    .where(ARTICLE_CATEGORY.CATEGORY_ID.eq(categoryId))
-            )
-            .and(validityCondition(validityDate)).and(ARTICLES.SHOW_ON_BLOG.isTrue)
+            ARTICLES.ID
+                .`in`(
+                    dsl
+                        .select(ARTICLE_CATEGORY.ARTICLE_ID)
+                        .from(ARTICLE_CATEGORY)
+                        .where(ARTICLE_CATEGORY.CATEGORY_ID.eq(categoryId))
+                ).and(validityCondition(validityDate))
+                .and(ARTICLES.SHOW_ON_BLOG.isTrue)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -70,7 +74,8 @@ class ArticleRepository(
     }
 
     fun findBySlug(slug: String): Article? =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(ARTICLES.SLUG.eq(slug).and(validityCondition(Instant.now())))
             .fetchOne(mapper)
 
@@ -82,7 +87,8 @@ class ArticleRepository(
         val whereCondition: Condition =
             validityCondition(validityDate)
                 .and(
-                    ARTICLES.TITLE.containsIgnoreCase(query)
+                    ARTICLES.TITLE
+                        .containsIgnoreCase(query)
                         .or(ARTICLES.PEREX.containsIgnoreCase(query))
                         .or(ARTICLES.BODY.containsIgnoreCase(query))
                 )
@@ -95,9 +101,9 @@ class ArticleRepository(
         )
     }
 
-
     fun findArticlesWithExternalIds(): List<Article> =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(ARTICLES.EXTERNAL_ID.isNotNull)
             .fetch(mapper)
 
@@ -128,7 +134,8 @@ class ArticleRepository(
     }
 
     protected fun validityCondition(validityDate: Instant) =
-        ARTICLES.VALID_FROM.lessOrEqual(validityDate)
+        ARTICLES.VALID_FROM
+            .lessOrEqual(validityDate)
             .and(
                 ARTICLES.VALID_TO.isNull
                     .or(ARTICLES.VALID_TO.greaterOrEqual(validityDate))

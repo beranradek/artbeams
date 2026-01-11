@@ -15,8 +15,9 @@ import org.xbery.artbeams.jooq.schema.tables.references.AUTH_CODE
  * @author Radek Beran
  */
 @Repository
-class SqlAuthorizationCodeRepository(override val dsl: DSLContext) :
-    AbstractRecordFetcher<AuthCodeRecord>,
+class SqlAuthorizationCodeRepository(
+    override val dsl: DSLContext
+) : AbstractRecordFetcher<AuthCodeRecord>,
     AbstractRecordStorage<AuthorizationCode, AuthCodeRecord>,
     AuthorizationCodeRepository {
 
@@ -31,9 +32,12 @@ class SqlAuthorizationCodeRepository(override val dsl: DSLContext) :
     }
 
     override fun findByCodePurposeAndUserId(code: String, purpose: String, userId: String): AuthorizationCode? =
-        dsl.selectFrom(table).where(
-            AUTH_CODE.CODE.eq(code),
-            AUTH_CODE.PURPOSE.eq(purpose),
-            AUTH_CODE.USER_ID.eq(userId)
-        ).fetchOne()?.into(AuthorizationCode::class.java)
+        dsl
+            .selectFrom(table)
+            .where(
+                AUTH_CODE.CODE.eq(code),
+                AUTH_CODE.PURPOSE.eq(purpose),
+                AUTH_CODE.USER_ID.eq(userId)
+            ).fetchOne()
+            ?.into(AuthorizationCode::class.java)
 }

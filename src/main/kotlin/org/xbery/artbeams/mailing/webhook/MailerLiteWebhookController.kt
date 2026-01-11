@@ -26,12 +26,12 @@ class MailerLiteWebhookController(
     private val appConfig: AppConfig,
     private val objectMapper: ObjectMapper
 ) {
-    
+
     companion object {
         private val logger = LoggerFactory.getLogger(MailerLiteWebhookController::class.java)
         private const val SIGNATURE_HEADER = "Authorization"
         private const val ALGORITHM = "HmacSHA256"
-        
+
         // Webhook event types
         private const val SUBSCRIBER_UNSUBSCRIBED = "subscriber.unsubscribed"
         private const val SUBSCRIBER_ADDED_TO_GROUP = "subscriber.added_to_group"
@@ -46,19 +46,19 @@ class MailerLiteWebhookController(
     ): ResponseEntity<String> {
         try {
             logger.info("Received MailerLite webhook event from IP: ${request.remoteAddr}")
-            
+
             // Verify webhook signature
             val signature = headers[SIGNATURE_HEADER.lowercase()]
             if (signature == null) {
                 logger.warn("Missing Authorization header in webhook request")
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing signature")
             }
-            
+
             if (!verifySignature(payload, signature)) {
                 logger.warn("Invalid webhook signature")
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid signature")
             }
-            
+
             // Parse webhook payload
             val webhookPayload = try {
                 objectMapper.readValue(payload, MailerLiteWebhookPayload::class.java)
@@ -66,9 +66,9 @@ class MailerLiteWebhookController(
                 logger.error("Failed to parse webhook payload", e)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid payload format")
             }
-            
+
             logger.info("Processing webhook event type: ${webhookPayload.type} for email: ${webhookPayload.data.subscriber.email}")
-            
+
             // Handle different event types
             when (webhookPayload.type) {
                 SUBSCRIBER_UNSUBSCRIBED -> handleUnsubscribedEvent(webhookPayload)
@@ -78,15 +78,15 @@ class MailerLiteWebhookController(
                     logger.debug("Ignoring webhook event type: ${webhookPayload.type}")
                 }
             }
-            
+
             return ResponseEntity.ok("Event processed successfully")
-            
+
         } catch (e: Exception) {
             logger.error("Error processing MailerLite webhook", e)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing webhook")
         }
     }
-    
+
     /**
      * Verifies the webhook signature using HMAC-SHA256.
      */
@@ -97,25 +97,25 @@ class MailerLiteWebhookController(
                 logger.warn("MailerLite webhook secret not configured")
                 return false
             }
-            
+
             // Remove "Bearer " prefix if present
             val cleanSignature = signature.removePrefix("Bearer ").trim()
-            
+
             val mac = Mac.getInstance(ALGORITHM)
             val secretKeySpec = SecretKeySpec(webhookSecret.toByteArray(), ALGORITHM)
             mac.init(secretKeySpec)
-            
+
             val computedHash = mac.doFinal(payload.toByteArray())
             val computedSignature = computedHash.joinToString("") { "%02x".format(it) }
-            
+
             val isValid = computedSignature.equals(cleanSignature, ignoreCase = true)
-            
+
             if (!isValid) {
                 logger.warn("Signature verification failed. Expected: $computedSignature, Received: $cleanSignature")
             }
-            
+
             return isValid
-            
+
         } catch (e: NoSuchAlgorithmException) {
             logger.error("HMAC algorithm not available", e)
             return false
@@ -127,7 +127,7 @@ class MailerLiteWebhookController(
             return false
         }
     }
-    
+
     /**
      * Handles subscriber unsubscribed events.
      */
@@ -148,7 +148,7 @@ class MailerLiteWebhookController(
             throw e
         }
     }
-    
+
     /**
      * Handles subscriber removed from group events.
      */
@@ -158,7 +158,7 @@ class MailerLiteWebhookController(
         logger.info("Processing removed from group event for email: $email, group: $groupId")
         logger.debug("Removed from group events are currently not processed")
     }
-    
+
     /**
      * Handles subscriber added to group events.
      */

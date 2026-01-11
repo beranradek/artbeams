@@ -54,7 +54,7 @@ open class EvernoteImporter(
             //   updatedArticleOpt = this.updateArticleWithNoteBySlug(note)
             // } yield updatedArticleOpt
 
-            logger.info("${operationMsg}: finished successfully")
+            logger.info("$operationMsg: finished successfully")
             updatedArticles
         } catch (ex: Exception) {
             logger.error("$operationMsg: finished with error $ex", ex)
@@ -86,7 +86,7 @@ open class EvernoteImporter(
         return null
     }
 
-    fun isEvernoteIdentifier(noteId: String): Boolean = noteId.count { it == '-'} >= 4
+    fun isEvernoteIdentifier(noteId: String): Boolean = noteId.count { it == '-' } >= 4
 
     private fun updateArticleWithNoteBySlug(note: Note): Article? {
         val slug = this.normalizationHelper.toSlug(note.title)
@@ -107,15 +107,19 @@ open class EvernoteImporter(
         }
         val htmlBody = markdownConverter.markdownToHtml(note.body)
         if (article.bodyEdited == note.body && article.body == htmlBody && article.title == note.title) {
-            logger.info("Nothing to update from Evernote (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}")
+            logger.info(
+                "Nothing to update from Evernote (already up to date): Article with slug ${article.slug}, externalId ${article.externalId ?: ""}"
+            )
             return article
         }
         val updatedArticle =
-            articleRepository.update(article.copy(
-                title = note.title,
-                bodyEdited = note.body,
-                body = htmlBody
-            ))
+            articleRepository.update(
+                article.copy(
+                    title = note.title,
+                    bodyEdited = note.body,
+                    body = htmlBody
+                )
+            )
         logger.info("Updated from Evernote: Article with slug ${updatedArticle.slug}, externalId ${updatedArticle.externalId ?: ""}")
         return updatedArticle
     }

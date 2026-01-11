@@ -15,17 +15,15 @@ import org.xbery.artbeams.jooq.schema.tables.records.UserActivityLogRecord
 @Component
 class UserActivityLogMapper : RecordMapper<UserActivityLogRecord, UserActivityLog> {
 
-    override fun map(rec: UserActivityLogRecord): UserActivityLog {
-        return UserActivityLog(
-            id = requireNotNull(rec.id),
-            userId = requireNotNull(rec.userId),
-            actionType = ActionType.fromValue(requireNotNull(rec.actionType)) ?: ActionType.MEMBER_ACCESS,
-            actionTime = requireNotNull(rec.actionTime),
-            entityType = rec.entityType?.let { EntityType.fromValue(it) },
-            entityId = rec.entityId,
-            ipAddress = rec.ipAddress,
-            userAgent = rec.userAgent,
-            details = rec.details
-        )
-    }
+    override fun map(rec: UserActivityLogRecord): UserActivityLog = UserActivityLog(
+        id = requireNotNull(rec.id),
+        userId = requireNotNull(rec.userId),
+        actionType = ActionType.fromValue(requireNotNull(rec.actionType)) ?: ActionType.MEMBER_ACCESS,
+        actionTime = requireNotNull(rec.actionTime),
+        entityType = rec.entityType?.let { EntityType.fromValue(it) },
+        entityId = rec.entityId,
+        ipAddress = rec.ipAddress,
+        userAgent = rec.userAgent,
+        details = rec.details
+    )
 }

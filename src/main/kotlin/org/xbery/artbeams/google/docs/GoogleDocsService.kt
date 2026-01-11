@@ -9,9 +9,9 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.repository.ArticleRepository
+import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.common.markdown.MarkdownConverter
 import org.xbery.artbeams.error.OperationException
-import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.google.auth.GoogleApiAuth
 import org.xbery.artbeams.google.error.GoogleErrorCode
 
@@ -61,7 +61,11 @@ open class GoogleDocsService(
             requests.add(
                 Request().setDeleteContentRange(
                     DeleteContentRangeRequest().setRange(
-                        Range().setStartIndex(1).setEndIndex(document.body.content.last().endIndex - 1)
+                        Range().setStartIndex(1).setEndIndex(
+                            document.body.content
+                                .last()
+                                .endIndex - 1
+                        )
                     )
                 )
             )
@@ -146,7 +150,8 @@ open class GoogleDocsService(
             )
         }
         if (docs == null) {
-            docs = Docs.Builder(googleAuth.httpTransport, googleAuth.jsonFactory, googleAuth.getCredentials(scopes))
+            docs = Docs
+                .Builder(googleAuth.httpTransport, googleAuth.jsonFactory, googleAuth.getCredentials(scopes))
                 .setApplicationName(googleAuth.getApplicationName())
                 .build()
         }

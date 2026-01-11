@@ -89,11 +89,7 @@ class Base62Test {
         Assertions.assertFalse(standardEncoder.isBase62Encoding("😱".toByteArray()))
     }
 
-    private fun encode(input: String): String {
-        return String(standardEncoder.encode(input.toByteArray()))
-    }
+    private fun encode(input: String): String = String(standardEncoder.encode(input.toByteArray()))
 
-    private fun isAlphaNumeric(str: String): Boolean {
-        return str.matches("^[a-zA-Z0-9]+$".toRegex())
-    }
+    private fun isAlphaNumeric(str: String): Boolean = str.matches("^[a-zA-Z0-9]+$".toRegex())
 }

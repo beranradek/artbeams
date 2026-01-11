@@ -26,7 +26,7 @@ class PasswordSetupMailerImpl(
         val tplVars = mapOf(
             "tokenUrl" to tokenUrl,
             "webName" to (appConfig.findConfig("web.name") ?: ""),
-            "senderName" to (appConfig.findConfig("mailer.sender.name") ?: ""),
+            "senderName" to (appConfig.findConfig("mailer.sender.name") ?: "")
         )
         val subject = appConfig.requireConfig("mailer.password.setup.subject")
         val templateId = appConfig.requireConfig("mailer.password.setup.template")

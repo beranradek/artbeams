@@ -22,8 +22,10 @@ class RoleRepository(
     override val mapper: RoleMapper,
     override val unmapper: RoleUnmapper
 ) : AssetRepository<Role, RolesRecord>(
-    dsl, mapper, unmapper
-) {
+        dsl,
+        mapper,
+        unmapper
+    ) {
     override val table: Table<RolesRecord> = ROLES
     override val idField: Field<String?> = ROLES.ID
 
@@ -31,21 +33,26 @@ class RoleRepository(
         dsl.selectFrom(table).orderBy(ROLES.NAME).fetch(mapper)
 
     fun findRolesOfUser(userId: String): List<Role> =
-        dsl.selectFrom(table)
-            .where(ROLES.ID.`in`(
-                dsl.select(USER_ROLE.ROLE_ID)
-                    .from(USER_ROLE)
-                    .where(USER_ROLE.USER_ID.eq(userId))
-            ))
-            .orderBy(ROLES.NAME)
+        dsl
+            .selectFrom(table)
+            .where(
+                ROLES.ID.`in`(
+                    dsl
+                        .select(USER_ROLE.ROLE_ID)
+                        .from(USER_ROLE)
+                        .where(USER_ROLE.USER_ID.eq(userId))
+                )
+            ).orderBy(ROLES.NAME)
             .fetch(mapper)
 
     fun updateRolesOfUser(userId: String, roles: List<Role>) {
-        dsl.deleteFrom(USER_ROLE)
+        dsl
+            .deleteFrom(USER_ROLE)
             .where(USER_ROLE.USER_ID.eq(userId))
             .execute()
         for (role in roles) {
-            dsl.insertInto(USER_ROLE)
+            dsl
+                .insertInto(USER_ROLE)
                 .set(USER_ROLE.USER_ID, userId)
                 .set(USER_ROLE.ROLE_ID, role.id)
                 .execute()

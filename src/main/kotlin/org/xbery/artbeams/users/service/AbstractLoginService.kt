@@ -1,14 +1,14 @@
 package org.xbery.artbeams.users.service
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * @author Radek Beran
  */
-abstract class AbstractLoginService() {
+abstract class AbstractLoginService {
 
     /**
      * Stores authenticated user into Spring security context.

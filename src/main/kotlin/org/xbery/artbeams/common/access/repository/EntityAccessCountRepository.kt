@@ -25,19 +25,17 @@ class EntityAccessCountRepository(
     AbstractRecordFetcher<EntityAccessCountRecord> {
     override val table: Table<EntityAccessCountRecord> = ENTITY_ACCESS_COUNT
 
-    fun findByEntityKey(entityKey: EntityKey): EntityAccessCount? {
-        return dsl.selectFrom(table)
-            .where(ENTITY_ACCESS_COUNT.ENTITY_TYPE.eq(entityKey.entityType))
-            .and(ENTITY_ACCESS_COUNT.ENTITY_ID.eq(entityKey.entityId))
-            .fetchOne(mapper)
-    }
+    fun findByEntityKey(entityKey: EntityKey): EntityAccessCount? = dsl
+        .selectFrom(table)
+        .where(ENTITY_ACCESS_COUNT.ENTITY_TYPE.eq(entityKey.entityType))
+        .and(ENTITY_ACCESS_COUNT.ENTITY_ID.eq(entityKey.entityId))
+        .fetchOne(mapper)
 
-    fun findByEntityTypesAndIds(entityKeys: Collection<EntityKey>): List<EntityAccessCount> {
-        return dsl.selectFrom(table)
-            .where(ENTITY_ACCESS_COUNT.ENTITY_TYPE.`in`(entityKeys.map { it.entityType }))
-            .and(ENTITY_ACCESS_COUNT.ENTITY_ID.`in`(entityKeys.map { it.entityId }))
-            .fetch(mapper)
-    }
+    fun findByEntityTypesAndIds(entityKeys: Collection<EntityKey>): List<EntityAccessCount> = dsl
+        .selectFrom(table)
+        .where(ENTITY_ACCESS_COUNT.ENTITY_TYPE.`in`(entityKeys.map { it.entityType }))
+        .and(ENTITY_ACCESS_COUNT.ENTITY_ID.`in`(entityKeys.map { it.entityId }))
+        .fetch(mapper)
 
     fun create(entity: EntityAccessCount) {
         createWithoutReturn(entity, unmapper)
@@ -45,12 +43,14 @@ class EntityAccessCountRepository(
 
     fun update(entity: EntityAccessCount) {
         val record = unmapper.unmap(entity)
-        val updatedCount = dsl.update(table)
+        val updatedCount = dsl
+            .update(table)
             .set(record)
-            .where(ENTITY_ACCESS_COUNT.ENTITY_TYPE.eq(entity.entityKey.entityType).and(
-                ENTITY_ACCESS_COUNT.ENTITY_ID.eq(entity.entityKey.entityId)
-            ))
-            .execute()
+            .where(
+                ENTITY_ACCESS_COUNT.ENTITY_TYPE.eq(entity.entityKey.entityType).and(
+                    ENTITY_ACCESS_COUNT.ENTITY_ID.eq(entity.entityKey.entityId)
+                )
+            ).execute()
         when {
             updatedCount == 0 -> error("Entity not updated")
             updatedCount > 1 -> error("More than one entity was updated")

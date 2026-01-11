@@ -23,38 +23,32 @@ open class LocalisationServiceImpl(
         return localisationRepository.findLocalisations(pagination, search)
     }
 
-    override fun findByKey(entryKey: String): Localisation? {
-        return localisationRepository.findByKey(entryKey)
+    override fun findByKey(entryKey: String): Localisation? = localisationRepository.findByKey(entryKey)
+
+    override fun saveLocalisation(edited: EditedLocalisation): Localisation = try {
+        val localisation = Localisation(edited.entryKey, edited.entryValue)
+        val savedLocalisation = if (edited.originalKey.isEmpty()) {
+            // New localisation
+            localisationRepository.create(localisation)
+        } else {
+            // Update existing localisation
+            localisationRepository.update(edited.originalKey, localisation)
+        }
+        // Reload cache after save
+        localisationRepository.reloadEntries()
+        savedLocalisation
+    } catch (ex: Exception) {
+        logger.error("Save of localisation ${edited.entryKey} finished with error ${ex.message}", ex)
+        throw ex
     }
 
-    override fun saveLocalisation(edited: EditedLocalisation): Localisation {
-        return try {
-            val localisation = Localisation(edited.entryKey, edited.entryValue)
-            val savedLocalisation = if (edited.originalKey.isEmpty()) {
-                // New localisation
-                localisationRepository.create(localisation)
-            } else {
-                // Update existing localisation
-                localisationRepository.update(edited.originalKey, localisation)
-            }
-            // Reload cache after save
-            localisationRepository.reloadEntries()
-            savedLocalisation
-        } catch (ex: Exception) {
-            logger.error("Save of localisation ${edited.entryKey} finished with error ${ex.message}", ex)
-            throw ex
-        }
-    }
-
-    override fun deleteLocalisation(entryKey: String): Boolean {
-        return try {
-            val result = localisationRepository.deleteByKey(entryKey)
-            // Reload cache after delete
-            localisationRepository.reloadEntries()
-            result
-        } catch (ex: Exception) {
-            logger.error("Delete of localisation $entryKey finished with error ${ex.message}", ex)
-            throw ex
-        }
+    override fun deleteLocalisation(entryKey: String): Boolean = try {
+        val result = localisationRepository.deleteByKey(entryKey)
+        // Reload cache after delete
+        localisationRepository.reloadEntries()
+        result
+    } catch (ex: Exception) {
+        logger.error("Delete of localisation $entryKey finished with error ${ex.message}", ex)
+        throw ex
     }
 }

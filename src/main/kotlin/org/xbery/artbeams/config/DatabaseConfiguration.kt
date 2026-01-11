@@ -20,16 +20,16 @@ import javax.sql.DataSource
 @Configuration
 @EnableAutoConfiguration
 @EnableTransactionManagement
-class DatabaseConfiguration(private val dataSource: DataSource) {
+class DatabaseConfiguration(
+    private val dataSource: DataSource
+) {
 
     @Bean
     fun connectionProvider(): DataSourceConnectionProvider =
         DataSourceConnectionProvider(TransactionAwareDataSourceProxy(dataSource))
 
     @Bean
-    fun dslContext(): DSLContext {
-        return DefaultDSLContext(configuration())
-    }
+    fun dslContext(): DSLContext = DefaultDSLContext(configuration())
 
     fun configuration(): DefaultConfiguration {
         val jooqConfiguration = DefaultConfiguration()

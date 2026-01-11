@@ -25,7 +25,7 @@ import java.time.Instant
  * @author Radek Beran
  */
 @Component
-open class ApplicationStartup() : ApplicationListener<ApplicationReadyEvent> {
+open class ApplicationStartup : ApplicationListener<ApplicationReadyEvent> {
     private val adminUserLogin: String = "admin"
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 

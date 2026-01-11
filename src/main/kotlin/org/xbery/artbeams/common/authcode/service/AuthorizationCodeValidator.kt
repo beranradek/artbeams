@@ -1,7 +1,6 @@
 package org.xbery.artbeams.common.authcode.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.time.Instant
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,6 +12,7 @@ import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.common.security.AESEncryption
 import org.xbery.artbeams.config.repository.AppConfig
+import java.time.Instant
 import kotlin.reflect.KClass
 
 /**
@@ -62,9 +62,9 @@ class AuthorizationCodeValidator(
         val authorizationCode = findCode(tokenPayload)
         if (authorizationCode.purpose != purpose) {
             val msg = "Authorization code purpose does not match: " +
-                    "code=${tokenPayload.code}, " +
-                    "userId=${tokenPayload.userId}, " +
-                    "purpose=${tokenPayload.purpose} ($purpose expected)"
+                "code=${tokenPayload.code}, " +
+                "userId=${tokenPayload.userId}, " +
+                "purpose=${tokenPayload.purpose} ($purpose expected)"
             logger.warn(
                 msg,
                 null
@@ -76,7 +76,7 @@ class AuthorizationCodeValidator(
         }
         if (authorizationCode.validTo.isBefore(Instant.now())) {
             val msg = "Authorization code expired: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
-                    "purpose=${tokenPayload.purpose}"
+                "purpose=${tokenPayload.purpose}"
             logger.warn(
                 msg,
                 null
@@ -90,7 +90,7 @@ class AuthorizationCodeValidator(
             // but it does not matter if still valid, necessity to validate token
             // before and after displaying a form can be a valid case
             val msg = "Authorization code was already validated: code=${tokenPayload.code}, userId=${tokenPayload.userId}, " +
-                    "purpose=${tokenPayload.purpose}"
+                "purpose=${tokenPayload.purpose}"
             logger.debug(
                 msg,
                 null
@@ -110,20 +110,18 @@ class AuthorizationCodeValidator(
 
     protected fun createObjectMapper(): ObjectMapper = ObjectMappers.DEFAULT_MAPPER
 
-    private fun getDecryptedCodePayload(code: String): TokenPayload {
-        return try {
-            val secretKey = AESEncryption.getKeyFromPassword(getEncryptionSecret(), getEncryptionSalt())
-            val decryptedString = AESEncryption.decryptPasswordBased(code, secretKey)
-            val tokenPayload = objectMapper.readValue(decryptedString, TokenPayload::class.java)
-            tokenPayload
-        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
-            val msg = "Decryption of authorization code failed: code=$code, msg=${e.message}"
-            logger.warn(msg, e)
-            throw InvalidAuthorizationCodeException(
-                InvalidAuthorizationCode.DECRYPTION_FAILED,
-                msg
-            )
-        }
+    private fun getDecryptedCodePayload(code: String): TokenPayload = try {
+        val secretKey = AESEncryption.getKeyFromPassword(getEncryptionSecret(), getEncryptionSalt())
+        val decryptedString = AESEncryption.decryptPasswordBased(code, secretKey)
+        val tokenPayload = objectMapper.readValue(decryptedString, TokenPayload::class.java)
+        tokenPayload
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+        val msg = "Decryption of authorization code failed: code=$code, msg=${e.message}"
+        logger.warn(msg, e)
+        throw InvalidAuthorizationCodeException(
+            InvalidAuthorizationCode.DECRYPTION_FAILED,
+            msg
+        )
     }
 
     private fun findCode(tokenPayload: TokenPayload): AuthorizationCode {
@@ -146,11 +144,7 @@ class AuthorizationCodeValidator(
         return authorizationCode
     }
 
-    protected fun getEncryptionSecret(): String {
-        return appConfig.requireConfig("encryptionSecret")
-    }
+    protected fun getEncryptionSecret(): String = appConfig.requireConfig("encryptionSecret")
 
-    protected fun getEncryptionSalt(): String {
-        return appConfig.requireConfig("encryptionSalt")
-    }
+    protected fun getEncryptionSalt(): String = appConfig.requireConfig("encryptionSalt")
 }

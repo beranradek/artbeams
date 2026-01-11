@@ -61,7 +61,7 @@ class UserServiceImpl(
     override fun setPassword(passwordSetupData: PasswordSetupData, ctx: OperationCtx): User {
         val user = requireByLogin(passwordSetupData.login)
         val userToUpdate = user.updatedWith(toEditedProfile(user, passwordSetupData.password), user.id)
-        
+
         // Check if user has MEMBER role, if not, assign it
         var userRoles = roleRepository.findRolesOfUser(user.id)
         if (userRoles.none { it.name == CommonRoles.MEMBER.roleName }) {
@@ -74,7 +74,7 @@ class UserServiceImpl(
                 updateRoles(user.id, userRoles)
             }
         }
-        
+
         val updatedUser = userRepository.update(userToUpdate.copy(roles = userRoles))
         logger.info("Password for user ${userToUpdate.login} was set")
         return updatedUser
@@ -92,17 +92,11 @@ class UserServiceImpl(
         return null
     }
 
-    override fun findByLogin(login: String): User? {
-        return userRepository.findByLogin(login)
-    }
+    override fun findByLogin(login: String): User? = userRepository.findByLogin(login)
 
-    override fun requireByLogin(login: String): User {
-        return userRepository.requireByLogin(login)
-    }
+    override fun requireByLogin(login: String): User = userRepository.requireByLogin(login)
 
-    override fun findById(userId: String): User? {
-        return userRepository.findByIdWithRoles(userId)
-    }
+    override fun findById(userId: String): User? = userRepository.findByIdWithRoles(userId)
 
     override fun updateUser(user: User): User = userRepository.update(user)
 
@@ -129,50 +123,52 @@ class UserServiceImpl(
         roleRepository.updateRolesOfUser(userId, roles)
     }
 
-    override fun deleteAccount(userId: String, ctx: OperationCtx): Boolean {
-        return try {
-            val user = userRepository.requireById(userId)
-            
-            // Create anonymized version of user for GDPR compliance
-            val anonymizedUser = user.copy(
-                common = user.common.updatedWith(userId),
-                login = "deleted_${user.id.take(8)}", // Make login unique but anonymized
-                password = "", // Clear password to prevent login
-                firstName = "[deleted]",
-                lastName = "",
-                email = null, // Clear email for privacy
-                roles = emptyList() // Remove all roles to prevent access
-            )
-            
-            // Update user with anonymized data
-            userRepository.update(anonymizedUser)
-            
-            // Remove all user roles
-            roleRepository.updateRolesOfUser(userId, emptyList())
-            
-            // Revoke all consents
-            consentService.revokeConsent(user.login, org.xbery.artbeams.consents.domain.ConsentType.NEWS)
-            
-            // Log account deletion
-            userActivityLogService.logActivity(
-                userId = userId,
-                actionType = org.xbery.artbeams.activitylog.domain.ActionType.ACCOUNT_DELETED,
-                entityType = org.xbery.artbeams.activitylog.domain.EntityType.USER,
-                entityId = userId,
-                ipAddress = null, // IP not available in service layer
-                userAgent = null, // User agent not available in service layer
-                details = "Account deleted and anonymized for user ${user.login}"
-            )
-            
-            logger.info("Account deleted and anonymized for user ${user.login} (ID: $userId)")
-            true
-        } catch (e: Exception) {
-            logger.error("Failed to delete account for user ID: $userId", e)
-            false
-        }
+    override fun deleteAccount(userId: String, ctx: OperationCtx): Boolean = try {
+        val user = userRepository.requireById(userId)
+
+        // Create anonymized version of user for GDPR compliance
+        val anonymizedUser = user.copy(
+            common = user.common.updatedWith(userId),
+            login = "deleted_${user.id.take(8)}", // Make login unique but anonymized
+            password = "", // Clear password to prevent login
+            firstName = "[deleted]",
+            lastName = "",
+            email = null, // Clear email for privacy
+            roles = emptyList() // Remove all roles to prevent access
+        )
+
+        // Update user with anonymized data
+        userRepository.update(anonymizedUser)
+
+        // Remove all user roles
+        roleRepository.updateRolesOfUser(userId, emptyList())
+
+        // Revoke all consents
+        consentService.revokeConsent(user.login, org.xbery.artbeams.consents.domain.ConsentType.NEWS)
+
+        // Log account deletion
+        userActivityLogService.logActivity(
+            userId = userId,
+            actionType = org.xbery.artbeams.activitylog.domain.ActionType.ACCOUNT_DELETED,
+            entityType = org.xbery.artbeams.activitylog.domain.EntityType.USER,
+            entityId = userId,
+            ipAddress = null, // IP not available in service layer
+            userAgent = null, // User agent not available in service layer
+            details = "Account deleted and anonymized for user ${user.login}"
+        )
+
+        logger.info("Account deleted and anonymized for user ${user.login} (ID: $userId)")
+        true
+    } catch (e: Exception) {
+        logger.error("Failed to delete account for user ID: $userId", e)
+        false
     }
 
-    private fun toEditedProfile(user: User, validatedPassword: String): MyProfile {
-        return MyProfile(user.login, user.firstName, user.lastName, validatedPassword, validatedPassword)
-    }
+    private fun toEditedProfile(user: User, validatedPassword: String): MyProfile = MyProfile(
+        user.login,
+        user.firstName,
+        user.lastName,
+        validatedPassword,
+        validatedPassword
+    )
 }

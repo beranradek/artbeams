@@ -20,19 +20,15 @@ data class Comment(
     val ip: String,
     val userAgent: String
 ) : Asset() {
-    fun updatedWith(edited: EditedComment, userId: String): Comment {
-        return this.copy(
-            common = this.common.updatedWith(userId),
-            comment = edited.comment,
-            userName = edited.userName,
-            email = edited.email,
-            entityKey = EntityKey.fromClassAndId(Article::class.java, edited.entityId)
-        )
-    }
+    fun updatedWith(edited: EditedComment, userId: String): Comment = this.copy(
+        common = this.common.updatedWith(userId),
+        comment = edited.comment,
+        userName = edited.userName,
+        email = edited.email,
+        entityKey = EntityKey.fromClassAndId(Article::class.java, edited.entityId)
+    )
 
-    fun toEdited(): EditedComment {
-        return EditedComment(this.id, this.entityKey.entityId, this.comment, this.userName, this.email)
-    }
+    fun toEdited(): EditedComment = EditedComment(this.id, this.entityKey.entityId, this.comment, this.userName, this.email)
 
     companion object {
         const val CACHE_NAME: String = "comments"
@@ -40,8 +36,12 @@ data class Comment(
             AssetAttributes.EMPTY,
             null,
             CommentState.WAITING_FOR_APPROVAL,
-            "", "", "",
-            EntityKey.Empty, "", ""
+            "",
+            "",
+            "",
+            EntityKey.Empty,
+            "",
+            ""
         )
     }
 }

@@ -20,9 +20,7 @@ class ConsentService(
     /**
      * Checks if the user has a valid consent of given type at the current time.
      */
-    fun hasValidConsent(login: String, consentType: ConsentType): Boolean {
-        return hasValidConsentAt(login, consentType, Instant.now())
-    }
+    fun hasValidConsent(login: String, consentType: ConsentType): Boolean = hasValidConsentAt(login, consentType, Instant.now())
 
     /**
      * Checks if the user has a valid consent of given type at the specified time.
@@ -35,16 +33,16 @@ class ConsentService(
     /**
      * Finds all currently valid consents for a given login and consent type.
      */
-    fun findValidConsents(login: String, consentType: ConsentType): List<Consent> {
-        return consentRepository.findValidConsents(login, consentType, Instant.now())
-    }
+    fun findValidConsents(login: String, consentType: ConsentType): List<Consent> = consentRepository.findValidConsents(
+        login,
+        consentType,
+        Instant.now()
+    )
 
     /**
      * Finds all consents (both valid and invalid) for a given login and consent type.
      */
-    fun findAllConsents(login: String, consentType: ConsentType): List<Consent> {
-        return consentRepository.findByLoginAndType(login, consentType)
-    }
+    fun findAllConsents(login: String, consentType: ConsentType): List<Consent> = consentRepository.findByLoginAndType(login, consentType)
 
     /**
      * Creates a new consent for a user.
@@ -54,9 +52,7 @@ class ConsentService(
         login: String,
         consentType: ConsentType,
         originProductId: String? = null
-    ): Consent {
-        return giveConsentFrom(login, consentType, Instant.now(), originProductId)
-    }
+    ): Consent = giveConsentFrom(login, consentType, Instant.now(), originProductId)
 
     /**
      * Creates a new consent for a user with a specific valid_from timestamp.
@@ -83,9 +79,7 @@ class ConsentService(
      * Revokes (ends) all currently valid consents for a user of given type.
      * Sets valid_to to the current timestamp.
      */
-    fun revokeConsent(login: String, consentType: ConsentType): Int {
-        return revokeConsentAt(login, consentType, Instant.now())
-    }
+    fun revokeConsent(login: String, consentType: ConsentType): Int = revokeConsentAt(login, consentType, Instant.now())
 
     /**
      * Revokes (ends) all currently valid consents for a user of given type at a specific time.

@@ -1,6 +1,5 @@
 package org.xbery.artbeams.users.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -23,6 +22,7 @@ import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
 import org.xbery.artbeams.users.service.UserService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * User administration routes.
@@ -101,9 +101,11 @@ class UserAdminController(
         val editForm: FormMapping<EditedUser> = editFormDef.fill(FormData(edited, validationResult))
         val roles: List<Role> = roleRepository.findRoles()
         val model = createModel(
-            request, "editForm"
-                    to editForm, "roles"
-                    to roles
+            request,
+            "editForm"
+                to editForm,
+            "roles"
+                to roles
         )
         return ModelAndView("$TplBasePath/userEdit", model)
     }

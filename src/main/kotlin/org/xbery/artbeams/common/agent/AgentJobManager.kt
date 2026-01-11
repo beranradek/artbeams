@@ -57,9 +57,7 @@ class AgentJobManager(
      * @param jobId The unique job identifier
      * @return The AgentJob if found, null otherwise
      */
-    fun getJob(jobId: String): AgentJob? {
-        return jobs[jobId]
-    }
+    fun getJob(jobId: String): AgentJob? = jobs[jobId]
 
     /**
      * Retrieves all jobs for a given session.
@@ -67,9 +65,7 @@ class AgentJobManager(
      * @param sessionId The session identifier
      * @return List of jobs for the session (may be empty)
      */
-    fun getJobsForSession(sessionId: String): List<AgentJob> {
-        return jobs.values.filter { it.sessionId == sessionId }
-    }
+    fun getJobsForSession(sessionId: String): List<AgentJob> = jobs.values.filter { it.sessionId == sessionId }
 
     /**
      * Manually removes a job from storage.
@@ -77,18 +73,14 @@ class AgentJobManager(
      * @param jobId The unique job identifier
      * @return The removed job if it existed, null otherwise
      */
-    fun removeJob(jobId: String): AgentJob? {
-        return jobs.remove(jobId)
-    }
+    fun removeJob(jobId: String): AgentJob? = jobs.remove(jobId)
 
     /**
      * Gets the current count of tracked jobs.
      *
      * @return Number of jobs currently in storage
      */
-    fun getJobCount(): Int {
-        return jobs.size
-    }
+    fun getJobCount(): Int = jobs.size
 
     /**
      * Schedules automatic cleanup of a job after the retention period.

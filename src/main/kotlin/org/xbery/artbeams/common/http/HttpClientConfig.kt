@@ -1,12 +1,12 @@
 package org.xbery.artbeams.common.http
 
-import jakarta.annotation.PreDestroy
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.net.http.HttpClient
 import java.time.Duration
 import java.util.concurrent.Executors
+import jakarta.annotation.PreDestroy
 
 /**
  * Configuration for shared HTTP client instance.
@@ -37,7 +37,8 @@ class HttpClientConfig {
     fun httpClient(): HttpClient {
         logger.info("Initializing shared HttpClient")
 
-        val client = HttpClient.newBuilder()
+        val client = HttpClient
+            .newBuilder()
             .version(HttpClient.Version.HTTP_2) // Prefer HTTP/2
             .connectTimeout(Duration.ofSeconds(30))
             .followRedirects(HttpClient.Redirect.NORMAL)

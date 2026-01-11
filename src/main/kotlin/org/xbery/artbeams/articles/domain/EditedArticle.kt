@@ -22,5 +22,5 @@ data class EditedArticle(
     override val validTo: Date?,
     val keywords: String,
     val showOnBlog: Boolean,
-    val categories: List<String>,
+    val categories: List<String>
 ) : EditedTimeValidity

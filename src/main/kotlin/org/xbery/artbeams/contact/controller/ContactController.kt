@@ -1,6 +1,5 @@
 package org.xbery.artbeams.contact.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -18,6 +17,7 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.form.FormErrors
 import org.xbery.artbeams.contact.domain.ContactRequest
 import org.xbery.artbeams.contact.service.ContactService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Contact page/form routes.
@@ -28,7 +28,7 @@ import org.xbery.artbeams.contact.service.ContactService
 class ContactController(
     controllerComponents: ControllerComponents,
     private val contactService: ContactService,
-    private val recaptchaService: RecaptchaService,
+    private val recaptchaService: RecaptchaService
 ) : BaseController(controllerComponents) {
 
     @GetMapping
@@ -60,8 +60,8 @@ class ContactController(
             if (!recaptchaResult.success) {
                 logger.warn(
                     "Captcha token was incorrect, score=${recaptchaResult.score}, " +
-                            "for contact form email=${contactRequest.email}, name=${contactRequest.name}, phone=${contactRequest.phone}, " +
-                            "IP=${ipAddress}, User-Agent=$userAgent"
+                        "for contact form email=${contactRequest.email}, name=${contactRequest.name}, phone=${contactRequest.phone}, " +
+                        "IP=$ipAddress, User-Agent=$userAgent"
                 )
                 contactFormResponse(FormErrors.formDataWithCaptchaInvalidError(formData), request)
             } else {
@@ -70,8 +70,11 @@ class ContactController(
                     val referrer = getReferrerUrl(request)
                     ajaxRedirect(referrer)
                 } catch (ex: Exception) {
-                    logger.error("Error while sending contact request " +
-                        "email=${contactRequest.email}, name=${contactRequest.name}, phone=${contactRequest.phone}: ${ex.message}", ex)
+                    logger.error(
+                        "Error while sending contact request " +
+                            "email=${contactRequest.email}, name=${contactRequest.name}, phone=${contactRequest.phone}: ${ex.message}",
+                        ex
+                    )
                     contactFormResponse(FormErrors.formDataWithInternalError(formData), request)
                 }
             }

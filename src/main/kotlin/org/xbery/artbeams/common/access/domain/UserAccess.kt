@@ -15,7 +15,8 @@ data class UserAccess(
     val ip: String,
     val userAgent: String,
     val entityKey: EntityKey
-) : IdentifiedEntity, Serializable {
+) : IdentifiedEntity,
+    Serializable {
     companion object {
         val Empty: UserAccess = UserAccess(AssetAttributes.EMPTY_ID, AssetAttributes.EMPTY_DATE, "", "", EntityKey.Empty)
     }

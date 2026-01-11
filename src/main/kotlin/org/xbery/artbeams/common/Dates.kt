@@ -10,9 +10,7 @@ import java.time.format.DateTimeFormatter
 object Dates {
     const val APP_ZONE_ID = "Europe/Prague" // usable as constant in annotations
 
-    fun format(instant: Instant, formatter: DateTimeFormatter): String {
-        return instant.atZone(ZoneId.of(APP_ZONE_ID)).toLocalDateTime().format(formatter)
-    }
+    fun format(instant: Instant, formatter: DateTimeFormatter): String = instant.atZone(ZoneId.of(APP_ZONE_ID)).toLocalDateTime().format(formatter)
 
     val FORMAT_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("d.M.yyyy HH:mm")
 

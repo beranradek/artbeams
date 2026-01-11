@@ -27,7 +27,7 @@ class NewsSubscriptionController(
     private val controllerComponents: ControllerComponents,
     private val newsSubscriptionService: NewsSubscriptionService,
     private val articleService: ArticleService,
-    private val recaptchaService: RecaptchaService,
+    private val recaptchaService: RecaptchaService
 ) : BaseController(controllerComponents) {
 
     @PostMapping("/subscribe")
@@ -45,8 +45,8 @@ class NewsSubscriptionController(
             if (!recaptchaResult.success) {
                 logger.warn(
                     "Captcha token was incorrect, score=${recaptchaResult.score}, " +
-                            "for news subscription email=${subscriptionData.email}, " +
-                            "IP=${ipAddress}"
+                        "for news subscription email=${subscriptionData.email}, " +
+                        "IP=$ipAddress"
                 )
                 subscriptionFormResponse(FormErrors.formDataWithCaptchaInvalidError(formData), request)
             } else {
@@ -73,9 +73,7 @@ class NewsSubscriptionController(
      * This is read operation without side effect.
      */
     @GetMapping("/confirmation")
-    fun showSubscriptionInfo(request: HttpServletRequest): Any {
-        return renderNewsArticle(request, "news-confirmation")
-    }
+    fun showSubscriptionInfo(request: HttpServletRequest): Any = renderNewsArticle(request, "news-confirmation")
 
     /**
      * Confirms user's consent with newsletter subscription and subscribes the user
@@ -91,9 +89,7 @@ class NewsSubscriptionController(
     }
 
     @GetMapping("/confirmed")
-    fun confirmed(request: HttpServletRequest): Any {
-        return renderNewsArticle(request, "news-confirmed")
-    }
+    fun confirmed(request: HttpServletRequest): Any = renderNewsArticle(request, "news-confirmed")
 
     private fun findEmailInRequest(request: HttpServletRequest): String? {
         val param = findParamInRequest(request, "email")

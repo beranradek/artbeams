@@ -23,7 +23,9 @@ data class UserActivityLog(
 /**
  * Types of user actions that can be logged.
  */
-enum class ActionType(val value: String) {
+enum class ActionType(
+    val value: String
+) {
     /** User logged into member section */
     LOGIN("LOGIN"),
 
@@ -59,7 +61,9 @@ enum class ActionType(val value: String) {
 /**
  * Types of entities that activities can be related to.
  */
-enum class EntityType(val value: String) {
+enum class EntityType(
+    val value: String
+) {
     /** Activity relates to an order */
     ORDER("ORDER"),
 

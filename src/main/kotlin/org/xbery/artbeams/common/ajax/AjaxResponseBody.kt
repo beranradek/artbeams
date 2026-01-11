@@ -8,7 +8,6 @@ package org.xbery.artbeams.common.ajax
 data class AjaxResponseBody(
     /** HTML content if some content should be re-placed in the page. */
     val htmlContent: String?,
-
     /**
      * Target redirect URI if redirection to another page
      * should be performed as a result of AJAX request

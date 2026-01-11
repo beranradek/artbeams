@@ -38,7 +38,8 @@ internal class ImageTransformerTest {
     }
 
     private fun getInputImageStream(): InputStream =
-        requireNotNull(javaClass.getResourceAsStream("image.jpg")) { // placed in /src/test/resources
+        requireNotNull(javaClass.getResourceAsStream("image.jpg")) {
+            // placed in /src/test/resources
             "Input image was not found"
         }
 }

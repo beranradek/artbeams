@@ -11,10 +11,8 @@ import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
 @Component
 class ConfigMapper : RecordMapper<ConfigRecord, Config> {
 
-    override fun map(record: ConfigRecord): Config {
-        return Config(
-            entryKey = requireNotNull(record.entryKey),
-            entryValue = requireNotNull(record.entryValue)
-        )
-    }
+    override fun map(record: ConfigRecord): Config = Config(
+        entryKey = requireNotNull(record.entryKey),
+        entryValue = requireNotNull(record.entryValue)
+    )
 }

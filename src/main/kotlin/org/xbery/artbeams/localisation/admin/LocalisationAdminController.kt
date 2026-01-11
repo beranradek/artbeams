@@ -1,6 +1,5 @@
 package org.xbery.artbeams.localisation.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -17,6 +16,7 @@ import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.localisation.domain.EditedLocalisation
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.localisation.service.LocalisationService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Localisation administration routes.
@@ -99,18 +99,22 @@ open class LocalisationAdminController(
         return try {
             // Validate input
             if (updateRequest.key.isBlank()) {
-                return ResponseEntity.badRequest().body(mapOf(
-                    "success" to false,
-                    "message" to "Localization key is required"
-                ))
+                return ResponseEntity.badRequest().body(
+                    mapOf(
+                        "success" to false,
+                        "message" to "Localization key is required"
+                    )
+                )
             }
 
             // Find existing localization
             val existing = localisationRepository.findByKey(updateRequest.key)
-                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf(
-                    "success" to false,
-                    "message" to "Localization with key '${updateRequest.key}' not found"
-                ))
+                ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    mapOf(
+                        "success" to false,
+                        "message" to "Localization with key '${updateRequest.key}' not found"
+                    )
+                )
 
             // Create edited localization with new value
             val edited = EditedLocalisation(
@@ -125,18 +129,22 @@ open class LocalisationAdminController(
             // Reload localization entries to refresh the cache
             localisationRepository.reloadEntries()
 
-            ResponseEntity.ok(mapOf(
-                "success" to true,
-                "message" to "Localization updated successfully",
-                "key" to updateRequest.key,
-                "value" to updateRequest.value
-            ))
+            ResponseEntity.ok(
+                mapOf(
+                    "success" to true,
+                    "message" to "Localization updated successfully",
+                    "key" to updateRequest.key,
+                    "value" to updateRequest.value
+                )
+            )
         } catch (ex: Exception) {
             logger.error("Error updating localization inline", ex)
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapOf(
-                "success" to false,
-                "message" to "Failed to update localization: ${ex.message}"
-            ))
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                mapOf(
+                    "success" to false,
+                    "message" to "Failed to update localization: ${ex.message}"
+                )
+            )
         }
     }
 
@@ -156,9 +164,11 @@ open class LocalisationAdminController(
     ): Any {
         val editForm: FormMapping<EditedLocalisation> = editFormDef.fill(FormData<EditedLocalisation>(edited, validationResult))
         val model = createModel(
-            request, "editForm"
-            to editForm, "errorMessage"
-            to errorMessage
+            request,
+            "editForm"
+                to editForm,
+            "errorMessage"
+                to errorMessage
         )
         return ModelAndView("$TplBasePath/localisationEdit", model)
     }

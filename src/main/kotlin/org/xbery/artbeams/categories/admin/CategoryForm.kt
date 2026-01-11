@@ -9,7 +9,8 @@ import java.util.*
 
 open class CategoryForm {
     companion object {
-        val definition: FormMapping<EditedCategory> = Forms.basic(EditedCategory::class.java, "category")
+        val definition: FormMapping<EditedCategory> = Forms
+            .basic(EditedCategory::class.java, "category")
             .field<String>("id", Field.HIDDEN)
             .field<String>("slug", Field.TEXT)
             .field<String>("title", Field.TEXT)

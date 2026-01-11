@@ -1,6 +1,5 @@
 package org.xbery.artbeams.comments.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -16,6 +15,7 @@ import org.xbery.artbeams.common.antispam.recaptcha.service.RecaptchaService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.form.FormErrors
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Comment routes.
@@ -45,8 +45,8 @@ class CommentController(
             if (!recaptchaResult.success) {
                 logger.warn(
                     "Captcha token was incorrect, score=${recaptchaResult.score}, " +
-                    "for comment=${edited.comment}, email=${edited.email}, userName=${edited.userName}, entityId=${edited.entityId}, " +
-                        "IP=${ipAddress}, User-Agent=$userAgent"
+                        "for comment=${edited.comment}, email=${edited.email}, userName=${edited.userName}, entityId=${edited.entityId}, " +
+                        "IP=$ipAddress, User-Agent=$userAgent"
                 )
                 commentFormResponse(FormErrors.formDataWithCaptchaInvalidError(formData), request)
             } else {
@@ -55,7 +55,10 @@ class CommentController(
                     val referrer = getReferrerUrl(request)
                     ajaxRedirect(referrer)
                 } catch (ex: Exception) {
-                    logger.error("Error while saving comment for entity ${edited.entityId} from ${edited.userName} with comment text ${edited.comment}: ${ex.message}", ex)
+                    logger.error(
+                        "Error while saving comment for entity ${edited.entityId} from ${edited.userName} with comment text ${edited.comment}: ${ex.message}",
+                        ex
+                    )
                     commentFormResponse(FormErrors.formDataWithInternalError(formData), request)
                 }
             }

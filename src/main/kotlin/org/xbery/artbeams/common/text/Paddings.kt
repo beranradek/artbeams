@@ -23,6 +23,8 @@ object Paddings {
             val result = StringBuilder(rawString)
             repeat(nPad) { result.append(PADDING_CHAR_NONE) }
             return result.toString()
-        } else return rawString
+        } else {
+            return rawString
+        }
     }
 }

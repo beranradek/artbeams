@@ -19,21 +19,19 @@ class EmailValidatorBuilder {
     var bogusList: List<String> = Bogus.bogusList
     private var bundle: ResourceBundle = ResourceBundle.getBundle("messages", Locale.forLanguageTag("en-US"))
 
-    fun build(): EmailValidator {
-        return EmailValidator(
-            smtpPort,
-            smtpSllPort,
-            checkDns,
-            domainTypingErrors,
-            gmailSuggestion,
-            ignoredSuggestions,
-            disposable,
-            domains,
-            validServersList,
-            bogusList,
-            bundle
-        )
-    }
+    fun build(): EmailValidator = EmailValidator(
+        smtpPort,
+        smtpSllPort,
+        checkDns,
+        domainTypingErrors,
+        gmailSuggestion,
+        ignoredSuggestions,
+        disposable,
+        domains,
+        validServersList,
+        bogusList,
+        bundle
+    )
 
     fun setSmtpPort(smtpPort: Int): EmailValidatorBuilder {
         this.smtpPort = smtpPort

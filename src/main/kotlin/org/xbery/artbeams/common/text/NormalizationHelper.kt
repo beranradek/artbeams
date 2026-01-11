@@ -20,14 +20,18 @@ open class NormalizationHelper {
         if (str.isEmpty()) return str
         val sb = StringBuilder()
         for (c: Char in str.toCharArray()) {
-            if (' ' == c) sb.append('-') else if (Character.isLetterOrDigit(c)) sb.append(c)
+            if (' ' == c) {
+                sb.append('-')
+            } else if (Character.isLetterOrDigit(c)) {
+                sb.append(c)
+            }
         }
         return toAscii(removeDiacriticalMarks(sb.toString())).lowercase()
     }
 
     fun normalizeForFilesystem(str: String): String {
         if (str.isEmpty()) return str
-        val str2: String = str.replace(SpecialFilesystemCharsRegex,"")
+        val str2: String = str.replace(SpecialFilesystemCharsRegex, "")
         return removeDiacriticalMarks(str2)
     }
 

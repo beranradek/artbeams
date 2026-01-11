@@ -13,14 +13,12 @@ import org.xbery.artbeams.jooq.schema.tables.records.ConsentsRecord
 @Component
 class ConsentMapper : RecordMapper<ConsentsRecord, Consent> {
 
-    override fun map(record: ConsentsRecord): Consent {
-        return Consent(
-            id = requireNotNull(record.id),
-            validFrom = requireNotNull(record.validFrom),
-            validTo = requireNotNull(record.validTo),
-            login = requireNotNull(record.login),
-            consentType = ConsentType.valueOf(requireNotNull(record.consentType)),
-            originProductId = record.originProductId
-        )
-    }
+    override fun map(record: ConsentsRecord): Consent = Consent(
+        id = requireNotNull(record.id),
+        validFrom = requireNotNull(record.validFrom),
+        validTo = requireNotNull(record.validTo),
+        login = requireNotNull(record.login),
+        consentType = ConsentType.valueOf(requireNotNull(record.consentType)),
+        originProductId = record.originProductId
+    )
 }

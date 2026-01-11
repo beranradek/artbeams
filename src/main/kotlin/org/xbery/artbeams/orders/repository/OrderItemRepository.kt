@@ -21,18 +21,22 @@ class OrderItemRepository(
     override val mapper: OrderItemMapper,
     override val unmapper: OrderItemUnmapper
 ) : AssetRepository<OrderItem, OrderItemsRecord>(
-    dsl, mapper, unmapper
-) {
+        dsl,
+        mapper,
+        unmapper
+    ) {
     override val table: Table<OrderItemsRecord> = ORDER_ITEMS
     override val idField: Field<String?> = ORDER_ITEMS.ID
 
     fun findByOrderId(orderId: String): List<OrderItem> =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(ORDER_ITEMS.ORDER_ID.eq(orderId))
             .fetch(mapper)
 
     fun findAllOrderItemsOfUserAndProduct(userId: String, productId: String): List<OrderItem> =
-        dsl.selectFrom(table)
+        dsl
+            .selectFrom(table)
             .where(ORDER_ITEMS.CREATED_BY.eq(userId).and(ORDER_ITEMS.PRODUCT_ID.eq(productId)))
             .orderBy(ORDER_ITEMS.CREATED.desc())
             .fetch(mapper)

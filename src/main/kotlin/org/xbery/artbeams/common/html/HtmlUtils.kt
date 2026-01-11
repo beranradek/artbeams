@@ -39,7 +39,5 @@ object HtmlUtils {
         return html
     }
 
-    fun containsHtmlMarkup(text: String): Boolean {
-        return TAG.matcher(text).find()
-    }
+    fun containsHtmlMarkup(text: String): Boolean = TAG.matcher(text).find()
 }

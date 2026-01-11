@@ -21,10 +21,10 @@ import java.time.format.DateTimeFormatter
 
 /**
  * Google Search Console API service using Java HttpClient.
- * 
+ *
  * Provides access to search performance data, indexing status, and sitemap information.
  * Uses Google Webmasters (Search Console) v3 REST API.
- * 
+ *
  * NOTE: This implementation requires proper Google OAuth2 authorization with webmasters.readonly scope.
  *
  * @author Radek Beran
@@ -59,7 +59,7 @@ open class GoogleSearchConsoleService(
     @Cacheable(value = ["searchConsoleMetrics"], key = "#startDate + '-' + #endDate")
     open fun getSearchMetrics(startDate: LocalDate, endDate: LocalDate): SearchConsoleMetrics {
         logger.info("Fetching Search Console metrics from $startDate to $endDate")
-        
+
         if (!isAuthorized()) {
             throw OperationException(
                 GoogleErrorCode.UNAUTHORIZED,
@@ -67,30 +67,31 @@ open class GoogleSearchConsoleService(
                 StatusCode.UNAUTHORIZED
             )
         }
-        
+
         val siteUrl = getSiteUrl()
         val encodedSiteUrl = URLEncoder.encode(siteUrl, "UTF-8")
         val accessToken = getAccessToken()
-        
+
         val requestBody = mapOf(
             "startDate" to startDate.format(dateFormatter),
             "endDate" to endDate.format(dateFormatter),
             "dimensions" to emptyList<String>()
         )
-        
+
         try {
             val url = "$apiBaseUrl/sites/$encodedSiteUrl/searchAnalytics/query"
-            val request = HttpRequest.newBuilder()
+            val request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(url))
                 .header("Authorization", "Bearer $accessToken")
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(requestBody)))
                 .build()
-            
+
             val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
             val statusCode = response.statusCode()
             val responseBody = response.body()
-            
+
             if (statusCode != 200) {
                 logger.error("Search Console API error: $statusCode - $responseBody")
                 throw OperationException(
@@ -99,10 +100,10 @@ open class GoogleSearchConsoleService(
                     StatusCode.INTERNAL_ERROR
                 )
             }
-            
+
             val result: Map<String, Any> = objectMapper.readValue(responseBody)
             val rows = result["rows"] as? List<Map<String, Any>>
-            
+
             if (rows.isNullOrEmpty()) {
                 logger.info("No search metrics data available for date range")
                 return SearchConsoleMetrics(
@@ -114,7 +115,7 @@ open class GoogleSearchConsoleService(
                     endDate = endDate
                 )
             }
-            
+
             val row = rows[0]
             return SearchConsoleMetrics(
                 impressions = (row["impressions"] as? Number)?.toLong() ?: 0,
@@ -143,43 +144,44 @@ open class GoogleSearchConsoleService(
     @Cacheable(value = ["searchConsolePages"], key = "#startDate + '-' + #endDate + '-' + #limit")
     open fun getTopPages(startDate: LocalDate, endDate: LocalDate, limit: Int = 10): List<SearchConsolePageMetrics> {
         logger.info("Fetching top $limit pages from $startDate to $endDate")
-        
+
         if (!isAuthorized()) {
             return emptyList()
         }
-        
+
         val siteUrl = getSiteUrl()
         val encodedSiteUrl = URLEncoder.encode(siteUrl, "UTF-8")
         val accessToken = getAccessToken()
-        
+
         val requestBody = mapOf(
             "startDate" to startDate.format(dateFormatter),
             "endDate" to endDate.format(dateFormatter),
             "dimensions" to listOf("page"),
             "rowLimit" to limit
         )
-        
+
         try {
             val url = "$apiBaseUrl/sites/$encodedSiteUrl/searchAnalytics/query"
-            val request = HttpRequest.newBuilder()
+            val request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(url))
                 .header("Authorization", "Bearer $accessToken")
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(requestBody)))
                 .build()
-            
+
             val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
             val statusCode = response.statusCode()
             val responseBody = response.body()
-            
+
             if (statusCode != 200) {
                 logger.error("Search Console API error: $statusCode - $responseBody")
                 return emptyList()
             }
-            
+
             val result: Map<String, Any> = objectMapper.readValue(responseBody)
             val rows = result["rows"] as? List<Map<String, Any>> ?: return emptyList()
-            
+
             return rows.map { row ->
                 val keys = row["keys"] as? List<String>
                 SearchConsolePageMetrics(
@@ -203,43 +205,44 @@ open class GoogleSearchConsoleService(
     @Cacheable(value = ["searchConsoleQueries"], key = "#startDate + '-' + #endDate + '-' + #limit")
     open fun getTopQueries(startDate: LocalDate, endDate: LocalDate, limit: Int = 10): List<SearchConsoleQueryMetrics> {
         logger.info("Fetching top $limit queries from $startDate to $endDate")
-        
+
         if (!isAuthorized()) {
             return emptyList()
         }
-        
+
         val siteUrl = getSiteUrl()
         val encodedSiteUrl = URLEncoder.encode(siteUrl, "UTF-8")
         val accessToken = getAccessToken()
-        
+
         val requestBody = mapOf(
             "startDate" to startDate.format(dateFormatter),
             "endDate" to endDate.format(dateFormatter),
             "dimensions" to listOf("query"),
             "rowLimit" to limit
         )
-        
+
         try {
             val url = "$apiBaseUrl/sites/$encodedSiteUrl/searchAnalytics/query"
-            val request = HttpRequest.newBuilder()
+            val request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(url))
                 .header("Authorization", "Bearer $accessToken")
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(requestBody)))
                 .build()
-            
+
             val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
             val statusCode = response.statusCode()
             val responseBody = response.body()
-            
+
             if (statusCode != 200) {
                 logger.error("Search Console API error: $statusCode - $responseBody")
                 return emptyList()
             }
-            
+
             val result: Map<String, Any> = objectMapper.readValue(responseBody)
             val rows = result["rows"] as? List<Map<String, Any>> ?: return emptyList()
-            
+
             return rows.map { row ->
                 val keys = row["keys"] as? List<String>
                 SearchConsoleQueryMetrics(
@@ -263,35 +266,36 @@ open class GoogleSearchConsoleService(
     @Cacheable(value = ["searchConsoleSitemaps"])
     open fun getSitemaps(): List<SearchConsoleSitemapStatus> {
         logger.info("Fetching sitemap status")
-        
+
         if (!isAuthorized()) {
             return emptyList()
         }
-        
+
         val siteUrl = getSiteUrl()
         val encodedSiteUrl = URLEncoder.encode(siteUrl, "UTF-8")
         val accessToken = getAccessToken()
-        
+
         try {
             val url = "$apiBaseUrl/sites/$encodedSiteUrl/sitemaps"
-            val request = HttpRequest.newBuilder()
+            val request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(url))
                 .header("Authorization", "Bearer $accessToken")
                 .GET()
                 .build()
-            
+
             val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
             val statusCode = response.statusCode()
             val responseBody = response.body()
-            
+
             if (statusCode != 200) {
                 logger.error("Search Console API error: $statusCode - $responseBody")
                 return emptyList()
             }
-            
+
             val result: Map<String, Any> = objectMapper.readValue(responseBody)
             val sitemaps = result["sitemap"] as? List<Map<String, Any>> ?: return emptyList()
-            
+
             return sitemaps.map { sitemap ->
                 SearchConsoleSitemapStatus(
                     path = sitemap["path"] as? String ?: "",
@@ -312,16 +316,12 @@ open class GoogleSearchConsoleService(
     /**
      * Checks if user is authorized to access Search Console data.
      */
-    open fun isAuthorized(): Boolean {
-        return googleAuth.isUserAuthorized(scopes)
-    }
+    open fun isAuthorized(): Boolean = googleAuth.isUserAuthorized(scopes)
 
     /**
      * Returns authorization URL for Search Console access.
      */
-    open fun getAuthorizationUrl(returnUrl: String): String {
-        return googleAuth.startAuthorizationFlow(scopes, returnUrl)
-    }
+    open fun getAuthorizationUrl(returnUrl: String): String = googleAuth.startAuthorizationFlow(scopes, returnUrl)
 
     /**
      * Returns access token for API calls.

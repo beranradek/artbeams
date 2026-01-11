@@ -13,22 +13,20 @@ import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
 @Component
 class CategoryMapper : RecordMapper<CategoriesRecord, Category> {
 
-    override fun map(record: CategoriesRecord): Category {
-        return Category(
-            common = AssetAttributes(
-                id = requireNotNull(record.id),
-                created = requireNotNull(record.created),
-                createdBy = requireNotNull(record.createdBy),
-                modified = requireNotNull(record.modified),
-                modifiedBy = requireNotNull(record.modifiedBy)
-            ),
-            validity = Validity(
-                validFrom = requireNotNull(record.validFrom),
-                validTo = record.validTo
-            ),
-            slug = requireNotNull(record.slug),
-            title = requireNotNull(record.title),
-            description = requireNotNull(record.description)
-        )
-    }
+    override fun map(record: CategoriesRecord): Category = Category(
+        common = AssetAttributes(
+            id = requireNotNull(record.id),
+            created = requireNotNull(record.created),
+            createdBy = requireNotNull(record.createdBy),
+            modified = requireNotNull(record.modified),
+            modifiedBy = requireNotNull(record.modifiedBy)
+        ),
+        validity = Validity(
+            validFrom = requireNotNull(record.validFrom),
+            validTo = record.validTo
+        ),
+        slug = requireNotNull(record.slug),
+        title = requireNotNull(record.title),
+        description = requireNotNull(record.description)
+    )
 }

@@ -11,7 +11,6 @@ import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 
-
 /**
  * <p>HTTP filter for generating random Content Security Policy "nonce" for each request into cspNonce request attribute.
  *

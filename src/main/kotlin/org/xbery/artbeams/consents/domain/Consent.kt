@@ -17,21 +17,18 @@ data class Consent(
     val login: String, // Email address
     val consentType: ConsentType,
     val originProductId: String? // Product ID if consent was created by product subscription/download
-) : IdentifiedEntity, Serializable {
+) : IdentifiedEntity,
+    Serializable {
 
     /**
      * Checks if this consent is currently valid.
      */
-    fun isValidAt(timestamp: Instant): Boolean {
-        return !timestamp.isBefore(validFrom) && timestamp.isBefore(validTo)
-    }
+    fun isValidAt(timestamp: Instant): Boolean = !timestamp.isBefore(validFrom) && timestamp.isBefore(validTo)
 
     /**
      * Checks if this consent is currently valid (at current time).
      */
-    fun isValid(): Boolean {
-        return isValidAt(Instant.now())
-    }
+    fun isValid(): Boolean = isValidAt(Instant.now())
 
     companion object {
         val EMPTY = Consent("", Instant.MIN, Instant.MIN, "", ConsentType.NEWS, null)

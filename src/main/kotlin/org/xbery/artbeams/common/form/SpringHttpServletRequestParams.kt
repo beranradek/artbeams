@@ -11,7 +11,9 @@ import jakarta.servlet.http.HttpServletRequest
  *
  * @author Radek Beran
  */
-class SpringHttpServletRequestParams(val request: HttpServletRequest) : AbstractRequestParams() {
+class SpringHttpServletRequestParams(
+    val request: HttpServletRequest
+) : AbstractRequestParams() {
     override fun getParamNames(): Iterable<String> = request.parameterNames.toList()
 
     override fun getParamValues(paramName: String?): Array<String> {
@@ -32,9 +34,11 @@ class SpringHttpServletRequestParams(val request: HttpServletRequest) : Abstract
             return arrayOf()
         }
         if (request is MultipartHttpServletRequest) {
-            return request.getFiles(paramName).map { file ->
-                SpringUploadedFile(file.originalFilename, file.contentType, file.size, file)
-            }.toTypedArray()
+            return request
+                .getFiles(paramName)
+                .map { file ->
+                    SpringUploadedFile(file.originalFilename, file.contentType, file.size, file)
+                }.toTypedArray()
         }
         return arrayOf()
     }

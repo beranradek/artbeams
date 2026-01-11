@@ -8,9 +8,13 @@ import java.io.Serializable
  *
  * @author Radek Beran
  */
-data class EntityKey(val entityType: String, val entityId: String) : Serializable {
+data class EntityKey(
+    val entityType: String,
+    val entityId: String
+) : Serializable {
     companion object {
         val Empty: EntityKey = EntityKey("", AssetAttributes.EMPTY_ID)
+
         fun fromClassAndId(cls: Class<*>, id: String): EntityKey = EntityKey(cls.simpleName, id)
     }
 }

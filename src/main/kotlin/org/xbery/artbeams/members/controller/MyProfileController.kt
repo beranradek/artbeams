@@ -1,6 +1,5 @@
 package org.xbery.artbeams.members.controller
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -17,6 +16,7 @@ import org.xbery.artbeams.users.domain.MyProfile
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.UserRepository
 import org.xbery.artbeams.users.service.UserService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * My profile editing.
@@ -34,70 +34,60 @@ class MyProfileController(
     private val editFormDef: FormMapping<MyProfile> = MyProfileForm.definition
 
     @GetMapping
-    fun editForm(request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
-            val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
-            renderEditForm(request, toEditedProfile(user), ValidationResult.empty)
-        }
+    fun editForm(request: HttpServletRequest): Any = tryOrErrorResponse(request) {
+        val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
+        val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
+        renderEditForm(request, toEditedProfile(user), ValidationResult.empty)
     }
 
     @PostMapping
-    fun save(request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            val params = ServletRequestParams(request)
-            val formData = editFormDef.bind(params)
-            if (!formData.isValid) {
-                renderEditForm(request, formData.data, formData.validationResult)
-            } else {
-                val myProfile = formData.data
-                userService.saveMyProfile(myProfile, requestToOperationCtx(request)) ?: throw NotFoundException(
-                    "User ${myProfile.login} was not found as currently logged user"
-                )
-                redirect(MemberSectionController.MEMBER_SECTION_PATH)
-            }
+    fun save(request: HttpServletRequest): Any = tryOrErrorResponse(request) {
+        val params = ServletRequestParams(request)
+        val formData = editFormDef.bind(params)
+        if (!formData.isValid) {
+            renderEditForm(request, formData.data, formData.validationResult)
+        } else {
+            val myProfile = formData.data
+            userService.saveMyProfile(myProfile, requestToOperationCtx(request)) ?: throw NotFoundException(
+                "User ${myProfile.login} was not found as currently logged user"
+            )
+            redirect(MemberSectionController.MEMBER_SECTION_PATH)
         }
     }
 
     @GetMapping("/smazat-ucet")
-    fun deleteAccountConfirm(request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
-            val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
+    fun deleteAccountConfirm(request: HttpServletRequest): Any = tryOrErrorResponse(request) {
+        val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
+        val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
+        val model = createModel(
+            request,
+            "user" to user
+        )
+        ModelAndView("$TPL_BASE_PATH/deleteAccount", model)
+    }
+
+    @PostMapping("/smazat-ucet")
+    fun deleteAccount(request: HttpServletRequest): Any = tryOrErrorResponse(request) {
+        val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
+        val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
+
+        val deleted = userService.deleteAccount(user.id, requestToOperationCtx(request))
+
+        if (deleted) {
+            // Log out the user
+            request.session.invalidate()
+            redirect("/")
+        } else {
             val model = createModel(
                 request,
-                "user" to user
+                "user" to user,
+                "error" to "Nepodařilo se smazat účet. Kontaktujte prosím podporu."
             )
             ModelAndView("$TPL_BASE_PATH/deleteAccount", model)
         }
     }
 
-    @PostMapping("/smazat-ucet")
-    fun deleteAccount(request: HttpServletRequest): Any {
-        return tryOrErrorResponse(request) {
-            val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
-            val user = userRepository.findByLogin(login) ?: throw NotFoundException("User $login was not found")
-            
-            val deleted = userService.deleteAccount(user.id, requestToOperationCtx(request))
-            
-            if (deleted) {
-                // Log out the user
-                request.session.invalidate()
-                redirect("/")
-            } else {
-                val model = createModel(
-                    request,
-                    "user" to user,
-                    "error" to "Nepodařilo se smazat účet. Kontaktujte prosím podporu."
-                )
-                ModelAndView("$TPL_BASE_PATH/deleteAccount", model)
-            }
-        }
-    }
-
-    private fun toEditedProfile(user: User): MyProfile {
-        return MyProfile(user.login, user.firstName, user.lastName, "", "")
-    }
+    private fun toEditedProfile(user: User): MyProfile = MyProfile(user.login, user.firstName, user.lastName, "", "")
 
     private fun renderEditForm(
         request: HttpServletRequest,
@@ -106,7 +96,8 @@ class MyProfileController(
     ): Any {
         val editForm: FormMapping<MyProfile> = editFormDef.fill(FormData(edited, validationResult))
         val model = createModel(
-            request, "editForm" to editForm
+            request,
+            "editForm" to editForm
         )
         return ModelAndView("$TPL_BASE_PATH/myProfile", model)
     }

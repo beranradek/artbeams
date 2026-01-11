@@ -19,7 +19,8 @@ object ObjectMappers {
 
     private fun createObjectMapper(): ObjectMapper {
         val objectMapper = jacksonObjectMapper()
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+        objectMapper
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

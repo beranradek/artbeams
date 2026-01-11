@@ -7,7 +7,9 @@ import org.xbery.artbeams.common.error.ErrorCode
  *
  * @author Radek Beran
  */
-enum class InvalidAuthorizationCode(override val code: String) : ErrorCode {
+enum class InvalidAuthorizationCode(
+    override val code: String
+) : ErrorCode {
     DECRYPTION_FAILED("authorization-code.invalid.decryption-failed"),
     NOT_FOUND("authorization-code.invalid.not-found"),
     ANOTHER_PURPOSE("authorization-code.invalid.another-purpose"),

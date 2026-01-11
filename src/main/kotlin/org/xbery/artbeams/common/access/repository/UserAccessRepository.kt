@@ -25,9 +25,8 @@ class UserAccessRepository(
     override val table: Table<UserAccessRecord> = USER_ACCESS
     override val idField: Field<String?> = USER_ACCESS.ID
 
-    fun filterAccessTimeLessThanEqual(time: Instant): List<UserAccess> {
-        return dsl.selectFrom(table)
-            .where(USER_ACCESS.ACCESS_TIME.le(time))
-            .fetch(mapper)
-    }
+    fun filterAccessTimeLessThanEqual(time: Instant): List<UserAccess> = dsl
+        .selectFrom(table)
+        .where(USER_ACCESS.ACCESS_TIME.le(time))
+        .fetch(mapper)
 }

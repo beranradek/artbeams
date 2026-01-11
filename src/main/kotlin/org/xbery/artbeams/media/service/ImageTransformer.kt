@@ -48,7 +48,8 @@ class ImageTransformer {
         compressionLevel: Int = DEFAULT_COMPRESSION_LEVEL,
         quality: Int = DEFAULT_QUALITY,
         targetWidth: Int? = null,
-        scaleMethod: ScaleMethod = DEFAULT_SCALE_METHOD) {
+        scaleMethod: ScaleMethod = DEFAULT_SCALE_METHOD
+    ) {
         transformInternal(
             ImmutableImage.loader().fromPath(inputPath),
             targetPath,
@@ -78,7 +79,8 @@ class ImageTransformer {
         compressionLevel: Int = DEFAULT_COMPRESSION_LEVEL,
         quality: Int = DEFAULT_QUALITY,
         targetWidth: Int? = null,
-        scaleMethod: ScaleMethod = DEFAULT_SCALE_METHOD) {
+        scaleMethod: ScaleMethod = DEFAULT_SCALE_METHOD
+    ) {
         inputStream.use { iStream ->
             transformInternal(
                 ImmutableImage.loader().fromStream(iStream),
@@ -99,8 +101,8 @@ class ImageTransformer {
         compressionLevel: Int,
         quality: Int,
         targetWidth: Int?,
-        scaleMethod: ScaleMethod) {
-
+        scaleMethod: ScaleMethod
+    ) {
         var transformedImage = image
         val writer = getImageWriter(targetFormat, compressionLevel, quality)
         targetWidth?.let { transformedImage = transformedImage.scaleToWidth(it, scaleMethod, true) }

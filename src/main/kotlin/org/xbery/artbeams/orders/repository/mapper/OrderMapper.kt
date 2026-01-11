@@ -13,21 +13,19 @@ import org.xbery.artbeams.orders.domain.OrderState
 @Component
 class OrderMapper : RecordMapper<OrdersRecord, Order> {
 
-    override fun map(record: OrdersRecord): Order {
-        return Order(
-            common = AssetAttributes(
-                id = requireNotNull(record.id),
-                created = requireNotNull(record.created),
-                createdBy = requireNotNull(record.createdBy),
-                modified = requireNotNull(record.modified),
-                modifiedBy = requireNotNull(record.modifiedBy)
-            ),
-            orderNumber = requireNotNull(record.orderNumber),
-            state = OrderState.valueOf(requireNotNull(record.state)),
-            items = emptyList(),
-            paidTime = record.paidTime,
-            paymentMethod = record.paymentMethod,
-            notes = record.notes
-        )
-    }
+    override fun map(record: OrdersRecord): Order = Order(
+        common = AssetAttributes(
+            id = requireNotNull(record.id),
+            created = requireNotNull(record.created),
+            createdBy = requireNotNull(record.createdBy),
+            modified = requireNotNull(record.modified),
+            modifiedBy = requireNotNull(record.modifiedBy)
+        ),
+        orderNumber = requireNotNull(record.orderNumber),
+        state = OrderState.valueOf(requireNotNull(record.state)),
+        items = emptyList(),
+        paidTime = record.paidTime,
+        paymentMethod = record.paymentMethod,
+        notes = record.notes
+    )
 }

@@ -22,21 +22,23 @@ class LocalisationRepository(
     private val unmapper: LocalisationUnmapper
 ) : CachedKeyValueRepository() {
 
-    override fun findAllEntries(): Map<String, String> {
-        return dsl.selectFrom(LOCALISATION).fetch { c ->
+    override fun findAllEntries(): Map<String, String> = dsl
+        .selectFrom(LOCALISATION)
+        .fetch { c ->
             requireNotNull(c.entryKey) to requireNotNull(c.entryValue)
         }.toMap()
-    }
 
     fun findLocalisations(pagination: Pagination, search: String? = null): ResultPage<Localisation> {
         val searchPattern = if (!search.isNullOrBlank()) "%${search.trim()}%" else null
 
-        val countQuery = dsl.selectCount()
+        val countQuery = dsl
+            .selectCount()
             .from(LOCALISATION)
 
         if (searchPattern != null) {
             countQuery.where(
-                LOCALISATION.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                LOCALISATION.ENTRY_KEY
+                    .likeIgnoreCase(searchPattern)
                     .or(LOCALISATION.ENTRY_VALUE.likeIgnoreCase(searchPattern))
             )
         }
@@ -47,7 +49,8 @@ class LocalisationRepository(
 
         if (searchPattern != null) {
             recordsQuery.where(
-                LOCALISATION.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                LOCALISATION.ENTRY_KEY
+                    .likeIgnoreCase(searchPattern)
                     .or(LOCALISATION.ENTRY_VALUE.likeIgnoreCase(searchPattern))
             )
         }
@@ -61,15 +64,15 @@ class LocalisationRepository(
         return ResultPage(records, pagination.withTotalCount(totalCount))
     }
 
-    fun findByKey(entryKey: String): Localisation? {
-        return dsl.selectFrom(LOCALISATION)
-            .where(LOCALISATION.ENTRY_KEY.eq(entryKey))
-            .fetchOne(mapper)
-    }
+    fun findByKey(entryKey: String): Localisation? = dsl
+        .selectFrom(LOCALISATION)
+        .where(LOCALISATION.ENTRY_KEY.eq(entryKey))
+        .fetchOne(mapper)
 
     fun create(localisation: Localisation): Localisation {
         val record = unmapper.unmap(localisation)
-        dsl.insertInto(LOCALISATION)
+        dsl
+            .insertInto(LOCALISATION)
             .set(record)
             .execute()
         return requireByKey(localisation.entryKey)
@@ -77,7 +80,8 @@ class LocalisationRepository(
 
     fun update(originalKey: String, localisation: Localisation): Localisation {
         val record = unmapper.unmap(localisation)
-        val updatedCount = dsl.update(LOCALISATION)
+        val updatedCount = dsl
+            .update(LOCALISATION)
             .set(record)
             .where(LOCALISATION.ENTRY_KEY.eq(originalKey))
             .execute()
@@ -88,13 +92,10 @@ class LocalisationRepository(
         return requireByKey(localisation.entryKey)
     }
 
-    fun deleteByKey(entryKey: String): Boolean {
-        return dsl.deleteFrom(LOCALISATION)
-            .where(LOCALISATION.ENTRY_KEY.eq(entryKey))
-            .execute() > 0
-    }
+    fun deleteByKey(entryKey: String): Boolean = dsl
+        .deleteFrom(LOCALISATION)
+        .where(LOCALISATION.ENTRY_KEY.eq(entryKey))
+        .execute() > 0
 
-    fun requireByKey(entryKey: String): Localisation {
-        return findByKey(entryKey) ?: error("Localisation with key $entryKey not found")
-    }
+    fun requireByKey(entryKey: String): Localisation = findByKey(entryKey) ?: error("Localisation with key $entryKey not found")
 }

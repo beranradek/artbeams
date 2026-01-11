@@ -1,6 +1,5 @@
 package org.xbery.artbeams.categories.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import net.formio.FormData
 import net.formio.FormMapping
 import net.formio.servlet.ServletRequestParams
@@ -21,6 +20,7 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.overview.Pagination
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Category administration routes.
@@ -53,17 +53,16 @@ class CategoryAdminController(
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
-    fun editForm(request: HttpServletRequest, @PathVariable id: String?): Any {
-        return if (id == null || AssetAttributes.EMPTY_ID == id) {
-            renderEditForm(request, Category.Empty.toEdited(), ValidationResult.empty, null)
-        } else {
-            val category = categoryRepository.requireById(id)
-            renderEditForm(
-                request, category.toEdited(),
-                ValidationResult.empty,
-                null
-            )
-        }
+    fun editForm(request: HttpServletRequest, @PathVariable id: String?): Any = if (id == null || AssetAttributes.EMPTY_ID == id) {
+        renderEditForm(request, Category.Empty.toEdited(), ValidationResult.empty, null)
+    } else {
+        val category = categoryRepository.requireById(id)
+        renderEditForm(
+            request,
+            category.toEdited(),
+            ValidationResult.empty,
+            null
+        )
     }
 
     @PostMapping(value = ["/save"])
@@ -96,9 +95,11 @@ class CategoryAdminController(
     ): Any {
         val editForm: FormMapping<EditedCategory> = editFormDef.fill(FormData<EditedCategory>(edited, validationResult))
         val model = createModel(
-            request, "editForm"
-            to editForm, "errorMessage"
-            to errorMessage
+            request,
+            "editForm"
+                to editForm,
+            "errorMessage"
+                to errorMessage
         )
         return ModelAndView(TplBasePath + "/categoryEdit", model)
     }

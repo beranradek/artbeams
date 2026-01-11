@@ -1,7 +1,5 @@
 package org.xbery.artbeams.common.emailvalidator
 
-import org.xbery.artbeams.common.emailvalidator.DNSLookup.getIPAddresses
-import org.xbery.artbeams.common.emailvalidator.I18N.getTranslation
 import org.xbery.artbeams.common.emailvalidator.CharUtils.isAsciiDigit
 import org.xbery.artbeams.common.emailvalidator.CharUtils.isAt
 import org.xbery.artbeams.common.emailvalidator.CharUtils.isBackSlash
@@ -13,6 +11,8 @@ import org.xbery.artbeams.common.emailvalidator.CharUtils.isNameSpecialCharacter
 import org.xbery.artbeams.common.emailvalidator.CharUtils.isNumber
 import org.xbery.artbeams.common.emailvalidator.CharUtils.isSpace
 import org.xbery.artbeams.common.emailvalidator.CharUtils.levenshteinDistance
+import org.xbery.artbeams.common.emailvalidator.DNSLookup.getIPAddresses
+import org.xbery.artbeams.common.emailvalidator.I18N.getTranslation
 import org.xbery.artbeams.common.emailvalidator.entity.Email
 import org.xbery.artbeams.common.emailvalidator.entity.EmailValidationMessage
 import org.xbery.artbeams.common.emailvalidator.entity.EmailValidationResult
@@ -88,7 +88,8 @@ class EmailValidator {
         email.errors.forEach { e ->
             messages.add(
                 EmailValidationMessage(
-                    MessageSeverity.ERROR, getTranslation(
+                    MessageSeverity.ERROR,
+                    getTranslation(
                         EmailValidationError::class.simpleName + "." + e.name,
                         messageBundle!!
                     )
@@ -100,9 +101,11 @@ class EmailValidator {
                 EmailValidationWarning.TYPO -> {
                     messages.add(
                         EmailValidationMessage(
-                            MessageSeverity.WARNING, getTranslation(
+                            MessageSeverity.WARNING,
+                            getTranslation(
                                 EmailValidationWarning::class.simpleName + "." + w.name,
-                                messageBundle!!, email.suggestion
+                                messageBundle!!,
+                                email.suggestion
                             )
                         )
                     )
@@ -111,7 +114,8 @@ class EmailValidator {
                 else -> {
                     messages.add(
                         EmailValidationMessage(
-                            MessageSeverity.WARNING, getTranslation(
+                            MessageSeverity.WARNING,
+                            getTranslation(
                                 EmailValidationWarning::class.simpleName + "." + w.name,
                                 messageBundle!!
                             )
@@ -194,12 +198,14 @@ class EmailValidator {
         }
         val domain = email.domain ?: ""
         domainSuggestion =
-            (if (domainSuggestion != domain) {
-                //upravili jsme domenu, zvalidujeme
-                getDomainSuggestion(domainSuggestion)
-            } else {
-                getDomainSuggestion(domain)
-            }) ?: ""
+            (
+                if (domainSuggestion != domain) {
+                    //upravili jsme domenu, zvalidujeme
+                    getDomainSuggestion(domainSuggestion)
+                } else {
+                    getDomainSuggestion(domain)
+                }
+            ) ?: ""
 
         if (domainSuggestion.isNotEmpty() && domainSuggestion != email.domain) {
             val result = "$localPartSuggestion@$domainSuggestion"
@@ -314,10 +320,10 @@ class EmailValidator {
                 }
             } else if (isHyphen(ch)) { //spojovnik/minus
                 sb.append(ch)
-                if (part === EmailPart.DOMAIN && sb.length == 1)  //spojovnik nemuze byt na zacatku domeny
-                {
-                    addError(email, EmailValidationError.HYPHEN_FOLLOWING_AT)
-                }
+                if (part === EmailPart.DOMAIN && sb.length == 1) //spojovnik nemuze byt na zacatku domeny
+                    {
+                        addError(email, EmailValidationError.HYPHEN_FOLLOWING_AT)
+                    }
                 if (part === EmailPart.DOMAIN) {
                     domainStr.append(ch)
                 }
@@ -328,12 +334,12 @@ class EmailValidator {
                     domainStr.append(ch)
                 } else { //v local partu povoleno
                     /*
-					 * A quoted string may exist as a dot separated entity within the local-part,
-					 * or it may exist when the outermost quotes are the outermost characters
-					 * of the local-part (e.g., abc."defghi".xyz@example.com or "abcdefghixyz"@example.com
-					 * are allowed.[citation needed] Conversely, abc"defghi"xyz@example.com is not;
-					 * neither is abc\"def\"ghi@example.com).
-					 */
+                     * A quoted string may exist as a dot separated entity within the local-part,
+                     * or it may exist when the outermost quotes are the outermost characters
+                     * of the local-part (e.g., abc."defghi".xyz@example.com or "abcdefghixyz"@example.com
+                     * are allowed.[citation needed] Conversely, abc"defghi"xyz@example.com is not;
+                     * neither is abc\"def\"ghi@example.com).
+                     */
                     //TODO
                     if (isBackSlash(lastChar)) { //oescapovane uvozovky
                         if (part === EmailPart.LOCAL_PART) {
@@ -352,10 +358,10 @@ class EmailValidator {
                 if (part === EmailPart.DOMAIN) {
                     domainStr.append(ch)
                 }
-                if (part === EmailPart.DOMAIN || part === EmailPart.LOCAL_PART)  //mezera je povolena pouze v uvozovkach
-                {
-                    addError(email, EmailValidationError.BAD_CHARACTER)
-                }
+                if (part === EmailPart.DOMAIN || part === EmailPart.LOCAL_PART) //mezera je povolena pouze v uvozovkach
+                    {
+                        addError(email, EmailValidationError.BAD_CHARACTER)
+                    }
             } else if (isNameSpecialCharacter(ch)) {
                 sb.append(ch)
                 if (part === EmailPart.DOMAIN) {

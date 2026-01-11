@@ -14,7 +14,7 @@ object RoleAccounts {
         "billing",
         "bursar",
         "busdev",
-        "casting",  //povolit
+        "casting", //povolit
         "ceo",
         "co-op",
         "community",
@@ -60,15 +60,15 @@ object RoleAccounts {
         "headteacher",
         "hostmaster",
         "hotel",
-        "hr",  //povolit
-        "info",  //povolit
+        "hr", //povolit
+        "info", //povolit
         "information",
         "informativo",
         "investorrelations",
         "inoc",
         "ispfeedback",
         "ispsupport",
-        "jobs",  //povolit
+        "jobs", //povolit
         "kontakt",
         "list-request",
         "list",

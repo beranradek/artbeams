@@ -13,5 +13,5 @@ object Parsers {
         }
 
     fun parseBoolean(s: String?): Boolean = s != null &&
-            (s == "true" || s == "1" || s == "on" || s == "y" || s == "yes")
+        (s == "true" || s == "1" || s == "on" || s == "y" || s == "yes")
 }

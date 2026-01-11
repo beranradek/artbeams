@@ -10,7 +10,10 @@ import org.xbery.artbeams.localisation.domain.Localisation
  */
 interface LocalisationService {
     fun findLocalisations(pagination: Pagination, search: String? = null): ResultPage<Localisation>
+
     fun findByKey(entryKey: String): Localisation?
+
     fun saveLocalisation(edited: EditedLocalisation): Localisation
+
     fun deleteLocalisation(entryKey: String): Boolean
 }

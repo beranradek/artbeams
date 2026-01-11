@@ -13,6 +13,7 @@ import org.xbery.artbeams.common.overview.ResultPage
  */
 interface ArticleService {
     fun findArticles(pagination: Pagination): ResultPage<Article>
+
     fun saveArticle(edited: EditedArticle, ctx: OperationCtx): Article?
 
     /**
@@ -23,8 +24,12 @@ interface ArticleService {
      * @throws UnauthorizedException if user is not authorized to access Google documents or authorization has expired
      */
     fun findEditedArticle(id: String, updateWithExternalData: Boolean): EditedArticle
+
     fun findBySlug(slug: String): Article?
+
     fun findLatest(limit: Int): List<Article>
+
     fun findByCategoryId(categoryId: String, limit: Int): List<Article>
+
     fun findByQuery(query: String, limit: Int): List<Article>
 }

@@ -24,12 +24,14 @@ class ConfigRepository(
     fun findConfigs(pagination: Pagination, search: String? = null): ResultPage<Config> {
         val searchPattern = if (!search.isNullOrBlank()) "%${search.trim()}%" else null
 
-        val countQuery = dsl.selectCount()
+        val countQuery = dsl
+            .selectCount()
             .from(CONFIG)
 
         if (searchPattern != null) {
             countQuery.where(
-                CONFIG.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                CONFIG.ENTRY_KEY
+                    .likeIgnoreCase(searchPattern)
                     .or(CONFIG.ENTRY_VALUE.likeIgnoreCase(searchPattern))
             )
         }
@@ -40,7 +42,8 @@ class ConfigRepository(
 
         if (searchPattern != null) {
             recordsQuery.where(
-                CONFIG.ENTRY_KEY.likeIgnoreCase(searchPattern)
+                CONFIG.ENTRY_KEY
+                    .likeIgnoreCase(searchPattern)
                     .or(CONFIG.ENTRY_VALUE.likeIgnoreCase(searchPattern))
             )
         }
@@ -54,15 +57,15 @@ class ConfigRepository(
         return ResultPage(records, pagination.withTotalCount(totalCount))
     }
 
-    fun findByKey(entryKey: String): Config? {
-        return dsl.selectFrom(CONFIG)
-            .where(CONFIG.ENTRY_KEY.eq(entryKey))
-            .fetchOne(mapper)
-    }
+    fun findByKey(entryKey: String): Config? = dsl
+        .selectFrom(CONFIG)
+        .where(CONFIG.ENTRY_KEY.eq(entryKey))
+        .fetchOne(mapper)
 
     fun create(config: Config): Config {
         val record = unmapper.unmap(config)
-        dsl.insertInto(CONFIG)
+        dsl
+            .insertInto(CONFIG)
             .set(record)
             .execute()
         return requireByKey(config.entryKey)
@@ -70,7 +73,8 @@ class ConfigRepository(
 
     fun update(originalKey: String, config: Config): Config {
         val record = unmapper.unmap(config)
-        val updatedCount = dsl.update(CONFIG)
+        val updatedCount = dsl
+            .update(CONFIG)
             .set(record)
             .where(CONFIG.ENTRY_KEY.eq(originalKey))
             .execute()
@@ -81,13 +85,10 @@ class ConfigRepository(
         return requireByKey(config.entryKey)
     }
 
-    fun deleteByKey(entryKey: String): Boolean {
-        return dsl.deleteFrom(CONFIG)
-            .where(CONFIG.ENTRY_KEY.eq(entryKey))
-            .execute() > 0
-    }
+    fun deleteByKey(entryKey: String): Boolean = dsl
+        .deleteFrom(CONFIG)
+        .where(CONFIG.ENTRY_KEY.eq(entryKey))
+        .execute() > 0
 
-    fun requireByKey(entryKey: String): Config {
-        return findByKey(entryKey) ?: error("Config with key $entryKey not found")
-    }
+    fun requireByKey(entryKey: String): Config = findByKey(entryKey) ?: error("Config with key $entryKey not found")
 }

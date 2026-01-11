@@ -1,6 +1,5 @@
 package org.xbery.artbeams.config.repository
 
-import java.time.Instant
 import org.jooq.DSLContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,6 +8,7 @@ import org.xbery.artbeams.common.repository.AbstractRecordFetcher
 import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
 import org.xbery.artbeams.jooq.schema.tables.references.CONFIG
 import java.math.BigDecimal
+import java.time.Instant
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 import kotlin.time.Duration
@@ -20,8 +20,10 @@ import kotlin.time.Duration
  * @author Radek Beran
  */
 @Repository
-class SqlAppConfig(override val dsl: DSLContext) :
-    AbstractRecordFetcher<ConfigRecord>, AppConfig {
+class SqlAppConfig(
+    override val dsl: DSLContext
+) : AbstractRecordFetcher<ConfigRecord>,
+    AppConfig {
 
     override val table = CONFIG
 

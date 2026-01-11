@@ -16,7 +16,8 @@ data class CreateOrderData(
 
 object CreateOrderForm {
     val definition: FormMapping<CreateOrderData> =
-        Forms.basic(CreateOrderData::class.java, "createOrderForm")
+        Forms
+            .basic(CreateOrderData::class.java, "createOrderForm")
             .field<String>("userId", Field.TEXT)
             .field<String>("productId", Field.TEXT)
             .build(FormUtils.CZ_CONFIG)

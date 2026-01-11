@@ -1,7 +1,5 @@
 package org.xbery.artbeams.articles.agent
 
-import jakarta.annotation.PreDestroy
-import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.http.HttpStatus
@@ -16,6 +14,8 @@ import org.xbery.artbeams.common.agent.JobStatus
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import java.util.concurrent.ConcurrentHashMap
+import jakarta.annotation.PreDestroy
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Controller for AI-powered image generation agent.
@@ -181,7 +181,8 @@ class ImageGeneratingAgentController(
         val tempImage = imageGeneratingAgent.getTempImage(tempImageId)
             ?: return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .contentType(MediaType.parseMediaType(tempImage.contentType))
             .contentLength(imageBytes.size.toLong())
             .body(imageBytes)
@@ -203,18 +204,22 @@ class ImageGeneratingAgentController(
         )
 
         return if (filename != null) {
-            ResponseEntity.ok(mapOf(
-                "success" to true,
-                "filename" to filename,
-                "message" to "Obrázek byl úspěšně uložen do galerie"
-            ))
+            ResponseEntity.ok(
+                mapOf(
+                    "success" to true,
+                    "filename" to filename,
+                    "message" to "Obrázek byl úspěšně uložen do galerie"
+                )
+            )
         } else {
             ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(mapOf(
-                    "success" to false,
-                    "error" to "Nepodařilo se uložit obrázek do galerie"
-                ))
+                .body(
+                    mapOf(
+                        "success" to false,
+                        "error" to "Nepodařilo se uložit obrázek do galerie"
+                    )
+                )
         }
     }
 

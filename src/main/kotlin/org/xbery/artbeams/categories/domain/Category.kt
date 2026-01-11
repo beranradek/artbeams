@@ -18,29 +18,26 @@ data class Category(
     val description: String
 ) : Asset(),
     ValidityAsset {
-    fun updatedWith(edited: EditedCategory, userId: String): Category {
-        return this.copy(
-            common = this.common.updatedWith(userId),
-            validity = this.validity.updatedWith(edited),
-            slug = edited.slug,
-            title = edited.title,
-            description = edited.description
-        )
-    }
+    fun updatedWith(edited: EditedCategory, userId: String): Category = this.copy(
+        common = this.common.updatedWith(userId),
+        validity = this.validity.updatedWith(edited),
+        slug = edited.slug,
+        title = edited.title,
+        description = edited.description
+    )
 
-    fun toEdited(): EditedCategory {
-        return EditedCategory(this.id,
-            this.slug,
-            this.title,
-            this.description,
-            if (this.validFrom == AssetAttributes.EMPTY_DATE) {
-                Date()
-            } else {
-                Date(this.validFrom.toEpochMilli())
-            },
-            this.validTo?.let { d -> Date(d.toEpochMilli()) }
-        )
-    }
+    fun toEdited(): EditedCategory = EditedCategory(
+        this.id,
+        this.slug,
+        this.title,
+        this.description,
+        if (this.validFrom == AssetAttributes.EMPTY_DATE) {
+            Date()
+        } else {
+            Date(this.validFrom.toEpochMilli())
+        },
+        this.validTo?.let { d -> Date(d.toEpochMilli()) }
+    )
 
     companion object {
         const val CacheName: String = "categories"

@@ -21,7 +21,10 @@ import java.nio.charset.StandardCharsets
  */
 @RestController
 @RequestMapping("/admin/google/auth")
-class AuthCodeReceiverController(private val googleAuth: GoogleApiAuth, common: ControllerComponents): BaseController(common) {
+class AuthCodeReceiverController(
+    private val googleAuth: GoogleApiAuth,
+    common: ControllerComponents
+) : BaseController(common) {
 
     @GetMapping("/callback")
     fun receiveAuthCode(

@@ -9,7 +9,6 @@ import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.prices.domain.Price
 import org.xbery.artbeams.users.repository.UserRepository
-import java.text.NumberFormat
 import java.util.*
 
 /**

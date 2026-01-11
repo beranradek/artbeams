@@ -15,7 +15,8 @@ import org.xbery.artbeams.users.domain.MyProfile
 open class MyProfileForm {
     companion object {
         val definition: FormMapping<MyProfile> =
-            Forms.basic(MyProfile::class.java, "myProfile")
+            Forms
+                .basic(MyProfile::class.java, "myProfile")
                 .field<String>("login", Field.TEXT)
                 .field<String>("firstName", Field.TEXT)
                 .field<String>("lastName", Field.TEXT)

@@ -28,47 +28,41 @@ class OrderCreatingAdminServiceImpl(
 ) : OrderCreatingAdminService {
 
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
-    
-    override fun prepareNewOrderData(): CreateOrderData {
-        return CreateOrderData()
-    }
+
+    override fun prepareNewOrderData(): CreateOrderData = CreateOrderData()
 
     override fun createOrder(createData: CreateOrderData): Pair<Boolean, String?> {
         try {
-            val user = requireFound(userRepository.findById(createData.userId)) { 
-                "User with id '${createData.userId}' not found" 
+            val user = requireFound(userRepository.findById(createData.userId)) {
+                "User with id '${createData.userId}' not found"
             }
-            
-            val product = requireFound(productRepository.findById(createData.productId)) { 
-                "Product with id '${createData.productId}' not found" 
+
+            val product = requireFound(productRepository.findById(createData.productId)) {
+                "Product with id '${createData.productId}' not found"
             }
-            
+
             // Generate order number and use CREATED state
             val orderNumber = orderService.generateOrderNumber()
             val orderState = OrderState.CONFIRMED
-            
+
             orderService.createOrderOfProduct(
-                user.id, 
-                product, 
-                orderNumber, 
+                user.id,
+                product,
+                orderNumber,
                 orderState
             )
             userService.confirmConsent(user.id)
 
             // Add product to user's library if not already there
             userProductService.addProductToUserLibrary(user.id, product.id)
-            
+
             return Pair(true, null)
         } catch (e: Exception) {
             return Pair(false, e.message)
         }
     }
-    
-    override fun findAllUsers(): List<User> {
-        return userRepository.findUsers()
-    }
-    
-    override fun findAllProducts(): List<Product> {
-        return productRepository.findProducts()
-    }
-} 
+
+    override fun findAllUsers(): List<User> = userRepository.findUsers()
+
+    override fun findAllProducts(): List<Product> = productRepository.findProducts()
+}

@@ -11,7 +11,5 @@ class WebConfig {
      * so we can use PATCH and DELETE HTTP methods (from admin).
      */
     @Bean
-    fun hiddenHttpMethodFilter(): HiddenHttpMethodFilter {
-        return HiddenHttpMethodFilter()
-    }
+    fun hiddenHttpMethodFilter(): HiddenHttpMethodFilter = HiddenHttpMethodFilter()
 }

@@ -30,7 +30,7 @@ class PasswordRecoveryMailerImpl(
         val tplVars = mapOf(
             "tokenUrl" to tokenUrl,
             "webName" to (appConfig.findConfig("web.name") ?: ""),
-            "senderName" to (appConfig.findConfig("mailer.sender.name") ?: ""),
+            "senderName" to (appConfig.findConfig("mailer.sender.name") ?: "")
         )
         logger.info("Sending password recovery email to ${data.email}, template parameters prepared.")
         templateMailer.sendMailWithTemplate(data.email, subject, templateId, tplVars)

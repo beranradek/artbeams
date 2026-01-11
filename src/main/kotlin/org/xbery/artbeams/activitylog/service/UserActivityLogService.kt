@@ -3,7 +3,6 @@ package org.xbery.artbeams.activitylog.service
 import org.xbery.artbeams.activitylog.domain.ActionType
 import org.xbery.artbeams.activitylog.domain.EntityType
 import org.xbery.artbeams.activitylog.domain.UserActivityLog
-import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.common.overview.ResultPage
 import java.time.Instant

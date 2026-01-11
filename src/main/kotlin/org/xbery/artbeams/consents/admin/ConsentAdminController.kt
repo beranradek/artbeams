@@ -1,6 +1,5 @@
 package org.xbery.artbeams.consents.admin
 
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -11,6 +10,7 @@ import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.consents.domain.ConsentType
 import org.xbery.artbeams.consents.repository.ConsentRepository
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Consents administration routes.

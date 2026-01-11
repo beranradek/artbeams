@@ -51,11 +51,9 @@ class SearchService(
     /**
      * Get search statistics (counts by entity type).
      */
-    fun getSearchStatistics(): Map<String, Long> {
-        return mapOf(
-            "articles" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.ARTICLE),
-            "categories" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.CATEGORY),
-            "products" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.PRODUCT)
-        )
-    }
+    fun getSearchStatistics(): Map<String, Long> = mapOf(
+        "articles" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.ARTICLE),
+        "categories" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.CATEGORY),
+        "products" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.PRODUCT)
+    )
 }

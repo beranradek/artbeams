@@ -13,7 +13,7 @@ import java.util.concurrent.Executor
 @EnableAsync
 @EnableScheduling
 @Configuration
-open class AsyncConfig() : AsyncConfigurer {
+open class AsyncConfig : AsyncConfigurer {
 
     /**
      * Creates executor for async operations.

@@ -8,7 +8,10 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
  *
  * @author Radek Beran
  */
-data class Role(override val common: AssetAttributes, val name: String) : Asset() {
+data class Role(
+    override val common: AssetAttributes,
+    val name: String
+) : Asset() {
     companion object {
         val Empty: Role = Role(AssetAttributes.EMPTY, "")
     }

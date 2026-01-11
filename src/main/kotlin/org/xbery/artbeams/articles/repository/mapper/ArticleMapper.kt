@@ -20,12 +20,12 @@ class ArticleMapper : RecordMapper<ArticlesRecord, Article> {
                     created = requireNotNull(record.created),
                     createdBy = requireNotNull(record.createdBy),
                     modified = requireNotNull(record.modified),
-                    modifiedBy = requireNotNull(record.modifiedBy),
+                    modifiedBy = requireNotNull(record.modifiedBy)
                 ),
             validity =
                 Validity(
                     validFrom = requireNotNull(record.validFrom),
-                    validTo = record.validTo,
+                    validTo = record.validTo
                 ),
             externalId = record.externalId,
             slug = requireNotNull(record.slug),
@@ -36,6 +36,6 @@ class ArticleMapper : RecordMapper<ArticlesRecord, Article> {
             editor = requireNotNull(record.editor),
             body = requireNotNull(record.body),
             keywords = requireNotNull(record.keywords),
-            showOnBlog = requireNotNull(record.showOnBlog),
+            showOnBlog = requireNotNull(record.showOnBlog)
         )
 }

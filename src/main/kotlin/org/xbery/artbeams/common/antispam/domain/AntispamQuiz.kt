@@ -11,7 +11,8 @@ import java.io.Serializable
 data class AntispamQuiz(
     val question: String,
     val answer: String
-) : IdentifiedEntity, Serializable {
+) : IdentifiedEntity,
+    Serializable {
 
     override val id: String
         get() = question
@@ -20,8 +21,8 @@ data class AntispamQuiz(
         const val CacheName = "antispam_quizes"
 
         val Empty = AntispamQuiz(
-                "",
-                ""
+            "",
+            ""
         )
     }
 }

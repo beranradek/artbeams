@@ -46,7 +46,9 @@ class UrlRedirectServletFilter : BaseServletFilter() {
                 httpResponse.status = HttpServletResponse.SC_MOVED_PERMANENTLY
                 httpResponse.setHeader(HttpHeaders.LOCATION, targetUrl)
                 val cacheControl =
-                    CacheControl.maxAge(48, TimeUnit.HOURS).cachePublic()
+                    CacheControl
+                        .maxAge(48, TimeUnit.HOURS)
+                        .cachePublic()
                         .headerValue
                 httpResponse.setHeader(HttpHeaders.CACHE_CONTROL, cacheControl)
             } else {
