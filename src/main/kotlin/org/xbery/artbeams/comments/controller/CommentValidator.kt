@@ -16,28 +16,21 @@ class CommentValidator : AbstractValidator<String>() {
     override fun <U : String> validate(ctx: ValidationContext<U>): List<InterpolatedMessage> {
         val msgs: MutableList<InterpolatedMessage> = mutableListOf()
         val comment = ctx.validatedValue
-        if (comment.isNotEmpty()) {
-            if (containsLink(comment)) {
-                msgs.add(
-                    this.error(
-                        ctx.elementName,
-                        "{constraints.Comment.containsLink.message}",
-                        *arrayOf(Arg("currentValue", ctx.validatedValue as Serializable))
-                    )
+        if (comment.isNotEmpty() &&
+            (
+                containsLink(comment) ||
+                    HtmlUtils.containsHtmlMarkup(comment) ||
+                    containsAtLeastNChars(comment, 15, RU_CHARS) ||
+                    containsStopwords(comment)
+            )
+        ) {
+            msgs.add(
+                this.error(
+                    ctx.elementName,
+                    "{constraints.Comment.message}",
+                    *arrayOf(Arg("currentValue", ctx.validatedValue as Serializable))
                 )
-            } else if (
-                HtmlUtils.containsHtmlMarkup(comment) ||
-                containsAtLeastNChars(comment, 15, RU_CHARS) ||
-                containsStopwords(comment)
-            ) {
-                msgs.add(
-                    this.error(
-                        ctx.elementName,
-                        "{constraints.Comment.message}",
-                        *arrayOf(Arg("currentValue", ctx.validatedValue as Serializable))
-                    )
-                )
-            }
+            )
         }
 
         return msgs
