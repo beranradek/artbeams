@@ -43,6 +43,24 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        // Align Spring Security modules to a patched release line (fixes spring-security-web advisory).
+        mavenBom "org.springframework.security:spring-security-bom:6.5.9"
+    }
+    dependencies {
+        // Force patched transitive versions flagged by GitHub security alerts.
+        dependency "org.apache.commons:commons-compress:1.26.0"
+        dependency "org.apache.activemq:artemis-project:2.40.0"
+        dependency "org.apache.commons:commons-lang3:3.18.0"
+        dependency "ch.qos.logback:logback-core:1.5.25"
+        dependency "org.assertj:assertj-core:3.27.7"
+        dependency "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+        dependency "org.apache.tomcat.embed:tomcat-embed-core:10.1.50"
+        dependency "org.springframework:spring-webmvc:6.2.17"
+    }
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
