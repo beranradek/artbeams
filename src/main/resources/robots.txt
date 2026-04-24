@@ -1,4 +1,5 @@
 User-agent: *
+Content-Signal: ai-train=yes, search=yes, ai-input=no
 Disallow: /WEB-INF/
 Disallow: /ochrana-osobnich-udaju
 Disallow: /obchodni-podminky
