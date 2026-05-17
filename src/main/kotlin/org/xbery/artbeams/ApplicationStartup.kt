@@ -39,6 +39,7 @@ open class ApplicationStartup : ApplicationListener<ApplicationReadyEvent> {
         val localisationRepository: LocalisationRepository = context.getBean(LocalisationRepository::class.java)
         val adminRole = findOrCreateRole(roleRepository, CommonRoles.ADMIN.roleName)
         findOrCreateRole(roleRepository, CommonRoles.MEMBER.roleName)
+        findOrCreateRole(roleRepository, CommonRoles.REDACTOR.roleName)
         findOrCreateAdminUser(userRepository, userService, adminRole)
         loadConfig(appConfig)
         loadLocalisation(localisationRepository)

@@ -67,15 +67,27 @@
         <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value!}" id="${fields.externalId.elementId}" class="form-control"/>
     </div>
   </div>
-  <@forms.inputDateTime field=fields.validFrom label="Valid from" required=true inputDivClass="col-sm-3" />
-  <@forms.inputDateTime field=fields.validTo label="Valid to" required=false inputDivClass="col-sm-3" />
+  <#if canPublish!false>
+    <@forms.inputDateTime field=fields.validFrom label="Valid from" required=true inputDivClass="col-sm-3" />
+    <@forms.inputDateTime field=fields.validTo label="Valid to" required=false inputDivClass="col-sm-3" />
+  <#else>
+    <input type="hidden" name="${fields.validFrom.name}" value="${fields.validFrom.value!}"/>
+    <input type="hidden" name="${fields.validTo.name}" value="${fields.validTo.value!}"/>
+    <div class="alert alert-info mt-3">
+      Tento článek bude uložen jako <strong>draft</strong>. Publikaci na veřejný web může provést pouze administrátor.
+    </div>
+  </#if>
   <div class="form-group row">
     <label for="${fields.keywords.elementId}" class="col-form-label col-sm-2 label-fix">Keywords</label>
     <div class="col-sm-3">
         <input type="text" name="${fields.keywords.name}" value="${fields.keywords.value!}" id="${fields.keywords.elementId}" class="form-control"/>
     </div>
   </div>
-  <@forms.inputCheckbox field=fields.showOnBlog label="Show on blog" inputDivClass="col-sm-10" />
+  <#if canPublish!false>
+    <@forms.inputCheckbox field=fields.showOnBlog label="Show on blog" inputDivClass="col-sm-10" />
+  <#else>
+    <input type="hidden" name="${fields.showOnBlog.name}" value="false"/>
+  </#if>
   <div class="form-group row">
     <label for="${fields.categories.elementId}" class="col-form-label col-sm-2 label-fix">Categories</label>
     <div class="col-sm-2">

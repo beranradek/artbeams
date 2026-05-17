@@ -8,6 +8,8 @@ import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.GrantedAuthority
 import org.xbery.artbeams.articles.agent.ArticleEditingAgent
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.articles.domain.EditedArticle
@@ -91,6 +93,10 @@ class ArticleAdminController(
                 renderEditForm(request, formData.data, formData.validationResult, null)
             } else {
                 var edited: EditedArticle = formData.data
+                if (!hasAuthority(request, "admin")) {
+                    // Redactor (and any non-admin) can write drafts, but cannot publish to public blog.
+                    edited = edited.copy(showOnBlog = false)
+                }
 
                 val uploadedFile = edited.file
                 val originalFileName = uploadedFile?.fileName
@@ -134,9 +140,19 @@ class ArticleAdminController(
             "editForm" to editForm,
             "errorMessage" to errorMessage,
             "categories" to categories,
-            "articleAgentAvailable" to isArticleAgentAvailable()
+            "articleAgentAvailable" to isArticleAgentAvailable(),
+            "canPublish" to hasAuthority(request, "admin")
         )
         return ModelAndView("$tplBasePath/articleEdit", model)
+    }
+
+    private fun hasAuthority(request: HttpServletRequest, authority: String): Boolean {
+        val principal = request.userPrincipal
+        if (principal is UsernamePasswordAuthenticationToken) {
+            val authorities: Collection<GrantedAuthority> = principal.authorities ?: emptyList()
+            return authorities.any { it.authority == authority }
+        }
+        return false
     }
 
     /**

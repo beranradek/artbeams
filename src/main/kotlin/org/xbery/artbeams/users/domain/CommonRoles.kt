@@ -7,5 +7,6 @@ enum class CommonRoles(
     val roleName: String
 ) {
     ADMIN("admin"),
-    MEMBER("member")
+    MEMBER("member"),
+    REDACTOR("redactor")
 }

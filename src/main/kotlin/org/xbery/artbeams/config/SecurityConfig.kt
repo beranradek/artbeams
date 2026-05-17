@@ -41,6 +41,10 @@ class SecurityConfig(
                 request.requestMatchers(*ResourcePaths).permitAll()
             }.authorizeHttpRequests { request ->
                 request
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles/**"))
+                    .hasAnyAuthority("admin", "redactor")
+            }.authorizeHttpRequests { request ->
+                request
                     .requestMatchers(AntPathRequestMatcher("/admin/**"))
                     .hasAuthority("admin")
             }.authorizeHttpRequests { request ->
