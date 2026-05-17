@@ -27,6 +27,9 @@ interface ArticleService {
 
     fun findBySlug(slug: String): Article?
 
+    /** Public-facing lookup. Must never return draft articles. */
+    fun findBySlugPublic(slug: String): Article?
+
     fun findLatest(limit: Int): List<Article>
 
     fun findByCategoryId(categoryId: String, limit: Int): List<Article>

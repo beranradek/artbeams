@@ -114,6 +114,12 @@ class ArticleServiceImpl(
     }
 
     @Cacheable(Article.CacheName)
+    override fun findBySlugPublic(slug: String): Article? {
+        logger.trace("Finding public article by slug $slug")
+        return articleRepository.findBySlugPublic(slug)
+    }
+
+    @Cacheable(Article.CacheName)
     override fun findLatest(limit: Int): List<Article> {
         logger.trace("Finding latest $limit articles")
         return articleRepository.findLatest(limit)

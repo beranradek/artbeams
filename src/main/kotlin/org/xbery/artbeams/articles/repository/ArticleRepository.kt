@@ -43,7 +43,10 @@ class ArticleRepository(
 
     fun findLatest(limit: Int): List<Article> {
         val validityDate = Instant.now()
-        val whereCondition = validityCondition(validityDate).and(ARTICLES.SHOW_ON_BLOG.isTrue)
+        val whereCondition =
+            validityCondition(validityDate)
+                .and(ARTICLES.SHOW_ON_BLOG.isTrue)
+                .and(ARTICLES.IS_DRAFT.isFalse)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -64,6 +67,7 @@ class ArticleRepository(
                         .where(ARTICLE_CATEGORY.CATEGORY_ID.eq(categoryId))
                 ).and(validityCondition(validityDate))
                 .and(ARTICLES.SHOW_ON_BLOG.isTrue)
+                .and(ARTICLES.IS_DRAFT.isFalse)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -78,6 +82,16 @@ class ArticleRepository(
             .selectFrom(table)
             .where(ARTICLES.SLUG.eq(slug).and(validityCondition(Instant.now())))
             .fetchOne(mapper)
+
+    fun findBySlugPublic(slug: String): Article? =
+        dsl
+            .selectFrom(table)
+            .where(
+                ARTICLES.SLUG
+                    .eq(slug)
+                    .and(validityCondition(Instant.now()))
+                    .and(ARTICLES.IS_DRAFT.isFalse)
+            ).fetchOne(mapper)
 
     fun findByQuery(query: String, limit: Int): List<Article> {
         if (query.trim().isEmpty()) {
@@ -129,6 +143,7 @@ class ArticleRepository(
             body = "",
             keywords = "",
             showOnBlog = false,
+            isDraft = false,
             editor = ""
         )
     }

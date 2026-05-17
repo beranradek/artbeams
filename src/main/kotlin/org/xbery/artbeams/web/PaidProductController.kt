@@ -232,7 +232,7 @@ class PaidProductController(
         errorMessage: String? = null,
         vararg args: Pair<String, Any?>
     ): Any {
-        val article = articleService.findBySlug(articleSlug)
+        val article = articleService.findBySlugPublic(articleSlug)
         return if (article != null) {
             // Checks user device capabilities.
             val userAccessReport = controllerComponents.userAccessService.getUserAccessReport(request)

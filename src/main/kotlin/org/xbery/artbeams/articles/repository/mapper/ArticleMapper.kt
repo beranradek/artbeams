@@ -36,6 +36,7 @@ class ArticleMapper : RecordMapper<ArticlesRecord, Article> {
             editor = requireNotNull(record.editor),
             body = requireNotNull(record.body),
             keywords = requireNotNull(record.keywords),
-            showOnBlog = requireNotNull(record.showOnBlog)
+            showOnBlog = requireNotNull(record.showOnBlog),
+            isDraft = requireNotNull(record.isDraft)
         )
 }

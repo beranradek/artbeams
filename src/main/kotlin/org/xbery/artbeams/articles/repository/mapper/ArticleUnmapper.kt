@@ -30,6 +30,7 @@ class ArticleUnmapper : RecordUnmapper<Article, ArticlesRecord> {
         record.body = article.body
         record.keywords = article.keywords
         record.showOnBlog = article.showOnBlog
+        record.isDraft = article.isDraft
         return record
     }
 }

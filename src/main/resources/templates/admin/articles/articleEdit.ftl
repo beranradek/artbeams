@@ -83,10 +83,11 @@
         <input type="text" name="${fields.keywords.name}" value="${fields.keywords.value!}" id="${fields.keywords.elementId}" class="form-control"/>
     </div>
   </div>
+  <@forms.inputCheckbox field=fields.showOnBlog label="Show on blog" inputDivClass="col-sm-10" />
   <#if canPublish!false>
-    <@forms.inputCheckbox field=fields.showOnBlog label="Show on blog" inputDivClass="col-sm-10" />
+    <@forms.inputCheckbox field=fields.isDraft label="Draft (not public)" inputDivClass="col-sm-10" />
   <#else>
-    <input type="hidden" name="${fields.showOnBlog.name}" value="false"/>
+    <input type="hidden" name="${fields.isDraft.name}" value="true"/>
   </#if>
   <div class="form-group row">
     <label for="${fields.categories.elementId}" class="col-form-label col-sm-2 label-fix">Categories</label>

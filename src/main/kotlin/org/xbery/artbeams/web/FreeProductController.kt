@@ -290,7 +290,7 @@ class FreeProductController(
         viewName: String = "productArticle",
         errorMessage: String? = null
     ): Any {
-        val article = articleService.findBySlug(articleSlug)
+        val article = articleService.findBySlugPublic(articleSlug)
         return if (article != null) {
             // Checks user device capabilities.
             val userAccessReport = if (saveUserAccess) {

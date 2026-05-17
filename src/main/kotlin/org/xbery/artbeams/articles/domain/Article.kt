@@ -25,6 +25,7 @@ data class Article(
     val body: String,
     val keywords: String,
     val showOnBlog: Boolean,
+    val isDraft: Boolean,
     val editor: String
 ) : Asset(),
     ValidityAsset {
@@ -45,6 +46,7 @@ data class Article(
             body = htmlBody,
             keywords = edited.keywords,
             showOnBlog = edited.showOnBlog,
+            isDraft = edited.isDraft,
             editor = edited.editor
         )
 
@@ -72,6 +74,7 @@ data class Article(
             },
             this.keywords,
             this.showOnBlog,
+            this.isDraft,
             categories
         )
     }
@@ -91,6 +94,7 @@ data class Article(
                 "",
                 "",
                 true,
+                false,
                 "markdown"
             )
         val EmptyEdited: EditedArticle = Empty.toEdited(ArrayList<String>())

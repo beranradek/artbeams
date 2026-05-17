@@ -28,7 +28,6 @@ import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
 import org.xbery.artbeams.search.service.SearchService
-import org.xbery.artbeams.users.domain.CommonRoles
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
@@ -147,18 +146,8 @@ class WebController(
     /** GET article detail. */
     @GetMapping("/{slug}")
     fun article(request: HttpServletRequest, @PathVariable slug: String?): Any = if (slug != null) {
-        val article = articleService.findBySlug(slug)
+        val article = articleService.findBySlugPublic(slug)
         if (article != null) {
-            if (!article.showOnBlog) {
-                val loggedUser = controllerComponents.getLoggedUser(request)
-                val canPreviewDraft =
-                    loggedUser?.roles?.any { role ->
-                        role.name == CommonRoles.ADMIN.roleName || role.name == CommonRoles.REDACTOR.roleName
-                    } == true
-                if (!canPreviewDraft) {
-                    return notFound(request)
-                }
-            }
             val entityKey = EntityKey.fromClassAndId(Article::class.java, article.id)
             val fUserAccessReport =
                 CompletableFuture.supplyAsync {
