@@ -46,7 +46,7 @@ class ArticleRepository(
         val whereCondition =
             validityCondition(validityDate)
                 .and(ARTICLES.SHOW_ON_BLOG.isTrue)
-                .and(ARTICLES.IS_DRAFT.isFalse)
+                .and(ARTICLES.DRAFT.isFalse)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -67,7 +67,7 @@ class ArticleRepository(
                         .where(ARTICLE_CATEGORY.CATEGORY_ID.eq(categoryId))
                 ).and(validityCondition(validityDate))
                 .and(ARTICLES.SHOW_ON_BLOG.isTrue)
-                .and(ARTICLES.IS_DRAFT.isFalse)
+                .and(ARTICLES.DRAFT.isFalse)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -90,7 +90,7 @@ class ArticleRepository(
                 ARTICLES.SLUG
                     .eq(slug)
                     .and(validityCondition(Instant.now()))
-                    .and(ARTICLES.IS_DRAFT.isFalse)
+                    .and(ARTICLES.DRAFT.isFalse)
             ).fetchOne(mapper)
 
     fun findByQuery(query: String, limit: Int): List<Article> {
@@ -143,7 +143,7 @@ class ArticleRepository(
             body = "",
             keywords = "",
             showOnBlog = false,
-            isDraft = false,
+            draft = false,
             editor = ""
         )
     }

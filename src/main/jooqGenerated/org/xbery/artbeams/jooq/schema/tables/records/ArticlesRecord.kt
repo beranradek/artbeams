@@ -85,7 +85,7 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
         set(value): Unit = set(16, value)
         get(): Boolean? = get(16) as Boolean?
 
-    open var isDraft: Boolean?
+    open var draft: Boolean?
         set(value): Unit = set(17, value)
         get(): Boolean? = get(17) as Boolean?
 
@@ -98,7 +98,7 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
     /**
      * Create a detached, initialised ArticlesRecord
      */
-    constructor(id: String? = null, externalId: String? = null, validFrom: Instant? = null, validTo: Instant? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, image: String? = null, perex: String? = null, body: String? = null, bodyEdited: String? = null, editor: String? = null, keywords: String? = null, showOnBlog: Boolean? = null, isDraft: Boolean? = null): this() {
+    constructor(id: String? = null, externalId: String? = null, validFrom: Instant? = null, validTo: Instant? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, image: String? = null, perex: String? = null, body: String? = null, bodyEdited: String? = null, editor: String? = null, keywords: String? = null, showOnBlog: Boolean? = null, draft: Boolean? = null): this() {
         this.id = id
         this.externalId = externalId
         this.validFrom = validFrom
@@ -116,7 +116,7 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
         this.editor = editor
         this.keywords = keywords
         this.showOnBlog = showOnBlog
-        this.isDraft = isDraft
+        this.draft = draft
         resetChangedOnNotNull()
     }
 }

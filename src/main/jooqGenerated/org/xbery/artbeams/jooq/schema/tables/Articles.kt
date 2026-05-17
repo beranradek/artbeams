@@ -33,7 +33,7 @@ import org.xbery.artbeams.common.persistence.jooq.converter.InstantConverter
 import org.xbery.artbeams.jooq.schema.DefaultSchema
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLES_CREATED
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLES_CREATED_BY
-import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLES_IS_DRAFT
+import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLES_DRAFT
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLES_SHOW_ON_BLOG
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ARTICLES_SLUG
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_B
@@ -163,9 +163,9 @@ open class Articles(
     val SHOW_ON_BLOG: TableField<ArticlesRecord, Boolean?> = createField(DSL.name("show_on_blog"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("TRUE"), SQLDataType.BOOLEAN)), this, "")
 
     /**
-     * The column <code>articles.is_draft</code>.
+     * The column <code>articles.draft</code>.
      */
-    val IS_DRAFT: TableField<ArticlesRecord, Boolean?> = createField(DSL.name("is_draft"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("FALSE"), SQLDataType.BOOLEAN)), this, "")
+    val DRAFT: TableField<ArticlesRecord, Boolean?> = createField(DSL.name("draft"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("FALSE"), SQLDataType.BOOLEAN)), this, "")
 
     private constructor(alias: Name, aliased: Table<ArticlesRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<ArticlesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
@@ -186,7 +186,7 @@ open class Articles(
      */
     constructor(): this(DSL.name("articles"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getIndexes(): List<Index> = listOf(IDX_ARTICLES_CREATED, IDX_ARTICLES_CREATED_BY, IDX_ARTICLES_IS_DRAFT, IDX_ARTICLES_SHOW_ON_BLOG, IDX_ARTICLES_SLUG)
+    override fun getIndexes(): List<Index> = listOf(IDX_ARTICLES_CREATED, IDX_ARTICLES_CREATED_BY, IDX_ARTICLES_DRAFT, IDX_ARTICLES_SHOW_ON_BLOG, IDX_ARTICLES_SLUG)
     override fun getPrimaryKey(): UniqueKey<ArticlesRecord> = CONSTRAINT_B
     override fun `as`(alias: String): Articles = Articles(DSL.name(alias), this)
     override fun `as`(alias: Name): Articles = Articles(alias, this)

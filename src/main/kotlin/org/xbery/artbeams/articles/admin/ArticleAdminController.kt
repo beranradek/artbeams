@@ -95,7 +95,7 @@ class ArticleAdminController(
                 var edited: EditedArticle = formData.data
                 if (!hasAuthority(request, "admin")) {
                     // Redactor (and any non-admin) can write drafts, but cannot publish to public blog.
-                    edited = edited.copy(isDraft = true)
+                    edited = edited.copy(draft = true)
                 }
 
                 val uploadedFile = edited.file

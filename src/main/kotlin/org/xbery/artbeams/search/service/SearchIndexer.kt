@@ -32,7 +32,7 @@ class SearchIndexer(
      * Index an article in the search index.
      */
     fun indexArticle(article: Article) {
-        if (article.isDraft) {
+        if (article.draft) {
             // Drafts must not appear in public search.
             searchIndexRepository.deleteByEntity(EntityType.ARTICLE, article.id)
             return
@@ -187,7 +187,7 @@ class SearchIndexer(
             metadata = mapOf(
                 "image" to article.image,
                 "showOnBlog" to article.showOnBlog,
-                "isDraft" to article.isDraft
+                "draft" to article.draft
             ),
             validFrom = article.validFrom,
             validTo = article.validTo,

@@ -69,13 +69,13 @@ CREATE TABLE articles (
 	editor VARCHAR(16) DEFAULT 'markdown',
 	keywords VARCHAR(256) DEFAULT NULL,
 	show_on_blog boolean DEFAULT TRUE,
-	is_draft boolean NOT NULL DEFAULT FALSE
+	draft boolean NOT NULL DEFAULT FALSE
 );
 
 CREATE INDEX idx_articles_slug ON articles (slug);
 CREATE INDEX idx_articles_created_by ON articles (created_by);
 CREATE INDEX idx_articles_show_on_blog ON articles (show_on_blog);
-CREATE INDEX idx_articles_is_draft ON articles (is_draft);
+CREATE INDEX idx_articles_draft ON articles (draft);
 CREATE INDEX idx_articles_created ON articles (created DESC);
 
 CREATE TABLE article_category (

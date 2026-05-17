@@ -28,7 +28,7 @@ open class ArticleForm {
                     "keywords",
                     Field.TEXT
                 ).field<Boolean>("showOnBlog", Field.CHECK_BOX)
-                .field<Boolean>("isDraft", Field.CHECK_BOX)
+                .field<Boolean>("draft", Field.CHECK_BOX)
                 .field<List<String>>("categories", Field.DROP_DOWN_CHOICE)
                 .build(FormUtils.CZ_CONFIG)
     }
