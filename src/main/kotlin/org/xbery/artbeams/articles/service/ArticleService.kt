@@ -14,6 +14,8 @@ import org.xbery.artbeams.common.overview.ResultPage
 interface ArticleService {
     fun findArticles(pagination: Pagination): ResultPage<Article>
 
+    fun findDraftArticles(pagination: Pagination): ResultPage<Article>
+
     fun saveArticle(edited: EditedArticle, ctx: OperationCtx): Article?
 
     /**
@@ -35,4 +37,6 @@ interface ArticleService {
     fun findByCategoryId(categoryId: String, limit: Int): List<Article>
 
     fun findByQuery(query: String, limit: Int): List<Article>
+
+    fun deleteArticle(id: String, ctx: OperationCtx): Boolean
 }

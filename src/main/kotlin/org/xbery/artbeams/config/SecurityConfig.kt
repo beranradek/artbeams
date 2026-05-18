@@ -41,6 +41,11 @@ class SecurityConfig(
                 request.requestMatchers(*ResourcePaths).permitAll()
             }.authorizeHttpRequests { request ->
                 request
+                    // AI agent endpoints can trigger side effects (OpenAI calls, media writes) and are admin-only.
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles/agent/**"))
+                    .hasAuthority("admin")
+            }.authorizeHttpRequests { request ->
+                request
                     .requestMatchers(AntPathRequestMatcher("/admin/articles/**"))
                     .hasAnyAuthority("admin", "redactor")
             }.authorizeHttpRequests { request ->

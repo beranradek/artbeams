@@ -19,6 +19,7 @@ import org.xbery.artbeams.categories.repository.CategoryRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.error.ForbiddenException
 import org.xbery.artbeams.common.form.SpringHttpServletRequestParams
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.error.OperationException
@@ -50,14 +51,17 @@ class ArticleAdminController(
         @RequestParam("limit", defaultValue = "20") limit: Int,
         request: HttpServletRequest
     ): Any {
+        val isAdmin = hasAuthority(request, "admin")
         val pagination = Pagination(offset, limit)
-        val resultPage = articleService.findArticles(pagination)
+        val resultPage = if (isAdmin) articleService.findArticles(pagination) else articleService.findDraftArticles(pagination)
         val model = createModel(
             request,
             "resultPage"
                 to resultPage,
             "emptyId"
-                to AssetAttributes.EMPTY_ID
+                to AssetAttributes.EMPTY_ID,
+            "canPublish"
+                to isAdmin
         )
         return ModelAndView("$tplBasePath/articleList", model)
     }
@@ -70,8 +74,11 @@ class ArticleAdminController(
             try {
                 // We do not want to update article's content with external data right after saving its data
                 // to external storage without leaving editor for further editing (expensive and useless operation).
-                val updateWithExternalData = request.getParameter(paramSaveWithinEditor) == null
+                val updateWithExternalData = hasAuthority(request, "admin") && request.getParameter(paramSaveWithinEditor) == null
                 val edited = articleService.findEditedArticle(id, updateWithExternalData)
+                if (!hasAuthority(request, "admin") && !edited.draft) {
+                    throw ForbiddenException("Redactor cannot edit non-draft articles")
+                }
                 return renderEditForm(request, edited, ValidationResult.empty, null)
             } catch (ex: OperationException) {
                 if (ex.errorCode == GoogleErrorCode.UNAUTHORIZED) {
@@ -94,8 +101,15 @@ class ArticleAdminController(
             } else {
                 var edited: EditedArticle = formData.data
                 if (!hasAuthority(request, "admin")) {
+                    if (edited.id != AssetAttributes.EMPTY_ID) {
+                        val existing = articleService.findEditedArticle(edited.id, false)
+                        if (!existing.draft) {
+                            throw ForbiddenException("Redactor cannot modify non-draft articles")
+                        }
+                    }
                     // Redactor (and any non-admin) can write drafts, but cannot publish to public blog.
-                    edited = edited.copy(draft = true)
+                    // Also disallow external sync identifiers (Evernote / Google Docs) for non-admins.
+                    edited = edited.copy(draft = true, externalId = null)
                 }
 
                 val uploadedFile = edited.file
@@ -124,6 +138,21 @@ class ArticleAdminController(
         } finally {
             formData.data?.file?.deleteTempFile()
         }
+    }
+
+    @PostMapping(value = ["/{id}/delete"])
+    fun delete(request: HttpServletRequest, @PathVariable id: String?): Any {
+        if (id.isNullOrBlank() || id == AssetAttributes.EMPTY_ID) {
+            return badRequest(request)
+        }
+        if (!hasAuthority(request, "admin")) {
+            val existing = articleService.findEditedArticle(id, false)
+            if (!existing.draft) {
+                throw ForbiddenException("Redactor cannot delete non-draft articles")
+            }
+        }
+        articleService.deleteArticle(id, requestToOperationCtx(request))
+        return redirect("/admin/articles")
     }
 
     private fun renderEditForm(

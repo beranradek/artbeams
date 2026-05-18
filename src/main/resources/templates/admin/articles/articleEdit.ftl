@@ -62,10 +62,14 @@
     </div>
   </div>
   <div class="form-group row">
-    <label for="${fields.externalId.elementId}" class="col-form-label col-sm-2 label-fix">External ID</label>
-    <div class="col-sm-3">
-        <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value!}" id="${fields.externalId.elementId}" class="form-control"/>
-    </div>
+    <#if canPublish!false>
+      <label for="${fields.externalId.elementId}" class="col-form-label col-sm-2 label-fix">External ID</label>
+      <div class="col-sm-3">
+          <input type="text" name="${fields.externalId.name}" value="${fields.externalId.value!}" id="${fields.externalId.elementId}" class="form-control"/>
+      </div>
+    <#else>
+      <input type="hidden" name="${fields.externalId.name}" value=""/>
+    </#if>
   </div>
   <#if canPublish!false>
     <@forms.inputDateTime field=fields.validFrom label="Valid from" required=true inputDivClass="col-sm-3" />
@@ -109,7 +113,7 @@
 </form>
 
 <#-- AI Agent for article editing -->
-<#if articleAgentAvailable!false>
+<#if (articleAgentAvailable!false) && (canPublish!false)>
 <#include "/articles/agent/chat.ftl">
 <div class="article-agent-icon" onclick="window.ArticleAgent.openChat()" title="AI Asistent pro editaci článků">
     <i class="fas fa-robot"></i>

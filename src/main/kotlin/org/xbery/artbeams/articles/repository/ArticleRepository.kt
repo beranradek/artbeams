@@ -41,6 +41,15 @@ class ArticleRepository(
             articleInfoMapper()
         )
 
+    fun findDraftArticles(pagination: Pagination): ResultPage<Article> =
+        findByCriteria(
+            INFO_ATTRIBUTES,
+            ARTICLES.DRAFT.isTrue,
+            ARTICLES.MODIFIED.desc(),
+            pagination,
+            articleInfoMapper()
+        )
+
     fun findLatest(limit: Int): List<Article> {
         val validityDate = Instant.now()
         val whereCondition =

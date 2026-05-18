@@ -46,6 +46,10 @@ class SearchIndexer(
         }
     }
 
+    fun deleteArticle(articleId: String) {
+        searchIndexRepository.deleteByEntity(EntityType.ARTICLE, articleId)
+    }
+
     /**
      * Index a category in the search index.
      */

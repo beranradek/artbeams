@@ -39,6 +39,11 @@ class ArticleServiceImpl(
         return articleRepository.findArticles(pagination)
     }
 
+    override fun findDraftArticles(pagination: Pagination): ResultPage<Article> {
+        logger.trace("Finding draft articles")
+        return articleRepository.findDraftArticles(pagination)
+    }
+
     @CacheEvict(value = [ Article.CacheName ], allEntries = true)
     override fun saveArticle(
         edited: EditedArticle,
@@ -134,6 +139,16 @@ class ArticleServiceImpl(
         query: String,
         limit: Int
     ): List<Article> = articleRepository.findByQuery(query, limit)
+
+    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
+    override fun deleteArticle(id: String, ctx: OperationCtx): Boolean {
+        logger.info("Deleting article $id")
+        // Remove category bindings first
+        articleCategoryRepository.updateArticleCategories(id, emptyList())
+        // Remove from search index
+        searchIndexer.deleteArticle(id)
+        return articleRepository.deleteById(id)
+    }
 
     private fun findArticleCategories(articleId: String): List<String> =
         articleCategoryRepository.findArticleCategoryIdsByArticleId(articleId)
