@@ -46,8 +46,21 @@ class SecurityConfig(
                     .hasAuthority("admin")
             }.authorizeHttpRequests { request ->
                 request
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles/**"))
+                    // Redactor may only manage draft articles (create/edit/delete drafts).
+                    // Server-side authorization must be strict; UI is only a convenience.
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles", "GET"))
                     .hasAnyAuthority("admin", "redactor")
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles/", "GET"))
+                    .hasAnyAuthority("admin", "redactor")
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles/*/edit", "GET"))
+                    .hasAnyAuthority("admin", "redactor")
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles/save", "POST"))
+                    .hasAnyAuthority("admin", "redactor")
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles/*/delete", "POST"))
+                    .hasAnyAuthority("admin", "redactor")
+                    // Everything else under /admin/articles is admin-only (publish/sync/reindex/etc.).
+                    .requestMatchers(AntPathRequestMatcher("/admin/articles/**"))
+                    .hasAuthority("admin")
             }.authorizeHttpRequests { request ->
                 request
                     .requestMatchers(AntPathRequestMatcher("/admin/**"))
