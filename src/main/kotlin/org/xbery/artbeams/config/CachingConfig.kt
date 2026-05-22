@@ -23,7 +23,7 @@ open class CachingConfig {
     @Primary
     open fun cacheManager(): ConcurrentMapCacheManager =
         ConcurrentMapCacheManager(
-            Article.CacheName,
+            Article.CACHE_NAME,
             Category.CacheName,
             CategoryServiceImpl.ARTICLE_CATEGORIES_CACHE_NAME,
             Comment.CACHE_NAME,

@@ -80,7 +80,7 @@ data class Article(
     }
 
     companion object {
-        const val CacheName: String = "articles"
+        const val CACHE_NAME: String = "articles"
         val Empty: Article =
             Article(
                 AssetAttributes.EMPTY,

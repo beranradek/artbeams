@@ -21,4 +21,4 @@ object CreateOrderForm {
             .field<String>("userId", Field.TEXT)
             .field<String>("productId", Field.TEXT)
             .build(FormUtils.CZ_CONFIG)
-} 
+}

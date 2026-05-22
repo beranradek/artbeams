@@ -44,7 +44,7 @@ class ArticleServiceImpl(
         return articleRepository.findDraftArticles(pagination)
     }
 
-    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
+    @CacheEvict(value = [ Article.CACHE_NAME ], allEntries = true)
     override fun saveArticle(
         edited: EditedArticle,
         ctx: OperationCtx
@@ -112,19 +112,19 @@ class ArticleServiceImpl(
         return articleUpdatedWithExternalData.toEdited(categoryIds)
     }
 
-    @Cacheable(Article.CacheName)
+    @Cacheable(Article.CACHE_NAME)
     override fun findBySlug(slug: String): Article? {
         logger.trace("Finding article by slug $slug")
         return articleRepository.findBySlug(slug)
     }
 
-    @Cacheable(Article.CacheName)
+    @Cacheable(Article.CACHE_NAME)
     override fun findBySlugPublic(slug: String): Article? {
         logger.trace("Finding public article by slug $slug")
         return articleRepository.findBySlugPublic(slug)
     }
 
-    @Cacheable(Article.CacheName)
+    @Cacheable(Article.CACHE_NAME)
     override fun findLatest(limit: Int): List<Article> {
         logger.trace("Finding latest $limit articles")
         return articleRepository.findLatest(limit)
@@ -140,7 +140,7 @@ class ArticleServiceImpl(
         limit: Int
     ): List<Article> = articleRepository.findByQuery(query, limit)
 
-    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
+    @CacheEvict(value = [ Article.CACHE_NAME ], allEntries = true)
     override fun deleteArticle(id: String, ctx: OperationCtx): Boolean {
         logger.info("Deleting article $id")
         // Remove category bindings first

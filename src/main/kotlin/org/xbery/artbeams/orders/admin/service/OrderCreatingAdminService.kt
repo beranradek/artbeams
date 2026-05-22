@@ -33,4 +33,4 @@ interface OrderCreatingAdminService {
      * @return list of products
      */
     fun findAllProducts(): List<Product>
-} 
+}

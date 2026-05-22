@@ -122,7 +122,8 @@ $itemListElements
     "priceCurrency": "${escapeJson(product.price.currency)}",
     "price": "${product.price.price}",
     "availability": "https://schema.org/InStock"
-  }""".trimIndent()
+  }
+            """.trimIndent()
 
         val imageField =
             if (imageUrl != null && imageUrl.isNotBlank()) {

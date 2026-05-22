@@ -33,4 +33,4 @@ class MemberSectionMailerImpl(
 
         templateMailer.sendMailWithTemplate(username, subject, templateId, tplVars)
     }
-} 
+}

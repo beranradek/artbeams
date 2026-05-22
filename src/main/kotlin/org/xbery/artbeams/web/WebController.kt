@@ -28,13 +28,13 @@ import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
 import org.xbery.artbeams.search.service.SearchService
+import java.nio.charset.StandardCharsets
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.nio.charset.StandardCharsets
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 /**
  * Common web routes.
@@ -59,22 +59,22 @@ class WebController(
 
     override fun productService(): ProductService = productService
 
-    private val ArticlesPerPageLimit: Int = 20
-    private val SearchLimit: Int = 20
-    private val LatestArticlesSidebarLimit: Int = 5
+    private val articlesPerPageLimit: Int = 20
+    private val searchLimit: Int = 20
+    private val latestArticlesSidebarLimit: Int = 5
     private var searchCount: Int = 0
 
     @GetMapping("/")
     fun homepage(request: HttpServletRequest): Any {
         // val fArticles = CompletableFuture.supplyAsync {
-        // articleService.findLatest(ArticlesPerPageLimit) }
+        // articleService.findLatest(articlesPerPageLimit) }
         // val fUserAccessReport =
         //    CompletableFuture.supplyAsync {
         // controllerComponents.userAccessService.getUserAccessReport(request) }
         // Stream.of(fArticles, fUserAccessReport).map(CompletableFuture::join)
         // CompletableFuture.allOf(fArticles, fUserAccessReport).join()
 
-        val articles = articleService.findLatest(ArticlesPerPageLimit)
+        val articles = articleService.findLatest(articlesPerPageLimit)
         val userAccessReport = controllerComponents.userAccessService.getUserAccessReport(request)
 
         // Generate website structured data for homepage
@@ -109,7 +109,7 @@ class WebController(
     fun category(request: HttpServletRequest, @PathVariable slug: String?): Any = if (slug != null) {
         val category = categoryService.findBySlug(slug)
         if (category != null) {
-            val articles = articleService.findByCategoryId(category.id, ArticlesPerPageLimit)
+            val articles = articleService.findByCategoryId(category.id, articlesPerPageLimit)
             val siteUrl = getUrlBase(request).trimEnd('/')
             val siteName = controllerComponents.localisationRepository.getEntries()["website.title"] ?: "ArtBeams"
             val breadcrumbJsonLd =
@@ -172,7 +172,8 @@ class WebController(
         val siteName = xlat["website.title"] ?: "ArtBeams"
         val siteDescription = xlat["website.description"] ?: ""
 
-        val articles = articleService.findLatest(50)
+        val articles = articleService
+            .findLatest(50)
             .filter { it.showOnBlog && !it.draft }
 
         val rss = buildRssXml(siteUrl, siteName, siteDescription, articles)
@@ -333,11 +334,14 @@ class WebController(
 
     private fun buildRssXml(siteUrl: String, siteName: String, siteDescription: String, articles: List<Article>): String {
         val rfc1123 = DateTimeFormatter.RFC_1123_DATE_TIME
-        val now = java.time.Instant.now().atOffset(ZoneOffset.UTC)
+        val now = java.time.Instant
+            .now()
+            .atOffset(ZoneOffset.UTC)
         val lastBuild = rfc1123.format(now)
 
         fun esc(s: String): String =
-            s.replace("&", "&amp;")
+            s
+                .replace("&", "&amp;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
@@ -375,7 +379,7 @@ class WebController(
 $items
 </channel>
 </rss>
-        """.trimIndent() + "\n"
+            """.trimIndent() + "\n"
     }
 
     @GetMapping("/search")
@@ -395,7 +399,7 @@ $items
                 if (query == null || query.trim().length < 2) {
                     emptyList()
                 } else {
-                    searchService.search(query, SearchLimit)
+                    searchService.search(query, searchLimit)
                 }
 
             // Group results by entity type
@@ -437,7 +441,7 @@ $items
     ): MutableMap<String, Any?> {
         val fLatestArticles =
             CompletableFuture.supplyAsync {
-                articleService.findLatest(LatestArticlesSidebarLimit)
+                articleService.findLatest(latestArticlesSidebarLimit)
             }
         val fArticleCategories = CompletableFuture.supplyAsync { categoryService.findCategories() }
         CompletableFuture.allOf(fLatestArticles, fArticleCategories).join()

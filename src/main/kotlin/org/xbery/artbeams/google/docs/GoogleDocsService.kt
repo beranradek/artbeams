@@ -94,7 +94,7 @@ open class GoogleDocsService(
      *
      * @throws UnauthorizedException if user is not authorized to access Google documents or authorization has expired
      */
-    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
+    @CacheEvict(value = [ Article.CACHE_NAME ], allEntries = true)
     fun updateArticleWithGoogleDoc(article: Article): Article? {
         if (article.externalId == null) {
             // Article without pairing to Google Doc id

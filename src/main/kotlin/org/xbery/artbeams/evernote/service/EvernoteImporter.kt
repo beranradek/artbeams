@@ -25,7 +25,7 @@ open class EvernoteImporter(
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
-    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
+    @CacheEvict(value = [ Article.CACHE_NAME ], allEntries = true)
     open fun importArticles(): List<Article> {
         val operationMsg = "Import of Evernote notes"
         logger.info("$operationMsg: started")
@@ -66,7 +66,7 @@ open class EvernoteImporter(
      * Updates article with the content of corresponding Evernote note. Returns updated article,
      * or null if it was not updated (note not found, or article has not an externalId - id of note).
      */
-    @CacheEvict(value = [ Article.CacheName ], allEntries = true)
+    @CacheEvict(value = [ Article.CACHE_NAME ], allEntries = true)
     open fun updateArticleWithNote(
         article: Article,
         noteStoreClient: NoteStore.Client? = null

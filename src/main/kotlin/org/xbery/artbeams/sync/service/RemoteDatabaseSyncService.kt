@@ -49,7 +49,7 @@ class RemoteDatabaseSyncService(
      * - Media are matched by filename, content type, and size (not by ID)
      * After sync, removes external IDs from all synced articles to prevent unintentional updates to Google Docs.
      */
-    @CacheEvict(value = [Article.CacheName], allEntries = true)
+    @CacheEvict(value = [Article.CACHE_NAME], allEntries = true)
     fun syncFromRemoteDatabase(): SyncResult {
         val connectionString = appConfig.findConfig("remote.db.connection")
         require(!connectionString.isNullOrBlank()) { "Remote database connection is not configured (remote.db.connection)" }
