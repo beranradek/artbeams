@@ -28,6 +28,8 @@ import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
 import org.xbery.artbeams.search.service.SearchService
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
 import java.nio.charset.StandardCharsets
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -156,8 +158,12 @@ class WebController(
         val cacheControl: CacheControl = CacheControl.maxAge(6, TimeUnit.HOURS).cachePublic()
         response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=sitemap.xml")
-        response.contentType = "application/xml"
-        response.writer.use { writer -> writeSitemap(this.getUrlBase(request), writer) }
+        response.characterEncoding = StandardCharsets.UTF_8.name()
+        response.contentType = "application/xml;charset=UTF-8"
+        PrintWriter(OutputStreamWriter(response.outputStream, StandardCharsets.UTF_8)).use { writer ->
+            writeSitemap(this.getUrlBase(request), writer)
+        }
+        response.flushBuffer()
     }
 
     @GetMapping(value = ["/feed.xml", "/rss.xml"])
@@ -172,9 +178,10 @@ class WebController(
         val siteName = xlat["website.title"] ?: "ArtBeams"
         val siteDescription = xlat["website.description"] ?: ""
 
-        val articles = articleService
-            .findLatest(50)
-            .filter { it.showOnBlog && !it.draft }
+        // `ArticleRepository.findLatest` already filters `showOnBlog=true` and `draft=false` at DB level.
+        // Do not re-filter here because `findLatest` uses `INFO_ATTRIBUTES` (a subset), and filtering on
+        // missing fields can accidentally drop all items.
+        val articles = articleService.findLatest(50)
 
         val rss = buildRssXml(siteUrl, siteName, siteDescription, articles)
         response.outputStream.write(rss.toByteArray(StandardCharsets.UTF_8))
@@ -195,7 +202,8 @@ class WebController(
         val isFull = request.requestURI.endsWith("llms-full.txt")
 
         val latest = if (isFull) {
-            articleService.findLatest(30).filter { it.showOnBlog && !it.draft }
+            // See comment in `feed()` – do not re-filter the already-filtered DB result.
+            articleService.findLatest(30)
         } else {
             emptyList()
         }

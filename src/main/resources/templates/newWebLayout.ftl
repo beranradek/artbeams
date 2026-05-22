@@ -80,20 +80,30 @@
   <link rel="preload" fetchpriority="high" as="image" href="/static/images/header.jpg" type="image/jpeg">
   </#if>
 
-	  <!-- Open Graph data (Facebook, LinkedIn) -->
-		  <#if product??>
-		    <meta property="og:title" content="${product.title!}" />
-		    <meta property="og:type" content="product" />
-		    <meta property="og:site_name" content="${xlat['website.title']}" />
-		    <#if product.image??>
-		      <meta property="og:image" content="${product.image!}" />
-		    <#elseif product.listingImage??>
-		      <meta property="og:image" content="${product.listingImage!}" />
-		    <#elseif article?? && article.image??>
-		      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
-		    <#else>
-		      <meta property="og:image" content="${_urlBase}/static/images/header.jpg" />
-		    </#if>
+		  <!-- Open Graph data (Facebook, LinkedIn) -->
+			  <#if product??>
+			    <meta property="og:title" content="${product.title!}" />
+			    <meta property="og:type" content="product" />
+			    <meta property="og:site_name" content="${xlat['website.title']}" />
+			    <#assign productShareImage = "">
+			    <#if product.image??>
+			      <#assign productShareImage = product.image!>
+			    <#elseif product.listingImage??>
+			      <#assign productShareImage = product.listingImage!>
+			    </#if>
+			    <#if productShareImage?has_content>
+			      <#if productShareImage?starts_with("http")>
+			        <meta property="og:image" content="${productShareImage}" />
+			      <#elseif productShareImage?starts_with("/")>
+			        <meta property="og:image" content="${_urlBase}${productShareImage}" />
+			      <#else>
+			        <meta property="og:image" content="${_urlBase}/${productShareImage}" />
+			      </#if>
+			    <#elseif article?? && article.image??>
+			      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
+			    <#else>
+			      <meta property="og:image" content="${_urlBase}/static/images/header.jpg" />
+			    </#if>
 		  <#elseif article??>
 	    <meta property="og:title" content="${article.title!}" />
 	    <meta property="og:type" content="article" />
@@ -134,17 +144,29 @@
   <meta property="og:locale" content="${xlat['website.locale']}" />
   <meta property="og:description" content="${description?html!}" />
 
-  <!-- Twitter Card data -->
-	  <meta name="twitter:card" content="summary_large_image" />
-	  <meta name="twitter:title" content="<#if title??>${title}<#else>${xlat['website.title']}</#if>" />
-	  <meta name="twitter:description" content="${description?truncate(200)?html!}" />
-	  <#if product?? && product.image??>
-	    <meta name="twitter:image" content="${product.image!}" />
-	    <meta name="twitter:image:alt" content="${product.title!}" />
-	  <#elseif article?? && article.image??>
-	    <meta name="twitter:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
-	    <meta name="twitter:image:alt" content="${article.title!}" />
-	  <#else>
+		  <!-- Twitter Card data -->
+		  <meta name="twitter:card" content="summary_large_image" />
+		  <meta name="twitter:title" content="<#if title??>${title}<#else>${xlat['website.title']}</#if>" />
+		  <meta name="twitter:description" content="${description?truncate(200)?html!}" />
+		  <#if product?? && (product.image?? || product.listingImage??)>
+		    <#assign productShareImage = "">
+		    <#if product.image??>
+		      <#assign productShareImage = product.image!>
+		    <#elseif product.listingImage??>
+		      <#assign productShareImage = product.listingImage!>
+		    </#if>
+		    <#if productShareImage?starts_with("http")>
+		      <meta name="twitter:image" content="${productShareImage}" />
+		    <#elseif productShareImage?starts_with("/")>
+		      <meta name="twitter:image" content="${_urlBase}${productShareImage}" />
+		    <#else>
+		      <meta name="twitter:image" content="${_urlBase}/${productShareImage}" />
+		    </#if>
+		    <meta name="twitter:image:alt" content="${product.title!}" />
+		  <#elseif article?? && article.image??>
+		    <meta name="twitter:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
+		    <meta name="twitter:image:alt" content="${article.title!}" />
+		  <#else>
 	    <#-- Use default social image for non-article pages -->
 	    <meta name="twitter:image" content="${_urlBase}/static/images/header.jpg" />
   </#if>
