@@ -46,14 +46,19 @@
     </div>
     <div class="row">
       <#list products as product>
-        <div class="col-md-6 col-lg-4 mb-3">
-          <div class="card h-100">
-            <#if product.metadata?? && product.metadata.listingImage??>
-              <img src="/media/${product.metadata.listingImage}?size=300" class="card-img-top" alt="${product.title}" loading="lazy">
-            </#if>
-            <div class="card-body">
-              <h5 class="card-title">
-                <a href="/produkt/${product.slug}">${product.title}</a>
+	        <div class="col-md-6 col-lg-4 mb-3">
+	          <div class="card h-100">
+	            <#if product.metadata?? && product.metadata.listingImage??>
+	              <#assign listingImage = product.metadata.listingImage?string>
+	              <#if listingImage?starts_with("http") || listingImage?starts_with("/")>
+	                <img src="${listingImage}?size=300" class="card-img-top" alt="${product.title}" loading="lazy">
+	              <#else>
+	                <img src="/media/${listingImage}?size=300" class="card-img-top" alt="${product.title}" loading="lazy">
+	              </#if>
+	            </#if>
+	            <div class="card-body">
+	              <h5 class="card-title">
+	                <a href="/produkt/${product.slug}">${product.title}</a>
               </h5>
               <#if product.description??>
                 <p class="card-text">${product.description?truncate(100, '...')}</p>
