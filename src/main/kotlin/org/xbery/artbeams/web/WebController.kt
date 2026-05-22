@@ -358,17 +358,21 @@ class WebController(
         val items = articles.joinToString("\n") { a ->
             val link = "$siteUrl/${a.slug}"
             val pub = rfc1123.format(a.validity.validFrom.atOffset(ZoneOffset.UTC))
-            val description = a.perex
-            val content = a.body
+            val description = a.perex?.trim().orEmpty()
+            // `findLatest(..)` loads `INFO_ATTRIBUTES`, which may not include full article body.
+            // Avoid emitting an empty <content:encoded> block in RSS.
+            val content = a.body?.trim()?.takeIf { it.isNotEmpty() } ?: description
+            val contentEncoded =
+                if (content.isNotBlank()) "<content:encoded><![CDATA[$content]]></content:encoded>" else ""
             """
-  <item>
-    <title>${esc(a.title)}</title>
-    <link>${esc(link)}</link>
-    <guid isPermaLink="true">${esc(link)}</guid>
-    <pubDate>$pub</pubDate>
-    <description>${esc(description)}</description>
-    <content:encoded><![CDATA[$content]]></content:encoded>
-  </item>
+              <item>
+                <title>${esc(a.title)}</title>
+                <link>${esc(link)}</link>
+                <guid isPermaLink="true">${esc(link)}</guid>
+                <pubDate>$pub</pubDate>
+                <description>${esc(description)}</description>
+                $contentEncoded
+              </item>
             """.trimIndent()
         }
 
