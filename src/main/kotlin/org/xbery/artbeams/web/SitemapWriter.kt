@@ -9,6 +9,7 @@ import org.xbery.artbeams.products.service.ProductService
 import java.io.PrintWriter
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.util.Date
 
 /**
  * Sitemap generating logic.
@@ -36,7 +37,7 @@ interface SitemapWriter {
             writer.println(
                 buildUrl(
                     urlBase + "/kategorie/" + category.slug,
-                    null
+                    category.common.modified
                 )
             )
         }
@@ -58,7 +59,7 @@ interface SitemapWriter {
             writer.println(
                 buildUrl(
                     urlBase + "/produkt/" + product.slug,
-                    null
+                    product.common.modified
                 )
             )
         }
@@ -70,7 +71,7 @@ interface SitemapWriter {
         sb.append("  <url>")
         sb.append("<loc>$url</loc>")
         modifiedOpt?.let { modified ->
-            sb.append("<lastmod>" + SitemapDateFormat.format(java.util.Date(modified.toEpochMilli())) + "</lastmod>")
+            sb.append("<lastmod>" + SitemapDateFormat.format(Date(modified.toEpochMilli())) + "</lastmod>")
         }
         sb.append("<changefreq>daily</changefreq><priority>0.8</priority>")
         sb.append("</url>")
@@ -78,6 +79,7 @@ interface SitemapWriter {
     }
 
     companion object {
-        val SitemapDateFormat = SimpleDateFormat("YYYY-MM-dd")
+        // Use calendar year (yyyy), not week-based year (YYYY).
+        val SitemapDateFormat = SimpleDateFormat("yyyy-MM-dd")
     }
 }

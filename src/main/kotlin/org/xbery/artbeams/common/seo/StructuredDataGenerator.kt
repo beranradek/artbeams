@@ -2,6 +2,7 @@ package org.xbery.artbeams.common.seo
 
 import org.xbery.artbeams.articles.domain.Article
 import org.xbery.artbeams.categories.domain.Category
+import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.users.domain.User
 import java.time.format.DateTimeFormatter
 
@@ -98,6 +99,60 @@ object StructuredDataGenerator {
   "itemListElement": [
 $itemListElements
   ]
+}
+            """.trimIndent()
+    }
+
+    /**
+     * Generates JSON-LD structured data for a product detail page. Uses Schema.org Product + Offer.
+     */
+    fun generateProductJsonLd(
+        product: Product,
+        pageUrl: String,
+        description: String,
+        imageUrl: String?,
+        siteName: String,
+        logoUrl: String
+    ): String {
+        val offers =
+            """
+  "offers": {
+    "@type": "Offer",
+    "url": "$pageUrl",
+    "priceCurrency": "${escapeJson(product.price.currency)}",
+    "price": "${product.price.price}",
+    "availability": "https://schema.org/InStock"
+  }""".trimIndent()
+
+        val imageField =
+            if (imageUrl != null && imageUrl.isNotBlank()) {
+                "\"image\": \"${escapeJson(imageUrl)}\","
+            } else {
+                ""
+            }
+
+        return """
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "${escapeJson(product.title)}",
+  "url": "$pageUrl",
+  $imageField
+  "description": "${escapeJson(description)}",
+$offers,
+  "brand": {
+    "@type": "Brand",
+    "name": "${escapeJson(siteName)}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "${escapeJson(siteName)}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "$logoUrl"
+    }
+  },
+  "inLanguage": "cs-CZ"
 }
             """.trimIndent()
     }

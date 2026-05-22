@@ -32,6 +32,9 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.nio.charset.StandardCharsets
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 /**
  * Common web routes.
@@ -107,12 +110,22 @@ class WebController(
         val category = categoryService.findBySlug(slug)
         if (category != null) {
             val articles = articleService.findByCategoryId(category.id, ArticlesPerPageLimit)
+            val siteUrl = getUrlBase(request).trimEnd('/')
+            val siteName = controllerComponents.localisationRepository.getEntries()["website.title"] ?: "ArtBeams"
+            val breadcrumbJsonLd =
+                StructuredDataGenerator.generateBreadcrumbJsonLd(
+                    listOf(
+                        Pair(siteName, siteUrl),
+                        Pair(category.title, "$siteUrl/kategorie/${category.slug}")
+                    )
+                )
             val model =
                 createBlogModel(
                     request,
                     FormData(SubscriptionFormData.Empty, ValidationResult.empty),
                     "category" to category,
-                    "articles" to articles
+                    "articles" to articles,
+                    "breadcrumbJsonLd" to breadcrumbJsonLd
                 )
             ModelAndView("category", model)
         } else {
@@ -129,7 +142,11 @@ class WebController(
             response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
             response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=robots.txt")
             response.contentType = "text/plain"
-            IOUtils.copy(fileStream, response.outputStream)
+            val base = getUrlBase(request).trimEnd('/')
+            val raw = IOUtils.toString(fileStream, StandardCharsets.UTF_8)
+            val sitemapLine = "Sitemap: $base/sitemap.xml"
+            val body = if (raw.contains("Sitemap:", ignoreCase = true)) raw else raw.trimEnd() + "\n" + sitemapLine + "\n"
+            response.outputStream.write(body.toByteArray(StandardCharsets.UTF_8))
             response.flushBuffer()
         }
     }
@@ -141,6 +158,72 @@ class WebController(
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=sitemap.xml")
         response.contentType = "application/xml"
         response.writer.use { writer -> writeSitemap(this.getUrlBase(request), writer) }
+    }
+
+    @GetMapping(value = ["/feed.xml", "/rss.xml"])
+    fun feed(request: HttpServletRequest, response: HttpServletResponse) {
+        val cacheControl: CacheControl = CacheControl.maxAge(1, TimeUnit.HOURS).cachePublic()
+        response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=feed.xml")
+        response.contentType = "application/rss+xml;charset=UTF-8"
+
+        val siteUrl = getUrlBase(request).trimEnd('/')
+        val xlat = controllerComponents.localisationRepository.getEntries()
+        val siteName = xlat["website.title"] ?: "ArtBeams"
+        val siteDescription = xlat["website.description"] ?: ""
+
+        val articles = articleService.findLatest(50)
+            .filter { it.showOnBlog && !it.draft }
+
+        val rss = buildRssXml(siteUrl, siteName, siteDescription, articles)
+        response.outputStream.write(rss.toByteArray(StandardCharsets.UTF_8))
+        response.flushBuffer()
+    }
+
+    @GetMapping(value = ["/llms.txt", "/llms-full.txt"])
+    fun llmsTxt(request: HttpServletRequest, response: HttpServletResponse) {
+        val cacheControl: CacheControl = CacheControl.maxAge(6, TimeUnit.HOURS).cachePublic()
+        response.addHeader(HttpHeaders.CACHE_CONTROL, cacheControl.headerValue)
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "filename=llms.txt")
+        response.contentType = "text/plain;charset=UTF-8"
+
+        val siteUrl = getUrlBase(request).trimEnd('/')
+        val xlat = controllerComponents.localisationRepository.getEntries()
+        val siteName = xlat["website.title"] ?: "ArtBeams"
+        val siteDescription = xlat["website.description"] ?: ""
+        val isFull = request.requestURI.endsWith("llms-full.txt")
+
+        val latest = if (isFull) {
+            articleService.findLatest(30).filter { it.showOnBlog && !it.draft }
+        } else {
+            emptyList()
+        }
+
+        val body = buildString {
+            appendLine("# $siteName")
+            if (siteDescription.isNotBlank()) appendLine(siteDescription.trim())
+            appendLine()
+            appendLine("Base URL: $siteUrl")
+            appendLine("Sitemap: $siteUrl/sitemap.xml")
+            appendLine("RSS: $siteUrl/feed.xml")
+            appendLine()
+            appendLine("## Key pages")
+            appendLine("- $siteUrl/")
+            appendLine("- $siteUrl/muj-pribeh")
+            appendLine("- $siteUrl/kategorie/spanek")
+            appendLine("- $siteUrl/kategorie/zivotosprava")
+            appendLine("- $siteUrl/kategorie/nemoci")
+            appendLine()
+            if (isFull) {
+                appendLine("## Latest articles")
+                for (a in latest) {
+                    appendLine("- ${a.title} — $siteUrl/${a.slug}")
+                }
+            }
+        }
+
+        response.outputStream.write(body.toByteArray(StandardCharsets.UTF_8))
+        response.flushBuffer()
     }
 
     /** GET article detail. */
@@ -246,6 +329,53 @@ class WebController(
         }
     } else {
         notFound(request)
+    }
+
+    private fun buildRssXml(siteUrl: String, siteName: String, siteDescription: String, articles: List<Article>): String {
+        val rfc1123 = DateTimeFormatter.RFC_1123_DATE_TIME
+        val now = java.time.Instant.now().atOffset(ZoneOffset.UTC)
+        val lastBuild = rfc1123.format(now)
+
+        fun esc(s: String): String =
+            s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;")
+
+        val items = articles.joinToString("\n") { a ->
+            val link = "$siteUrl/${a.slug}"
+            val pub = rfc1123.format(a.validity.validFrom.atOffset(ZoneOffset.UTC))
+            val description = a.perex
+            val content = a.body
+            """
+  <item>
+    <title>${esc(a.title)}</title>
+    <link>${esc(link)}</link>
+    <guid isPermaLink="true">${esc(link)}</guid>
+    <pubDate>$pub</pubDate>
+    <description>${esc(description)}</description>
+    <content:encoded><![CDATA[$content]]></content:encoded>
+  </item>
+            """.trimIndent()
+        }
+
+        return """
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<channel>
+  <title>${esc(siteName)}</title>
+  <link>${esc(siteUrl)}/</link>
+  <description>${esc(siteDescription)}</description>
+  <language>cs-CZ</language>
+  <lastBuildDate>$lastBuild</lastBuildDate>
+  <atom:link href="${esc(siteUrl)}/feed.xml" rel="self" type="application/rss+xml" />
+$items
+</channel>
+</rss>
+        """.trimIndent() + "\n"
     }
 
     @GetMapping("/search")

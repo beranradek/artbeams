@@ -25,6 +25,7 @@ import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.form.FormErrors
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
+import org.xbery.artbeams.common.seo.StructuredDataGenerator
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.consents.domain.ConsentType
 import org.xbery.artbeams.consents.service.ConsentService
@@ -303,13 +304,55 @@ class FreeProductController(
 
             val subscriptionForm = fillSubscriptionForm()
 
+            val siteUrl = getUrlBase(request).trimEnd('/')
+            val xlat = controllerComponents.localisationRepository.getEntries()
+            val siteName = xlat["website.title"] ?: "ArtBeams"
+            val logoUrl = "$siteUrl${xlat["logo.img.src"] ?: "/media/favicon.ico"}"
+            val pageUrl = "$siteUrl/produkt/${product.slug}"
+
+            val structuredDescription =
+                when {
+                    !product.subtitle.isNullOrBlank() -> product.subtitle!!
+                    !article.perex.isNullOrBlank() -> article.perex
+                    else -> xlat["website.description"] ?: ""
+                }
+
+            val imageUrlRaw = product.image ?: product.listingImage ?: article.image?.let { "/media/$it?size=1200" }
+            val imageUrl =
+                when {
+                    imageUrlRaw.isNullOrBlank() -> null
+                    imageUrlRaw.startsWith("http://") || imageUrlRaw.startsWith("https://") -> imageUrlRaw
+                    imageUrlRaw.startsWith("/") -> siteUrl + imageUrlRaw
+                    else -> "$siteUrl/$imageUrlRaw"
+                }
+
+            val productJsonLd =
+                StructuredDataGenerator.generateProductJsonLd(
+                    product = product,
+                    pageUrl = pageUrl,
+                    description = structuredDescription,
+                    imageUrl = imageUrl,
+                    siteName = siteName,
+                    logoUrl = logoUrl
+                )
+
+            val breadcrumbJsonLd =
+                StructuredDataGenerator.generateBreadcrumbJsonLd(
+                    listOf(
+                        Pair(siteName, siteUrl),
+                        Pair(product.title, pageUrl)
+                    )
+                )
+
             val model = createModel(
                 request,
                 "product" to product,
                 "article" to article,
                 TPL_PARAM_SUBSCRIPTION_FORM_MAPPING to subscriptionForm,
                 "userAccessReport" to userAccessReport,
-                "errorMessage" to errorMessage
+                "errorMessage" to errorMessage,
+                "productJsonLd" to productJsonLd,
+                "breadcrumbJsonLd" to breadcrumbJsonLd
             )
             ModelAndView(viewName, model)
         } else {

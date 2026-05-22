@@ -22,19 +22,31 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://www.google.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <#assign description = "${xlat['website.description']}">
-  <#if article??>
-    <#assign title = "${(article.title)[0..*200]}">
-    <#if article.perex??>
-      <#assign description = "${(article.perex)[0..*350]}">
-    </#if>
-  <#elseif category??>
-    <#assign title = "${(category.title)[0..*200]}">
-    <#if category.description??>
-      <#assign description = "${(category.description)[0..*350]}">
-    </#if>
-  </#if>
-  <meta name="description" content="${description?html!}" />
+	  <#assign description = "${xlat['website.description']}">
+	  <#-- Product pages can also provide an article for body content; prefer product metadata for SEO -->
+	  <#if product??>
+	    <#assign title = "${(product.title)[0..*200]}">
+	    <#if product.subtitle?? && product.subtitle?trim != "">
+	      <#assign description = "${(product.subtitle)[0..*350]}">
+	    <#elseif article?? && article.perex??>
+	      <#assign description = "${(article.perex)[0..*350]}">
+	    </#if>
+	  <#elseif article??>
+	    <#assign title = "${(article.title)[0..*200]}">
+	    <#if article.perex??>
+	      <#assign description = "${(article.perex)[0..*350]}">
+	    </#if>
+		  <#elseif category??>
+	    <#assign title = "${(category.title)[0..*200]}">
+	    <#if category.description??>
+	      <#assign description = "${(category.description)[0..*350]}">
+	    </#if>
+	  </#if>
+	  <#-- Ensure we never output an empty meta description -->
+	  <#if !description?has_content || description?trim == "">
+	    <#assign description = "${xlat['website.description']}">
+	  </#if>
+	  <meta name="description" content="${description?html!}" />
   <#-- Note: keywords meta tag is outdated for SEO, but kept for legacy compatibility -->
   <#if article?? && article.keywords??>
     <meta name="keywords" content="${article.keywords!}"/>
@@ -42,19 +54,25 @@
     <meta name="keywords" content="${xlat['website.keywords']}"/>
   </#if>
 
-  <#-- Canonical URL to prevent duplicate content issues -->
-  <#if article??>
-    <link rel="canonical" href="${_urlBase}/${article.slug}" />
-  <#elseif category??>
-    <link rel="canonical" href="${_urlBase}/kategorie/${category.slug}" />
-  <#else>
-    <link rel="canonical" href="${_urlBase}" />
-  </#if>
+	  <#-- Canonical URL to prevent duplicate content issues -->
+	  <#if product??>
+	    <link rel="canonical" href="${_urlBase}/produkt/${product.slug}" />
+	  <#elseif article??>
+	    <link rel="canonical" href="${_urlBase}/${article.slug}" />
+	  <#elseif category??>
+	    <link rel="canonical" href="${_urlBase}/kategorie/${category.slug}" />
+	  <#else>
+	    <link rel="canonical" href="${_urlBase}" />
+	  </#if>
 
-  <#-- Author link for articles -->
-  <#if article??>
-    <link rel="author" href="${_urlBase}/muj-pribeh" />
-  </#if>
+	  <#-- Content discovery helpers (SEO/GEO) -->
+	  <link rel="alternate" type="application/rss+xml" title="${xlat['website.title']}" href="${_urlBase}/feed.xml" />
+	  <link rel="alternate" type="text/plain" title="LLMs" href="${_urlBase}/llms.txt" />
+
+	  <#-- Author link for articles -->
+	  <#if article??>
+	    <link rel="author" href="${_urlBase}/muj-pribeh" />
+	  </#if>
 
   <link rel="shortcut icon" href="${xlat['favicon.img.src']}" />
   <#-- Preload of Largest Contentful Paint (LCP) image with a high fetch priority so it starts loading with the stylesheet. -->
@@ -62,13 +80,26 @@
   <link rel="preload" fetchpriority="high" as="image" href="/static/images/header.jpg" type="image/jpeg">
   </#if>
 
-  <!-- Open Graph data (Facebook, LinkedIn) -->
-  <#if article??>
-    <meta property="og:title" content="${article.title!}" />
-    <meta property="og:type" content="article" />
-    <meta property="og:site_name" content="${xlat['website.title']}" />
-    <#if article.image??>
-      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
+	  <!-- Open Graph data (Facebook, LinkedIn) -->
+		  <#if product??>
+		    <meta property="og:title" content="${product.title!}" />
+		    <meta property="og:type" content="product" />
+		    <meta property="og:site_name" content="${xlat['website.title']}" />
+		    <#if product.image??>
+		      <meta property="og:image" content="${product.image!}" />
+		    <#elseif product.listingImage??>
+		      <meta property="og:image" content="${product.listingImage!}" />
+		    <#elseif article?? && article.image??>
+		      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
+		    <#else>
+		      <meta property="og:image" content="${_urlBase}/static/images/header.jpg" />
+		    </#if>
+		  <#elseif article??>
+	    <meta property="og:title" content="${article.title!}" />
+	    <meta property="og:type" content="article" />
+	    <meta property="og:site_name" content="${xlat['website.title']}" />
+	    <#if article.image??>
+	      <meta property="og:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
       <meta property="og:image:width" content="${xlat['article.img.tablet.width']}" />
       <meta property="og:image:height" content="${xlat['article.img.tablet.height']!xlat['article.img.tablet.width']}" />
     </#if>
@@ -100,15 +131,18 @@
   <meta property="og:description" content="${description?html!}" />
 
   <!-- Twitter Card data -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="<#if title??>${title}<#else>${xlat['website.title']}</#if>" />
-  <meta name="twitter:description" content="${description?truncate(200)?html!}" />
-  <#if article?? && article.image??>
-    <meta name="twitter:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
-    <meta name="twitter:image:alt" content="${article.title!}" />
-  <#else>
-    <#-- Use default social image for non-article pages -->
-    <meta name="twitter:image" content="${_urlBase}/static/images/header.jpg" />
+	  <meta name="twitter:card" content="summary_large_image" />
+	  <meta name="twitter:title" content="<#if title??>${title}<#else>${xlat['website.title']}</#if>" />
+	  <meta name="twitter:description" content="${description?truncate(200)?html!}" />
+	  <#if product?? && product.image??>
+	    <meta name="twitter:image" content="${product.image!}" />
+	    <meta name="twitter:image:alt" content="${product.title!}" />
+	  <#elseif article?? && article.image??>
+	    <meta name="twitter:image" content="${_urlBase}/media/${article.image}?size=${xlat['article.img.tablet.width']}" />
+	    <meta name="twitter:image:alt" content="${article.title!}" />
+	  <#else>
+	    <#-- Use default social image for non-article pages -->
+	    <meta name="twitter:image" content="${_urlBase}/static/images/header.jpg" />
   </#if>
   <#-- Add your Twitter handle if you have one
   <meta name="twitter:site" content="@YourTwitterHandle" />
@@ -117,12 +151,17 @@
 
   <title><#if title??>${title} | </#if>${xlat['website.title']}</title>
 
-  <#-- JSON-LD Structured Data for GEO/SEO -->
-  <#if articleJsonLd??>
-  <script type="application/ld+json" nonce="${_cspNonce}">
+	  <#-- JSON-LD Structured Data for GEO/SEO -->
+	  <#if productJsonLd??>
+	  <script type="application/ld+json" nonce="${_cspNonce}">
+${productJsonLd}
+	  </script>
+	  </#if>
+	  <#if articleJsonLd??>
+	  <script type="application/ld+json" nonce="${_cspNonce}">
 ${articleJsonLd}
-  </script>
-  </#if>
+	  </script>
+	  </#if>
   <#if breadcrumbJsonLd??>
   <script type="application/ld+json" nonce="${_cspNonce}">
 ${breadcrumbJsonLd}

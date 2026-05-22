@@ -11,6 +11,7 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.ForbiddenException
 import org.xbery.artbeams.common.error.requireFound
+import org.xbery.artbeams.common.seo.StructuredDataGenerator
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderState
@@ -237,11 +238,53 @@ class PaidProductController(
             // Checks user device capabilities.
             val userAccessReport = controllerComponents.userAccessService.getUserAccessReport(request)
 
+            val siteUrl = getUrlBase(request).trimEnd('/')
+            val xlat = controllerComponents.localisationRepository.getEntries()
+            val siteName = xlat["website.title"] ?: "ArtBeams"
+            val logoUrl = "$siteUrl${xlat["logo.img.src"] ?: "/media/favicon.ico"}"
+            val pageUrl = "$siteUrl/produkt/${product.slug}"
+
+            val structuredDescription =
+                when {
+                    !product.subtitle.isNullOrBlank() -> product.subtitle!!
+                    !article.perex.isNullOrBlank() -> article.perex
+                    else -> xlat["website.description"] ?: ""
+                }
+
+            val imageUrlRaw = product.image ?: product.listingImage ?: article.image?.let { "/media/$it?size=1200" }
+            val imageUrl =
+                when {
+                    imageUrlRaw.isNullOrBlank() -> null
+                    imageUrlRaw.startsWith("http://") || imageUrlRaw.startsWith("https://") -> imageUrlRaw
+                    imageUrlRaw.startsWith("/") -> siteUrl + imageUrlRaw
+                    else -> "$siteUrl/$imageUrlRaw"
+                }
+
+            val productJsonLd =
+                StructuredDataGenerator.generateProductJsonLd(
+                    product = product,
+                    pageUrl = pageUrl,
+                    description = structuredDescription,
+                    imageUrl = imageUrl,
+                    siteName = siteName,
+                    logoUrl = logoUrl
+                )
+
+            val breadcrumbJsonLd =
+                StructuredDataGenerator.generateBreadcrumbJsonLd(
+                    listOf(
+                        Pair(siteName, siteUrl),
+                        Pair(product.title, pageUrl)
+                    )
+                )
+
             val params = mapOf(
                 "product" to product,
                 "article" to article,
                 "userAccessReport" to userAccessReport,
-                "errorMessage" to errorMessage
+                "errorMessage" to errorMessage,
+                "productJsonLd" to productJsonLd,
+                "breadcrumbJsonLd" to breadcrumbJsonLd
             ) + args.toMap()
             val model = createModel(
                 request,
