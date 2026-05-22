@@ -66,7 +66,9 @@ class CommentValidatorTest :
         }
 
         "should reject comment with link in the middle" {
-            val ctx = createValidationContext("Explore the latest additions here — http://www.tiroavolobologna.it/media/pgs/le-code-promo-1xbet_bonus.html")
+            val ctx = createValidationContext(
+                "Explore the latest additions here — http://www.tiroavolobologna.it/media/pgs/le-code-promo-1xbet_bonus.html"
+            )
             val errors = validator.validate(ctx)
             errors shouldHaveSize 1
         }
