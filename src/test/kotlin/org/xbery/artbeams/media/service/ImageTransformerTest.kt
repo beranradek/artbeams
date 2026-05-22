@@ -2,6 +2,7 @@ package org.xbery.artbeams.media.service
 
 import com.sksamuel.scrimage.ScaleMethod
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import org.xbery.artbeams.common.file.TempFiles
 import org.xbery.artbeams.media.domain.ImageFormat
@@ -17,6 +18,12 @@ internal class ImageTransformerTest {
 
     @Test
     fun transform() {
+        val arch = (System.getProperty("os.arch") ?: "").lowercase()
+        // scrimage-webp uses bundled cwebp/dwebp binaries which are not available for all architectures (e.g. aarch64).
+        assumeTrue(arch == "amd64" || arch == "x86_64") {
+            "Skipping WEBP transformation test on unsupported architecture: os.arch=$arch"
+        }
+
         // Tested for the same good quality/size ratio as achieved via IrfanView
         val transformer = ImageTransformer()
         TempFiles.createTempFilePath("test-image-730-bicubic-", ".webp", true).use { out ->
