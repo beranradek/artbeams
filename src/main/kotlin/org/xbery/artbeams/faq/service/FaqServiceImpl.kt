@@ -1,5 +1,7 @@
 package org.xbery.artbeams.faq.service
 
+import org.jooq.exception.DataAccessException
+import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
@@ -16,10 +18,21 @@ import org.xbery.artbeams.faq.repository.FaqEntryRepository
 class FaqServiceImpl(
     private val faqEntryRepository: FaqEntryRepository
 ) : FaqService {
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Cacheable(value = [FaqEntry.CACHE_NAME], key = "#entityType.name() + ':' + #entityId")
+    @Cacheable(
+        value = [FaqEntry.CACHE_NAME],
+        key = "#entityType.name() + ':' + #entityId",
+        unless = "#result.isEmpty()"
+    )
     override fun findByEntity(entityType: FaqEntityType, entityId: String): List<FaqEntry> =
-        faqEntryRepository.findByEntity(entityType, entityId)
+        try {
+            faqEntryRepository.findByEntity(entityType, entityId)
+        } catch (e: DataAccessException) {
+            // Safe fallback for deployments where DB migration hasn't been applied yet.
+            logger.warn("Unable to load FAQ entries (entityType={}, entityId={}): {}", entityType, entityId, e.message)
+            emptyList()
+        }
 
     @CacheEvict(value = [FaqEntry.CACHE_NAME], key = "#entityType.name() + ':' + #entityId")
     override fun create(
