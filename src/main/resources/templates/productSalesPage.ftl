@@ -285,20 +285,24 @@
     }
   ] />
 
-  <@faq.faqAccordion [
-    {
-      "question": "Co když tento e-book nebude fungovat i pro mě?",
-      "answer": "Rozumím, že máte obavy, zda Vám informace v tomto e-booku opravdu pomohou. Techniky a návyky, které v něm najdete, jsou podložené vědeckými výzkumy, léty praxe a mým testováním. Pokud budete postupovat podle návodu, je velmi pravděpodobné, že pocítíte zlepšení. A pokud zjistíte, že Vám něco nefunguje, můžete se na mě obrátit s doplňující otázkou."
-    },
-    {
-      "question": "Co když to nedokážu nebo se mi to nebude dařit?",
-      "answer": "Vím, že změnit některé spánkové návyky může být možná náročné, ale s tímto e-bookem máte podporu krok za krokem. Každý postup je jednoduchý a praktický, takže i když to bude ze začátku někdy výzva, budete mít jasný plán, jak dosáhnout výsledků."
-    },
-    {
-      "question": "Ale co když si najdu tyto informace zdarma jinde?",
-      "answer": "Ano, řadu informací o spánku můžete najít i jinde. Ale v tomto e-booku je vše na jednom místě, konkrétní a praktické. Ušetříte si hodiny hledání, čtení článků a experimentování s různými metodami, které ve výsledku možná nebudou fungovat. Právě v tomto e-booku se podrobněji dozvíte, co funguje, a co ne. E-book vám poskytne ucelený přehled a efektivní kroky ke skutečnému zlepšení spánku. Investice do tohoto e-booku je investicí do Vaší pohody, zdraví a kvalitního spánku. A pokud byste nebyli spokojeni, vrátím Vám peníze jednoduše bez dotazů zpět."
-    }
-  ] />
+  <#if faqs?? && faqs?has_content>
+    <@faq.faqAccordion faqs />
+  <#else>
+    <@faq.faqAccordion [
+      {
+        "question": "Co když tento e-book nebude fungovat i pro mě?",
+        "answer": "Rozumím, že máte obavy, zda Vám informace v tomto e-booku opravdu pomohou. Techniky a návyky, které v něm najdete, jsou podložené vědeckými výzkumy, léty praxe a mým testováním. Pokud budete postupovat podle návodu, je velmi pravděpodobné, že pocítíte zlepšení. A pokud zjistíte, že Vám něco nefunguje, můžete se na mě obrátit s doplňující otázkou."
+      },
+      {
+        "question": "Co když to nedokážu nebo se mi to nebude dařit?",
+        "answer": "Vím, že změnit některé spánkové návyky může být možná náročné, ale s tímto e-bookem máte podporu krok za krokem. Každý postup je jednoduchý a praktický, takže i když to bude ze začátku někdy výzva, budete mít jasný plán, jak dosáhnout výsledků."
+      },
+      {
+        "question": "Ale co když si najdu tyto informace zdarma jinde?",
+        "answer": "Ano, řadu informací o spánku můžete najít i jinde. Ale v tomto e-booku je vše na jednom místě, konkrétní a praktické. Ušetříte si hodiny hledání, čtení článků a experimentování s různými metodami, které ve výsledku možná nebudou fungovat. Právě v tomto e-booku se podrobněji dozvíte, co funguje, a co ne. E-book vám poskytne ucelený přehled a efektivní kroky ke skutečnému zlepšení spánku. Investice do tohoto e-booku je investicí do Vaší pohody, zdraví a kvalitního spánku. A pokud byste nebyli spokojeni, vrátím Vám peníze jednoduše bez dotazů zpět."
+      }
+    ] />
+  </#if>
 
   <@author.authorSection />
 

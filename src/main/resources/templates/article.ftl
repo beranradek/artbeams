@@ -3,6 +3,7 @@
 <#import "/metadata.ftl" as metadata>
 <#import "/socialShare.ftl" as socialShare>
 <#import "/components/responsiveImage.ftl" as img>
+<#import "/components/faqAccordion.ftl" as faq>
 <#-- <#import "/fbComments.ftl" as fbComments> -->
 <#import "/comments/commentAdd.ftl" as commentAdd>
 <#import "/comments/commentList.ftl" as commentList>
@@ -69,6 +70,9 @@
 
         <#if article.showOnBlog>
           <footer>
+            <#if faqs?? && faqs?has_content>
+              <@faq.faqAccordion faqs />
+            </#if>
             <@socialShare.share></@socialShare.share>
             <#-- <@fbComments.fbComments></@fbComments.fbComments> -->
             <@commentList.commentList title="${article.title!}"></@commentList.commentList>

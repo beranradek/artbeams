@@ -161,6 +161,9 @@
               <a class="nav-link" href="/admin/articles" role="menuitem" aria-label="Manage articles">Articles</a>
             </li>
             <li class="nav-item" role="none">
+              <a class="nav-link" href="/admin/faqs?entityType=HOMEPAGE&entityId=homepage" role="menuitem" aria-label="Manage homepage FAQs">Homepage FAQs</a>
+            </li>
+            <li class="nav-item" role="none">
               <a class="nav-link" href="/admin/comments" role="menuitem" aria-label="Manage comments">Comments</a>
             </li>
             <li class="nav-item" role="none">

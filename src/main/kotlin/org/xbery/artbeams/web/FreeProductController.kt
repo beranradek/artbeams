@@ -29,6 +29,8 @@ import org.xbery.artbeams.common.seo.StructuredDataGenerator
 import org.xbery.artbeams.common.text.NormalizationHelper
 import org.xbery.artbeams.consents.domain.ConsentType
 import org.xbery.artbeams.consents.service.ConsentService
+import org.xbery.artbeams.faq.domain.FaqEntityType
+import org.xbery.artbeams.faq.service.FaqService
 import org.xbery.artbeams.mailing.api.MailingApi
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
@@ -63,7 +65,8 @@ class FreeProductController(
     private val mediaRepository: MediaRepository,
     private val mailSender: MailgunMailSender,
     private val mailingApi: MailingApi,
-    private val recaptchaService: RecaptchaService
+    private val recaptchaService: RecaptchaService,
+    private val faqService: FaqService
 ) : BaseController(controllerComponents) {
     private val normalizationHelper: NormalizationHelper = NormalizationHelper()
 
@@ -344,6 +347,14 @@ class FreeProductController(
                     )
                 )
 
+            val faqs = faqService.findByEntity(FaqEntityType.PRODUCT, product.id)
+            val faqJsonLd =
+                if (faqs.isNotEmpty()) {
+                    StructuredDataGenerator.generateFaqJsonLd(faqs.map { it.question to it.answer })
+                } else {
+                    null
+                }
+
             val model = createModel(
                 request,
                 "product" to product,
@@ -352,7 +363,9 @@ class FreeProductController(
                 "userAccessReport" to userAccessReport,
                 "errorMessage" to errorMessage,
                 "productJsonLd" to productJsonLd,
-                "breadcrumbJsonLd" to breadcrumbJsonLd
+                "breadcrumbJsonLd" to breadcrumbJsonLd,
+                "faqs" to faqs,
+                "faqJsonLd" to faqJsonLd
             )
             ModelAndView(viewName, model)
         } else {

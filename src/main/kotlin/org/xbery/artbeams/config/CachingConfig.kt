@@ -11,6 +11,7 @@ import org.xbery.artbeams.categories.service.CategoryServiceImpl
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.common.access.domain.EntityAccessCount
 import org.xbery.artbeams.common.antispam.domain.AntispamQuiz
+import org.xbery.artbeams.faq.domain.FaqEntry
 
 /**
  * @author Radek Beran
@@ -33,6 +34,7 @@ open class CachingConfig {
             "searchConsolePages",
             "searchConsoleQueries",
             "searchConsoleSitemaps",
-            "searchSuggestions" // Search autocomplete suggestions cache
+            "searchSuggestions", // Search autocomplete suggestions cache
+            FaqEntry.CACHE_NAME
         )
 }

@@ -21,6 +21,11 @@
 
 <#assign fields = editForm.fields>
 <h1>${fields.title.value!}</h1>
+<#if fields.id.value?? && fields.id.value != "" && fields.id.value != "0">
+  <p class="mt-2">
+    <a class="btn btn-secondary btn-sm" href="/admin/faqs?entityType=PRODUCT&entityId=${fields.id.value}">Edit FAQs</a>
+  </p>
+</#if>
 
 <form action="/admin/products/save" method="post" class="form-horizontal">
   <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}"/>

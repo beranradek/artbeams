@@ -24,6 +24,9 @@ import org.xbery.artbeams.common.access.domain.EntityKey
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.seo.StructuredDataGenerator
+import org.xbery.artbeams.faq.domain.FaqEntityType
+import org.xbery.artbeams.faq.domain.FaqEntry
+import org.xbery.artbeams.faq.service.FaqService
 import org.xbery.artbeams.mailing.controller.SubscriptionForm
 import org.xbery.artbeams.mailing.controller.SubscriptionFormData
 import org.xbery.artbeams.products.service.ProductService
@@ -52,7 +55,8 @@ class WebController(
     val commentService: CommentService,
     val controllerComponents: ControllerComponents,
     val resourceLoader: ResourceLoader,
-    private val searchService: SearchService
+    private val searchService: SearchService,
+    private val faqService: FaqService
 ) : BaseController(controllerComponents),
     SitemapWriter {
 
@@ -96,6 +100,14 @@ class WebController(
                 searchUrl = "/search?query={search_term_string}"
             )
 
+        val faqs = faqService.findByEntity(FaqEntityType.HOMEPAGE, FaqEntry.HOMEPAGE_ENTITY_ID)
+        val faqJsonLd =
+            if (faqs.isNotEmpty()) {
+                StructuredDataGenerator.generateFaqJsonLd(faqs.map { it.question to it.answer })
+            } else {
+                null
+            }
+
         val model =
             createBlogModel(
                 request,
@@ -103,7 +115,9 @@ class WebController(
                 "articles" to articles,
                 "showHeadline" to true,
                 "userAccessReport" to userAccessReport,
-                "websiteJsonLd" to websiteJsonLd
+                "websiteJsonLd" to websiteJsonLd,
+                "faqs" to faqs,
+                "faqJsonLd" to faqJsonLd
             )
         return ModelAndView("homepage", model)
     }
@@ -320,6 +334,14 @@ class WebController(
             val breadcrumbJsonLd =
                 StructuredDataGenerator.generateBreadcrumbJsonLd(breadcrumbItems)
 
+            val faqs = faqService.findByEntity(FaqEntityType.ARTICLE, article.id)
+            val faqJsonLd =
+                if (faqs.isNotEmpty()) {
+                    StructuredDataGenerator.generateFaqJsonLd(faqs.map { it.question to it.answer })
+                } else {
+                    null
+                }
+
             val model =
                 createBlogModel(
                     request,
@@ -331,7 +353,9 @@ class WebController(
                     "userAccessReport" to fUserAccessReport.get(),
                     "countOfVisits" to fCountOfVisits.get(),
                     "articleJsonLd" to articleJsonLd,
-                    "breadcrumbJsonLd" to breadcrumbJsonLd
+                    "breadcrumbJsonLd" to breadcrumbJsonLd,
+                    "faqs" to faqs,
+                    "faqJsonLd" to faqJsonLd
                 )
             ModelAndView("article", model)
         } else {

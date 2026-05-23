@@ -335,3 +335,20 @@ CREATE INDEX idx_search_validity ON search_index(valid_from, valid_to);
 CREATE INDEX idx_search_modified ON search_index(modified DESC);
 
 -- PostgreSQL trigger for auto-populating search_vector is in migration_search_index.sql
+
+-- FAQ entries for articles, products and homepage (entity_type + entity_id).
+CREATE TABLE faq_entries (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    created timestamp NOT NULL,
+    created_by VARCHAR(40) NOT NULL,
+    modified timestamp NOT NULL,
+    modified_by VARCHAR(40) NOT NULL,
+    entity_type VARCHAR(20) NOT NULL,
+    entity_id VARCHAR(40) NOT NULL,
+    question VARCHAR(500) NOT NULL,
+    answer TEXT NOT NULL,
+    sort_order integer NOT NULL DEFAULT 0
+);
+
+CREATE INDEX idx_faq_entries_entity_sort ON faq_entries(entity_type, entity_id, sort_order);
+CREATE INDEX idx_faq_entries_entity ON faq_entries(entity_type, entity_id);

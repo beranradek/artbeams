@@ -10,6 +10,11 @@
 <form action="/admin/articles/save" method="POST" enctype="multipart/form-data" class="form-article-edit">
   <div>
     <h1>${fields.title.value!}</h1>
+    <#if fields.id.value?? && fields.id.value != "" && fields.id.value != "0">
+      <p class="mt-2">
+        <a class="btn btn-secondary btn-sm" href="/admin/faqs?entityType=ARTICLE&entityId=${fields.id.value}">Edit FAQs</a>
+      </p>
+    </#if>
   </div>
   <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}"/>
   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

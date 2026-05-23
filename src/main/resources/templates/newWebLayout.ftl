@@ -188,6 +188,11 @@ ${productJsonLd}
 ${articleJsonLd}
 	  </script>
 	  </#if>
+	  <#if faqJsonLd??>
+	  <script type="application/ld+json" nonce="${_cspNonce}">
+${faqJsonLd}
+	  </script>
+	  </#if>
   <#if breadcrumbJsonLd??>
   <script type="application/ld+json" nonce="${_cspNonce}">
 ${breadcrumbJsonLd}

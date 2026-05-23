@@ -18,6 +18,7 @@ import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
 import org.xbery.artbeams.jooq.schema.tables.Consents
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
+import org.xbery.artbeams.jooq.schema.tables.FaqEntries
 import org.xbery.artbeams.jooq.schema.tables.Localisation
 import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
@@ -92,6 +93,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>entity_access_count</code>.
      */
     val ENTITY_ACCESS_COUNT: EntityAccessCount get() = EntityAccessCount.ENTITY_ACCESS_COUNT
+
+    /**
+     * The table <code>faq_entries</code>.
+     */
+    val FAQ_ENTRIES: FaqEntries get() = FaqEntries.FAQ_ENTRIES
 
     /**
      * The table <code>localisation</code>.
@@ -180,6 +186,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         Config.CONFIG,
         Consents.CONSENTS,
         EntityAccessCount.ENTITY_ACCESS_COUNT,
+        FaqEntries.FAQ_ENTRIES,
         Localisation.LOCALISATION,
         Media.MEDIA,
         NewsSubscription.NEWS_SUBSCRIPTION,

@@ -1,5 +1,6 @@
 <#import "/newWebLayout.ftl" as layout>
 <#import "/components/articleCardModern.ftl" as articleCard>
+<#import "/components/faqAccordion.ftl" as faq>
 <@layout.page>
   <#if articles?has_content>
     <#-- Featured Article (first one) -->
@@ -51,5 +52,9 @@
       <h3><span data-i18n-key="homepage.no.articles.heading">Žádné články zatím nejsou k dispozici.</span></h3>
       <p class="text-muted"><span data-i18n-key="homepage.no.articles.text">Brzy zde najdete zajímavý obsah!</span></p>
     </div>
+  </#if>
+
+  <#if faqs?? && faqs?has_content>
+    <@faq.faqAccordion faqs />
   </#if>
 </@layout.page>
