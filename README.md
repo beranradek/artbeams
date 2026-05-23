@@ -107,3 +107,14 @@ This involves also changes in templates (but change in a template does not invok
 * Add Heroku Procfile (provided)
 * In Heroku CLI run command: `heroku ps:scale web=1` (so the application has associated one dyno required for application run and application can start)
 * See Heroku documentation for more details
+
+#### GitHub Actions deploy (manual trigger)
+
+This repo contains a GitHub Actions workflow that deploys to Heroku app `manualzivota` only when a commit message contains `[deploy-manualzivota]`:
+
+1) In GitHub repo settings add secrets:
+   - `HEROKU_API_KEY`
+   - `HEROKU_EMAIL`
+2) Deploy by pushing to `master` with the marker in the commit message, e.g.:
+   - `git commit -m "SEO: update sitemap [deploy-manualzivota]"`
+   - `git push origin master`
