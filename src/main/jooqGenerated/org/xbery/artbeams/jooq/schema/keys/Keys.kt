@@ -27,6 +27,7 @@ import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.Sequences
+import org.xbery.artbeams.jooq.schema.tables.SystemEventLog
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
 import org.xbery.artbeams.jooq.schema.tables.UserProduct
@@ -51,6 +52,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.QueueRecord
 import org.xbery.artbeams.jooq.schema.tables.records.RolesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.SearchIndexRecord
 import org.xbery.artbeams.jooq.schema.tables.records.SequencesRecord
+import org.xbery.artbeams.jooq.schema.tables.records.SystemEventLogRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserAccessRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserActivityLogRecord
 import org.xbery.artbeams.jooq.schema.tables.records.UserProductRecord
@@ -82,6 +84,7 @@ val CONSTRAINT_66: UniqueKey<QueueRecord> = Internal.createUniqueKey(Queue.QUEUE
 val CONSTRAINT_6: UniqueKey<RolesRecord> = Internal.createUniqueKey(Roles.ROLES, DSL.name("CONSTRAINT_6"), arrayOf(Roles.ROLES.ID), true)
 val CONSTRAINT_1B: UniqueKey<SearchIndexRecord> = Internal.createUniqueKey(SearchIndex.SEARCH_INDEX, DSL.name("CONSTRAINT_1B"), arrayOf(SearchIndex.SEARCH_INDEX.ID), true)
 val CONSTRAINT_BD: UniqueKey<SequencesRecord> = Internal.createUniqueKey(Sequences.SEQUENCES, DSL.name("CONSTRAINT_BD"), arrayOf(Sequences.SEQUENCES.SEQUENCE_NAME), true)
+val CONSTRAINT_6E: UniqueKey<SystemEventLogRecord> = Internal.createUniqueKey(SystemEventLog.SYSTEM_EVENT_LOG, DSL.name("CONSTRAINT_6E"), arrayOf(SystemEventLog.SYSTEM_EVENT_LOG.ID), true)
 val CONSTRAINT_D: UniqueKey<UserAccessRecord> = Internal.createUniqueKey(UserAccess.USER_ACCESS, DSL.name("CONSTRAINT_D"), arrayOf(UserAccess.USER_ACCESS.ID), true)
 val CONSTRAINT_1: UniqueKey<UserActivityLogRecord> = Internal.createUniqueKey(UserActivityLog.USER_ACTIVITY_LOG, DSL.name("CONSTRAINT_1"), arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ID), true)
 val CONSTRAINT_48: UniqueKey<UserProductRecord> = Internal.createUniqueKey(UserProduct.USER_PRODUCT, DSL.name("CONSTRAINT_48"), arrayOf(UserProduct.USER_PRODUCT.ID), true)

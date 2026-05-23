@@ -10,10 +10,12 @@ import org.xbery.artbeams.common.form.validation.ChainedEmailValidator
 import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.domain.Product
+import org.xbery.artbeams.systemevents.domain.SystemEventType
+import org.xbery.artbeams.systemevents.service.SystemEventLogService
 import org.xbery.artbeams.users.domain.EditedUser
 import org.xbery.artbeams.users.domain.User
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Radek Beran
@@ -21,18 +23,51 @@ import java.util.*
 @Service
 class UserSubscriptionServiceImpl(
     private val userService: UserService,
-    private val orderService: OrderService
+    private val orderService: OrderService,
+    private val systemEventLogService: SystemEventLogService
 ) : UserSubscriptionService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun createOrUpdateUserWithOrderAndConsent(fullName: String?, login: String, product: Product, orderNumber: String, orderState: OrderState): User {
+    override fun createOrUpdateUserWithOrderAndConsent(
+        fullName: String?,
+        login: String,
+        product: Product,
+        orderNumber: String,
+        orderState: OrderState
+    ): User {
         if (login.isEmpty()) {
             throw IllegalArgumentException("Cannot confirm consent for user with empty login (e-mail), fullName $fullName, productId ${product.id}")
         }
         val loginNormalized = login.trim().lowercase()
         val user = findOrRegisterUser(fullName, loginNormalized)
-        orderService.createOrderOfProduct(user.id, product, orderNumber, orderState)
-        userService.confirmConsent(user.id, product.id)
+        try {
+            orderService.createOrderOfProduct(user.id, product, orderNumber, orderState)
+        } catch (e: Exception) {
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.ORDER_CREATE_FAILED,
+                message = "Failed to create order for user ${user.id}/${user.login}, product ${product.id}/${product.slug}, orderNumber=$orderNumber",
+                throwable = e,
+                entityType = "ORDER",
+                entityId = orderNumber,
+                userId = user.id
+            )
+            throw e
+        }
+        try {
+            userService.confirmConsent(user.id, product.id)
+        } catch (e: Exception) {
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.CONSENT_CONFIRMATION_FAILED,
+                message = "Failed to confirm consent for user ${user.id}/${user.login}, product ${product.id}/${product.slug}",
+                throwable = e,
+                entityType = "USER",
+                entityId = user.id,
+                userId = user.id
+            )
+            throw e
+        }
         return user
     }
 
@@ -68,7 +103,21 @@ class UserSubscriptionServiceImpl(
             listOf()
         )
         val ctx = OperationCtx(null, OriginStamp(Instant.now(), "RegisterUser", null))
-        val registeredUser = userService.saveUser(user, ctx)
+        val registeredUser =
+            try {
+                userService.saveUser(user, ctx)
+            } catch (e: Exception) {
+                systemEventLogService.logError(
+                    ctx = ctx,
+                    eventType = SystemEventType.USER_REGISTRATION_FAILED,
+                    message = "Failed to register user with login=$login",
+                    throwable = e,
+                    entityType = "USER",
+                    entityId = null,
+                    userId = null
+                )
+                throw e
+            }
         logger.info("User ${registeredUser.id}/${registeredUser.login} was registered")
         return registeredUser
     }

@@ -17,6 +17,8 @@ import org.xbery.artbeams.jooq.schema.tables.references.MEDIA
 import org.xbery.artbeams.jooq.schema.tables.references.PRODUCTS
 import org.xbery.artbeams.localisation.domain.Localisation
 import org.xbery.artbeams.localisation.repository.LocalisationRepository
+import org.xbery.artbeams.systemevents.domain.SystemEventType
+import org.xbery.artbeams.systemevents.service.SystemEventLogService
 import java.sql.DriverManager
 
 /**
@@ -28,7 +30,8 @@ class RemoteDatabaseSyncService(
     private val appConfig: AppConfig,
     private val localDsl: DSLContext,
     private val articleCategoryRepository: ArticleCategoryRepository,
-    private val localisationRepository: LocalisationRepository
+    private val localisationRepository: LocalisationRepository,
+    private val systemEventLogService: SystemEventLogService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -423,6 +426,20 @@ class RemoteDatabaseSyncService(
 
         } catch (ex: Exception) {
             logger.error("Error syncing from remote database", ex)
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.REMOTE_DB_SYNC_FAILED,
+                message = "Remote DB sync failed",
+                throwable = ex,
+                entityType = "JOB",
+                entityId = "RemoteDatabaseSyncService.syncFromRemoteDatabase",
+                details =
+                    "categoriesCreated=$categoriesCreated,categoriesUpdated=$categoriesUpdated," +
+                        "productsCreated=$productsCreated,productsUpdated=$productsUpdated," +
+                        "articlesCreated=$articlesCreated,articlesUpdated=$articlesUpdated," +
+                        "localisationsCreated=$localisationsCreated,localisationsUpdated=$localisationsUpdated," +
+                        "mediaCreated=$mediaCreated,mediaUpdated=$mediaUpdated"
+            )
             return SyncResult(
                 success = false,
                 categoriesCreated = categoriesCreated,

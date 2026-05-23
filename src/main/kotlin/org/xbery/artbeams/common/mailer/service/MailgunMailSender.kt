@@ -7,6 +7,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.mailer.config.MailgunMailerConfig
+import org.xbery.artbeams.systemevents.domain.SystemEventType
+import org.xbery.artbeams.systemevents.service.SystemEventLogService
 
 /**
  * Mailgun mailer for sending e-mails.
@@ -17,7 +19,8 @@ import org.xbery.artbeams.common.mailer.config.MailgunMailerConfig
 @Service
 open class MailgunMailSender(
     private val mailerConfig: MailgunMailerConfig,
-    private val mailgunMessagesApi: MailgunMessagesApi
+    private val mailgunMessagesApi: MailgunMessagesApi,
+    private val systemEventLogService: SystemEventLogService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -40,9 +43,29 @@ open class MailgunMailSender(
             logger.info("Email $subject to $recipientEmail was sent successfully.")
         } catch (ex: FeignException) {
             logMailerException(subject, recipientEmail, ex)
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.EMAIL_SEND_FAILED,
+                message = "Mailgun template email failed: subject='$subject', to='$recipientEmail', status=${ex.status()}",
+                throwable = ex,
+                entityType = "EMAIL",
+                entityId = recipientEmail,
+                userId = null,
+                details = "templateId=$templateId"
+            )
             throw ex
         } catch (ex: Exception) {
             logMailerException(subject, recipientEmail, ex)
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.EMAIL_SEND_FAILED,
+                message = "Mailgun template email failed: subject='$subject', to='$recipientEmail'",
+                throwable = ex,
+                entityType = "EMAIL",
+                entityId = recipientEmail,
+                userId = null,
+                details = "templateId=$templateId"
+            )
             throw ex
         }
     }
@@ -65,9 +88,25 @@ open class MailgunMailSender(
             logger.info("Email $subject to $recipientEmail was sent successfully.")
         } catch (ex: FeignException) {
             logMailerException(subject, recipientEmail, ex)
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.EMAIL_SEND_FAILED,
+                message = "Mailgun text email failed: subject='$subject', to='$recipientEmail', status=${ex.status()}",
+                throwable = ex,
+                entityType = "EMAIL",
+                entityId = recipientEmail
+            )
             throw ex
         } catch (ex: Exception) {
             logMailerException(subject, recipientEmail, ex)
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.EMAIL_SEND_FAILED,
+                message = "Mailgun text email failed: subject='$subject', to='$recipientEmail'",
+                throwable = ex,
+                entityType = "EMAIL",
+                entityId = recipientEmail
+            )
             throw ex
         }
     }
@@ -90,9 +129,25 @@ open class MailgunMailSender(
             logger.info("Email $subject to $recipientEmail was sent successfully.")
         } catch (ex: FeignException) {
             logMailerException(subject, recipientEmail, ex)
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.EMAIL_SEND_FAILED,
+                message = "Mailgun HTML email failed: subject='$subject', to='$recipientEmail', status=${ex.status()}",
+                throwable = ex,
+                entityType = "EMAIL",
+                entityId = recipientEmail
+            )
             throw ex
         } catch (ex: Exception) {
             logMailerException(subject, recipientEmail, ex)
+            systemEventLogService.logError(
+                ctx = null,
+                eventType = SystemEventType.EMAIL_SEND_FAILED,
+                message = "Mailgun HTML email failed: subject='$subject', to='$recipientEmail'",
+                throwable = ex,
+                entityType = "EMAIL",
+                entityId = recipientEmail
+            )
             throw ex
         }
     }

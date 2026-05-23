@@ -155,6 +155,9 @@
               <a class="nav-link" href="/admin/activity-logs" role="menuitem" aria-label="View activity logs">Activity Logs</a>
             </li>
             <li class="nav-item" role="none">
+              <a class="nav-link" href="/admin/system-events" role="menuitem" aria-label="View system events">System Events</a>
+            </li>
+            <li class="nav-item" role="none">
               <a class="nav-link" href="/admin/categories" role="menuitem" aria-label="Manage categories">Categories</a>
             </li>
             <li class="nav-item" role="none">

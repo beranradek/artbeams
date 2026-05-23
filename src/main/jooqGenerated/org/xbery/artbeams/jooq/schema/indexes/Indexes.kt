@@ -21,6 +21,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.SearchIndex
+import org.xbery.artbeams.jooq.schema.tables.SystemEventLog
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog
 import org.xbery.artbeams.jooq.schema.tables.UserProduct
@@ -69,6 +70,11 @@ val IDX_SEARCH_ENTITY: Index = Internal.createIndex(DSL.name("idx_search_entity"
 val IDX_SEARCH_MODIFIED: Index = Internal.createIndex(DSL.name("idx_search_modified"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.MODIFIED), false)
 val IDX_SEARCH_SLUG: Index = Internal.createIndex(DSL.name("idx_search_slug"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.SLUG), false)
 val IDX_SEARCH_VALIDITY: Index = Internal.createIndex(DSL.name("idx_search_validity"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.VALID_FROM, SearchIndex.SEARCH_INDEX.VALID_TO), false)
+val IDX_SYSTEM_EVENT_LOG_ENTITY: Index = Internal.createIndex(DSL.name("idx_system_event_log_entity"), SystemEventLog.SYSTEM_EVENT_LOG, arrayOf(SystemEventLog.SYSTEM_EVENT_LOG.ENTITY_TYPE, SystemEventLog.SYSTEM_EVENT_LOG.ENTITY_ID, SystemEventLog.SYSTEM_EVENT_LOG.EVENT_TIME), false)
+val IDX_SYSTEM_EVENT_LOG_SEVERITY_TIME: Index = Internal.createIndex(DSL.name("idx_system_event_log_severity_time"), SystemEventLog.SYSTEM_EVENT_LOG, arrayOf(SystemEventLog.SYSTEM_EVENT_LOG.SEVERITY, SystemEventLog.SYSTEM_EVENT_LOG.EVENT_TIME), false)
+val IDX_SYSTEM_EVENT_LOG_TIME: Index = Internal.createIndex(DSL.name("idx_system_event_log_time"), SystemEventLog.SYSTEM_EVENT_LOG, arrayOf(SystemEventLog.SYSTEM_EVENT_LOG.EVENT_TIME), false)
+val IDX_SYSTEM_EVENT_LOG_TYPE_TIME: Index = Internal.createIndex(DSL.name("idx_system_event_log_type_time"), SystemEventLog.SYSTEM_EVENT_LOG, arrayOf(SystemEventLog.SYSTEM_EVENT_LOG.EVENT_TYPE, SystemEventLog.SYSTEM_EVENT_LOG.EVENT_TIME), false)
+val IDX_SYSTEM_EVENT_LOG_USER_TIME: Index = Internal.createIndex(DSL.name("idx_system_event_log_user_time"), SystemEventLog.SYSTEM_EVENT_LOG, arrayOf(SystemEventLog.SYSTEM_EVENT_LOG.USER_ID, SystemEventLog.SYSTEM_EVENT_LOG.EVENT_TIME), false)
 val IDX_USER_ACCESS_UNIQUE: Index = Internal.createIndex(DSL.name("idx_user_access_unique"), UserAccess.USER_ACCESS, arrayOf(UserAccess.USER_ACCESS.ACCESS_DATE, UserAccess.USER_ACCESS.IP, UserAccess.USER_ACCESS.USER_AGENT, UserAccess.USER_ACCESS.ENTITY_TYPE, UserAccess.USER_ACCESS.ENTITY_ID), true)
 val IDX_USER_ACTIVITY_LOG_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_user_activity_log_action_time"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ACTION_TIME), false)
 val IDX_USER_ACTIVITY_LOG_ACTION_TYPE: Index = Internal.createIndex(DSL.name("idx_user_activity_log_action_type"), UserActivityLog.USER_ACTIVITY_LOG, arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ACTION_TYPE), false)

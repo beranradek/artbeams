@@ -24,6 +24,8 @@ import org.xbery.artbeams.media.repository.MediaRepository
 import org.xbery.artbeams.members.controller.MemberSectionController.Companion.MEMBER_SECTION_PATH
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.products.service.ProductService
+import org.xbery.artbeams.systemevents.domain.SystemEventType
+import org.xbery.artbeams.systemevents.service.SystemEventLogService
 import org.xbery.artbeams.userproducts.service.UserProductService
 import org.xbery.artbeams.users.service.UserService
 import org.xbery.artbeams.web.FreeProductController
@@ -46,6 +48,7 @@ class UserProductController(
     private val mediaRepository: MediaRepository,
     private val pdfSigner: PdfSigner,
     private val activityLogService: UserActivityLogService,
+    private val systemEventLogService: SystemEventLogService,
     // TBD RBe: Separate common component/controller
     private val freeProductController: FreeProductController,
     common: ControllerComponents
@@ -66,82 +69,101 @@ class UserProductController(
      */
     @GetMapping("$MEMBER_SECTION_PATH/{productSlug}/download")
     fun serveProductData(request: HttpServletRequest, @PathVariable productSlug: String): Any = tryOrErrorResponse(request) {
-        val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
-        val product = productService.requireBySlug(productSlug)
-
-        val productFileName = requireFound(product.fileName) { "Product $productSlug has no file name" }
-
-        // User must exist and must confirm the consent before he/she can download the product (free or paid)
-        val user = userService.requireByLogin(login)
-
-        if (!consentService.hasValidConsent(login, ConsentType.NEWS)) {
-            throw ConsentRequiredException(
-                "Uživatel $login zatím nepotvrdil souhlas s podmínkami, proto nemůže být produkt $productSlug zatím stažen."
-            )
-        }
-
-        // Check an order (any order) of the product for given user exists
-        val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
-        if (orderItems.isEmpty()) throw UnauthorizedException("Uživatel ${user.login} si neobjednal produkt ${product.slug}")
-        val orders = orderItems.map { orderService.requireByOrderId(it.orderId) }
-        if (orders.isEmpty()) throw UnauthorizedException("Objednávka produktu ${product.slug} nebyla nalezena pro uživatele ${user.login}")
-
-        val completedOrders = orders.filter { it.state.isAfterPayment() || product.priceRegular.isZero() }
-        if (completedOrders.isEmpty()) {
-            throw UnauthorizedException(
-                "Uživatel ${user.login} nezaplatil za produkt ${product.slug}, který vyžaduje provedení platby."
-            )
-        }
-        val completedOrder = completedOrders.first()
-        val orderItem = orderItems.first()
-
-        val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
-            "File $productFileName was not found"
-        }
-        val mediaType = fileData.getMediaType()
-        val documentOutputStream = if (MediaType.APPLICATION_PDF == mediaType) {
-            pdfSigner.addUserMetadataToPdf(
-                fileData.data,
-                product.title,
-                "Radek Beran", // TBD: Author
-                user.login,
-                user.fullName,
-                completedOrder.orderNumber
-            )
-        } else {
-            val os = ByteArrayOutputStream()
-            os.write(fileData.data)
-            os
-        }
-
-        // Update order item as downloaded
-        orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
-        freeProductController.sendProductDownloadedNotification(product, user)
-
-        // Log product download activity
+        val ctx = requestToOperationCtx(request)
+        var productIdForLog: String? = null
+        var userIdForLog: String? = null
         try {
-            activityLogService.logActivity(
-                userId = user.id,
-                actionType = ActionType.PRODUCT_DOWNLOADED,
-                entityType = EntityType.PRODUCT,
-                entityId = product.id,
-                ipAddress = request.remoteAddr,
-                userAgent = request.getHeader("User-Agent"),
-                details = "Product: ${product.title}, Order: ${completedOrder.orderNumber}"
-            )
-        } catch (e: Exception) {
-            // Don't fail download if logging fails
-            logger.error("Failed to log product download activity", e)
-        }
+            val login = userService.findCurrentUserLogin() ?: throw NotFoundException("Currently logged user was not found")
+            val product = productService.requireBySlug(productSlug)
+            productIdForLog = product.id
 
-        ResponseEntity
-            .ok()
-            .contentType(mediaType)
-            .contentLength(documentOutputStream.size().toLong())
-            .cacheControl(CacheControl.noStore()) // prevent browsers and proxies to cache the request
-            .header(
-                HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=" + fileData.filename
-            ).body(documentOutputStream.toByteArray())
+            val productFileName = requireFound(product.fileName) { "Product $productSlug has no file name" }
+
+            // User must exist and must confirm the consent before he/she can download the product (free or paid)
+            val user = userService.requireByLogin(login)
+            userIdForLog = user.id
+
+            if (!consentService.hasValidConsent(login, ConsentType.NEWS)) {
+                throw ConsentRequiredException(
+                    "Uživatel $login zatím nepotvrdil souhlas s podmínkami, proto nemůže být produkt $productSlug zatím stažen."
+                )
+            }
+
+            // Check an order (any order) of the product for given user exists
+            val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
+            if (orderItems.isEmpty()) throw UnauthorizedException("Uživatel ${user.login} si neobjednal produkt ${product.slug}")
+            val orders = orderItems.map { orderService.requireByOrderId(it.orderId) }
+            if (orders.isEmpty()) throw UnauthorizedException("Objednávka produktu ${product.slug} nebyla nalezena pro uživatele ${user.login}")
+
+            val completedOrders = orders.filter { it.state.isAfterPayment() || product.priceRegular.isZero() }
+            if (completedOrders.isEmpty()) {
+                throw UnauthorizedException(
+                    "Uživatel ${user.login} nezaplatil za produkt ${product.slug}, který vyžaduje provedení platby."
+                )
+            }
+            val completedOrder = completedOrders.first()
+            val orderItem = orderItems.first()
+
+            val fileData = requireFound(mediaRepository.findFile(productFileName, null)) {
+                "File $productFileName was not found"
+            }
+            val mediaType = fileData.getMediaType()
+            val documentOutputStream = if (MediaType.APPLICATION_PDF == mediaType) {
+                pdfSigner.addUserMetadataToPdf(
+                    fileData.data,
+                    product.title,
+                    "Radek Beran", // TBD: Author
+                    user.login,
+                    user.fullName,
+                    completedOrder.orderNumber
+                )
+            } else {
+                val os = ByteArrayOutputStream()
+                os.write(fileData.data)
+                os
+            }
+
+            // Update order item as downloaded
+            orderService.updateOrderItemDownloaded(orderItem.id, Instant.now())
+            freeProductController.sendProductDownloadedNotification(product, user)
+
+            // Log product download activity
+            try {
+                activityLogService.logActivity(
+                    userId = user.id,
+                    actionType = ActionType.PRODUCT_DOWNLOADED,
+                    entityType = EntityType.PRODUCT,
+                    entityId = product.id,
+                    ipAddress = request.remoteAddr,
+                    userAgent = request.getHeader("User-Agent"),
+                    details = "Product: ${product.title}, Order: ${completedOrder.orderNumber}"
+                )
+            } catch (e: Exception) {
+                // Don't fail download if logging fails
+                logger.error("Failed to log product download activity", e)
+            }
+
+            ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .contentLength(documentOutputStream.size().toLong())
+                .cacheControl(CacheControl.noStore()) // prevent browsers and proxies to cache the request
+                .header(
+                    HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=" + fileData.filename
+                ).body(documentOutputStream.toByteArray())
+        } catch (e: Exception) {
+            systemEventLogService.logError(
+                ctx = ctx,
+                eventType = SystemEventType.PRODUCT_DOWNLOAD_FAILED,
+                message = "Member product download failed (productSlug=$productSlug)",
+                throwable = e,
+                request = request,
+                entityType = "PRODUCT",
+                entityId = productIdForLog ?: productSlug,
+                userId = userIdForLog
+            )
+            throw e
+        }
     }
 }

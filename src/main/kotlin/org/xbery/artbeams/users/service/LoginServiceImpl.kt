@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service
 import org.xbery.artbeams.activitylog.domain.ActionType
 import org.xbery.artbeams.activitylog.domain.EntityType
 import org.xbery.artbeams.activitylog.service.UserActivityLogService
+import org.xbery.artbeams.systemevents.domain.SystemEventType
+import org.xbery.artbeams.systemevents.service.SystemEventLogService
 import org.xbery.artbeams.users.domain.User
 import org.xbery.artbeams.users.repository.RoleRepository
 import org.xbery.artbeams.users.repository.UserRepository
@@ -22,7 +24,8 @@ open class LoginServiceImpl(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
     private val cmsAuthenticationProvider: CmsAuthenticationProvider,
-    private val activityLogService: UserActivityLogService
+    private val activityLogService: UserActivityLogService,
+    private val systemEventLogService: SystemEventLogService
 ) : AbstractLoginService(),
     LoginService {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
@@ -53,6 +56,15 @@ open class LoginServiceImpl(
             }
         } else {
             logger.error("Authentication failed for user ${user.login}")
+            systemEventLogService.logWarn(
+                ctx = null,
+                eventType = SystemEventType.LOGIN_FAILED,
+                message = "Authentication failed for user ${user.id}/${user.login}",
+                request = request,
+                entityType = EntityType.USER.value,
+                entityId = user.id,
+                userId = user.id
+            )
         }
     }
 

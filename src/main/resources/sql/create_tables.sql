@@ -352,3 +352,27 @@ CREATE TABLE faq_entries (
 
 CREATE INDEX idx_faq_entries_entity_sort ON faq_entries(entity_type, entity_id, sort_order);
 CREATE INDEX idx_faq_entries_entity ON faq_entries(entity_type, entity_id);
+
+-- System event log for tracking important failures (and optionally warnings) across key flows.
+CREATE TABLE system_event_log (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    event_time timestamp NOT NULL,
+    severity VARCHAR(16) NOT NULL,
+    event_type VARCHAR(80) NOT NULL,
+    origin VARCHAR(60) DEFAULT NULL,
+    message VARCHAR(2000) NOT NULL,
+    details TEXT DEFAULT NULL,
+    stack_trace TEXT DEFAULT NULL,
+    entity_type VARCHAR(20) DEFAULT NULL,
+    entity_id VARCHAR(40) DEFAULT NULL,
+    user_id VARCHAR(40) DEFAULT NULL,
+    ip_address VARCHAR(60) DEFAULT NULL,
+    user_agent VARCHAR(200) DEFAULT NULL,
+    correlation_id VARCHAR(64) DEFAULT NULL
+);
+
+CREATE INDEX idx_system_event_log_time ON system_event_log (event_time DESC);
+CREATE INDEX idx_system_event_log_type_time ON system_event_log (event_type, event_time DESC);
+CREATE INDEX idx_system_event_log_severity_time ON system_event_log (severity, event_time DESC);
+CREATE INDEX idx_system_event_log_entity ON system_event_log (entity_type, entity_id, event_time DESC);
+CREATE INDEX idx_system_event_log_user_time ON system_event_log (user_id, event_time DESC);

@@ -31,8 +31,8 @@ class FaqServiceImpl(
         key = "#entityType.name() + ':' + #entityId",
         unless = "#result.isEmpty()"
     )
-    override fun findByEntity(entityType: FaqEntityType, entityId: String): List<FaqEntry> {
-        return try {
+    override fun findByEntity(entityType: FaqEntityType, entityId: String): List<FaqEntry> =
+        try {
             reEnableIfExpired()
             if (!dbTableAvailable.get()) {
                 emptyList()
@@ -55,7 +55,6 @@ class FaqServiceImpl(
             }
             emptyList()
         }
-    }
 
     private fun reEnableIfExpired() {
         if (dbTableAvailable.get()) return
