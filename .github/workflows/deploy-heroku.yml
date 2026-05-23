@@ -7,8 +7,8 @@ on:
 jobs:
   deploy:
     # Only deploy when the commit message contains the marker.
-    # Example: "SEO: update sitemap [deploy-manualzivota]"
-    if: contains(github.event.head_commit.message, '[deploy-manualzivota]')
+    # Example: "SEO: update sitemap [deploy]"
+    if: contains(github.event.head_commit.message, '[deploy]')
     runs-on: ubuntu-latest
 
     steps:

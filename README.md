@@ -110,11 +110,11 @@ This involves also changes in templates (but change in a template does not invok
 
 #### GitHub Actions deploy (manual trigger)
 
-This repo contains a GitHub Actions workflow that deploys to Heroku app `manualzivota` only when a commit message contains `[deploy-manualzivota]`:
+This repo contains a GitHub Actions workflow that deploys to Heroku app `manualzivota` only when a commit message contains `[deploy]`:
 
 1) In GitHub repo settings add secrets:
    - `HEROKU_API_KEY`
    - `HEROKU_EMAIL`
 2) Deploy by pushing to `master` with the marker in the commit message, e.g.:
-   - `git commit -m "SEO: update sitemap [deploy-manualzivota]"`
+   - `git commit -m "SEO: update sitemap [deploy]"`
    - `git push origin master`
