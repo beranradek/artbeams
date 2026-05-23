@@ -33,6 +33,7 @@ class SearchService(
      * Uses PostgreSQL's tsvector for comprehensive, ranked results.
      * Falls back to prefix matching when Czech stemming is unavailable.
      */
+    @Cacheable("searchResults", unless = "#query.length() < 3")
     fun search(query: String, limit: Int = 50): List<SearchResult> {
         if (query.trim().isEmpty()) {
             return emptyList()

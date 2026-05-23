@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -64,7 +65,7 @@ class WebController(
     private val articlesPerPageLimit: Int = 20
     private val searchLimit: Int = 20
     private val latestArticlesSidebarLimit: Int = 5
-    private var searchCount: Int = 0
+    private val searchSemaphore = Semaphore(3, true)
 
     @GetMapping("/")
     fun homepage(request: HttpServletRequest): Any {
@@ -395,32 +396,39 @@ $items
     }
 
     @GetMapping("/search")
-    fun search(request: HttpServletRequest): Any = try {
-        searchCount += 1
-        if (searchCount > 1) {
-            ModelAndView(
+    fun search(request: HttpServletRequest): Any {
+        val query: String? = request.getParameter("query")
+        val normalizedQuery = query?.trim()
+        val hasEnoughChars = normalizedQuery != null && normalizedQuery.length >= 2
+        if (!hasEnoughChars) {
+            val model =
+                createBlogModel(
+                    request,
+                    FormData(SubscriptionFormData.Empty, ValidationResult.empty),
+                    "query" to query,
+                    "articles" to emptyList<Any>(),
+                    "categories" to emptyList<Any>(),
+                    "products" to emptyList<Any>(),
+                    "totalResults" to 0
+                )
+            return ModelAndView("search", model)
+        }
+
+        if (!searchSemaphore.tryAcquire()) {
+            return ModelAndView(
                 "searchOverloaded",
                 createBlogModel(
                     request,
                     FormData(SubscriptionFormData.Empty, ValidationResult.empty)
                 )
             )
-        } else {
-            val query: String? = request.getParameter("query")
-            val results =
-                if (query == null || query.trim().length < 2) {
-                    emptyList()
-                } else {
-                    searchService.search(query, searchLimit)
-                }
+        }
+        try {
+            val results = searchService.search(normalizedQuery, searchLimit)
 
-            // Group results by entity type
-            val articles = results
-                .filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.ARTICLE }
-            val categories = results
-                .filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.CATEGORY }
-            val products = results
-                .filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.PRODUCT }
+            val articles = results.filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.ARTICLE }
+            val categories = results.filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.CATEGORY }
+            val products = results.filter { it.entityType == org.xbery.artbeams.search.domain.EntityType.PRODUCT }
 
             val model =
                 createBlogModel(
@@ -432,10 +440,10 @@ $items
                     "products" to products,
                     "totalResults" to results.size
                 )
-            ModelAndView("search", model)
+            return ModelAndView("search", model)
+        } finally {
+            searchSemaphore.release()
         }
-    } finally {
-        searchCount -= 1
     }
 
     private fun createBlogModel(
