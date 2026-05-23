@@ -198,8 +198,8 @@ class OrderServiceImpl(
             } catch (e: Exception) {
                 systemEventLogService.logError(
                     ctx = null,
-                    eventType = SystemEventType.PAYMENT_CONFIRMATION_FAILED,
-                    message = "Order payment confirmation flow failed (orderId=$orderId)",
+                    eventType = SystemEventType.POST_PAYMENT_PROCESSING_FAILED,
+                    message = "Post-payment processing failed (orderId=$orderId)",
                     throwable = e,
                     entityType = "ORDER",
                     entityId = orderId

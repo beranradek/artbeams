@@ -20,6 +20,7 @@ import org.xbery.artbeams.common.access.domain.EntityKey
 import org.xbery.artbeams.common.antispam.recaptcha.service.RecaptchaService
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.common.error.requireAuthorized
 import org.xbery.artbeams.common.error.requireFound
@@ -248,17 +249,42 @@ class FreeProductController(
                     "attachment; filename=" + fileData.filename
                 ).body(documentOutputStream.toByteArray())
         } catch (e: Exception) {
-            systemEventLogService.logError(
-                ctx = ctx,
-                eventType = SystemEventType.PRODUCT_DOWNLOAD_FAILED,
-                message = "Free product download failed (slug=$slug)",
-                throwable = e,
-                request = request,
-                entityType = "PRODUCT",
-                entityId = productIdForLog ?: slug,
-                userId = userIdForLog
-            )
+            val isExpected = isExpectedDownloadDenial(e)
+            if (isExpected) {
+                systemEventLogService.logWarn(
+                    ctx = ctx,
+                    eventType = SystemEventType.PRODUCT_DOWNLOAD_FAILED,
+                    message = "Free product download denied (slug=$slug): ${e.message}",
+                    request = request,
+                    entityType = "PRODUCT",
+                    entityId = productIdForLog ?: slug,
+                    userId = userIdForLog
+                )
+            } else {
+                systemEventLogService.logError(
+                    ctx = ctx,
+                    eventType = SystemEventType.PRODUCT_DOWNLOAD_FAILED,
+                    message = "Free product download failed (slug=$slug)",
+                    throwable = e,
+                    request = request,
+                    entityType = "PRODUCT",
+                    entityId = productIdForLog ?: slug,
+                    userId = userIdForLog
+                )
+            }
             throw e
+        }
+    }
+
+    private fun isExpectedDownloadDenial(e: Exception): Boolean {
+        if (e !is org.xbery.artbeams.error.OperationException) return false
+        return when (e.statusCode) {
+            StatusCode.UNAUTHORIZED,
+            StatusCode.BAD_INPUT,
+            StatusCode.FORBIDDEN,
+            StatusCode.NOT_FOUND
+            -> true
+            else -> false
         }
     }
 

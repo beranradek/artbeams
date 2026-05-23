@@ -15,6 +15,7 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.error.ConsentRequiredException
 import org.xbery.artbeams.common.error.NotFoundException
+import org.xbery.artbeams.common.error.StatusCode
 import org.xbery.artbeams.common.error.UnauthorizedException
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.pdf.PdfSigner
@@ -153,17 +154,42 @@ class UserProductController(
                     "attachment; filename=" + fileData.filename
                 ).body(documentOutputStream.toByteArray())
         } catch (e: Exception) {
-            systemEventLogService.logError(
-                ctx = ctx,
-                eventType = SystemEventType.PRODUCT_DOWNLOAD_FAILED,
-                message = "Member product download failed (productSlug=$productSlug)",
-                throwable = e,
-                request = request,
-                entityType = "PRODUCT",
-                entityId = productIdForLog ?: productSlug,
-                userId = userIdForLog
-            )
+            val isExpected = isExpectedDownloadDenial(e)
+            if (isExpected) {
+                systemEventLogService.logWarn(
+                    ctx = ctx,
+                    eventType = SystemEventType.PRODUCT_DOWNLOAD_FAILED,
+                    message = "Member product download denied (productSlug=$productSlug): ${e.message}",
+                    request = request,
+                    entityType = "PRODUCT",
+                    entityId = productIdForLog ?: productSlug,
+                    userId = userIdForLog
+                )
+            } else {
+                systemEventLogService.logError(
+                    ctx = ctx,
+                    eventType = SystemEventType.PRODUCT_DOWNLOAD_FAILED,
+                    message = "Member product download failed (productSlug=$productSlug)",
+                    throwable = e,
+                    request = request,
+                    entityType = "PRODUCT",
+                    entityId = productIdForLog ?: productSlug,
+                    userId = userIdForLog
+                )
+            }
             throw e
+        }
+    }
+
+    private fun isExpectedDownloadDenial(e: Exception): Boolean {
+        if (e !is org.xbery.artbeams.error.OperationException) return false
+        return when (e.statusCode) {
+            StatusCode.UNAUTHORIZED,
+            StatusCode.BAD_INPUT,
+            StatusCode.FORBIDDEN,
+            StatusCode.NOT_FOUND
+            -> true
+            else -> false
         }
     }
 }
