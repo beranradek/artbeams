@@ -18,6 +18,8 @@ import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.repository.OrderItemRepository
 import org.xbery.artbeams.orders.repository.OrderRepository
 import org.xbery.artbeams.products.domain.Product
+import org.xbery.artbeams.systemevents.domain.SystemEventType
+import org.xbery.artbeams.systemevents.service.SystemEventLogService
 import org.xbery.artbeams.users.domain.CommonRoles
 import org.xbery.artbeams.users.password.setup.service.PasswordSetupMailer
 import org.xbery.artbeams.users.repository.UserRepository
@@ -38,7 +40,8 @@ class OrderServiceImpl(
     private val productService: org.xbery.artbeams.products.service.ProductService,
     private val mailingApi: org.xbery.artbeams.mailing.api.MailingApi,
     private val activityLogService: UserActivityLogService,
-    private val adminNotificationService: org.xbery.artbeams.admin.notification.AdminNotificationService
+    private val adminNotificationService: org.xbery.artbeams.admin.notification.AdminNotificationService,
+    private val systemEventLogService: SystemEventLogService
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -190,7 +193,19 @@ class OrderServiceImpl(
     override fun updateOrderState(orderId: String, state: OrderState): Boolean {
         logger.info("Updating state of order $orderId to $state")
         if (state == OrderState.PAID) {
-            return updateOrderPaid(orderId)
+            try {
+                return updateOrderPaid(orderId)
+            } catch (e: Exception) {
+                systemEventLogService.logError(
+                    ctx = null,
+                    eventType = SystemEventType.PAYMENT_CONFIRMATION_FAILED,
+                    message = "Order payment confirmation flow failed (orderId=$orderId)",
+                    throwable = e,
+                    entityType = "ORDER",
+                    entityId = orderId
+                )
+                throw e
+            }
         }
         return orderRepository.updateOrderState(orderId, state)
     }
