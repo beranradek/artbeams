@@ -10,6 +10,10 @@ import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.faq.domain.FaqEntityType
 import org.xbery.artbeams.faq.domain.FaqEntry
 import org.xbery.artbeams.faq.repository.FaqEntryRepository
+import java.time.Duration
+import java.time.Instant
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * @author Radek Beran
@@ -19,20 +23,52 @@ class FaqServiceImpl(
     private val faqEntryRepository: FaqEntryRepository
 ) : FaqService {
     private val logger = LoggerFactory.getLogger(this::class.java)
+    private val dbTableAvailable = AtomicBoolean(true)
+    private val disabledAt = AtomicReference<Instant?>(null)
 
     @Cacheable(
         value = [FaqEntry.CACHE_NAME],
         key = "#entityType.name() + ':' + #entityId",
         unless = "#result.isEmpty()"
     )
-    override fun findByEntity(entityType: FaqEntityType, entityId: String): List<FaqEntry> =
-        try {
-            faqEntryRepository.findByEntity(entityType, entityId)
+    override fun findByEntity(entityType: FaqEntityType, entityId: String): List<FaqEntry> {
+        return try {
+            reEnableIfExpired()
+            if (!dbTableAvailable.get()) {
+                emptyList()
+            } else {
+                faqEntryRepository.findByEntity(entityType, entityId)
+            }
         } catch (e: DataAccessException) {
             // Safe fallback for deployments where DB migration hasn't been applied yet.
-            logger.warn("Unable to load FAQ entries (entityType={}, entityId={}): {}", entityType, entityId, e.message)
+            // If the table is missing, avoid hammering DB with failing queries on every request.
+            val firstDisable = dbTableAvailable.getAndSet(false)
+            if (firstDisable) {
+                disabledAt.set(Instant.now())
+                logger.warn(
+                    "Unable to load FAQ entries (entityType={}, entityId={}); disabling FAQ DB reads for {}. Cause: {}",
+                    entityType,
+                    entityId,
+                    RECHECK_INTERVAL,
+                    e.message
+                )
+            }
             emptyList()
         }
+    }
+
+    private fun reEnableIfExpired() {
+        if (dbTableAvailable.get()) return
+        val disabled = disabledAt.get() ?: return
+        if (Instant.now().isAfter(disabled.plus(RECHECK_INTERVAL))) {
+            dbTableAvailable.set(true)
+            disabledAt.set(null)
+        }
+    }
+
+    private companion object {
+        val RECHECK_INTERVAL: Duration = Duration.ofMinutes(10)
+    }
 
     @CacheEvict(value = [FaqEntry.CACHE_NAME], key = "#entityType.name() + ':' + #entityId")
     override fun create(
