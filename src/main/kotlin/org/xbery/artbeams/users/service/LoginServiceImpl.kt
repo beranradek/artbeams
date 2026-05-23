@@ -59,7 +59,7 @@ open class LoginServiceImpl(
             systemEventLogService.logWarn(
                 ctx = null,
                 eventType = SystemEventType.LOGIN_FAILED,
-                message = "Authentication failed for user ${user.id}/${user.login}",
+                message = "Authentication failed for userId=${user.id}",
                 request = request,
                 entityType = EntityType.USER.value,
                 entityId = user.id,

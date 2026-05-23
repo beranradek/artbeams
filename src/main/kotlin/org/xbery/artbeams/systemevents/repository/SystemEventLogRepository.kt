@@ -57,4 +57,10 @@ class SystemEventLogRepository(
 
         return ResultPage(records, pagination.withTotalCount(totalCount.toLong()))
     }
+
+    fun deleteOlderThan(cutoff: Instant): Int =
+        dsl
+            .deleteFrom(table)
+            .where(SYSTEM_EVENT_LOG.EVENT_TIME.lt(cutoff))
+            .execute()
 }

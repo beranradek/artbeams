@@ -46,12 +46,12 @@ open class MailgunMailSender(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun template email failed: subject='$subject', to='$recipientEmail', status=${ex.status()}",
+                message = "Mailgun template email failed: subject='$subject', status=${ex.status()}",
                 throwable = ex,
                 entityType = "EMAIL",
                 entityId = recipientEmail,
                 userId = null,
-                details = "templateId=$templateId"
+                details = "templateId=$templateId,to=$recipientEmail"
             )
             throw ex
         } catch (ex: Exception) {
@@ -59,12 +59,12 @@ open class MailgunMailSender(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun template email failed: subject='$subject', to='$recipientEmail'",
+                message = "Mailgun template email failed: subject='$subject'",
                 throwable = ex,
                 entityType = "EMAIL",
                 entityId = recipientEmail,
                 userId = null,
-                details = "templateId=$templateId"
+                details = "templateId=$templateId,to=$recipientEmail"
             )
             throw ex
         }
@@ -91,10 +91,11 @@ open class MailgunMailSender(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun text email failed: subject='$subject', to='$recipientEmail', status=${ex.status()}",
+                message = "Mailgun text email failed: subject='$subject', status=${ex.status()}",
                 throwable = ex,
                 entityType = "EMAIL",
-                entityId = recipientEmail
+                entityId = recipientEmail,
+                details = "to=$recipientEmail"
             )
             throw ex
         } catch (ex: Exception) {
@@ -102,10 +103,11 @@ open class MailgunMailSender(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun text email failed: subject='$subject', to='$recipientEmail'",
+                message = "Mailgun text email failed: subject='$subject'",
                 throwable = ex,
                 entityType = "EMAIL",
-                entityId = recipientEmail
+                entityId = recipientEmail,
+                details = "to=$recipientEmail"
             )
             throw ex
         }
@@ -132,10 +134,11 @@ open class MailgunMailSender(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun HTML email failed: subject='$subject', to='$recipientEmail', status=${ex.status()}",
+                message = "Mailgun HTML email failed: subject='$subject', status=${ex.status()}",
                 throwable = ex,
                 entityType = "EMAIL",
-                entityId = recipientEmail
+                entityId = recipientEmail,
+                details = "to=$recipientEmail"
             )
             throw ex
         } catch (ex: Exception) {
@@ -143,10 +146,11 @@ open class MailgunMailSender(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun HTML email failed: subject='$subject', to='$recipientEmail'",
+                message = "Mailgun HTML email failed: subject='$subject'",
                 throwable = ex,
                 entityType = "EMAIL",
-                entityId = recipientEmail
+                entityId = recipientEmail,
+                details = "to=$recipientEmail"
             )
             throw ex
         }

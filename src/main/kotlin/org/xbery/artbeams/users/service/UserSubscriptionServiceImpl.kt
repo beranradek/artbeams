@@ -46,7 +46,7 @@ class UserSubscriptionServiceImpl(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.ORDER_CREATE_FAILED,
-                message = "Failed to create order for user ${user.id}/${user.login}, product ${product.id}/${product.slug}, orderNumber=$orderNumber",
+                message = "Failed to create order for userId=${user.id}, product ${product.id}/${product.slug}, orderNumber=$orderNumber",
                 throwable = e,
                 entityType = "ORDER",
                 entityId = orderNumber,
@@ -60,7 +60,7 @@ class UserSubscriptionServiceImpl(
             systemEventLogService.logError(
                 ctx = null,
                 eventType = SystemEventType.CONSENT_CONFIRMATION_FAILED,
-                message = "Failed to confirm consent for user ${user.id}/${user.login}, product ${product.id}/${product.slug}",
+                message = "Failed to confirm consent for userId=${user.id}, product ${product.id}/${product.slug}",
                 throwable = e,
                 entityType = "USER",
                 entityId = user.id,
@@ -110,7 +110,7 @@ class UserSubscriptionServiceImpl(
                 systemEventLogService.logError(
                     ctx = ctx,
                     eventType = SystemEventType.USER_REGISTRATION_FAILED,
-                    message = "Failed to register user with login=$login",
+                    message = "Failed to register user",
                     throwable = e,
                     entityType = "USER",
                     entityId = null,
