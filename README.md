@@ -2,6 +2,8 @@
 
 **Open source CMS** for blogs with admin interface. Simple, functional.
 
+This CMS is SEO/GEO optimized: it includes sitemap and metadata support, friendly URLs, and basic geo/meta tag helpers to improve search and regional relevance.
+
 Built with Spring Boot framework, Kotlin language, JOOQ (and PostgreSQL) for persistence layer, 
 Spring Security, Spring MVC for handling requests, Apache FreeMarker and Bootstrap templates, Formio form definition, binding and validation library (https://github.com/beranradek/formio), 
 Google APIs for integration with Google Docs, Browscap for browser detection,
