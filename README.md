@@ -13,6 +13,10 @@ Scrimage image library for manipulation of images,
 Kotest and MockK for unit tests, Flexmark for markdown editor, CKEditor WYSIWYG editor, 
 Evernote API for Evernote integration, Google reCaptcha and more.
 
+## SEO & GEO optimization
+
+ArtBeams is SEO and GEO friendly out of the box: it supports configurable meta tags, clean/readable URLs, sitemap generation hooks, and locale-aware content so sites built with ArtBeams are ready for search engines and geographic targeting.
+
 ## Implemented features
 
 * Public blog with articles, categories, comments, search, products to purchase, integration of social networks, terms and conditions, data privacy and cookies policy, contact form.
