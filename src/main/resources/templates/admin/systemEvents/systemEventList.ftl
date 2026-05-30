@@ -35,7 +35,8 @@
   </div>
 </form>
 
-<#assign entries = resultPage.data>
+<#-- resultPage.data can be null on empty results; treat as empty list -->
+<#assign entries = (resultPage.data)![]>
 <#if entries?has_content>
   <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -73,4 +74,3 @@
   <p class="text-muted">No events found.</p>
 </#if>
 </@layout.page>
-
