@@ -15,6 +15,7 @@ Evernote API for Evernote integration, Google reCaptcha and more.
 
 ## Implemented features
 
+* SEO and GEO optimized: supports SEO-friendly URLs, meta tags, sitemap generation and basic geo-targeting considerations.
 * Public blog with articles, categories, comments, search, products to purchase, integration of social networks, terms and conditions, data privacy and cookies policy, contact form.
 * Administration of article categories, articles, roles, users, comments, products and orders. Markdown editor and WYSIWYG editor.
 * Simple client zone for customers to view their purchased products.
