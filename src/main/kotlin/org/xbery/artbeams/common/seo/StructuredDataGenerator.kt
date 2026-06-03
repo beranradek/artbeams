@@ -13,6 +13,8 @@ import java.time.format.DateTimeFormatter
  * @author Radek Beran
  */
 object StructuredDataGenerator {
+    private const val DEFAULT_SELLING_COUNTRY = "CZ"
+
 
     /**
      * Generates JSON-LD structured data for a blog article. Implements Schema.org BlogPosting type
@@ -121,7 +123,39 @@ $itemListElements
     "url": "$pageUrl",
     "priceCurrency": "${escapeJson(product.price.currency)}",
     "price": "${product.price.price}",
-    "availability": "https://schema.org/InStock"
+    "availability": "https://schema.org/InStock",
+    "shippingDetails": {
+      "@type": "OfferShippingDetails",
+      "shippingRate": {
+        "@type": "MonetaryAmount",
+        "value": 0,
+        "currency": "${escapeJson(product.price.currency)}"
+      },
+      "shippingDestination": {
+        "@type": "DefinedRegion",
+        "addressCountry": "$DEFAULT_SELLING_COUNTRY"
+      },
+      "deliveryTime": {
+        "@type": "ShippingDeliveryTime",
+        "handlingTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 0,
+          "unitCode": "DAY"
+        },
+        "transitTime": {
+          "@type": "QuantitativeValue",
+          "minValue": 0,
+          "maxValue": 0,
+          "unitCode": "DAY"
+        }
+      }
+    },
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": "$DEFAULT_SELLING_COUNTRY",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+    }
   }
             """.trimIndent()
 
