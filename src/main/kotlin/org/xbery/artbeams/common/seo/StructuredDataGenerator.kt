@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter
 object StructuredDataGenerator {
     private const val DEFAULT_SELLING_COUNTRY = "CZ"
 
-
     /**
      * Generates JSON-LD structured data for a blog article. Implements Schema.org BlogPosting type
      * for optimal GEO (Generative Engine Optimization).
