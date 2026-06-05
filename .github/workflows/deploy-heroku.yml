@@ -2,6 +2,8 @@ name: Deploy to Heroku
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ "master" ]
 
 permissions:
   contents: read
@@ -15,6 +17,7 @@ env:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
     runs-on: ubuntu-latest
     timeout-minutes: 30
 

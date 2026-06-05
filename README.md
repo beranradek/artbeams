@@ -123,6 +123,7 @@ Required GitHub configuration for repository `beranradek/artbeams`:
 
 How to run the workflow:
 
+- Automatically on push to `master` when the commit message contains `[deploy]`
 - Manually from GitHub Actions via the `Run workflow` button
 - Manually from CLI:
   - `gh workflow run deploy-heroku.yml --ref master`
