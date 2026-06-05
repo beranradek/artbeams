@@ -109,13 +109,27 @@ This involves also changes in templates (but change in a template does not invok
 * In Heroku CLI run command: `heroku ps:scale web=1` (so the application has associated one dyno required for application run and application can start)
 * See Heroku documentation for more details
 
-#### GitHub Actions deploy (manual trigger)
+#### GitHub Actions deploy
 
-This repo contains a GitHub Actions workflow that deploys to Heroku app `manualzivota` only when a commit message contains `[deploy]`:
+This repo contains a GitHub Actions workflow that builds the application and deploys it to an existing Heroku app via Heroku Git.
 
-1) In GitHub repo settings add secrets:
+Required GitHub configuration for repository `beranradek/artbeams`:
+
+1) Add repository secret:
    - `HEROKU_API_KEY`
-   - `HEROKU_EMAIL`
-2) Deploy by pushing to `master` with the marker in the commit message, e.g.:
-   - `git commit -m "SEO: update sitemap [deploy]"`
-   - `git push origin master`
+2) Add repository variable:
+   - `HEROKU_APP_NAME`
+3) Ensure the Heroku app already exists and the API key has access to it.
+
+How to run the workflow:
+
+- Manually from GitHub Actions via the `Run workflow` button
+- Manually from CLI:
+  - `gh workflow run deploy-heroku.yml --ref master`
+
+What the workflow does:
+
+- checks out the full Git history (`fetch-depth: 0`) because Heroku rejects pushes from shallow clones
+- runs `./gradlew build`
+- verifies access to the target Heroku app with `heroku apps:info`
+- deploys with `git push heroku HEAD:main`
