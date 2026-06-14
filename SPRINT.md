@@ -39,6 +39,8 @@ If course does not have any modules, list of articles is displayed directly in d
 <!-- Context for this sprint, including links to relevant codebase, 
 product description, analysis, documentation, knowledge base, prototypes, examples and issues. -->
 
+**`sprint-memory.md`** (repo root) — research findings and implementation plan for this sprint. MUST be read before starting any implementation. Keep it up-to-date as tasks complete or decisions change.
+
 Member section (/clenska-sekce, memberSection.ftl, memberLayout.ftl, MemberSectionController.kt) 
 already exists and provides access to purchased products.
 
@@ -66,6 +68,11 @@ or via an end-to-end test. -->
 - Access to Course works end-to-end when member user logs into member section, and can see menu with available Courses, visit their details up to nested article details.
 - User logged in member section can search per each Course, in all Courses he has access to, and see the articles in search results. Content from the private article set is not pre-indexed. User can search separately within each Course via its search form. Results from publicly indexed articles or from another Courses are not displayed.  
 
+End-to-end test the complete application by running it locally, with idempotent seed script for filling all data needed
+to be present in database for full testing. Use Chrome DevTools MCP tools for evaluation
+of all the user journeys like the humans do through the typing, clicking, seeing (taking screenshots),
+observing application logs and errors, network traffic and console errors in the browser.
+
 ## Failure conditions
 <!-- Bulleted list of binary-evaluable checks that mean the sprint goal is still failing. 
 Each bullet is an observable symptom that must be resolved before the sprint can be declared done. -->
@@ -77,6 +84,8 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 ## Out of scope
 <!-- Bulleted list of things the planner must refuse to schedule this sprint. -->
 
+- Do not create unmentioned additional entities within the Courses (like Audio/Video media records are another additional Assets).
+
 ## Seed candidates
 <!-- Bulleted list of ground-floor candidate issues. 
 The planner promotes these into BACKLOG.md when it is empty or low on items. -->
@@ -87,3 +96,8 @@ The planner promotes these into BACKLOG.md when it is empty or low on items. -->
 - Administration of Courses and Modules.
 - Article has possibility to be assigned to a Course within existing article administration/editor.
 - Member section enhanced with Courses (and their inner Modules and Articles within them).
+
+Do not create too many issues or too small issues - group small/related parts rather together.
+Keep it cohesive and well-scoped across standalone testable phases or the clearly separable infrastructure.
+Agents are capable to implement bigger tasks and do not lose the coupled context.
+Each issue implementation will lead to a PR that must be validated and merged.

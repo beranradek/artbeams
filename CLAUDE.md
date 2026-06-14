@@ -2,6 +2,10 @@
 
 This file provides guidance when working with code in this repository.
 
+## Sprint Memory
+
+**`sprint-memory.md`** (repo root) — MUST be read at the start of any sprint-related work. It contains the active sprint's research findings, domain model decisions, file map, and implementation tasks. Agents must keep it up-to-date as tasks are completed or decisions change. If `sprint-memory.md` exists, read it before touching any code related to the current sprint.
+
 ## Project Overview
 
 ArtBeams is an open-source CMS for blogs with administration interface, built with Kotlin/Spring Boot. It features content management, user authentication, e-commerce capabilities, and integrations with Google Docs, Evernote, and email services.
