@@ -2,7 +2,7 @@
 <!-- To suggest work, add items to "## Later / ideas" below. The planner will promote them when capacity opens up. -->
 
 ## Next up (ready)
-- Add idempotent e2e seed SQL script (`scripts/seed_courses_e2e.sql`) to provision admin/member users, purchased product, course, modules, and linked articles for Chrome DevTools journey tests; include deterministic IDs and safe re-run semantics aligned with `src/main/resources/sql/create_tables.sql` and `src/main/resources/sql/migrations/*.sql`.
+
 
 ## Later / ideas
 <!-- To suggest work, add items to "## Later / ideas" below. The planner will promote them when capacity opens up. -->
