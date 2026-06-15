@@ -55,34 +55,78 @@ ALTER TABLE articles ADD COLUMN IF NOT EXISTS module_id VARCHAR(40) DEFAULT NULL
 CREATE INDEX IF NOT EXISTS idx_articles_course_id ON articles (course_id);
 CREATE INDEX IF NOT EXISTS idx_articles_module_id ON articles (module_id);
 
--- Add foreign key constraints if missing. Use plpgsql blocks to check existence first.
+-- Add foreign key constraints if missing. Use plpgsql blocks with robust existence checks
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_modules_course_id') THEN
+  -- modules.course_id -> courses.id
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class t ON c.conrelid = t.oid
+    JOIN pg_class r ON c.confrelid = r.oid
+    WHERE c.contype = 'f' AND t.relname = 'modules' AND r.relname = 'courses')
+  THEN
     ALTER TABLE modules ADD CONSTRAINT fk_modules_course_id FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE;
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_product_course_product') THEN
+
+  -- product_course.product_id -> products.id
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class t ON c.conrelid = t.oid
+    JOIN pg_class r ON c.confrelid = r.oid
+    WHERE c.contype = 'f' AND t.relname = 'product_course' AND r.relname = 'products')
+  THEN
     ALTER TABLE product_course ADD CONSTRAINT fk_product_course_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE;
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_product_course_course') THEN
+
+  -- product_course.course_id -> courses.id
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class t ON c.conrelid = t.oid
+    JOIN pg_class r ON c.confrelid = r.oid
+    WHERE c.contype = 'f' AND t.relname = 'product_course' AND r.relname = 'courses')
+  THEN
     ALTER TABLE product_course ADD CONSTRAINT fk_product_course_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE;
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_articles_course') THEN
+
+  -- articles.course_id -> courses.id
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class t ON c.conrelid = t.oid
+    JOIN pg_class r ON c.confrelid = r.oid
+    WHERE c.contype = 'f' AND t.relname = 'articles' AND r.relname = 'courses')
+  THEN
     ALTER TABLE articles ADD CONSTRAINT fk_articles_course FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE SET NULL;
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_articles_module') THEN
+
+  -- articles.module_id -> modules.id
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class t ON c.conrelid = t.oid
+    JOIN pg_class r ON c.confrelid = r.oid
+    WHERE c.contype = 'f' AND t.relname = 'articles' AND r.relname = 'modules')
+  THEN
     ALTER TABLE articles ADD CONSTRAINT fk_articles_module FOREIGN KEY (module_id) REFERENCES modules(id) ON DELETE SET NULL;
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_courses_created_by') THEN
+
+  -- courses.created_by/modified_by -> users.id
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class t ON c.conrelid = t.oid
+    JOIN pg_class r ON c.confrelid = r.oid
+    WHERE c.contype = 'f' AND t.relname = 'courses' AND r.relname = 'users')
+  THEN
     ALTER TABLE courses ADD CONSTRAINT fk_courses_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_courses_modified_by') THEN
     ALTER TABLE courses ADD CONSTRAINT fk_courses_modified_by FOREIGN KEY (modified_by) REFERENCES users(id) ON DELETE SET NULL;
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_modules_created_by') THEN
+
+  -- modules.created_by/modified_by -> users.id
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class t ON c.conrelid = t.oid
+    JOIN pg_class r ON c.confrelid = r.oid
+    WHERE c.contype = 'f' AND t.relname = 'modules' AND r.relname = 'users')
+  THEN
     ALTER TABLE modules ADD CONSTRAINT fk_modules_created_by FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_modules_modified_by') THEN
     ALTER TABLE modules ADD CONSTRAINT fk_modules_modified_by FOREIGN KEY (modified_by) REFERENCES users(id) ON DELETE SET NULL;
   END IF;
 END$$;
