@@ -29,6 +29,8 @@ open class ArticleForm {
                     Field.TEXT
                 ).field<Boolean>("showOnBlog", Field.CHECK_BOX)
                 .field<Boolean>("draft", Field.CHECK_BOX)
+                .field<String?>("courseId", Field.DROP_DOWN_CHOICE)
+                .field<String?>("moduleId", Field.DROP_DOWN_CHOICE)
                 .field<List<String>>("categories", Field.DROP_DOWN_CHOICE)
                 .build(FormUtils.CZ_CONFIG)
     }

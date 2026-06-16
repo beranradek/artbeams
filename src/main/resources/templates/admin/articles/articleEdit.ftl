@@ -109,6 +109,28 @@
     </div>
   </div>
   <div class="form-group row">
+    <label for="${fields.courseId.elementId}" class="col-form-label col-sm-2 label-fix">Course</label>
+    <div class="col-sm-3">
+      <select name="${fields.courseId.name}" id="${fields.courseId.elementId}" class="form-control">
+        <option value="" <#if !fields.courseId.value?? || fields.courseId.value == "">selected</#if>></option>
+        <#list courses as course>
+          <option value="${course.id}" <#if fields.courseId.value == course.id>selected</#if>>${course.title}</option>
+        </#list>
+      </select>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="${fields.moduleId.elementId}" class="col-form-label col-sm-2 label-fix">Module</label>
+    <div class="col-sm-3">
+      <select name="${fields.moduleId.name}" id="${fields.moduleId.elementId}" class="form-control">
+        <option value="" <#if !fields.moduleId.value?? || fields.moduleId.value == "">selected</#if>></option>
+        <#list modules as module>
+          <option value="${module.id}" <#if fields.moduleId.value == module.id>selected</#if>>${module.title}</option>
+        </#list>
+      </select>
+    </div>
+  </div>
+  <div class="form-group row">
     <div class="col-sm-2 col-form-label"></div>
     <div class="col-sm-10">
         <button type="submit" class="btn btn-primary">Save and leave</button>

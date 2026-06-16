@@ -167,6 +167,16 @@ open class Articles(
      */
     val DRAFT: TableField<ArticlesRecord, Boolean?> = createField(DSL.name("draft"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field(DSL.raw("FALSE"), SQLDataType.BOOLEAN)), this, "")
 
+    /**
+     * The column <code>articles.course_id</code>.
+     */
+    val COURSE_ID: TableField<ArticlesRecord, String?> = createField(DSL.name("course_id"), SQLDataType.VARCHAR(40).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
+    /**
+     * The column <code>articles.module_id</code>.
+     */
+    val MODULE_ID: TableField<ArticlesRecord, String?> = createField(DSL.name("module_id"), SQLDataType.VARCHAR(40).defaultValue(DSL.field(DSL.raw("NULL"), SQLDataType.VARCHAR)), this, "")
+
     private constructor(alias: Name, aliased: Table<ArticlesRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<ArticlesRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<ArticlesRecord>?, where: Condition?): this(alias, null, null, null, aliased, null, where)

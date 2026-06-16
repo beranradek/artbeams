@@ -89,6 +89,14 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
         set(value): Unit = set(17, value)
         get(): Boolean? = get(17) as Boolean?
 
+    open var courseId: String?
+        set(value): Unit = set(18, value)
+        get(): String? = get(18) as String?
+
+    open var moduleId: String?
+        set(value): Unit = set(19, value)
+        get(): String? = get(19) as String?
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -98,7 +106,7 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
     /**
      * Create a detached, initialised ArticlesRecord
      */
-    constructor(id: String? = null, externalId: String? = null, validFrom: Instant? = null, validTo: Instant? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, image: String? = null, perex: String? = null, body: String? = null, bodyEdited: String? = null, editor: String? = null, keywords: String? = null, showOnBlog: Boolean? = null, draft: Boolean? = null): this() {
+    constructor(id: String? = null, externalId: String? = null, validFrom: Instant? = null, validTo: Instant? = null, created: Instant? = null, createdBy: String? = null, modified: Instant? = null, modifiedBy: String? = null, slug: String? = null, title: String? = null, image: String? = null, perex: String? = null, body: String? = null, bodyEdited: String? = null, editor: String? = null, keywords: String? = null, showOnBlog: Boolean? = null, draft: Boolean? = null, courseId: String? = null, moduleId: String? = null): this() {
         this.id = id
         this.externalId = externalId
         this.validFrom = validFrom
@@ -117,6 +125,8 @@ open class ArticlesRecord() : UpdatableRecordImpl<ArticlesRecord>(Articles.ARTIC
         this.keywords = keywords
         this.showOnBlog = showOnBlog
         this.draft = draft
+        this.courseId = courseId
+        this.moduleId = moduleId
         resetChangedOnNotNull()
     }
 }

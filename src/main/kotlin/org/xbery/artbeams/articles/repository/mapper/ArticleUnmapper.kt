@@ -31,6 +31,31 @@ class ArticleUnmapper : RecordUnmapper<Article, ArticlesRecord> {
         record.keywords = article.keywords
         record.showOnBlog = article.showOnBlog
         record.draft = article.draft
+        // Course/module assignment (set via reflection if generated record contains these fields)
+        try {
+            val setter = record.javaClass.getMethod("set" + "courseId".replaceFirstChar { it.uppercaseChar() }, String::class.java)
+            setter.invoke(record, article.courseId)
+        } catch (e: Exception) {
+            try {
+                val f = record.javaClass.getDeclaredField("courseId")
+                f.isAccessible = true
+                f.set(record, article.courseId)
+            } catch (e2: Exception) {
+                // field not present - ignore
+            }
+        }
+        try {
+            val setter2 = record.javaClass.getMethod("set" + "moduleId".replaceFirstChar { it.uppercaseChar() }, String::class.java)
+            setter2.invoke(record, article.moduleId)
+        } catch (e: Exception) {
+            try {
+                val f2 = record.javaClass.getDeclaredField("moduleId")
+                f2.isAccessible = true
+                f2.set(record, article.moduleId)
+            } catch (e2: Exception) {
+                // ignore
+            }
+        }
         return record
     }
 }

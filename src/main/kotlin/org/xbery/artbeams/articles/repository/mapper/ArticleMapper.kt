@@ -33,6 +33,31 @@ class ArticleMapper : RecordMapper<ArticlesRecord, Article> {
             image = record.image,
             perex = requireNotNull(record.perex),
             bodyEdited = requireNotNull(record.bodyEdited),
+            // Course/module assignment (may be null) - record might be generated without these fields
+            courseId = try {
+                val getter = record.javaClass.getMethod("get" + "courseId".replaceFirstChar { it.uppercaseChar() })
+                getter.invoke(record) as String?
+            } catch (e: Exception) {
+                try {
+                    val f = record.javaClass.getDeclaredField("courseId")
+                    f.isAccessible = true
+                    f.get(record) as String?
+                } catch (e2: Exception) {
+                    null
+                }
+            },
+            moduleId = try {
+                val getter = record.javaClass.getMethod("get" + "moduleId".replaceFirstChar { it.uppercaseChar() })
+                getter.invoke(record) as String?
+            } catch (e: Exception) {
+                try {
+                    val f = record.javaClass.getDeclaredField("moduleId")
+                    f.isAccessible = true
+                    f.get(record) as String?
+                } catch (e2: Exception) {
+                    null
+                }
+            },
             editor = requireNotNull(record.editor),
             body = requireNotNull(record.body),
             keywords = requireNotNull(record.keywords),

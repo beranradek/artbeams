@@ -37,6 +37,12 @@ class SearchIndexer(
             searchIndexRepository.deleteByEntity(EntityType.ARTICLE, article.id)
             return
         }
+        // Articles assigned to a course should not be publicly searchable/indexed
+        // They are part of course content and must not appear in public search results.
+        if (!article.courseId.isNullOrBlank()) {
+            searchIndexRepository.deleteByEntity(EntityType.ARTICLE, article.id)
+            return
+        }
         indexEntity(
             entityType = EntityType.ARTICLE,
             entityId = article.id,
@@ -130,6 +136,12 @@ class SearchIndexer(
             val articles = articleRepository.findLatest(10000) // Get all articles
             articles.forEach { article ->
                 try {
+                    // Skip course-assigned articles - they must not be in public index
+                    if (!article.courseId.isNullOrBlank()) {
+                        // Ensure any existing index entry is removed
+                        searchIndexRepository.deleteByEntity(EntityType.ARTICLE, article.id)
+                        return@forEach
+                    }
                     val entry = createArticleIndexEntry(article, null)
                     searchIndexRepository.create(entry)
                 } catch (e: Exception) {
