@@ -26,7 +26,9 @@ data class Article(
     val keywords: String,
     val showOnBlog: Boolean,
     val draft: Boolean,
-    val editor: String
+    val editor: String,
+    val courseId: String?,
+    val moduleId: String?
 ) : Asset(),
     ValidityAsset {
     fun updatedWith(
@@ -48,6 +50,9 @@ data class Article(
             showOnBlog = edited.showOnBlog,
             draft = edited.draft,
             editor = edited.editor
+            ,
+            courseId = edited.courseId,
+            moduleId = edited.moduleId
         )
 
     fun toEdited(categories: List<String>): EditedArticle {
@@ -75,6 +80,8 @@ data class Article(
             this.keywords,
             this.showOnBlog,
             this.draft,
+            this.courseId,
+            this.moduleId,
             categories
         )
     }
@@ -84,18 +91,20 @@ data class Article(
         val Empty: Article =
             Article(
                 AssetAttributes.EMPTY,
-                Validity.Empty,
-                null,
-                "",
-                "New article",
-                null,
-                "",
-                "",
-                "",
-                "",
-                true,
-                false,
-                "markdown"
+            Validity.Empty,
+            null,
+            "",
+            "New article",
+            null,
+            "",
+            "",
+            "",
+            "",
+            true,
+            false,
+            "markdown",
+            null,
+            null
             )
         val EmptyEdited: EditedArticle = Empty.toEdited(ArrayList<String>())
     }

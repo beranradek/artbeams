@@ -52,24 +52,26 @@ CREATE TABLE categories (
 CREATE INDEX idx_categories_slug ON categories (slug);
 
 CREATE TABLE articles (
-	id VARCHAR(40) NOT NULL PRIMARY KEY,
-	external_id VARCHAR(64) DEFAULT NULL,
-	valid_from timestamp DEFAULT NULL,
-	valid_to timestamp DEFAULT NULL,
-	created timestamp DEFAULT NULL,
-	created_by VARCHAR(40) DEFAULT NULL,
-	modified timestamp DEFAULT NULL,
-	modified_by VARCHAR(40) DEFAULT NULL,
-	slug VARCHAR(128) DEFAULT NULL,
-	title VARCHAR(128) DEFAULT NULL,
-	image VARCHAR(128) DEFAULT NULL,
-	perex VARCHAR(4000) DEFAULT NULL,
-	body TEXT,
-	body_edited TEXT,
-	editor VARCHAR(16) DEFAULT 'markdown',
-	keywords VARCHAR(256) DEFAULT NULL,
-	show_on_blog boolean DEFAULT TRUE,
-	draft boolean NOT NULL DEFAULT FALSE
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    external_id VARCHAR(64) DEFAULT NULL,
+    valid_from timestamp DEFAULT NULL,
+    valid_to timestamp DEFAULT NULL,
+    created timestamp DEFAULT NULL,
+    created_by VARCHAR(40) DEFAULT NULL,
+    modified timestamp DEFAULT NULL,
+    modified_by VARCHAR(40) DEFAULT NULL,
+    slug VARCHAR(128) DEFAULT NULL,
+    title VARCHAR(128) DEFAULT NULL,
+    image VARCHAR(128) DEFAULT NULL,
+    perex VARCHAR(4000) DEFAULT NULL,
+    body TEXT,
+    body_edited TEXT,
+    editor VARCHAR(16) DEFAULT 'markdown',
+    keywords VARCHAR(256) DEFAULT NULL,
+    show_on_blog boolean DEFAULT TRUE,
+    draft boolean NOT NULL DEFAULT FALSE,
+    course_id VARCHAR(40) DEFAULT NULL,
+    module_id VARCHAR(40) DEFAULT NULL
 );
 
 CREATE INDEX idx_articles_slug ON articles (slug);

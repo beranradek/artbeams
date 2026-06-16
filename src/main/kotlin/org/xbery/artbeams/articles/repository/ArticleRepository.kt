@@ -56,6 +56,7 @@ class ArticleRepository(
             validityCondition(validityDate)
                 .and(ARTICLES.SHOW_ON_BLOG.isTrue)
                 .and(ARTICLES.DRAFT.isFalse)
+                .and(ARTICLES.COURSE_ID.isNull)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -74,9 +75,10 @@ class ArticleRepository(
                         .select(ARTICLE_CATEGORY.ARTICLE_ID)
                         .from(ARTICLE_CATEGORY)
                         .where(ARTICLE_CATEGORY.CATEGORY_ID.eq(categoryId))
-                ).and(validityCondition(validityDate))
+            ).and(validityCondition(validityDate))
                 .and(ARTICLES.SHOW_ON_BLOG.isTrue)
                 .and(ARTICLES.DRAFT.isFalse)
+                .and(ARTICLES.COURSE_ID.isNull)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -100,6 +102,7 @@ class ArticleRepository(
                     .eq(slug)
                     .and(validityCondition(Instant.now()))
                     .and(ARTICLES.DRAFT.isFalse)
+                    .and(ARTICLES.COURSE_ID.isNull)
             ).fetchOne(mapper)
 
     fun findByQuery(query: String, limit: Int): List<Article> {
@@ -115,6 +118,7 @@ class ArticleRepository(
                         .or(ARTICLES.PEREX.containsIgnoreCase(query))
                         .or(ARTICLES.BODY.containsIgnoreCase(query))
                 )
+                .and(ARTICLES.COURSE_ID.isNull)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,
@@ -153,7 +157,9 @@ class ArticleRepository(
             keywords = "",
             showOnBlog = false,
             draft = false,
-            editor = ""
+            editor = "",
+            courseId = record[ARTICLES.COURSE_ID],
+            moduleId = record[ARTICLES.MODULE_ID]
         )
     }
 
@@ -179,7 +185,9 @@ class ArticleRepository(
             ARTICLES.SLUG,
             ARTICLES.TITLE,
             ARTICLES.IMAGE,
-            ARTICLES.PEREX
+            ARTICLES.PEREX,
+            ARTICLES.COURSE_ID,
+            ARTICLES.MODULE_ID
         )
     }
 }

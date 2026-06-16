@@ -23,5 +23,7 @@ data class EditedArticle(
     val keywords: String,
     val showOnBlog: Boolean,
     val draft: Boolean,
+    val courseId: String?,
+    val moduleId: String?,
     val categories: List<String>
 ) : EditedTimeValidity

@@ -42,6 +42,7 @@ class ArticleAdminController(
     private val articleService: ArticleService,
     private val categoryRepository: CategoryRepository,
     private val articleImageRepository: ArticleImageRepository,
+    private val courseRepository: org.xbery.artbeams.courses.repository.CourseRepository,
     private val applicationContext: ApplicationContext,
     common: ControllerComponents
 ) : BaseController(common) {
@@ -168,11 +169,21 @@ class ArticleAdminController(
         val editForm: FormMapping<EditedArticle> = editFormDef.fill(FormData(edited, validationResult))
         // Fetch categories codebook
         val categories: List<Category> = categoryRepository.findCategories()
+        // Fetch courses for assignment
+        val courses = courseRepository.findAll()
+        // If article is assigned to a course, try to fetch modules for selected course
+        val modules = if (!edited.courseId.isNullOrBlank()) {
+            courseRepository.findById(edited.courseId)?.modules ?: emptyList()
+        } else {
+            emptyList()
+        }
         val model = createModel(
             request,
             "editForm" to editForm,
             "errorMessage" to errorMessage,
             "categories" to categories,
+            "courses" to courses,
+            "modules" to modules,
             "articleAgentAvailable" to isArticleAgentAvailable(),
             "canPublish" to hasAuthority(request, "admin")
         )
