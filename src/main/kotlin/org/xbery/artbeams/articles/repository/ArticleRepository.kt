@@ -91,7 +91,12 @@ class ArticleRepository(
     fun findBySlug(slug: String): Article? =
         dsl
             .selectFrom(table)
-            .where(ARTICLES.SLUG.eq(slug).and(validityCondition(Instant.now())))
+            .where(
+                ARTICLES.SLUG
+                    .eq(slug)
+                    .and(validityCondition(Instant.now()))
+                    .and(ARTICLES.COURSE_ID.isNull)
+            )
             .fetchOne(mapper)
 
     fun findBySlugPublic(slug: String): Article? =
