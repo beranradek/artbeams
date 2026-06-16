@@ -1,7 +1,6 @@
 ## Next up (ready)
 
-
--
+- Implement module loading in CourseRepository: populate Course.modules from COURSE_MODULES (see src/main/kotlin/org/xbery/artbeams/courses/repository/CourseRepository.kt). This is a small, infra-level change that removes the TODO and adds a unit test to verify modules are returned by findById.
 
 ## Later / ideas
 
