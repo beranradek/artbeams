@@ -86,9 +86,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 - Do not create unmentioned additional entities within the Courses (like Audio/Video media records are another additional Assets).
 
-## Seed candidates
-<!-- Bulleted list of ground-floor candidate issues. 
-The planner promotes these into BACKLOG.md when it is empty or low on items. -->
+## Next up (ready)
 
 - Course and Module entities and repositories. Changes in create_tables.sql, migration script to add new tables and indexes to production. 
 - Services for Courses and Modules.
@@ -97,7 +95,5 @@ The planner promotes these into BACKLOG.md when it is empty or low on items. -->
 - Article has possibility to be assigned to a Course within existing article administration/editor.
 - Member section enhanced with Courses (and their inner Modules and Articles within them).
 
-Do not create too many issues or too small issues - group small/related parts rather together.
-Keep it cohesive and well-scoped across standalone testable phases or the clearly separable infrastructure.
-Agents are capable to implement bigger tasks and do not lose the coupled context.
-Each issue implementation will lead to a PR that must be validated and merged.
+## Later / ideas
+
