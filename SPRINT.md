@@ -88,7 +88,6 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- Course and Module entities and repositories. Changes in create_tables.sql, migration script to add new tables and indexes to production. 
 - Services for Courses and Modules.
 - Script to seed end-to-end testing data for agentic evaluating of this feature, creating new user with ADMIN role and new user with MEMBER role (including their test passwords), new Product assigned with Course with Modules and related Articles.   
 - Administration of Courses and Modules.
@@ -97,3 +96,4 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Later / ideas
 
+- Implement idempotent end-to-end browser-driven smoke script that boots the app in 'local' profile, seeds DB and performs Chrome DevTools journeys (justification: automates manual E2E verification and will be used by the MCP-based evaluation).
