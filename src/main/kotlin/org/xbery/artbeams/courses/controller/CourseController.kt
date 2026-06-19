@@ -1,12 +1,15 @@
 package org.xbery.artbeams.courses.controller
 
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.servlet.ModelAndView
-import jakarta.servlet.http.HttpServletRequest
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.courses.service.CourseService
+import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Member-facing courses controller.
@@ -33,6 +36,12 @@ class CourseController(
         val loggedUser = model["_loggedUser"] as? org.xbery.artbeams.users.domain.User
             ?: return redirect("/login")
         val course = courseService.findBySlug(slug) ?: return notFound(request)
+        // Ensure the logged user has access to this course
+        val userCourses = courseService.findCoursesForUser(loggedUser.common.id)
+        model["courses"] = userCourses
+        if (userCourses.none { it.common.id == course.common.id }) {
+            return notFound(request)
+        }
         model["course"] = course
         return ModelAndView("member/courses/detail", model)
     }
@@ -43,6 +52,11 @@ class CourseController(
         val loggedUser = model["_loggedUser"] as? org.xbery.artbeams.users.domain.User
             ?: return redirect("/login")
         val course = courseService.findBySlug(slug) ?: return notFound(request)
+        val userCourses = courseService.findCoursesForUser(loggedUser.common.id)
+        model["courses"] = userCourses
+        if (userCourses.none { it.common.id == course.common.id }) {
+            return notFound(request)
+        }
         val module = course.modules.find { it.id == moduleSlug }
             ?: return notFound(request)
         // For module articles we delegate to per-course search but filter by module id
@@ -64,6 +78,11 @@ class CourseController(
         val loggedUser = model["_loggedUser"] as? org.xbery.artbeams.users.domain.User
             ?: return redirect("/login")
         val course = courseService.findBySlug(slug) ?: return notFound(request)
+        val userCourses = courseService.findCoursesForUser(loggedUser.common.id)
+        model["courses"] = userCourses
+        if (userCourses.none { it.common.id == course.common.id }) {
+            return notFound(request)
+        }
         val q = request.getParameter("q") ?: ""
         val limit = try {
             request.getParameter("limit")?.toInt() ?: 50
