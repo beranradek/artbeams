@@ -88,9 +88,9 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- Implement member-facing Course pages, menu integration and per-course search: add src/main/kotlin/org/xbery/artbeams/courses/controller/CourseController.kt, update src/main/kotlin/org/xbery/artbeams/members/controller/MemberSectionController.kt to include courses in the model, and add FreeMarker templates under src/main/resources/templates/member/courses (list.ftl, detail.ftl, module.ftl). Add unit tests in src/test/kotlin/org/xbery/artbeams/courses/controller/CourseControllerTest.kt and src/test/kotlin/org/xbery/artbeams/members/controller/MemberSectionControllerTest.kt; verify end-to-end with scripts/e2e/run_smoke_courses.sh. This addresses the unmet DoD bullets: member access, menu, per-course search and end-to-end verification.
+- (none)
 
 
 ## Later / ideas
 
-- (none)
+- Run idempotent E2E smoke for Courses (Chrome DevTools MCP): exercise member-facing Course menu, course detail, module list, article detail and per-course search using scripts/e2e/run_smoke_courses.sh; capture screenshots and browser logs to iterate on regressions. Rationale: End-to-end verification is still required by the DoD and can be executed once the in-flight admin/member UI work merges. Concrete artifacts: scripts/e2e/run_smoke_courses.sh, scripts/e2e/seed_courses.sql, templates under src/main/resources/templates/member/courses.
