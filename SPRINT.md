@@ -88,7 +88,8 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- (none)
+- Implement Courses admin CRUD and templates (admin/courses): add CourseAdminController, ModuleAdminController, CourseForm, ModuleForm, and templates under src/main/resources/templates/admin/courses; add "Courses" link to admin layout. This directly addresses the unmet DoD bullet: "Administration of Courses is implemented..." and will provide the admin UI required before member-side pages.
+
 
 ## Later / ideas
 
