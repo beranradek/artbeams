@@ -15,6 +15,8 @@ import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
 import org.xbery.artbeams.jooq.schema.tables.Consents
+import org.xbery.artbeams.jooq.schema.tables.CourseModules
+import org.xbery.artbeams.jooq.schema.tables.Courses
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.FaqEntries
 import org.xbery.artbeams.jooq.schema.tables.Localisation
@@ -40,6 +42,8 @@ import org.xbery.artbeams.jooq.schema.tables.records.CategoriesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.CommentsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ConsentsRecord
+import org.xbery.artbeams.jooq.schema.tables.records.CourseModulesRecord
+import org.xbery.artbeams.jooq.schema.tables.records.CoursesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.EntityAccessCountRecord
 import org.xbery.artbeams.jooq.schema.tables.records.FaqEntriesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.LocalisationRecord
@@ -70,9 +74,11 @@ val CONSTRAINT_B: UniqueKey<ArticlesRecord> = Internal.createUniqueKey(Articles.
 val AUTH_CODE_PKEY: UniqueKey<AuthCodeRecord> = Internal.createUniqueKey(AuthCode.AUTH_CODE, DSL.name("auth_code_pkey"), arrayOf(AuthCode.AUTH_CODE.CODE, AuthCode.AUTH_CODE.PURPOSE, AuthCode.AUTH_CODE.USER_ID), true)
 val CONSTRAINT_4: UniqueKey<CategoriesRecord> = Internal.createUniqueKey(Categories.CATEGORIES, DSL.name("CONSTRAINT_4"), arrayOf(Categories.CATEGORIES.ID), true)
 val CONSTRAINT_DC: UniqueKey<CommentsRecord> = Internal.createUniqueKey(Comments.COMMENTS, DSL.name("CONSTRAINT_DC"), arrayOf(Comments.COMMENTS.ID), true)
-val CONSTRAINT_A: UniqueKey<ConfigRecord> = Internal.createUniqueKey(Config.CONFIG, DSL.name("CONSTRAINT_A"), arrayOf(Config.CONFIG.ENTRY_KEY), true)
+val CONSTRAINT_AF: UniqueKey<ConfigRecord> = Internal.createUniqueKey(Config.CONFIG, DSL.name("CONSTRAINT_AF"), arrayOf(Config.CONFIG.ENTRY_KEY), true)
 val CONSTRAINT_DE: UniqueKey<ConsentsRecord> = Internal.createUniqueKey(Consents.CONSENTS, DSL.name("CONSTRAINT_DE"), arrayOf(Consents.CONSENTS.ID), true)
-val CONSTRAINT_3: UniqueKey<EntityAccessCountRecord> = Internal.createUniqueKey(EntityAccessCount.ENTITY_ACCESS_COUNT, DSL.name("CONSTRAINT_3"), arrayOf(EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_TYPE, EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_ID), true)
+val CONSTRAINT_A: UniqueKey<CourseModulesRecord> = Internal.createUniqueKey(CourseModules.COURSE_MODULES, DSL.name("CONSTRAINT_A"), arrayOf(CourseModules.COURSE_MODULES.ID), true)
+val CONSTRAINT_3: UniqueKey<CoursesRecord> = Internal.createUniqueKey(Courses.COURSES, DSL.name("CONSTRAINT_3"), arrayOf(Courses.COURSES.ID), true)
+val CONSTRAINT_34: UniqueKey<EntityAccessCountRecord> = Internal.createUniqueKey(EntityAccessCount.ENTITY_ACCESS_COUNT, DSL.name("CONSTRAINT_34"), arrayOf(EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_TYPE, EntityAccessCount.ENTITY_ACCESS_COUNT.ENTITY_ID), true)
 val CONSTRAINT_8: UniqueKey<FaqEntriesRecord> = Internal.createUniqueKey(FaqEntries.FAQ_ENTRIES, DSL.name("CONSTRAINT_8"), arrayOf(FaqEntries.FAQ_ENTRIES.ID), true)
 val CONSTRAINT_C3A: UniqueKey<LocalisationRecord> = Internal.createUniqueKey(Localisation.LOCALISATION, DSL.name("CONSTRAINT_C3A"), arrayOf(Localisation.LOCALISATION.ENTRY_KEY), true)
 val CONSTRAINT_62: UniqueKey<MediaRecord> = Internal.createUniqueKey(Media.MEDIA, DSL.name("CONSTRAINT_62"), arrayOf(Media.MEDIA.ID), true)
@@ -95,6 +101,7 @@ val CONSTRAINT_6A: UniqueKey<UsersRecord> = Internal.createUniqueKey(Users.USERS
 // -------------------------------------------------------------------------
 
 val PARENT_ID_FK: ForeignKey<CommentsRecord, CommentsRecord> = Internal.createForeignKey(Comments.COMMENTS, DSL.name("parent_id_fk"), arrayOf(Comments.COMMENTS.PARENT_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_DC, arrayOf(Comments.COMMENTS.ID), true)
+val FK_COURSE_MODULES_COURSE_ID: ForeignKey<CourseModulesRecord, CoursesRecord> = Internal.createForeignKey(CourseModules.COURSE_MODULES, DSL.name("fk_course_modules_course_id"), arrayOf(CourseModules.COURSE_MODULES.COURSE_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_3, arrayOf(Courses.COURSES.ID), true)
 val ORDER_FK: ForeignKey<OrderItemsRecord, OrdersRecord> = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("order_fk"), arrayOf(OrderItems.ORDER_ITEMS.ORDER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3, arrayOf(Orders.ORDERS.ID), true)
 val ORDERED_PRODUCT_FK: ForeignKey<OrderItemsRecord, ProductsRecord> = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("ordered_product_fk"), arrayOf(OrderItems.ORDER_ITEMS.PRODUCT_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C, arrayOf(Products.PRODUCTS.ID), true)
 val USER_ACTIVITY_LOG_USER_FK: ForeignKey<UserActivityLogRecord, UsersRecord> = Internal.createForeignKey(UserActivityLog.USER_ACTIVITY_LOG, DSL.name("user_activity_log_user_fk"), arrayOf(UserActivityLog.USER_ACTIVITY_LOG.USER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A, arrayOf(Users.USERS.ID), true)

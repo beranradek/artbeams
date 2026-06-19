@@ -8,12 +8,12 @@ import org.springframework.context.ApplicationContext
 import org.springframework.mock.web.MockHttpServletRequest
 import org.xbery.artbeams.articles.service.ArticleService
 import org.xbery.artbeams.categories.repository.CategoryRepository
+import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.ControllerComponents
-import org.xbery.artbeams.media.repository.ArticleImageRepository
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.repository.CourseRepository
-import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.media.repository.ArticleImageRepository
 
 class ArticleAdminControllerModelTest {
     @Test
@@ -28,7 +28,15 @@ class ArticleAdminControllerModelTest {
         val course = Course(AssetAttributes.EMPTY, "slug", "Course title", null, null, null, null, listOf(Module("m1", "Module 1", null, null, null)))
         every { courseRepository.findAll() } returns listOf(course)
 
-        val controller = ArticleAdminController(articleService, categoryRepository, articleImageRepository, courseRepository, applicationContext, controllerComponents)
+        val controller =
+            ArticleAdminController(
+                articleService,
+                categoryRepository,
+                articleImageRepository,
+                courseRepository,
+                applicationContext,
+                controllerComponents
+            )
 
         val request = MockHttpServletRequest()
         val result = controller.editForm(request, AssetAttributes.EMPTY_ID)

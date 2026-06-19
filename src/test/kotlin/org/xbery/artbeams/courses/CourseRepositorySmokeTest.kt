@@ -10,14 +10,15 @@ import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.repository.CourseRepository
 import org.xbery.artbeams.jooq.schema.tables.records.CoursesRecord
 
-class CourseRepositorySmokeTest : FunSpec({
-    test("course repository is assignable to AssetRepository") {
-        val dsl = mockk<DSLContext>()
-        val mapper = mockk<RecordMapper<CoursesRecord, Course>>()
-        val unmapper = mockk<RecordUnmapper<Course, CoursesRecord>>()
+class CourseRepositorySmokeTest :
+    FunSpec({
+        test("course repository is assignable to AssetRepository") {
+            val dsl = mockk<DSLContext>()
+            val mapper = mockk<RecordMapper<CoursesRecord, Course>>()
+            val unmapper = mockk<RecordUnmapper<Course, CoursesRecord>>()
 
-        val repo = CourseRepository(dsl, mapper, unmapper)
+            val repo = CourseRepository(dsl, mapper, unmapper)
 
-        (repo is org.xbery.artbeams.common.assets.repository.AssetRepository<*, *>).shouldBeTrue()
-    }
-})
+            (repo is org.xbery.artbeams.common.assets.repository.AssetRepository<*, *>).shouldBeTrue()
+        }
+    })

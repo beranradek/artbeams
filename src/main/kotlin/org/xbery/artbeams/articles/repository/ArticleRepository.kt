@@ -75,7 +75,7 @@ class ArticleRepository(
                         .select(ARTICLE_CATEGORY.ARTICLE_ID)
                         .from(ARTICLE_CATEGORY)
                         .where(ARTICLE_CATEGORY.CATEGORY_ID.eq(categoryId))
-            ).and(validityCondition(validityDate))
+                ).and(validityCondition(validityDate))
                 .and(ARTICLES.SHOW_ON_BLOG.isTrue)
                 .and(ARTICLES.DRAFT.isFalse)
                 .and(ARTICLES.COURSE_ID.isNull)
@@ -96,8 +96,7 @@ class ArticleRepository(
                     .eq(slug)
                     .and(validityCondition(Instant.now()))
                     .and(ARTICLES.COURSE_ID.isNull)
-            )
-            .fetchOne(mapper)
+            ).fetchOne(mapper)
 
     fun findBySlugPublic(slug: String): Article? =
         dsl
@@ -122,8 +121,7 @@ class ArticleRepository(
                         .containsIgnoreCase(query)
                         .or(ARTICLES.PEREX.containsIgnoreCase(query))
                         .or(ARTICLES.BODY.containsIgnoreCase(query))
-                )
-                .and(ARTICLES.COURSE_ID.isNull)
+                ).and(ARTICLES.COURSE_ID.isNull)
         return findByCriteriaWithLimit(
             INFO_ATTRIBUTES,
             whereCondition,

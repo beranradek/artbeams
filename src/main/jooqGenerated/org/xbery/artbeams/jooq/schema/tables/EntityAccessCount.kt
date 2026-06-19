@@ -26,7 +26,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
-import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_3
+import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_34
 import org.xbery.artbeams.jooq.schema.tables.records.EntityAccessCountRecord
 
 
@@ -101,7 +101,7 @@ open class EntityAccessCount(
      */
     constructor(): this(DSL.name("entity_access_count"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getPrimaryKey(): UniqueKey<EntityAccessCountRecord> = CONSTRAINT_3
+    override fun getPrimaryKey(): UniqueKey<EntityAccessCountRecord> = CONSTRAINT_34
     override fun `as`(alias: String): EntityAccessCount = EntityAccessCount(DSL.name(alias), this)
     override fun `as`(alias: Name): EntityAccessCount = EntityAccessCount(alias, this)
     override fun `as`(alias: Table<*>): EntityAccessCount = EntityAccessCount(alias.qualifiedName, this)

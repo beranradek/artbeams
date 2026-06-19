@@ -12,6 +12,8 @@ import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
 import org.xbery.artbeams.jooq.schema.tables.Consents
+import org.xbery.artbeams.jooq.schema.tables.CourseModules
+import org.xbery.artbeams.jooq.schema.tables.Courses
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.FaqEntries
 import org.xbery.artbeams.jooq.schema.tables.Localisation
@@ -72,6 +74,16 @@ val CONFIG: Config = Config.CONFIG
  * The table <code>consents</code>.
  */
 val CONSENTS: Consents = Consents.CONSENTS
+
+/**
+ * The table <code>course_modules</code>.
+ */
+val COURSE_MODULES: CourseModules = CourseModules.COURSE_MODULES
+
+/**
+ * The table <code>courses</code>.
+ */
+val COURSES: Courses = Courses.COURSES
 
 /**
  * The table <code>entity_access_count</code>.

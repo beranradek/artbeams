@@ -5,12 +5,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.xbery.artbeams.articles.domain.Article
+import org.xbery.artbeams.articles.repository.ArticleRepository
+import org.xbery.artbeams.categories.repository.CategoryRepository
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.assets.domain.Validity
 import org.xbery.artbeams.products.repository.ProductRepository
 import org.xbery.artbeams.search.repository.SearchIndexRepository
-import org.xbery.artbeams.categories.repository.CategoryRepository
-import org.xbery.artbeams.articles.repository.ArticleRepository
 
 class SearchIndexerTest {
     @Test

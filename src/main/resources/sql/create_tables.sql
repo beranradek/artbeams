@@ -121,37 +121,36 @@ CREATE TABLE products (
 
 CREATE INDEX idx_products_slug ON products (slug);
 
--- courses
--- TODO: Add tables for courses and course modules. These are required for
--- the Courses/Modules feature and should be implemented as part of DB
--- migrations so that jOOQ code generation can produce the corresponding
--- records and table references. Example tables to add:
---
--- CREATE TABLE courses (
---   id VARCHAR(40) NOT NULL PRIMARY KEY,
---   created timestamp DEFAULT NULL,
---   created_by VARCHAR(40) DEFAULT NULL,
---   modified timestamp DEFAULT NULL,
---   modified_by VARCHAR(40) DEFAULT NULL,
---   slug VARCHAR(128) DEFAULT NULL,
---   title VARCHAR(128) DEFAULT NULL,
---   subtitle VARCHAR(256) DEFAULT NULL,
---   listing_image VARCHAR(128) DEFAULT NULL,
---   image VARCHAR(128) DEFAULT NULL,
---   perex VARCHAR(4000) DEFAULT NULL
--- );
---
--- CREATE TABLE course_modules (
---   id VARCHAR(40) NOT NULL PRIMARY KEY,
---   course_id VARCHAR(40) NOT NULL,
---   title VARCHAR(128) DEFAULT NULL,
---   image VARCHAR(128) DEFAULT NULL,
---   short_description VARCHAR(1000) DEFAULT NULL,
---   perex TEXT DEFAULT NULL,
---   sort_order integer NOT NULL DEFAULT 0
--- );
---
--- Add foreign keys and indexes as appropriate.
+-- Courses and course_modules tables
+-- These tables back the Courses/Modules feature. They are also present
+-- in migration scripts located in src/main/resources/sql/migrations so
+-- that production databases and jOOQ code generation see the same schema.
+CREATE TABLE courses (
+  id VARCHAR(40) NOT NULL PRIMARY KEY,
+  created timestamp DEFAULT NULL,
+  created_by VARCHAR(40) DEFAULT NULL,
+  modified timestamp DEFAULT NULL,
+  modified_by VARCHAR(40) DEFAULT NULL,
+  slug VARCHAR(128) DEFAULT NULL,
+  title VARCHAR(128) DEFAULT NULL,
+  subtitle VARCHAR(256) DEFAULT NULL,
+  listing_image VARCHAR(128) DEFAULT NULL,
+  image VARCHAR(128) DEFAULT NULL,
+  perex VARCHAR(4000) DEFAULT NULL
+);
+
+CREATE TABLE course_modules (
+  id VARCHAR(40) NOT NULL PRIMARY KEY,
+  course_id VARCHAR(40) NOT NULL,
+  title VARCHAR(128) DEFAULT NULL,
+  image VARCHAR(128) DEFAULT NULL,
+  short_description VARCHAR(1000) DEFAULT NULL,
+  perex TEXT DEFAULT NULL,
+  sort_order integer NOT NULL DEFAULT 0
+);
+
+ALTER TABLE course_modules ADD CONSTRAINT fk_course_modules_course_id FOREIGN KEY (course_id) REFERENCES courses (id);
+CREATE INDEX idx_course_modules_course_id ON course_modules (course_id);
 
 CREATE TABLE user_access (
   id VARCHAR(40) NOT NULL PRIMARY KEY,
