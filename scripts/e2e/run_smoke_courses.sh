@@ -34,27 +34,34 @@ if [ ! -f "$SEED_FILE" ]; then
   exit 3
 fi
 
-if ! command -v psql >/dev/null 2>&1; then
-  echo "psql not found in PATH. Please install PostgreSQL client and ensure psql is available." >&2
+echo "Running seed SQL: $SEED_FILE"
+# Determine psql command: allow overriding via PSQL_CMD env var, otherwise require psql in PATH
+if [ -n "${PSQL_CMD:-}" ]; then
+  PSQL_CMD="$PSQL_CMD"
+elif command -v psql >/dev/null 2>&1; then
+  PSQL_CMD="psql"
+else
+  echo "psql not found in PATH and PSQL_CMD not set. Please install PostgreSQL client or set PSQL_CMD to a psql-compatible command." >&2
   echo "See sprint-memory.md for example connection settings." >&2
   exit 3
 fi
 
-echo "Running seed SQL: $SEED_FILE"
-# Use whatever psql connection is configured via environment or .pgpass. Keep command minimal so users can override via PSQL env vars.
-PSQL_CMD="${PSQL_CMD:-psql}"
 ${PSQL_CMD} -v ON_ERROR_STOP=1 -f "$SEED_FILE"
 
 # 2) Start application
 echo "[2/8] Starting application (background)"
 # Use start.sh if available; fall back to gradle bootRun
 if [ -x "$ROOT_DIR/start.sh" ]; then
-  (cd "$ROOT_DIR" && nohup "$ROOT_DIR/start.sh" > "$ROOT_DIR/.e2e_app.log" 2>&1 &) 
+  pushd "$ROOT_DIR" >/dev/null
+  nohup "$ROOT_DIR/start.sh" > "$ROOT_DIR/.e2e_app.log" 2>&1 &
   WRAPPER_PID=$!
+  popd >/dev/null
   echo "$WRAPPER_PID" > "$ROOT_DIR/.app.pid"
 else
-  (cd "$ROOT_DIR" && nohup ./gradlew bootRun --args='--spring.profiles.active=local' > "$ROOT_DIR/.e2e_app.log" 2>&1 &)
+  pushd "$ROOT_DIR" >/dev/null
+  nohup ./gradlew bootRun --args='--spring.profiles.active=local' > "$ROOT_DIR/.e2e_app.log" 2>&1 &
   WRAPPER_PID=$!
+  popd >/dev/null
   echo "$WRAPPER_PID" > "$ROOT_DIR/.app.pid"
 fi
 
@@ -81,7 +88,8 @@ for i in $(seq 1 $RETRIES); do
 done
 if [ "$OK" -ne 1 ]; then
   echo "Application did not start in time. Check logs." >&2
-  kill "$APP_PID" || true
+  # best-effort stop
+  kill "$WRAPPER_PID" >/dev/null 2>&1 || true
   exit 4
 fi
 

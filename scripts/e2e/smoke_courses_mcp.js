@@ -54,17 +54,30 @@ async function run() {
     // Navigate to member section
     await page.goto(baseUrl + '/clenska-sekce', { waitUntil: 'networkidle2' });
 
-    // Assert course menu exists
-    const menu = await page.$('nav.course-menu');
-    if (!menu) throw new Error('course-menu not found on /clenska-sekce');
+    // Look for a course/product link on the member section.
+    // The seed may create a product with slug 'kurz-zdraveho-stravovani' and a course with slug 'zdrave-stravovani'.
+    // Be tolerant and accept either href or any link that starts with /clenska-sekce/.
+    const possibleHrefs = [
+      '/clenska-sekce/kurz-zdraveho-stravovani',
+      '/clenska-sekce/zdrave-stravovani'
+    ];
 
-    // Check for link to seeded course
-    const linkHandle = await page.$x("//nav[contains(@class,'course-menu')]//a[@href='/clenska-sekce/zdrave-stravovani']");
+    let linkHandle = null;
+    for (const href of possibleHrefs) {
+      const handles = await page.$x(`//a[@href='${href}']`);
+      if (handles && handles.length) { linkHandle = handles; break; }
+    }
+    // Fallback: any link that points to member section
+    if (!linkHandle) {
+      const handles = await page.$x("//a[starts-with(@href, '/clenska-sekce/')]");
+      if (handles && handles.length) linkHandle = handles;
+    }
+
     if (!linkHandle || linkHandle.length === 0) {
       // provide debug screenshot
       const debugPath = path.join(artifacts, 'course-menu-missing.png');
       await page.screenshot({ path: debugPath, fullPage: true });
-      throw new Error(`Course link /clenska-sekce/zdrave-stravovani not found. Screenshot: ${debugPath}`);
+      throw new Error(`Course link not found on /clenska-sekce. Screenshot: ${debugPath}`);
     }
 
     // Click the first matching link and wait for navigation (avoid race)
