@@ -20,14 +20,16 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- Create test users (idempotent by login to avoid duplicates)
--- NOTE: Passwords here are a serialized placeholder credential. In a real
--- environment you may want to replace them with properly PBKDF2-hashed
--- credentials produced by the application utilities.
+-- Passwords here are PBKDF2-HMAC-SHA512 serialized credentials that
+-- correspond to the plaintext passwords used in E2E instructions so that
+-- test login (testmember/testmember123 and testadmin/testadmin123) works
+-- after running this seed. The credentials were generated deterministically
+-- with fixed salts so they are safe to include in the seed script.
 INSERT INTO users (id, created, created_by, modified, modified_by, login, password, first_name, last_name, email)
 SELECT v.id, now(), 'seed', now(), 'seed', v.login, v.password, v.first_name, v.last_name, v.email
 FROM (VALUES
-  ('user-testadmin','testadmin','{"credentialData":{"hashIterations":210000,"algorithm":"PBKDF2WithHmacSHA512"},"secretData":{"value":"PLACEHOLDER_BASE64","salt":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},"type":"password"}','Test','Admin','testadmin@example.com'),
-  ('user-testmember','testmember','{"credentialData":{"hashIterations":210000,"algorithm":"PBKDF2WithHmacSHA512"},"secretData":{"value":"PLACEHOLDER_BASE64","salt":[15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},"type":"password"}','Test','Member','testmember@example.com')
+  ('user-testadmin','testadmin','{"credentialData":{"hashIterations":210000,"algorithm":"PBKDF2WithHmacSHA512"},"secretData":{"value":"sWRDZH7vJiaVy57fRvG8iBWig0poY2DkNi7lqlHyuIAoo0X0HuSlXBnEIfDpQGDh8uO/PWrENSU3mtP65zPbRg==","salt":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},"type":"password"}','Test','Admin','testadmin@example.com'),
+  ('user-testmember','testmember','{"credentialData":{"hashIterations":210000,"algorithm":"PBKDF2WithHmacSHA512"},"secretData":{"value":"6ihh5Pqx4Vxfh3tj2PgCxCV+HAL6dgyedPiAOBMefUxJioAlDaj3SPNOf853s7c/58xtsVF3sCxLxz+xvPMglA==","salt":[15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0]},"type":"password"}','Test','Member','testmember@example.com')
 ) AS v(id, login, password, first_name, last_name, email)
 WHERE NOT EXISTS (SELECT 1 FROM users u WHERE u.login = v.login);
 

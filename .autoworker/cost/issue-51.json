@@ -9,5 +9,13 @@
     "cost": 0.122716,
     "updated_at": "2026-06-19T08:41:32.303Z"
   },
-  "review": null
+  "review": {
+    "input": 14799,
+    "cached_input": 264448,
+    "cache_write": 0,
+    "output": 2943,
+    "reasoning": 1408,
+    "cost": 0.019013,
+    "updated_at": "2026-06-19T08:45:31.003Z"
+  }
 }
