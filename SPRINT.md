@@ -88,7 +88,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- Implement Courses admin CRUD and templates (admin/courses): add CourseAdminController, ModuleAdminController, CourseForm, ModuleForm, and templates under src/main/resources/templates/admin/courses; add "Courses" link to admin layout. This directly addresses the unmet DoD bullet: "Administration of Courses is implemented..." and will provide the admin UI required before member-side pages.
+- Implement member-facing Course pages, menu integration and per-course search: add src/main/kotlin/org/xbery/artbeams/courses/controller/CourseController.kt, update src/main/kotlin/org/xbery/artbeams/members/controller/MemberSectionController.kt to include courses in the model, and add FreeMarker templates under src/main/resources/templates/member/courses (list.ftl, detail.ftl, module.ftl). Add unit tests in src/test/kotlin/org/xbery/artbeams/courses/controller/CourseControllerTest.kt and src/test/kotlin/org/xbery/artbeams/members/controller/MemberSectionControllerTest.kt; verify end-to-end with scripts/e2e/run_smoke_courses.sh. This addresses the unmet DoD bullets: member access, menu, per-course search and end-to-end verification.
 
 
 ## Later / ideas
