@@ -88,11 +88,8 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- Script to seed end-to-end testing data for agentic evaluating of this feature, creating new user with ADMIN role and new user with MEMBER role (including their test passwords), new Product assigned with Course with Modules and related Articles.
-- Administration of Courses and Modules.
-- Article has possibility to be assigned to a Course within existing article administration/editor.
-- Member section enhanced with Courses (and their inner Modules and Articles within them).
+- Implement idempotent end-to-end browser-driven smoke script that boots the app in 'local' profile, seeds DB (scripts/seed_courses_e2e.sql) and performs Chrome DevTools MCP journeys that log in as `testmember`, verify the course menu (nav.course-menu), visit `/clenska-sekce/zdrave-stravovani` and assert module/article lists. (Grounding: scripts/seed_courses_e2e.sql, start.sh, sprint-memory.md Task 7.)
 
 ## Later / ideas
 
-- Implement idempotent end-to-end browser-driven smoke script that boots the app in 'local' profile, seeds DB and performs Chrome DevTools journeys (justification: automates manual E2E verification and will be used by the MCP-based evaluation).
+- (none)
