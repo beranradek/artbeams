@@ -88,7 +88,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- Implement idempotent end-to-end browser-driven smoke script that boots the app in 'local' profile, seeds DB (scripts/seed_courses_e2e.sql) and performs Chrome DevTools MCP journeys that log in as `testmember`, verify the course menu (nav.course-menu), visit `/clenska-sekce/zdrave-stravovani` and assert module/article lists. (Grounding: scripts/seed_courses_e2e.sql, start.sh, sprint-memory.md Task 7.)
+- (none)
 
 ## Later / ideas
 

@@ -1,11 +1,17 @@
 {
   "version": 1,
   "status": "active",
-  "verdict": "in_progress",
-  "setBy": "system",
-  "updatedAt": "2026-06-14T16:00:30.517Z",
+  "verdict": "needs_fixes",
+  "setBy": "verifier",
+  "updatedAt": "2026-06-19T14:30:11.942Z",
   "evidence": [],
-  "unmet": [],
-  "notes": "",
+  "unmet": [
+    "Administration of Courses is implemented, allowing administrators to create and manage Courses (sets of articles) and assign them to products, create list of modules within this course - each module with image, title, short description and perex content (introduction text).",
+    "User with member role who purchased a product that has an assigned course can access those article sets and their articles in his member section once logged in. Member section will have simple top menu before the tiles of products (visible if some course is available).",
+    "Access to Course works end-to-end when member user logs into member section, and can see menu with available Courses, visit their details up to nested article details.",
+    "User logged in member section can search per each Course, in all Courses he has access to, and see the articles in search results. Content from the private article set is not pre-indexed. User can search separately within each Course via its search form. Results from publicly indexed articles or from another Courses are not displayed.",
+    "End-to-end test the complete application by running it locally, with idempotent seed script for filling all data needed to be present in database for full testing. Use Chrome DevTools MCP tools for evaluation of all the user journeys like the humans do through the typing, clicking, seeing (taking screenshots), observing application logs and errors, network traffic and console errors in the browser."
+  ],
+  "notes": "Gradle unit/integration tests passed (./gradlew test). Backend pieces for Courses exist: domain, repository stub, CourseService, ModuleService, Article editor supports course/module assignment, and SearchIndexer explicitly skips course-assigned articles. However, admin UI for managing Courses (CourseAdminController and templates), CourseController/routes and member-section UI integration (course menu, course detail, per-course search) are not present, and end-to-end browser-driven verification was not executed. Therefore several DoD bullets remain unfulfilled.",
   "blockers": []
 }
