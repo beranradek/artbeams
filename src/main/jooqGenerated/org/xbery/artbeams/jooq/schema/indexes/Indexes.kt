@@ -13,6 +13,7 @@ import org.xbery.artbeams.jooq.schema.tables.AuthCode
 import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Consents
+import org.xbery.artbeams.jooq.schema.tables.CourseModules
 import org.xbery.artbeams.jooq.schema.tables.FaqEntries
 import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
@@ -51,6 +52,7 @@ val IDX_COMMENTS_STATE: Index = Internal.createIndex(DSL.name("idx_comments_stat
 val IDX_CONSENTS_LOGIN: Index = Internal.createIndex(DSL.name("idx_consents_login"), Consents.CONSENTS, arrayOf(Consents.CONSENTS.LOGIN), false)
 val IDX_CONSENTS_LOGIN_TYPE_VALIDITY: Index = Internal.createIndex(DSL.name("idx_consents_login_type_validity"), Consents.CONSENTS, arrayOf(Consents.CONSENTS.LOGIN, Consents.CONSENTS.CONSENT_TYPE, Consents.CONSENTS.VALID_FROM, Consents.CONSENTS.VALID_TO), false)
 val IDX_CONSENTS_VALIDITY: Index = Internal.createIndex(DSL.name("idx_consents_validity"), Consents.CONSENTS, arrayOf(Consents.CONSENTS.VALID_FROM, Consents.CONSENTS.VALID_TO), false)
+val IDX_COURSE_MODULES_COURSE_ID: Index = Internal.createIndex(DSL.name("idx_course_modules_course_id"), CourseModules.COURSE_MODULES, arrayOf(CourseModules.COURSE_MODULES.COURSE_ID), false)
 val IDX_FAQ_ENTRIES_ENTITY: Index = Internal.createIndex(DSL.name("idx_faq_entries_entity"), FaqEntries.FAQ_ENTRIES, arrayOf(FaqEntries.FAQ_ENTRIES.ENTITY_TYPE, FaqEntries.FAQ_ENTRIES.ENTITY_ID), false)
 val IDX_FAQ_ENTRIES_ENTITY_SORT: Index = Internal.createIndex(DSL.name("idx_faq_entries_entity_sort"), FaqEntries.FAQ_ENTRIES, arrayOf(FaqEntries.FAQ_ENTRIES.ENTITY_TYPE, FaqEntries.FAQ_ENTRIES.ENTITY_ID, FaqEntries.FAQ_ENTRIES.SORT_ORDER), false)
 val IDX_MEDIA_FILENAME: Index = Internal.createIndex(DSL.name("idx_media_filename"), Media.MEDIA, arrayOf(Media.MEDIA.FILENAME), false)

@@ -26,7 +26,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import org.xbery.artbeams.jooq.schema.DefaultSchema
-import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_A
+import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_AF
 import org.xbery.artbeams.jooq.schema.tables.records.ConfigRecord
 
 
@@ -96,7 +96,7 @@ open class Config(
      */
     constructor(): this(DSL.name("config"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
-    override fun getPrimaryKey(): UniqueKey<ConfigRecord> = CONSTRAINT_A
+    override fun getPrimaryKey(): UniqueKey<ConfigRecord> = CONSTRAINT_AF
     override fun `as`(alias: String): Config = Config(DSL.name(alias), this)
     override fun `as`(alias: Name): Config = Config(alias, this)
     override fun `as`(alias: Table<*>): Config = Config(alias.qualifiedName, this)

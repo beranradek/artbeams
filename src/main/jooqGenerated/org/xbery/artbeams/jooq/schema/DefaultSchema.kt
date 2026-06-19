@@ -17,6 +17,8 @@ import org.xbery.artbeams.jooq.schema.tables.Categories
 import org.xbery.artbeams.jooq.schema.tables.Comments
 import org.xbery.artbeams.jooq.schema.tables.Config
 import org.xbery.artbeams.jooq.schema.tables.Consents
+import org.xbery.artbeams.jooq.schema.tables.CourseModules
+import org.xbery.artbeams.jooq.schema.tables.Courses
 import org.xbery.artbeams.jooq.schema.tables.EntityAccessCount
 import org.xbery.artbeams.jooq.schema.tables.FaqEntries
 import org.xbery.artbeams.jooq.schema.tables.Localisation
@@ -89,6 +91,16 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
      * The table <code>consents</code>.
      */
     val CONSENTS: Consents get() = Consents.CONSENTS
+
+    /**
+     * The table <code>course_modules</code>.
+     */
+    val COURSE_MODULES: CourseModules get() = CourseModules.COURSE_MODULES
+
+    /**
+     * The table <code>courses</code>.
+     */
+    val COURSES: Courses get() = Courses.COURSES
 
     /**
      * The table <code>entity_access_count</code>.
@@ -191,6 +203,8 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         Comments.COMMENTS,
         Config.CONFIG,
         Consents.CONSENTS,
+        CourseModules.COURSE_MODULES,
+        Courses.COURSES,
         EntityAccessCount.ENTITY_ACCESS_COUNT,
         FaqEntries.FAQ_ENTRIES,
         Localisation.LOCALISATION,

@@ -49,8 +49,7 @@ data class Article(
             keywords = edited.keywords,
             showOnBlog = edited.showOnBlog,
             draft = edited.draft,
-            editor = edited.editor
-            ,
+            editor = edited.editor,
             courseId = edited.courseId,
             moduleId = edited.moduleId
         )
@@ -91,20 +90,20 @@ data class Article(
         val Empty: Article =
             Article(
                 AssetAttributes.EMPTY,
-            Validity.Empty,
-            null,
-            "",
-            "New article",
-            null,
-            "",
-            "",
-            "",
-            "",
-            true,
-            false,
-            "markdown",
-            null,
-            null
+                Validity.Empty,
+                null,
+                "",
+                "New article",
+                null,
+                "",
+                "",
+                "",
+                "",
+                true,
+                false,
+                "markdown",
+                null,
+                null
             )
         val EmptyEdited: EditedArticle = Empty.toEdited(ArrayList<String>())
     }
