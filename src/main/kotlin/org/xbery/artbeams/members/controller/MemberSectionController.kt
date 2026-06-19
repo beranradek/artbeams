@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest
 class MemberSectionController(
     private val userProductService: UserProductService,
     private val orderService: OrderService,
+    private val courseService: org.xbery.artbeams.courses.service.CourseService,
     common: ControllerComponents
 ) : BaseController(common) {
 
@@ -28,6 +29,12 @@ class MemberSectionController(
             request,
             "userProducts" to userProducts
         )
+        // Add courses available for the logged user to the model (if logged in)
+        val loggedUser = model["_loggedUser"] as? org.xbery.artbeams.users.domain.User
+        if (loggedUser != null) {
+            val courses = courseService.findCoursesForUser(loggedUser.common.id)
+            model["courses"] = courses
+        }
         return ModelAndView("member/memberSection", model)
     }
 
