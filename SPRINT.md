@@ -88,7 +88,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- Script to seed end-to-end testing data for agentic evaluating of this feature, creating new user with ADMIN role and new user with MEMBER role (including their test passwords), new Product assigned with Course with Modules and related Articles.   
+- Script to seed end-to-end testing data for agentic evaluating of this feature, creating new user with ADMIN role and new user with MEMBER role (including their test passwords), new Product assigned with Course with Modules and related Articles.
 - Administration of Courses and Modules.
 - Article has possibility to be assigned to a Course within existing article administration/editor.
 - Member section enhanced with Courses (and their inner Modules and Articles within them).
