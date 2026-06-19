@@ -180,6 +180,18 @@
 
     <div class="member-layout-grid">
         <div>
+            <#-- Courses menu (if user has courses) -->
+            <#if courses?has_content>
+                <div id="menu-kurz">
+                    <h2>Kurzy</h2>
+                    <ul>
+                        <#list courses as c>
+                            <li><a href="/clenska-sekce/courses/${c.slug}">${c.title}</a></li>
+                        </#list>
+                    </ul>
+                </div>
+            </#if>
+
             <#if userProducts?has_content>
                 <div class="products-grid">
                     <#list userProducts as userProduct>
