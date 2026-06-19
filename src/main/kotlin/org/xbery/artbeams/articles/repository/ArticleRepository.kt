@@ -131,6 +131,37 @@ class ArticleRepository(
         )
     }
 
+    /**
+     * Searches articles within a specific course. Unlike findByQuery this method
+     * targets articles that belong to the given course (ARTICLES.COURSE_ID = courseId).
+     *
+     * API Docs / Notes:
+     * - Mirrors findByQuery but replaces the ARTICLES.COURSE_ID.isNull condition
+     *   with ARTICLES.COURSE_ID.eq(courseId) so course-bound articles are
+     *   included in the results.
+     */
+    fun findByQueryForCourse(courseId: String, query: String, limit: Int): List<Article> {
+        if (query.trim().isEmpty()) {
+            return emptyList()
+        }
+        val validityDate = Instant.now()
+        val whereCondition: Condition =
+            validityCondition(validityDate)
+                .and(
+                    ARTICLES.TITLE
+                        .containsIgnoreCase(query)
+                        .or(ARTICLES.PEREX.containsIgnoreCase(query))
+                        .or(ARTICLES.BODY.containsIgnoreCase(query))
+                ).and(ARTICLES.COURSE_ID.eq(courseId))
+        return findByCriteriaWithLimit(
+            INFO_ATTRIBUTES,
+            whereCondition,
+            defaultOrdering(),
+            limit,
+            articleInfoMapper()
+        )
+    }
+
     fun findArticlesWithExternalIds(): List<Article> =
         dsl
             .selectFrom(table)
