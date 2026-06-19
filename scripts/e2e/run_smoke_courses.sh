@@ -25,7 +25,13 @@ fi
 # Keep artifacts beside this script for predictable paths regardless of ROOT_DIR
 ARTIFACTS_DIR="$SCRIPT_DIR/artifacts"
 
+# Ensure a clean artifacts directory for each run to avoid false-negative CI failures
 mkdir -p "$ARTIFACTS_DIR"
+# Remove previous run artifacts (error-*.png, course-detail.png, course-detail-missing.png, course-menu-missing.png)
+rm -f "$ARTIFACTS_DIR"/error-*.png || true
+rm -f "$ARTIFACTS_DIR"/course-detail*.png || true
+rm -f "$ARTIFACTS_DIR"/course-menu-missing.png || true
+
 
 echo "[1/8] Seeding test data using psql"
 SEED_FILE="$ROOT_DIR/scripts/seed_courses_e2e.sql"
@@ -41,8 +47,9 @@ if [ -n "${PSQL_CMD:-}" ]; then
 elif command -v psql >/dev/null 2>&1; then
   PSQL_CMD="psql"
 else
-  echo "psql not found in PATH and PSQL_CMD not set. Please install PostgreSQL client or set PSQL_CMD to a psql-compatible command." >&2
-  echo "See sprint-memory.md for example connection settings." >&2
+  echo "psql not found in PATH and PSQL_CMD not set. Please install the PostgreSQL client or set PSQL_CMD to a psql-compatible command." >&2
+  echo "Example: export PSQL_CMD='psql -U artbeams_user -d artbeams' and then re-run this script." >&2
+  echo "See sprint-memory.md for more connection settings and local DB setup." >&2
   exit 3
 fi
 
@@ -119,6 +126,33 @@ fi
 echo "Running browser script"
 node "$ROOT_DIR/scripts/e2e/smoke_courses_mcp.js" --baseUrl=http://localhost:8080 --artifacts="$ARTIFACTS_DIR"
 RC=$?
+
+# Check application logs for uncaught exceptions / stack traces
+APP_LOG="$ROOT_DIR/.e2e_app.log"
+if [ -f "$APP_LOG" ]; then
+  if grep -E "Exception in thread|java.lang\.|Traceback \(most recent call last\)" "$APP_LOG" >/dev/null 2>&1; then
+    echo "Detected stack trace or exception in application log ($APP_LOG)" >&2
+    echo "Tail of $APP_LOG:" >&2
+    tail -n 200 "$APP_LOG" >&2 || true
+    RC=9
+  fi
+fi
+
+# Verify artifact expectations: no error-*.png and course-detail.png exists
+if ls "$ARTIFACTS_DIR"/error-*.png >/dev/null 2>&1; then
+  echo "Found error screenshots in artifacts directory:" >&2
+  ls -l "$ARTIFACTS_DIR"/error-*.png >&2 || true
+  RC=10
+fi
+
+if [ ! -f "$ARTIFACTS_DIR/course-detail.png" ]; then
+  echo "Expected artifact course-detail.png not found in $ARTIFACTS_DIR" >&2
+  # If there is a course-detail-missing screenshot, move it to artifacts/course-detail-missing.png for debugging
+  if [ -f "$ARTIFACTS_DIR/course-detail-missing.png" ]; then
+    echo "Found course-detail-missing.png; leaving it in artifacts for inspection." >&2
+  fi
+  RC=11
+fi
 
 echo "[5/8] Verifying idempotence via SQL checks"
 USER_COUNT=$(${PSQL_CMD} -t -A -c "SELECT COUNT(*) FROM users WHERE login = 'testmember';" 2>/dev/null || echo "0")

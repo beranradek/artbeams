@@ -59,7 +59,9 @@ async function run() {
     // Be tolerant and accept either href or any link that starts with /clenska-sekce/.
     const possibleHrefs = [
       '/clenska-sekce/kurz-zdraveho-stravovani',
-      '/clenska-sekce/zdrave-stravovani'
+      '/clenska-sekce/zdrave-stravovani',
+      '/clenska-sekce/courses/kurz-zdraveho-stravovani',
+      '/clenska-sekce/courses/zdrave-stravovani'
     ];
 
     let linkHandle = null;
