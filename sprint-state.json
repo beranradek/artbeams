@@ -3,7 +3,7 @@
   "status": "active",
   "verdict": "needs_fixes",
   "setBy": "verifier",
-  "updatedAt": "2026-06-20T11:02:31.110Z",
+  "updatedAt": "2026-06-20T12:01:16.590Z",
   "evidence": [],
   "unmet": [
     "Administration of Courses is implemented, allowing administrators to create and manage Courses (sets of articles) and assign them to products, create list of modules within this course - each module with image, title, short description and perex content (introduction text).",
@@ -20,7 +20,7 @@
       "summary": "Set up a local PostgreSQL dev DB and run scripts/seed_courses_e2e.sql so the E2E smoke for Courses can run",
       "discoveredBy": "planner",
       "issue": 75,
-      "status": "open"
+      "status": "abandoned"
     }
   ]
 }
