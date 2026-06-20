@@ -65,13 +65,8 @@ or via an end-to-end test. -->
 - Administration of Courses is implemented, allowing administrators to create and manage Courses (sets of articles) and assign them to products, create list of modules within this course - each module with image, title, short description and perex content (introduction text).
 - Article has possibility to be assigned to a course within existing article administration/editor.
 - User with member role who purchased a product that has an assigned course can access those article sets and their articles in his member section once logged in. Member section will have simple top menu before the tiles of products (visible if some course is available).
-- Access to Course works end-to-end when member user logs into member section, and can see menu with available Courses, visit their details up to nested article details.
+- Access to Course works when member user logs into member section, and can see menu with available Courses, visit their details up to nested article details.
 - User logged in member section can search per each Course, in all Courses he has access to, and see the articles in search results. Content from the private article set is not pre-indexed. User can search separately within each Course via its search form. Results from publicly indexed articles or from another Courses are not displayed.  
-
-End-to-end test the complete application by running it locally, with idempotent seed script for filling all data needed
-to be present in database for full testing. Use Chrome DevTools MCP tools for evaluation
-of all the user journeys like the humans do through the typing, clicking, seeing (taking screenshots),
-observing application logs and errors, network traffic and console errors in the browser.
 
 ## Failure conditions
 <!-- Bulleted list of binary-evaluable checks that mean the sprint goal is still failing. 
