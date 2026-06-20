@@ -88,7 +88,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- (none)
+- Add unit tests for Courses admin controllers and member menu presence
 
 
 ## Later / ideas
