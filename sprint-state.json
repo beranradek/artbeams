@@ -3,7 +3,7 @@
   "status": "active",
   "verdict": "needs_fixes",
   "setBy": "verifier",
-  "updatedAt": "2026-06-19T14:30:11.942Z",
+  "updatedAt": "2026-06-20T11:02:31.110Z",
   "evidence": [],
   "unmet": [
     "Administration of Courses is implemented, allowing administrators to create and manage Courses (sets of articles) and assign them to products, create list of modules within this course - each module with image, title, short description and perex content (introduction text).",
@@ -13,5 +13,14 @@
     "End-to-end test the complete application by running it locally, with idempotent seed script for filling all data needed to be present in database for full testing. Use Chrome DevTools MCP tools for evaluation of all the user journeys like the humans do through the typing, clicking, seeing (taking screenshots), observing application logs and errors, network traffic and console errors in the browser."
   ],
   "notes": "Gradle unit/integration tests passed (./gradlew test). Backend pieces for Courses exist: domain, repository stub, CourseService, ModuleService, Article editor supports course/module assignment, and SearchIndexer explicitly skips course-assigned articles. However, admin UI for managing Courses (CourseAdminController and templates), CourseController/routes and member-section UI integration (course menu, course detail, per-course search) are not present, and end-to-end browser-driven verification was not executed. Therefore several DoD bullets remain unfulfilled.",
-  "blockers": []
+  "blockers": [
+    {
+      "id": "provision-local-postgres-and-run-courses-e2e-seed",
+      "kind": "deployment",
+      "summary": "Set up a local PostgreSQL dev DB and run scripts/seed_courses_e2e.sql so the E2E smoke for Courses can run",
+      "discoveredBy": "planner",
+      "issue": 75,
+      "status": "open"
+    }
+  ]
 }
