@@ -88,9 +88,9 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- (none)
+- Run idempotent E2E smoke for Courses (Chrome DevTools MCP): exercise member-facing Course menu, course detail, module list, article detail and per-course search using scripts/e2e/run_smoke_courses.sh; capture screenshots and browser logs to iterate on regressions. Rationale: End-to-end verification is still required by the DoD and can be executed once the in-flight admin/member UI work merges. Concrete artifacts: scripts/e2e/run_smoke_courses.sh, scripts/e2e/smoke_courses_mcp.js, scripts/seed_courses_e2e.sql, templates under src/main/resources/templates/member/courses.
 
 
 ## Later / ideas
 
-- Run idempotent E2E smoke for Courses (Chrome DevTools MCP): exercise member-facing Course menu, course detail, module list, article detail and per-course search using scripts/e2e/run_smoke_courses.sh; capture screenshots and browser logs to iterate on regressions. Rationale: End-to-end verification is still required by the DoD and can be executed once the in-flight admin/member UI work merges. Concrete artifacts: scripts/e2e/run_smoke_courses.sh, scripts/e2e/seed_courses.sql, templates under src/main/resources/templates/member/courses.
+- (none)
