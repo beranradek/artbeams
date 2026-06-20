@@ -424,27 +424,6 @@ interface CourseService {
 
 ---
 
-### Task 7: End-to-end seed data script
-
-**Files:**
-- Create: `scripts/seed_courses_e2e.sql`
-
-- [ ] Write idempotent SQL seed script that creates:
-  - Admin user: login `testadmin`, password hash for `testadmin123` (use existing PBKDF2 pattern — look at existing seed or user creation code for the hash format), role ADMIN
-  - Member user: login `testmember`, hashed password `testmember123`, role MEMBER
-  - One Product: `Kurz zdravého stravování`
-  - One Course: `zdravé-stravování`, assigned to the product, with description and perex
-  - Two Modules: `Základy výživy` (sort_order 1), `Praktické recepty` (sort_order 2)
-  - Three Articles assigned to the course — two in Module 1, one in Module 2 (course articles, not public)
-  - user_product entry linking testmember to the product
-  - order + order_item for testmember so `UserProductRepository.findUserProducts` returns the product
-
-- [ ] Document usage at top of script: `-- psql -U artbeams_user -d artbeams -f scripts/seed_courses_e2e.sql`
-- [ ] Run the script against local DB and verify member login shows the course menu
-- [ ] Commit: `chore: add e2e seed data for courses feature`
-
----
-
 ## Security Checklist
 
 - [ ] Course articles (`article.courseId != null`) are never returned by `articleRepository.findLatest()` / public endpoints without an access check
@@ -471,7 +450,4 @@ psql -U artbeams_user -d artbeams -f src/main/resources/sql/migrations/add_cours
 ./gradlew bootRun --args='--spring.profiles.active=local'
 # Open: http://localhost:8080/clenska-sekce (login as testmember)
 # Open: http://localhost:8080/admin/courses (login as testadmin)
-
-# Run seed data:
-psql -U artbeams_user -d artbeams -f scripts/seed_courses_e2e.sql
 ```
