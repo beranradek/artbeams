@@ -1,6 +1,13 @@
 {
   "rejections": [
     {
+      "title": "Add scripts/e2e/package.json and npm smoke script for Courses E2E",
+      "reason": "graded_out",
+      "detail": "grade 5/5, keep=false",
+      "runId": "plan-beranradek-artbeams-1782066218199",
+      "at": "2026-06-21T18:25:22.815Z"
+    },
+    {
       "title": "Add admin-side unit tests for CourseAdminController and templates",
       "reason": "graded_out",
       "detail": "grade 5/5, keep=false",
@@ -8,5 +15,5 @@
       "at": "2026-06-21T17:01:49.029Z"
     }
   ],
-  "updatedAt": "2026-06-21T17:01:49.029Z"
+  "updatedAt": "2026-06-21T18:25:22.815Z"
 }
