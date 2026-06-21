@@ -1,0 +1,12 @@
+{
+  "run_id": "plan-beranradek-artbeams-1782066218199",
+  "planning": {
+    "input": 27368,
+    "cached_input": 219136,
+    "cache_write": 0,
+    "output": 2376,
+    "reasoning": 2176,
+    "cost": 0.021424,
+    "updated_at": "2026-06-21T18:25:22.815Z"
+  }
+}
