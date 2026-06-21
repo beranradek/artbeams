@@ -87,4 +87,38 @@ _(none yet)_
 
 ## Later / ideas
 
-_(none yet)_
+- Stabilize and add automated tests to prevent unauthorized access to Course articles
+
+  Rationale: Failure condition requires that "Articles from course are publicly accessible or accessible to users who have not purchased the associated product" must never occur. Add focused tests that assert only users who have purchased an associated product see course menus, course detail pages and course-assigned articles.
+
+  Files to inspect/extend:
+  - src/main/kotlin/org/xbery/artbeams/members/controller/MemberSectionController.kt
+  - src/main/kotlin/org/xbery/artbeams/courses/controller/CourseController.kt
+  - src/test/kotlin/org/xbery/artbeams/courses/service/CourseServiceIntegrationTest.kt
+  - src/test/kotlin/org/xbery/artbeams/courses/controller/CourseControllerTest.kt
+  - src/test/kotlin/org/xbery/artbeams/members/controller/MemberSectionControllerTest.kt
+
+  Short idea: add new Kotest cases that simulate a user WITHOUT the product and assert CourseService.findCoursesForUser returns empty and that CourseController.listCourses does not render course menu. Also add an integration-style test that loads CourseRepository with in-memory records and asserts article search for a course filters out public articles (see CourseServiceIntegrationTest.kt).
+
+- Harden e2e MCP smoke script to avoid manual DB steps and make idempotent
+
+  Rationale: there are existing scripts and a Chrome DevTools MCP runner used by CI and local dev. Make the e2e runner self-contained and tolerant to pre-existing data to reduce human intervention and flakiness.
+
+  Files to inspect/extend:
+  - scripts/e2e/run_smoke_courses.sh
+  - scripts/e2e/smoke_courses_mcp.js
+  - scripts/seed_courses_e2e.sql
+  - scripts/e2e/README.md
+
+  Short idea: modify the shell script and MCP runner to skip or no-op when SEED data already exists (idempotent checks), and avoid requiring psql if possible by seeding via application HTTP admin endpoints or existing repository test fixtures where feasible.
+
+- Add admin-side controller/template unit tests for Courses CRUD
+
+  Rationale: Administrators must be able to create and manage Courses (DoD). There is an open implementation issue for admin CRUD (#59). Once implemented, add MockMvc/Kotest tests that verify form submission, product assignment and module creation.
+
+  Files to inspect/extend:
+  - src/main/kotlin/org/xbery/artbeams/courses/admin/CourseAdminController.kt (planned location / sprint-memory.md)
+  - src/main/resources/templates/admin/courses/
+  - src/test/kotlin/org/xbery/artbeams/courses/admin/
+
+  Short idea: when admin controller exists, create tests mirroring existing ArticleAdminController tests (see src/test/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminControllerModelTest.kt) to validate binding of courseId on article edit form, module list CRUD, and product assignment.
