@@ -22,4 +22,14 @@ interface CourseService {
      * must only contain articles that belong to the given course.
      */
     fun searchArticlesInCourse(courseId: String, q: String, limit: Int): List<Article>
+
+    /**
+     * Saves course metadata from admin UI.
+     */
+    fun saveCourse(edited: org.xbery.artbeams.courses.admin.EditedCourse, ctx: org.xbery.artbeams.common.context.OperationCtx): Course?
+
+    /**
+     * Deletes a course by id.
+     */
+    fun deleteCourse(id: String, ctx: org.xbery.artbeams.common.context.OperationCtx): Boolean
 }
