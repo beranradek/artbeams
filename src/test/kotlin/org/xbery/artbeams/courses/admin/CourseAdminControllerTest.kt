@@ -5,25 +5,23 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockHttpServletRequest
+import org.xbery.artbeams.common.access.service.UserAccessService
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.ControllerComponents
-import org.xbery.artbeams.common.access.service.UserAccessService
+import org.xbery.artbeams.common.overview.Pagination
+import org.xbery.artbeams.common.overview.ResultPage
 import org.xbery.artbeams.config.service.ConfigService
-import org.xbery.artbeams.localisation.repository.LocalisationRepository
-import org.xbery.artbeams.users.service.LoginService
-import freemarker.template.Configuration as FmConfiguration
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.repository.CourseRepository
 import org.xbery.artbeams.courses.service.CourseService
-import org.xbery.artbeams.products.repository.ProductRepository
-import org.xbery.artbeams.common.overview.Pagination
-import org.xbery.artbeams.common.overview.ResultPage
+import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.products.domain.Product
-import org.springframework.http.HttpStatus
-import net.formio.FormMapping
-import net.formio.FormData
+import org.xbery.artbeams.products.repository.ProductRepository
+import org.xbery.artbeams.users.service.LoginService
+import freemarker.template.Configuration as FmConfiguration
 
 class CourseAdminControllerTest {
     @Test
@@ -58,6 +56,7 @@ class CourseAdminControllerTest {
         Assertions.assertEquals("admin/courses/courseEdit", mv.viewName)
         // editForm is a FormMapping filled with EditedCourse; access data via reflection
         val editForm = mv.model["editForm"]!!
+
         fun extractFormData(mapping: Any): Any? {
             val methodCandidates = listOf("getFilledObject", "getData", "getFormData", "getValue", "getForm", "getFormObject")
             for (m in methodCandidates) {
@@ -83,9 +82,13 @@ class CourseAdminControllerTest {
         // Debug info in case reflection mapping differs
         println("editForm class=${editForm.javaClass.name}")
         println("editForm methods=${editForm.javaClass.methods.map { it.name }}")
-        println("extracted data=${data?.javaClass?.name} -> ${data}")
+        println("extracted data=${data?.javaClass?.name} -> $data")
         val id = data?.javaClass?.getMethod("getId")?.invoke(data)
-        Assertions.assertEquals(AssetAttributes.EMPTY_ID, id, "debug: editForm class=${editForm.javaClass.name} methods=${editForm.javaClass.methods.map { it.name }} extracted=${data}")
+        Assertions.assertEquals(
+            AssetAttributes.EMPTY_ID,
+            id,
+            "debug: editForm class=${editForm.javaClass.name} methods=${editForm.javaClass.methods.map { it.name }} extracted=$data"
+        )
     }
 
     @Test
@@ -104,6 +107,7 @@ class CourseAdminControllerTest {
         val mv = result as org.springframework.web.servlet.ModelAndView
         Assertions.assertEquals("admin/courses/courseEdit", mv.viewName)
         val editForm = mv.model["editForm"]!!
+
         fun extractFormData(mapping: Any): Any? {
             val methodCandidates = listOf("getFilledObject", "getData", "getFormData", "getValue", "getForm", "getFormObject")
             for (m in methodCandidates) {
@@ -128,9 +132,13 @@ class CourseAdminControllerTest {
         val data = extractFormData(editForm)
         println("editForm class=${editForm.javaClass.name}")
         println("editForm methods=${editForm.javaClass.methods.map { it.name }}")
-        println("extracted data=${data?.javaClass?.name} -> ${data}")
+        println("extracted data=${data?.javaClass?.name} -> $data")
         val title = data?.javaClass?.getMethod("getTitle")?.invoke(data)
-        Assertions.assertEquals("My Course Title", title, "debug: editForm class=${editForm.javaClass.name} methods=${editForm.javaClass.methods.map { it.name }} extracted=${data}")
+        Assertions.assertEquals(
+            "My Course Title",
+            title,
+            "debug: editForm class=${editForm.javaClass.name} methods=${editForm.javaClass.methods.map { it.name }} extracted=$data"
+        )
     }
 
     @Test
