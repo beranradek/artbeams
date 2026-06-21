@@ -10,6 +10,7 @@ import org.xbery.artbeams.common.assets.repository.AssetRepository
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.jooq.schema.tables.Courses
 import org.xbery.artbeams.jooq.schema.tables.records.CoursesRecord
+import org.xbery.artbeams.courses.repository.ModuleRepository
 
 /**
  * Course repository.
@@ -24,12 +25,13 @@ import org.xbery.artbeams.jooq.schema.tables.records.CoursesRecord
 class CourseRepository(
     override val dsl: DSLContext,
     override val mapper: RecordMapper<CoursesRecord, Course>,
-    override val unmapper: RecordUnmapper<Course, CoursesRecord>
+    override val unmapper: RecordUnmapper<Course, CoursesRecord>,
+    private val moduleRepository: ModuleRepository
 ) : AssetRepository<Course, CoursesRecord>(
         dsl,
         mapper,
         unmapper
-    ) {
+) {
     // Table reference for courses. Generated via jOOQ when SQL schema includes
     // courses and course_modules tables (see src/main/resources/sql/create_tables.sql).
     // NOTE: This file assumes jOOQ-generated classes CoursesRecord and COURSES
@@ -42,7 +44,16 @@ class CourseRepository(
     override val table: Table<CoursesRecord> = Courses.COURSES
     override val idField: Field<String?> = Courses.COURSES.ID
 
-    // TODO: Implement mapping logic to load course_modules rows and populate
-    // the Course.modules list. Currently modules may need to be loaded via a
-    // separate repository method that joins COURSE_MODULES by course_id.
+    // Populate modules for courses using ModuleRepository.
+    // The ModuleRepository is a lightweight stub until DB migrations are
+    // available and a proper JOOQ implementation replaces it.
+    override fun findById(id: String): Course? {
+        val course = super.findById(id) ?: return null
+        return course.copy(modules = moduleRepository.findByCourseId(course.id))
+    }
+
+    override fun findAll(): List<Course> =
+        super.findAll().map { course ->
+            course.copy(modules = moduleRepository.findByCourseId(course.id))
+        }
 }

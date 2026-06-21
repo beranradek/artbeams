@@ -1,0 +1,13 @@
+{
+  "issue": 81,
+  "implementation": {
+    "input": 94155,
+    "cached_input": 501760,
+    "cache_write": 0,
+    "output": 3882,
+    "reasoning": 1472,
+    "cost": 0.046791,
+    "updated_at": "2026-06-21T06:10:00.060Z"
+  },
+  "review": null
+}
