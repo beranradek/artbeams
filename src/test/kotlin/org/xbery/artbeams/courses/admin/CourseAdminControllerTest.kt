@@ -8,6 +8,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.ControllerComponents
+import org.xbery.artbeams.common.access.service.UserAccessService
+import org.xbery.artbeams.config.service.ConfigService
+import org.xbery.artbeams.localisation.repository.LocalisationRepository
+import org.xbery.artbeams.users.service.LoginService
+import freemarker.template.Configuration as FmConfiguration
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.repository.CourseRepository
@@ -26,7 +31,7 @@ class CourseAdminControllerTest {
         val courseRepo = mockk<CourseRepository>(relaxed = true)
         val courseService = mockk<CourseService>(relaxed = true)
         val productRepo = mockk<ProductRepository>(relaxed = true)
-        val components = mockk<ControllerComponents>(relaxed = true)
+        val components = createTestComponents()
 
         val c = Course(AssetAttributes.EMPTY, "slug", "Title", null, null, null, null, listOf(Module("m1", "M", null, null, null)))
         every { courseService.findAllForAdmin() } returns listOf(c)
@@ -44,7 +49,7 @@ class CourseAdminControllerTest {
         val courseRepo = mockk<CourseRepository>(relaxed = true)
         val courseService = mockk<CourseService>(relaxed = true)
         val productRepo = mockk<ProductRepository>(relaxed = true)
-        val components = mockk<ControllerComponents>(relaxed = true)
+        val components = createTestComponents()
 
         val controller = CourseAdminController(courseRepo, courseService, productRepo, components)
         val request = MockHttpServletRequest()
@@ -88,7 +93,7 @@ class CourseAdminControllerTest {
         val courseRepo = mockk<CourseRepository>(relaxed = true)
         val courseService = mockk<CourseService>(relaxed = true)
         val productRepo = mockk<ProductRepository>(relaxed = true)
-        val components = mockk<ControllerComponents>(relaxed = true)
+        val components = createTestComponents()
 
         val c = Course(AssetAttributes.EMPTY, "slug", "My Course Title", null, null, null, null, emptyList())
         every { courseRepo.requireById("cid") } returns c
@@ -133,7 +138,7 @@ class CourseAdminControllerTest {
         val courseRepo = mockk<CourseRepository>(relaxed = true)
         val courseService = mockk<CourseService>(relaxed = true)
         val productRepo = mockk<ProductRepository>(relaxed = true)
-        val components = mockk<ControllerComponents>(relaxed = true)
+        val components = createTestComponents()
 
         val prod = Product.Empty
         every { productRepo.findProducts(Pagination(0, 100)) } returns ResultPage(listOf(prod), Pagination(0, 100))
@@ -153,7 +158,7 @@ class CourseAdminControllerTest {
         val courseRepo = mockk<CourseRepository>(relaxed = true)
         val courseService = mockk<CourseService>(relaxed = true)
         val productRepo = mockk<ProductRepository>(relaxed = true)
-        val components = mockk<ControllerComponents>(relaxed = true)
+        val components = createTestComponents()
 
         val controller = CourseAdminController(courseRepo, courseService, productRepo, components)
         val request = MockHttpServletRequest()
@@ -166,11 +171,28 @@ class CourseAdminControllerTest {
     }
 
     @Test
+    fun `POST delete with EMPTY_ID returns bad request`() {
+        val courseRepo = mockk<CourseRepository>(relaxed = true)
+        val courseService = mockk<CourseService>(relaxed = true)
+        val productRepo = mockk<ProductRepository>(relaxed = true)
+        val components = createTestComponents()
+
+        val controller = CourseAdminController(courseRepo, courseService, productRepo, components)
+        val request = MockHttpServletRequest()
+        // id parameter present but equals EMPTY_ID
+        request.setParameter("id", AssetAttributes.EMPTY_ID)
+        val result = controller.delete(request)
+        Assertions.assertTrue(result is org.springframework.web.servlet.ModelAndView)
+        val mv = result as org.springframework.web.servlet.ModelAndView
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, mv.status)
+    }
+
+    @Test
     fun `POST delete with valid id calls service and redirects`() {
         val courseRepo = mockk<CourseRepository>(relaxed = true)
         val courseService = mockk<CourseService>(relaxed = true)
         val productRepo = mockk<ProductRepository>(relaxed = true)
-        val components = mockk<ControllerComponents>(relaxed = true)
+        val components = createTestComponents()
 
         every { courseService.deleteCourse("cid", any()) } returns true
 
@@ -188,7 +210,7 @@ class CourseAdminControllerTest {
         val courseRepo = mockk<CourseRepository>(relaxed = true)
         val courseService = mockk<CourseService>(relaxed = true)
         val productRepo = mockk<ProductRepository>(relaxed = true)
-        val components = mockk<ControllerComponents>(relaxed = true)
+        val components = createTestComponents()
 
         val saved = Course(AssetAttributes.EMPTY, "slug", "Title", null, null, null, null, emptyList())
         every { courseService.saveCourse(any(), any()) } returns saved
@@ -205,4 +227,17 @@ class CourseAdminControllerTest {
         Assertions.assertEquals("redirect:/admin/courses", result)
         verify(exactly = 1) { courseService.saveCourse(any(), any()) }
     }
+}
+
+// Helper to create ControllerComponents with minimal stubs to avoid fragile relaxed mocks.
+private fun createTestComponents(): ControllerComponents {
+    val loginService = mockk<LoginService>(relaxed = true)
+    every { loginService.getLoggedUser(any()) } returns null
+    val userAccessService = mockk<UserAccessService>(relaxed = true)
+    val localisationRepository = mockk<LocalisationRepository>(relaxed = true)
+    every { localisationRepository.getEntries() } returns mapOf<String, String>()
+    val configService = mockk<ConfigService>(relaxed = true)
+    every { configService.findByKey(any()) } returns null
+    val fmConfig = FmConfiguration(FmConfiguration.VERSION_2_3_32)
+    return ControllerComponents(loginService, userAccessService, localisationRepository, configService, fmConfig)
 }
