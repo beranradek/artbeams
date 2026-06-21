@@ -1,0 +1,12 @@
+{
+  "rejections": [
+    {
+      "title": "Add admin-side unit tests for CourseAdminController and templates",
+      "reason": "graded_out",
+      "detail": "grade 5/5, keep=false",
+      "runId": "plan-beranradek-artbeams-1782061201512",
+      "at": "2026-06-21T17:01:49.029Z"
+    }
+  ],
+  "updatedAt": "2026-06-21T17:01:49.029Z"
+}

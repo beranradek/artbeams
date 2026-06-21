@@ -83,14 +83,14 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Stabilize and add server-side tests that prevent unauthorized access to Course (private) articles
-
-Add focused unit and integration tests that assert course-bound articles are never returned by public article APIs and that member-facing controllers deny access when the user does not have the purchased product. These tests are focused, complementary to existing CourseService tests, and target access-control failure conditions listed in SPRINT.md.
+Add admin-side unit tests for CourseAdminController and templates — expand coverage for edit form, delete and product list rendering (see CourseAdminController.kt and templates under src/main/resources/templates/admin/courses)
 
 ## Later / ideas
 
-- Add admin-side controller/template unit tests for Courses CRUD (see templates under src/main/resources/templates/admin/courses and CourseAdminController.kt)
+_(none yet)_
 
 - Harden e2e MCP smoke script to avoid manual DB steps and make idempotent (scripts/e2e/*)
+  Justification: useful follow-up to make smoke runs reliable once more tests are stable; touches scripts/e2e/*. Keep as Later.
 
 - Add JVM integration test profile using embedded H2 for fast verification of course access rules
+  Justification: larger change (DB migration + generateJooq run) — keep in Later until unit tests and access-control tests are merged.
