@@ -16,8 +16,9 @@ class CourseRepositorySmokeTest :
             val dsl = mockk<DSLContext>()
             val mapper = mockk<RecordMapper<CoursesRecord, Course>>()
             val unmapper = mockk<RecordUnmapper<Course, CoursesRecord>>()
+            val moduleRepo = mockk<org.xbery.artbeams.courses.repository.ModuleRepository>()
 
-            val repo = CourseRepository(dsl, mapper, unmapper)
+            val repo = CourseRepository(dsl, mapper, unmapper, moduleRepo)
 
             (repo is org.xbery.artbeams.common.assets.repository.AssetRepository<*, *>).shouldBeTrue()
         }
