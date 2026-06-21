@@ -89,47 +89,47 @@ _(none yet)_
 
 - Stabilize and add automated tests to prevent unauthorized access to Course articles
 
-  Rationale: Addresses the Failure condition "Articles from course are publicly accessible or accessible to users who have not purchased the associated product". This is grounded and targeted at server-side unit and integration tests that run inside the existing Gradle/Kotest test suite.
+  Rationale: Resolves Failure condition "Articles from course are publicly accessible or accessible to users who have not purchased the associated product" by adding server-side unit and integration tests that run inside the existing Gradle/Kotest test suite.
 
-  Files to inspect / extend (concrete):
+  Concrete files to inspect / extend:
   - src/main/kotlin/org/xbery/artbeams/members/controller/MemberSectionController.kt (add course-menu model attributes)
   - src/main/kotlin/org/xbery/artbeams/articles/controller/ArticleController.kt (ensure course article access checks)
   - src/main/kotlin/org/xbery/artbeams/courses/service/CourseService.kt and CourseServiceImpl.kt (business rules for product->course access)
-  - src/test/kotlin/org/xbery/artbeams/courses/service/CourseServiceIntegrationTest.kt (new integration tests using the repository & in-memory DB/profile)
-  - src/test/kotlin/org/xbery/artbeams/articles/controller/ArticleControllerAuthTest.kt (MockMvc tests asserting 403 for unauthorized access)
+  - src/test/kotlin/org/xbery/artbeams/courses/service/CourseServiceIntegrationTest.kt (new integration tests using repository & test profile)
+  - src/test/kotlin/org/xbery/artbeams/articles/controller/ArticleControllerAuthTest.kt (MockMvc/Kotest asserting 403 for unauthorized access)
 
-  Notes: There are related open issues (#67 in-progress, #84, #73). Do not duplicate their exact test tasks; pick complementary tests that assert access-control end-to-end within the JVM test environment.
+  Notes: There are related open issues (#67 in-progress, #84, #73). Avoid duplicating their exact tests; add complementary assertions focusing on access-control edge cases (e.g. article assigned to Course but product not purchased, course without modules, search scoping per-course).
 
 - Add admin-side controller/template unit tests for Courses CRUD
 
-  Rationale: Ensures administrators can create/manage Courses (one of the Definition of done bullets). Mirror existing Article admin controller tests to prevent regressions.
+  Rationale: Ensures administrators can create and manage Courses and their Modules (one of the Definition of done bullets). Mirror existing Article admin controller tests to prevent regressions.
 
-  Files to inspect / extend (concrete):
+  Concrete files to inspect / extend:
   - src/main/kotlin/org/xbery/artbeams/courses/admin/CourseAdminController.kt
-  - src/main/resources/templates/admin/courses/ (templates for list/edit/new)
+  - src/main/resources/templates/admin/courses/ (list/edit/new templates)
   - src/test/kotlin/org/xbery/artbeams/courses/admin/CourseAdminControllerModelTest.kt (new tests mirroring articles/admin tests)
-  - Example reference: src/test/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminControllerModelTest.kt
+  - Reference example: src/test/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminControllerModelTest.kt
 
-  Notes: Do not duplicate open issue #73; instead add the missing assertions or additional edge-case tests it does not cover.
+  Notes: Do not duplicate open issue #73; instead add missing assertions and edge-case coverage (product assignment UI, module image upload handling, perex presence/validation).
 
 - Harden e2e MCP smoke script to avoid manual DB steps and make idempotent
 
-  Rationale: E2E smoke scripts are flaky if they rely on manual DB steps. Convert seeding to HTTP-admin seeding or idempotent SQL and make the Chrome DevTools MCP run resilient.
+  Rationale: E2E smoke scripts are flaky if they rely on manual DB steps. Convert seeding to HTTP-admin seeding or idempotent SQL and make the Chrome DevTools MCP run resilient and repeatable.
 
-  Files to inspect / extend (concrete):
+  Concrete files to inspect / extend:
   - scripts/e2e/run_smoke_courses.sh
   - scripts/e2e/smoke_courses_mcp.js
-  - scripts/seed_courses_e2e.sql (migrate to HTTP seeding endpoints if possible)
+  - scripts/seed_courses_e2e.sql (migrate to HTTP seeding endpoints where possible)
 
-  Notes: Lower priority; keep as Later until CI owners allocate an e2e maintenance pass.
+  Notes: Lower priority than server-side tests; keep in Later until CI owners allocate e2e maintenance time. Related closed items already improved idempotency — this is follow-up hardening.
 
-- (Idea) Add JVM integration test profile that uses an embedded H2 for lightweight verification of course access rules
+- Add JVM integration test profile using embedded H2 for fast verification of course access rules
 
-  Rationale: Enables fast, self-contained verification of Course access control and search filtering without depending on PostgreSQL or external services. Useful for CI and developer feedback loops.
+  Rationale: Enables fast, self-contained verification of Course access control and search filtering without depending on PostgreSQL. Useful for CI and local developer feedback loops.
 
-  Files to inspect / extend (concrete):
-  - src/test/resources/application-test.yml (create if missing) to configure embedded datasource
-  - src/test/kotlin/org/xbery/artbeams/courses/EmbeddedCourseAccessIntegrationTest.kt (new integration test using TestConfiguration)
-  - build.gradle.kts / Gradle test tasks (ensure test profile runs)
+  Concrete files to inspect / extend:
+  - src/test/resources/application-test.yml (create to configure embedded datasource if missing)
+  - src/test/kotlin/org/xbery/artbeams/courses/EmbeddedCourseAccessIntegrationTest.kt (new integration test)
+  - build.gradle.kts / Gradle test tasks (ensure test profile runs as part of unit/integration suites)
 
-  Notes: This is complementary to later items above and does not duplicate them. It is an idea to keep in the backlog until a developer slot is available.
+  Notes: Complementary to the access-control tests above. Do not propose this as a replacement for existing integration tests that exercise JOOQ/Postgres behaviour.
