@@ -16,7 +16,6 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.overview.Pagination
-import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.repository.CourseRepository
 import org.xbery.artbeams.courses.service.CourseService
 import org.xbery.artbeams.products.repository.ProductRepository

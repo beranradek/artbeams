@@ -6,8 +6,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
-import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.repository.CourseRepository

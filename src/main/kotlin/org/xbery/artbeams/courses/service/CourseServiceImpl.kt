@@ -38,8 +38,10 @@ class CourseServiceImpl(
     override fun saveCourse(edited: org.xbery.artbeams.courses.admin.EditedCourse, ctx: org.xbery.artbeams.common.context.OperationCtx): Course? {
         // Build Course domain object. Modules are handled separately and preserved if updating.
         val userId = ctx.loggedUser?.common?.id ?: org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY_ID
-        val common = org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY.updatedWith(userId)
-        val course = Course(common, edited.slug ?: "", edited.title ?: "", edited.subtitle, edited.listingImage, edited.image, edited.perex, emptyList())
+        val common = org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY
+            .updatedWith(userId)
+        val course =
+            Course(common, edited.slug ?: "", edited.title ?: "", edited.subtitle, edited.listingImage, edited.image, edited.perex, emptyList())
         return try {
             if (edited.id == null || edited.id == org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY_ID) {
                 courseRepository.create(course)

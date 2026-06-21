@@ -8,9 +8,9 @@ import org.jooq.Table
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.common.assets.repository.AssetRepository
 import org.xbery.artbeams.courses.domain.Course
+import org.xbery.artbeams.courses.repository.ModuleRepository
 import org.xbery.artbeams.jooq.schema.tables.Courses
 import org.xbery.artbeams.jooq.schema.tables.records.CoursesRecord
-import org.xbery.artbeams.courses.repository.ModuleRepository
 
 /**
  * Course repository.
@@ -31,7 +31,7 @@ class CourseRepository(
         dsl,
         mapper,
         unmapper
-) {
+    ) {
     // Table reference for courses. Generated via jOOQ when SQL schema includes
     // courses and course_modules tables (see src/main/resources/sql/create_tables.sql).
     // NOTE: This file assumes jOOQ-generated classes CoursesRecord and COURSES

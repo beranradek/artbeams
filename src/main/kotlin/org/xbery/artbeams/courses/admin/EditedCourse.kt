@@ -1,7 +1,5 @@
 package org.xbery.artbeams.courses.admin
 
-import org.xbery.artbeams.common.assets.domain.AssetAttributes
-
 /**
  * EditedCourse is a lightweight DTO used by admin forms to edit course metadata.
  */

@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 import org.xbery.artbeams.common.controller.ControllerComponents
-import org.xbery.artbeams.localisation.repository.LocalisationRepository
 import org.xbery.artbeams.config.service.ConfigService
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.service.ModuleService
+import org.xbery.artbeams.localisation.repository.LocalisationRepository
 
 class ModuleAdminControllerTest {
     @Test
@@ -62,7 +62,7 @@ class ModuleAdminControllerTest {
             verify(exactly = 1) { moduleService.saveModule("c1", any()) }
         } catch (t: Throwable) {
             // Print stacktrace to help debugging in CI logs
-            println("Controller save threw: ${t}")
+            println("Controller save threw: $t")
             t.printStackTrace()
             Assertions.fail<String>("Controller save threw: ${t.stackTraceToString()}")
         }

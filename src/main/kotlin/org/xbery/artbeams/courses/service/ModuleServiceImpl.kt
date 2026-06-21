@@ -1,9 +1,9 @@
 package org.xbery.artbeams.courses.service
 
 import org.springframework.stereotype.Service
-import org.xbery.artbeams.courses.repository.ModuleRepository
 import org.xbery.artbeams.courses.admin.EditedModule
 import org.xbery.artbeams.courses.domain.Module
+import org.xbery.artbeams.courses.repository.ModuleRepository
 
 @Service
 class ModuleServiceImpl(
