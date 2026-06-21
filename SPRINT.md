@@ -83,7 +83,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-- Implement module loading in CourseRepository so Course.modules is populated from course_modules via ModuleRepository (touches src/main/kotlin/org/xbery/artbeams/courses/repository/CourseRepository.kt). This is a prerequisite for admin templates and article editor which expect modules to be present.
+_(none yet)_
 
 ## Later / ideas
 
