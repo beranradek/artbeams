@@ -89,38 +89,47 @@ _(none yet)_
 
 - Stabilize and add automated tests to prevent unauthorized access to Course articles
 
-  Rationale: Addresses the Failure condition "Articles from course are publicly accessible or accessible to users who have not purchased the associated product". This item is grounded in concrete code locations and test targets so it can be promoted when a developer slot is available.
+  Rationale: Addresses the Failure condition "Articles from course are publicly accessible or accessible to users who have not purchased the associated product". This is grounded and targeted at server-side unit and integration tests that run inside the existing Gradle/Kotest test suite.
 
   Files to inspect / extend (concrete):
-  - src/main/kotlin/org/xbery/artbeams/members/controller/MemberSectionController.kt (adds courses to model)
-  - src/main/kotlin/org/xbery/artbeams/courses/controller/CourseController.kt (member-facing controllers and authorization checks)
-  - src/main/kotlin/org/xbery/artbeams/courses/service/CourseService.kt and src/main/kotlin/org/xbery/artbeams/courses/service/CourseServiceImpl.kt
-  - src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt (ensure course articles are excluded)
-  - src/test/kotlin/org/xbery/artbeams/courses/service/CourseServiceIntegrationTest.kt
-  - src/test/kotlin/org/xbery/artbeams/courses/controller/CourseControllerTest.kt
-  - src/test/kotlin/org/xbery/artbeams/members/controller/MemberSectionControllerTest.kt
+  - src/main/kotlin/org/xbery/artbeams/members/controller/MemberSectionController.kt (add course-menu model attributes)
+  - src/main/kotlin/org/xbery/artbeams/articles/controller/ArticleController.kt (ensure course article access checks)
+  - src/main/kotlin/org/xbery/artbeams/courses/service/CourseService.kt and CourseServiceImpl.kt (business rules for product->course access)
+  - src/test/kotlin/org/xbery/artbeams/courses/service/CourseServiceIntegrationTest.kt (new integration tests using the repository & in-memory DB/profile)
+  - src/test/kotlin/org/xbery/artbeams/articles/controller/ArticleControllerAuthTest.kt (MockMvc tests asserting 403 for unauthorized access)
 
-  Notes: There are already related open issues (#67 in-progress, #84, #73). Do NOT promote this to Next up while #67 remains returned-for-repair or in-progress; instead pick this up once #67 is resolved or re-assigned.
+  Notes: There are related open issues (#67 in-progress, #84, #73). Do not duplicate their exact test tasks; pick complementary tests that assert access-control end-to-end within the JVM test environment.
+
+- Add admin-side controller/template unit tests for Courses CRUD
+
+  Rationale: Ensures administrators can create/manage Courses (one of the Definition of done bullets). Mirror existing Article admin controller tests to prevent regressions.
+
+  Files to inspect / extend (concrete):
+  - src/main/kotlin/org/xbery/artbeams/courses/admin/CourseAdminController.kt
+  - src/main/resources/templates/admin/courses/ (templates for list/edit/new)
+  - src/test/kotlin/org/xbery/artbeams/courses/admin/CourseAdminControllerModelTest.kt (new tests mirroring articles/admin tests)
+  - Example reference: src/test/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminControllerModelTest.kt
+
+  Notes: Do not duplicate open issue #73; instead add the missing assertions or additional edge-case tests it does not cover.
 
 - Harden e2e MCP smoke script to avoid manual DB steps and make idempotent
 
-  Rationale: E2E smoke scripts have caused flakiness in earlier runs. Make seeding idempotent and avoid direct psql usage so the worker can run browser-driven verification without external DB manual steps.
+  Rationale: E2E smoke scripts are flaky if they rely on manual DB steps. Convert seeding to HTTP-admin seeding or idempotent SQL and make the Chrome DevTools MCP run resilient.
 
   Files to inspect / extend (concrete):
   - scripts/e2e/run_smoke_courses.sh
   - scripts/e2e/smoke_courses_mcp.js
-  - scripts/seed_courses_e2e.sql (note: prefer migrating seeding into HTTP admin endpoints so tests are idempotent and do not require psql)
+  - scripts/seed_courses_e2e.sql (migrate to HTTP seeding endpoints if possible)
 
-  Notes: This is a lower-priority 'later' item until CI owners allocate an e2e maintenance pass. Keep as Later; do NOT create a human blocker for DB provisioning (previous #75 was Not Planned).
+  Notes: Lower priority; keep as Later until CI owners allocate an e2e maintenance pass.
 
-- Add admin-side controller/template unit tests for Courses CRUD
+- (Idea) Add JVM integration test profile that uses an embedded H2 for lightweight verification of course access rules
 
-  Rationale: Administrators must be able to create and manage Courses (DoD). When admin controllers/templates are present, add MockMvc/Kotest tests mirroring ArticleAdminController tests to prevent regressions.
+  Rationale: Enables fast, self-contained verification of Course access control and search filtering without depending on PostgreSQL or external services. Useful for CI and developer feedback loops.
 
   Files to inspect / extend (concrete):
-  - src/main/kotlin/org/xbery/artbeams/courses/admin/CourseAdminController.kt (when present)
-  - src/main/resources/templates/admin/courses/
-  - src/test/kotlin/org/xbery/artbeams/courses/admin/ (test package to add)
-  - Example to mirror: src/test/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminControllerModelTest.kt
+  - src/test/resources/application-test.yml (create if missing) to configure embedded datasource
+  - src/test/kotlin/org/xbery/artbeams/courses/EmbeddedCourseAccessIntegrationTest.kt (new integration test using TestConfiguration)
+  - build.gradle.kts / Gradle test tasks (ensure test profile runs)
 
-  Notes: There are open/overlapping issues (#59, #73). Do not duplicate — pick up these tests if and when the admin CRUD implementation branch/PR stabilizes.
+  Notes: This is complementary to later items above and does not duplicate them. It is an idea to keep in the backlog until a developer slot is available.
