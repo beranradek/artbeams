@@ -83,14 +83,12 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Add admin-side unit tests for CourseAdminController and templates — expand coverage for edit form, delete and product list rendering (see CourseAdminController.kt and templates under src/main/resources/templates/admin/courses)
+_(none yet)_
 
 ## Later / ideas
 
-_(none yet)_
-
 - Harden e2e MCP smoke script to avoid manual DB steps and make idempotent (scripts/e2e/*)
-  Justification: useful follow-up to make smoke runs reliable once more tests are stable; touches scripts/e2e/*. Keep as Later.
+  Justification: useful follow-up to make smoke runs reliable once more tests are stable; touches scripts/e2e/*. Keep in Later.
 
 - Add JVM integration test profile using embedded H2 for fast verification of course access rules
   Justification: larger change (DB migration + generateJooq run) — keep in Later until unit tests and access-control tests are merged.
