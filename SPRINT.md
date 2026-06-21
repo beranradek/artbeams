@@ -89,36 +89,38 @@ _(none yet)_
 
 - Stabilize and add automated tests to prevent unauthorized access to Course articles
 
-  Rationale: The sprint Failure condition "Articles from course are publicly accessible or accessible to users who have not purchased the associated product" must never occur. There are already open issues tracking related tests (#84, #73 and #67). Do not duplicate open work; this Later item consolidates the original suggestion and points to concrete files to extend when this becomes the next work.
+  Rationale: Addresses the Failure condition "Articles from course are publicly accessible or accessible to users who have not purchased the associated product". This item is grounded in concrete code locations and test targets so it can be promoted when a developer slot is available.
 
-  Files to inspect/extend (concrete):
+  Files to inspect / extend (concrete):
   - src/main/kotlin/org/xbery/artbeams/members/controller/MemberSectionController.kt (adds courses to model)
   - src/main/kotlin/org/xbery/artbeams/courses/controller/CourseController.kt (member-facing controllers and authorization checks)
   - src/main/kotlin/org/xbery/artbeams/courses/service/CourseService.kt and src/main/kotlin/org/xbery/artbeams/courses/service/CourseServiceImpl.kt
+  - src/main/kotlin/org/xbery/artbeams/search/service/SearchIndexer.kt (ensure course articles are excluded)
   - src/test/kotlin/org/xbery/artbeams/courses/service/CourseServiceIntegrationTest.kt
   - src/test/kotlin/org/xbery/artbeams/courses/controller/CourseControllerTest.kt
-  - src/test/kotlin/org/xbery/artbeams/members/controller/MemberSectionControllerTest.kt (if present / to add)
+  - src/test/kotlin/org/xbery/artbeams/members/controller/MemberSectionControllerTest.kt
 
-  Short idea: add Kotest cases that simulate a user WITHOUT the purchased product and assert CourseService.findCoursesForUser returns empty and CourseController endpoints return 404 or empty lists. Add an integration-style test that loads CourseRepository with in-memory fixtures and asserts searchArticlesInCourse returns only course-bound articles.
+  Notes: There are already related open issues (#67 in-progress, #84, #73). Do NOT promote this to Next up while #67 remains returned-for-repair or in-progress; instead pick this up once #67 is resolved or re-assigned.
 
 - Harden e2e MCP smoke script to avoid manual DB steps and make idempotent
 
-  Rationale: Existing e2e runners are useful (history shows scripts under scripts/e2e/ and prior PRs added idempotent behavior) but past open PRs show flakiness. Keep this as Later until CI requirements allow another run.
+  Rationale: E2E smoke scripts have caused flakiness in earlier runs. Make seeding idempotent and avoid direct psql usage so the worker can run browser-driven verification without external DB manual steps.
 
-  Files to inspect/extend:
+  Files to inspect / extend (concrete):
   - scripts/e2e/run_smoke_courses.sh
   - scripts/e2e/smoke_courses_mcp.js
-  - scripts/seed_courses_e2e.sql (note: direct psql usage is not allowed for worker verification; prefer HTTP seeding)
+  - scripts/seed_courses_e2e.sql (note: prefer migrating seeding into HTTP admin endpoints so tests are idempotent and do not require psql)
 
-  Short idea: make the shell and MCP runner detect/skip existing seed data, or migrate seeding to HTTP admin endpoints so tests are idempotent and do not require psql.
+  Notes: This is a lower-priority 'later' item until CI owners allocate an e2e maintenance pass. Keep as Later; do NOT create a human blocker for DB provisioning (previous #75 was Not Planned).
 
 - Add admin-side controller/template unit tests for Courses CRUD
 
-  Rationale: Administrators must be able to create and manage Courses (DoD). There is an open implementation issue for admin CRUD (#59). When admin controllers/templates exist, add MockMvc/Kotest tests mirroring ArticleAdminController tests.
+  Rationale: Administrators must be able to create and manage Courses (DoD). When admin controllers/templates are present, add MockMvc/Kotest tests mirroring ArticleAdminController tests to prevent regressions.
 
-  Files to inspect/extend:
-  - src/main/kotlin/org/xbery/artbeams/courses/admin/CourseAdminController.kt (planned location)
+  Files to inspect / extend (concrete):
+  - src/main/kotlin/org/xbery/artbeams/courses/admin/CourseAdminController.kt (when present)
   - src/main/resources/templates/admin/courses/
-  - src/test/kotlin/org/xbery/artbeams/courses/admin/
+  - src/test/kotlin/org/xbery/artbeams/courses/admin/ (test package to add)
+  - Example to mirror: src/test/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminControllerModelTest.kt
 
-  Short idea: implement unit tests similar to src/test/kotlin/org/xbery/artbeams/articles/admin/ArticleAdminControllerModelTest.kt verifying form binding for product assignment, module list CRUD and that courseId appears on article edit form.
+  Notes: There are open/overlapping issues (#59, #73). Do not duplicate — pick up these tests if and when the admin CRUD implementation branch/PR stabilizes.
