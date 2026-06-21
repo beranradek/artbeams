@@ -18,6 +18,12 @@ class CourseServiceImpl(
         return courseRepository.findAll()
     }
 
+    override fun findAllForAdmin(): List<Course> {
+        // Admin listing currently returns all courses. Keep method small so
+        // controller tests can mock service instead of repository.
+        return courseRepository.findAll()
+    }
+
     override fun findBySlug(slug: String): Course? {
         // CourseRepository does not expose findBySlug helper; lookup in-memory.
         return courseRepository.findAll().firstOrNull { it.slug == slug }

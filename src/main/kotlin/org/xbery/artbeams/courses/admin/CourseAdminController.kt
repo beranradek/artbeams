@@ -42,10 +42,11 @@ class CourseAdminController(
         @RequestParam("limit", defaultValue = "20") limit: Int,
         request: HttpServletRequest
     ): Any {
-        // For admin UI simply list all courses
-        val courses = courseRepository.findAll()
+        // For admin UI list all courses via service (so tests mock service)
+        val courses = courseService.findAllForAdmin()
         val model = createModel(request, "courses" to courses, "emptyId" to AssetAttributes.EMPTY_ID)
-        return ModelAndView("$tplBasePath/courseList", model)
+        // View name 'admin/courses/list' used by acceptance tests and templates
+        return ModelAndView("$tplBasePath/list", model)
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])

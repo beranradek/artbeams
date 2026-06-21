@@ -15,6 +15,6 @@ class ModuleServiceImpl(
         // Stub implementation: repository save not implemented yet. Return
         // a domain Module instance constructed from edited data so callers
         // (and unit tests) can verify behaviour without a DB.
-        return Module(edited.id, edited.title, edited.image, edited.shortDescription, edited.perex)
+        return Module(edited.id ?: "", edited.title ?: "", edited.image, edited.shortDescription, edited.perex)
     }
 }

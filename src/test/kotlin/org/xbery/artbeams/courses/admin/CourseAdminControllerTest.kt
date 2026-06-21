@@ -23,13 +23,13 @@ class CourseAdminControllerTest {
         val components = mockk<ControllerComponents>(relaxed = true)
 
         val c = Course(AssetAttributes.EMPTY, "slug", "Title", null, null, null, null, listOf(Module("m1", "M", null, null, null)))
-        every { courseRepo.findAll() } returns listOf(c)
+        every { courseService.findAllForAdmin() } returns listOf(c)
 
         val controller = CourseAdminController(courseRepo, courseService, productRepo, components)
         val request = MockHttpServletRequest()
         val result = controller.list(0, 20, request)
         val mv = result as org.springframework.web.servlet.ModelAndView
-        Assertions.assertEquals("admin/courses/courseList", mv.viewName)
+        Assertions.assertEquals("admin/courses/list", mv.viewName)
         Assertions.assertTrue(mv.model.containsKey("courses"))
     }
 

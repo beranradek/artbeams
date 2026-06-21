@@ -40,27 +40,20 @@ class ModuleAdminController(
 
     @PostMapping("/save")
     fun save(@PathVariable courseId: String, request: HttpServletRequest): Any {
-        // Debug: print request parameter names to help unit-test binding issues
-        try {
-            println("ModuleAdminController.save params: ${request.parameterMap.keys}")
-        } catch (e: Exception) {
-            // ignore
-        }
-        // For simplicity and to keep unit tests independent of formio internals,
-        // bind parameters manually here. This avoids reflection-based instantiation
-        // issues in unit tests that don't run through full servlet binding.
-        val id = request.getParameter("module.id") ?: ""
-        val title = request.getParameter("module.title") ?: ""
-        val image = request.getParameter("module.image")
-        val shortDescription = request.getParameter("module.shortDescription")
-        val perex = request.getParameter("module.perex")
-
-        val edited = EditedModule(id, title, image, shortDescription, perex)
-        return try {
-            val saved = moduleService.saveModule(courseId, edited)
-            if (saved != null) redirect("/admin/courses/$courseId/modules") else notFound(request)
-        } catch (ex: Exception) {
-            renderEditForm(request, courseId, edited, ValidationResult.empty, ex.toString())
+        // Use formio binding to validate input consistently with other controllers.
+        val params = ServletRequestParams(request)
+        val formData: FormData<EditedModule> = editFormDef.bind(params)
+        return if (!formData.isValid) {
+            // validation errors - re-render form with messages
+            renderEditForm(request, courseId, formData.data, formData.validationResult, null)
+        } else {
+            try {
+                val edited = formData.data
+                val saved = moduleService.saveModule(courseId, edited)
+                if (saved != null) redirect("/admin/courses/$courseId/modules") else notFound(request)
+            } catch (ex: Exception) {
+                renderEditForm(request, courseId, formData.data, formData.validationResult, ex.toString())
+            }
         }
     }
 
