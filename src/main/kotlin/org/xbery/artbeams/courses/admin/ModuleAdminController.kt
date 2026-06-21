@@ -40,13 +40,20 @@ class ModuleAdminController(
 
     @PostMapping("/save")
     fun save(@PathVariable courseId: String, request: HttpServletRequest): Any {
+        // Use formio binding to validate input consistently with other controllers.
         val params = ServletRequestParams(request)
-        val formData = editFormDef.bind(params)
+        val formData: FormData<EditedModule> = editFormDef.bind(params)
         return if (!formData.isValid) {
+            // validation errors - re-render form with messages
             renderEditForm(request, courseId, formData.data, formData.validationResult, null)
         } else {
-            // Module persistence is not implemented in the stub repository.
-            redirect("/admin/courses/$courseId/modules")
+            try {
+                val edited = formData.data
+                val saved = moduleService.saveModule(courseId, edited)
+                if (saved != null) redirect("/admin/courses/$courseId/modules") else notFound(request)
+            } catch (ex: Exception) {
+                renderEditForm(request, courseId, formData.data, formData.validationResult, ex.toString())
+            }
         }
     }
 

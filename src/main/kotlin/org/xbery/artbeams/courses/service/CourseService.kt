@@ -13,6 +13,12 @@ interface CourseService {
     fun findCoursesForUser(userId: String): List<Course>
 
     /**
+     * Returns all courses for admin listing. Kept separate from user-facing
+     * findCoursesForUser to allow admin-only fields or ordering in future.
+     */
+    fun findAllForAdmin(): List<Course>
+
+    /**
      * Finds a course by its slug.
      */
     fun findBySlug(slug: String): Course?
