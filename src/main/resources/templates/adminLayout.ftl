@@ -176,6 +176,9 @@
               <a class="nav-link" href="/admin/products" role="menuitem" aria-label="Manage products">Products</a>
             </li>
             <li class="nav-item" role="none">
+              <a class="nav-link" href="/admin/courses" role="menuitem" aria-label="Manage courses">Courses</a>
+            </li>
+            <li class="nav-item" role="none">
               <a class="nav-link" href="/admin/orders" role="menuitem" aria-label="Manage orders">Orders</a>
             </li>
             <li class="nav-item" role="none">
