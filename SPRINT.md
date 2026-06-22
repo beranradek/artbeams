@@ -83,11 +83,10 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-_(none yet)_
+Add JVM integration test profile using H2 for fast verification of course access rules
+
+Reason: The sprint's Later queue contains a well-scoped task to add a test profile that uses an embedded H2 DB so JVM integration tests (particularly course access rules and repository-level checks) can run quickly and deterministically without requiring a PostgreSQL instance. Promote this to Next up so an implementer can add the test config and a small helper to initialize the schema from src/main/resources/sql/create_tables.sql.
 
 ## Later / ideas
 
-- Add JVM integration test profile using H2 for fast verification of course access rules
-  Justification: larger change (DB migration + generateJooq run). Keep in Later until unit tests and
-  access-control tests are merged. The plan should include editing src/main/resources/sql/create_tables.sql and
-  adding a test profile file under src/test/resources/application-test.yml; this remains a Later task.
+_(none yet)_

@@ -1,6 +1,13 @@
 {
   "rejections": [
     {
+      "title": "Add JVM integration test profile (H2) and test DB initializer",
+      "reason": "graded_out",
+      "detail": "grade 5/5, keep=false",
+      "runId": "plan-beranradek-artbeams-1782111601759",
+      "at": "2026-06-22T07:03:13.387Z"
+    },
+    {
       "title": "Add scripts/e2e/package.json with puppeteer, minimist and smoke script",
       "reason": "graded_out",
       "detail": "grade 5/5, keep=false",
@@ -29,5 +36,5 @@
       "at": "2026-06-21T17:01:49.029Z"
     }
   ],
-  "updatedAt": "2026-06-22T06:01:46.472Z"
+  "updatedAt": "2026-06-22T07:03:13.387Z"
 }
