@@ -82,19 +82,17 @@ class CourseRepository(
      * Persist product assignments for a given course. Previous assignments are replaced.
      */
     fun saveProductCourseAssignments(courseId: String, productIds: List<String>) {
-        // Use transaction to ensure delete + inserts are atomic
-        dsl.transaction { config ->
-            val ctx = config.dsl()
-            // Delete existing assignments for course
-            ctx.deleteFrom(PRODUCT_COURSE).where(PRODUCT_COURSE.COURSE_ID.eq(courseId)).execute()
-            // Insert new assignments
-            productIds.filter { it.isNotBlank() }.forEach { pid ->
-                ctx
-                    .insertInto(PRODUCT_COURSE)
-                    .set(PRODUCT_COURSE.PRODUCT_ID, pid)
-                    .set(PRODUCT_COURSE.COURSE_ID, courseId)
-                    .execute()
-            }
+        // Delete existing assignments for course and insert new ones.
+        // Note: Transactional boundary is left to the caller to allow composing
+        // course persist + assignments in a single transaction when needed.
+        dsl.deleteFrom(PRODUCT_COURSE).where(PRODUCT_COURSE.COURSE_ID.eq(courseId)).execute()
+        // Insert new assignments
+        productIds.filter { it.isNotBlank() }.forEach { pid ->
+            dsl
+                .insertInto(PRODUCT_COURSE)
+                .set(PRODUCT_COURSE.PRODUCT_ID, pid)
+                .set(PRODUCT_COURSE.COURSE_ID, courseId)
+                .execute()
         }
     }
 

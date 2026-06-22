@@ -47,30 +47,36 @@ class CourseServiceImpl(
             .updatedWith(userId)
         val course =
             Course(common, edited.slug ?: "", edited.title ?: "", edited.subtitle, edited.listingImage, edited.image, edited.perex, emptyList())
+        // To ensure course creation/update and product assignments are applied
+        // atomically, perform both operations within a single jOOQ transaction.
         return try {
-            if (edited.id == null || edited.id == org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY_ID) {
-                courseRepository.create(course)
-            } else {
-                // Preserve existing modules when updating
-                val existing = courseRepository.requireById(edited.id!!)
-                val updated = course.copy(common = existing.common.updatedWith(userId), modules = existing.modules)
-                courseRepository.update(updated)
-            }
-        } catch (e: Exception) {
-            return null
-        }?.also { saved ->
-            // Persist product assignments selected in admin UI. EditedCourse.productIds
-            // is a comma-separated list of product ids. Convert to list and persist.
-            try {
+            courseRepository.dsl.transactionResult { config ->
+                // Inside transaction closure; operations using the same DSLContext
+                // (courseRepository.dsl) will participate in the same DB transaction.
+                val saved = if (edited.id == null || edited.id == org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY_ID) {
+                    courseRepository.create(course)
+                } else {
+                    // Preserve existing modules when updating
+                    val existing = courseRepository.requireById(edited.id!!)
+                    val updated = course.copy(common = existing.common.updatedWith(userId), modules = existing.modules)
+                    courseRepository.update(updated)
+                }
+
+                // Persist product assignments selected in admin UI. EditedCourse.productIds
+                // is a comma-separated list of product ids. Convert to list and persist.
                 val ids = edited.productIds
                     ?.split(",")
                     ?.map { it.trim() }
                     ?.filter { it.isNotEmpty() } ?: emptyList()
+                // saveProductCourseAssignments no longer creates its own transaction so
+                // this call is part of the wrapping transaction and will roll back
+                // together with course persist on failure.
                 courseRepository.saveProductCourseAssignments(saved.id, ids)
-            } catch (e: Exception) {
-                // On failure, return null to indicate save was not fully successful
-                return null
+                saved
             }
+        } catch (e: Exception) {
+            // On failure, return null to indicate save was not fully successful
+            null
         }
     }
 
