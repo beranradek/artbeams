@@ -1,6 +1,13 @@
 {
   "rejections": [
     {
+      "title": "Add package.json with smoke script for scripts/e2e",
+      "reason": "graded_out",
+      "detail": "grade 5/5, keep=false",
+      "runId": "plan-beranradek-artbeams-1782104401515",
+      "at": "2026-06-22T05:01:39.671Z"
+    },
+    {
       "title": "Add scripts/e2e/package.json and npm smoke script for Courses E2E",
       "reason": "graded_out",
       "detail": "grade 5/5, keep=false",
@@ -15,5 +22,5 @@
       "at": "2026-06-21T17:01:49.029Z"
     }
   ],
-  "updatedAt": "2026-06-21T18:25:22.815Z"
+  "updatedAt": "2026-06-22T05:01:39.671Z"
 }

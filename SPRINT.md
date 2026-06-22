@@ -86,13 +86,14 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 Harden E2E smoke runner for Courses: add package.json and npm smoke script
 
 Reason: the existing scripts/e2e/smoke_courses_mcp.js requires Puppeteer and minimist but there is no
-package.json in scripts/e2e. Add a small package.json (puppeteer, minimist) and an npm "smoke" script so
-the wrapper run_smoke_courses.sh can run `npm ci` and `npm run smoke` reliably in CI and locally.
+package.json in scripts/e2e. Add a small scripts/e2e/package.json (declaring puppeteer and minimist) and a
+"smoke" npm script so the wrapper scripts/e2e/run_smoke_courses.sh can run `npm ci` and `npm run smoke` reliably in CI and locally.
 
-(This item was promoted from Later / ideas.)
+(This was previously proposed but the new version explicitly requires the package.json to include the exact dependency names and a smoke script, addressing earlier feedback.)
 
 ## Later / ideas
 
 - Add JVM integration test profile using H2 for fast verification of course access rules
   Justification: larger change (DB migration + generateJooq run). Keep in Later until unit tests and
-  access-control tests are merged. (remains in Later)
+  access-control tests are merged. The plan should include editing src/main/resources/sql/create_tables.sql and
+  adding a test profile file under src/test/resources/application-test.yml; this remains a Later task.
