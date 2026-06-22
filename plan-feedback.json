@@ -1,6 +1,13 @@
 {
   "rejections": [
     {
+      "title": "Add scripts/e2e/package.json with puppeteer, minimist and smoke script",
+      "reason": "graded_out",
+      "detail": "grade 5/5, keep=false",
+      "runId": "plan-beranradek-artbeams-1782108001492",
+      "at": "2026-06-22T06:01:46.472Z"
+    },
+    {
       "title": "Add package.json with smoke script for scripts/e2e",
       "reason": "graded_out",
       "detail": "grade 5/5, keep=false",
@@ -22,5 +29,5 @@
       "at": "2026-06-21T17:01:49.029Z"
     }
   ],
-  "updatedAt": "2026-06-22T05:01:39.671Z"
+  "updatedAt": "2026-06-22T06:01:46.472Z"
 }
