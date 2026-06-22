@@ -53,6 +53,7 @@ class WebController(
     private val articleCategoryRepository: ArticleCategoryRepository,
     val productService: ProductService,
     val commentService: CommentService,
+    private val courseService: org.xbery.artbeams.courses.service.CourseService,
     val controllerComponents: ControllerComponents,
     val resourceLoader: ResourceLoader,
     private val searchService: SearchService,
@@ -251,11 +252,36 @@ class WebController(
     }
 
     /** GET article detail. */
-    @GetMapping("/{slug}")
-    fun article(request: HttpServletRequest, @PathVariable slug: String?): Any = if (slug != null) {
-        val article = articleService.findBySlugPublic(slug)
-        if (article != null) {
-            val entityKey = EntityKey.fromClassAndId(Article::class.java, article.id)
+    @GetMapping(value = ["/{slug}", "/a/{slug}"])
+    fun article(request: HttpServletRequest, @PathVariable slug: String?): Any {
+        if (slug == null) {
+            return notFound(request)
+        }
+        val isAlias = request.requestURI.startsWith("/a/")
+        val article = if (isAlias) articleService.findBySlug(slug) else articleService.findBySlugPublic(slug)
+        if (article == null) {
+            return notFound(request)
+        }
+
+        // If this is alias path, enforce that drafts are not exposed and course access is checked
+        if (isAlias) {
+            if (article.draft) {
+                return notFound(request)
+            }
+            val loggedUser = controllerComponents.getLoggedUser(request)
+            if (article.courseId != null) {
+                // If user not logged or does not have access to the course, return 404
+                if (loggedUser == null) {
+                    return notFound(request)
+                }
+                val courses = courseService.findCoursesForUser(loggedUser.common.id)
+                if (courses.none { it.id == article.courseId }) {
+                    return notFound(request)
+                }
+            }
+        }
+
+        val entityKey = EntityKey.fromClassAndId(Article::class.java, article.id)
             val fUserAccessReport =
                 CompletableFuture.supplyAsync {
                     controllerComponents.userAccessService.saveUserAccess(
@@ -357,13 +383,8 @@ class WebController(
                     "faqs" to faqs,
                     "faqJsonLd" to faqJsonLd
                 )
-            ModelAndView("article", model)
-        } else {
-            notFound(request)
+            return ModelAndView("article", model)
         }
-    } else {
-        notFound(request)
-    }
 
     private fun buildRssXml(siteUrl: String, siteName: String, siteDescription: String, articles: List<Article>): String {
         val rfc1123 = DateTimeFormatter.RFC_1123_DATE_TIME
