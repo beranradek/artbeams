@@ -139,6 +139,15 @@ CREATE TABLE courses (
   perex VARCHAR(4000) DEFAULT NULL
 );
 
+CREATE TABLE product_course (
+    product_id VARCHAR(40) NOT NULL,
+    course_id VARCHAR(40) NOT NULL,
+    PRIMARY KEY (product_id, course_id)
+);
+
+CREATE INDEX idx_product_course_product_id ON product_course (product_id);
+CREATE INDEX idx_product_course_course_id ON product_course (course_id);
+
 CREATE TABLE course_modules (
   id VARCHAR(40) NOT NULL PRIMARY KEY,
   course_id VARCHAR(40) NOT NULL,

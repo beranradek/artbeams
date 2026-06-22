@@ -11,6 +11,7 @@ import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.repository.ModuleRepository
 import org.xbery.artbeams.jooq.schema.tables.Courses
 import org.xbery.artbeams.jooq.schema.tables.records.CoursesRecord
+import org.xbery.artbeams.jooq.schema.tables.references.PRODUCT_COURSE
 
 /**
  * Course repository.
@@ -56,4 +57,53 @@ class CourseRepository(
         super.findAll().map { course ->
             course.copy(modules = moduleRepository.findByCourseId(course.id))
         }
+
+    /**
+     * Returns courses assigned to the given product.
+     */
+    fun findCoursesForProduct(productId: String): List<Course> {
+        // Select courses that are assigned to the given product via product_course join
+        val courseIds = dsl
+            .select(PRODUCT_COURSE.COURSE_ID)
+            .from(PRODUCT_COURSE)
+            .where(PRODUCT_COURSE.PRODUCT_ID.eq(productId))
+            .fetch { rec -> requireNotNull(rec[PRODUCT_COURSE.COURSE_ID]) }
+
+        if (courseIds.isEmpty()) return emptyList()
+
+        return dsl
+            .selectFrom(Courses.COURSES)
+            .where(Courses.COURSES.ID.`in`(courseIds))
+            .fetch(mapper)
+            .map { c -> c.copy(modules = moduleRepository.findByCourseId(c.id)) }
+    }
+
+    /**
+     * Persist product assignments for a given course. Previous assignments are replaced.
+     */
+    fun saveProductCourseAssignments(courseId: String, productIds: List<String>) {
+        // Use transaction to ensure delete + inserts are atomic
+        dsl.transaction { config ->
+            val ctx = config.dsl()
+            // Delete existing assignments for course
+            ctx.deleteFrom(PRODUCT_COURSE).where(PRODUCT_COURSE.COURSE_ID.eq(courseId)).execute()
+            // Insert new assignments
+            productIds.filter { it.isNotBlank() }.forEach { pid ->
+                ctx
+                    .insertInto(PRODUCT_COURSE)
+                    .set(PRODUCT_COURSE.PRODUCT_ID, pid)
+                    .set(PRODUCT_COURSE.COURSE_ID, courseId)
+                    .execute()
+            }
+        }
+    }
+
+    /**
+     * Returns product ids assigned to a course.
+     */
+    fun findProductIdsForCourse(courseId: String): List<String> = dsl
+        .select(PRODUCT_COURSE.PRODUCT_ID)
+        .from(PRODUCT_COURSE)
+        .where(PRODUCT_COURSE.COURSE_ID.eq(courseId))
+        .fetch { record -> requireNotNull(record[PRODUCT_COURSE.PRODUCT_ID]) }
 }

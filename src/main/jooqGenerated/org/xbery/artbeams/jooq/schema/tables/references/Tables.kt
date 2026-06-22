@@ -21,6 +21,7 @@ import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
+import org.xbery.artbeams.jooq.schema.tables.ProductCourse
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
@@ -119,6 +120,11 @@ val ORDER_ITEMS: OrderItems = OrderItems.ORDER_ITEMS
  * The table <code>orders</code>.
  */
 val ORDERS: Orders = Orders.ORDERS
+
+/**
+ * The table <code>product_course</code>.
+ */
+val PRODUCT_COURSE: ProductCourse = ProductCourse.PRODUCT_COURSE
 
 /**
  * The table <code>products</code>.

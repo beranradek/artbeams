@@ -19,6 +19,7 @@ import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
+import org.xbery.artbeams.jooq.schema.tables.ProductCourse
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.SearchIndex
@@ -65,6 +66,8 @@ val IDX_ORDERS_ORDER_NUMBER: Index = Internal.createIndex(DSL.name("idx_orders_o
 val IDX_ORDERS_PAID_TIME: Index = Internal.createIndex(DSL.name("idx_orders_paid_time"), Orders.ORDERS, arrayOf(Orders.ORDERS.PAID_TIME), false)
 val IDX_ORDERS_PAYMENT_METHOD: Index = Internal.createIndex(DSL.name("idx_orders_payment_method"), Orders.ORDERS, arrayOf(Orders.ORDERS.PAYMENT_METHOD), false)
 val IDX_ORDERS_STATE: Index = Internal.createIndex(DSL.name("idx_orders_state"), Orders.ORDERS, arrayOf(Orders.ORDERS.STATE), false)
+val IDX_PRODUCT_COURSE_COURSE_ID: Index = Internal.createIndex(DSL.name("idx_product_course_course_id"), ProductCourse.PRODUCT_COURSE, arrayOf(ProductCourse.PRODUCT_COURSE.COURSE_ID), false)
+val IDX_PRODUCT_COURSE_PRODUCT_ID: Index = Internal.createIndex(DSL.name("idx_product_course_product_id"), ProductCourse.PRODUCT_COURSE, arrayOf(ProductCourse.PRODUCT_COURSE.PRODUCT_ID), false)
 val IDX_PRODUCTS_SLUG: Index = Internal.createIndex(DSL.name("idx_products_slug"), Products.PRODUCTS, arrayOf(Products.PRODUCTS.SLUG), false)
 val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)
 val IDX_QUEUE_NEXT_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_queue_next_action_time"), Queue.QUEUE, arrayOf(Queue.QUEUE.NEXT_ACTION_TIME), false)

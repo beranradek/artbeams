@@ -94,6 +94,31 @@ class UserProductRepository(
             )
         }.distinctBy { it.id }
 
+    /**
+     * Returns product ids purchased/available for the given user. The query mirrors
+     * logic in findUserProducts that filters by orders and free products.
+     */
+    fun findProductIdsForUser(userId: String): List<String> = dsl
+        .selectDistinct(USER_PRODUCT.PRODUCT_ID)
+        .from(USER_PRODUCT)
+        .innerJoin(PRODUCTS)
+        .on(USER_PRODUCT.PRODUCT_ID.eq(PRODUCTS.ID))
+        .innerJoin(ORDER_ITEMS)
+        .on(ORDER_ITEMS.PRODUCT_ID.eq(PRODUCTS.ID))
+        .innerJoin(ORDERS)
+        .on(ORDER_ITEMS.ORDER_ID.eq(ORDERS.ID))
+        .where(
+            USER_PRODUCT.USER_ID
+                .eq(userId)
+                .and(ORDERS.CREATED_BY.eq(userId))
+                .and(
+                    ORDERS.STATE
+                        .`in`(
+                            org.xbery.artbeams.orders.domain.OrderState.AFTER_PAYMENT_STATES
+                        ).or(PRODUCTS.PRICE_REGULAR.le(java.math.BigDecimal.ZERO))
+                )
+        ).fetch { record -> requireNotNull(record[USER_PRODUCT.PRODUCT_ID]) }
+
     fun findUserProduct(userId: String, productSlug: String): UserProductDetail? = dsl
         .select(
             USER_PRODUCT.ID,

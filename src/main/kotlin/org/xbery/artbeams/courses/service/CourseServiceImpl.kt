@@ -5,17 +5,22 @@ import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.repository.CourseRepository
 import org.xbery.artbeams.courses.repository.ModuleRepository
+import org.xbery.artbeams.userproducts.repository.UserProductRepository
 
 @Service
 class CourseServiceImpl(
     private val courseRepository: CourseRepository,
     private val articleRepository: ArticleRepository,
-    private val moduleRepository: ModuleRepository
+    private val moduleRepository: ModuleRepository,
+    private val userProductRepository: UserProductRepository
 ) : CourseService {
     override fun findCoursesForUser(userId: String): List<Course> {
-        // For now, courses available for a user are retrieved from repository.
-        // In future this can be filtered by user's purchased products.
-        return courseRepository.findAll()
+        // Courses available for a user are determined by user's purchased products.
+        val productIds = userProductRepository.findProductIdsForUser(userId)
+        if (productIds.isEmpty()) return emptyList()
+        // Aggregate courses for each product and deduplicate by id
+        val courses = productIds.flatMap { pid -> courseRepository.findCoursesForProduct(pid) }
+        return courses.distinctBy { it.id }
     }
 
     override fun findAllForAdmin(): List<Course> {
@@ -52,7 +57,20 @@ class CourseServiceImpl(
                 courseRepository.update(updated)
             }
         } catch (e: Exception) {
-            null
+            return null
+        }?.also { saved ->
+            // Persist product assignments selected in admin UI. EditedCourse.productIds
+            // is a comma-separated list of product ids. Convert to list and persist.
+            try {
+                val ids = edited.productIds
+                    ?.split(",")
+                    ?.map { it.trim() }
+                    ?.filter { it.isNotEmpty() } ?: emptyList()
+                courseRepository.saveProductCourseAssignments(saved.id, ids)
+            } catch (e: Exception) {
+                // On failure, return null to indicate save was not fully successful
+                return null
+            }
         }
     }
 
