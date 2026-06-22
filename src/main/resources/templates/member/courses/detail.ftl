@@ -19,7 +19,7 @@
                     <#list articles as a>
                         <div class="card mb-2">
                             <div class="card-body">
-                                <h5 class="card-title"><a href="/articles/${a.slug}">${a.title}</a></h5>
+                                <h5 class="card-title"><a href="/a/${a.slug}">${a.title}</a></h5>
                                 <p class="card-text">${a.perex?if_exists!''}</p>
                             </div>
                         </div>
