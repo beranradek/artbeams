@@ -1,11 +1,14 @@
 {
   "version": 1,
   "status": "active",
-  "verdict": "in_progress",
-  "setBy": "system",
-  "updatedAt": "2026-06-21T06:00:44.397Z",
+  "verdict": "needs_fixes",
+  "setBy": "verifier",
+  "updatedAt": "2026-06-22T13:08:19.325Z",
   "evidence": [],
-  "unmet": [],
-  "notes": "",
+  "unmet": [
+    "Administration of Courses is implemented, allowing administrators to create and manage Courses (sets of articles) and assign them to products, create list of modules within this course - each module with image, title, short description and perex content (introduction text).",
+    "Access to Course works when member user logs into member section, and can see menu with available Courses, visit their details up to nested article details."
+  ],
+  "notes": "Gradle tests pass (./gradlew test). Code contains Course domain, admin controllers/forms/templates, CourseService and CourseRepository with product assignment, Article admin supports course assignment, CourseController enforces access and provides per-course search, and SearchIndexer excludes course-bound articles from public index. However ModuleRepository is a stub (findByCourseId returns empty) so created modules are not persisted/listed; and there is no member-facing controller to render course-bound article detail (templates link to /a/{slug} but no matching controller), so nested article detail viewing is not implemented.",
   "blockers": []
 }
