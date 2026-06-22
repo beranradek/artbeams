@@ -83,13 +83,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Harden E2E smoke runner for Courses: add package.json and npm smoke script
-
-Reason: the existing scripts/e2e/smoke_courses_mcp.js requires Puppeteer and minimist but there is no
-package.json in scripts/e2e. Add a small scripts/e2e/package.json (declaring puppeteer and minimist) and a
-"smoke" npm script so the wrapper scripts/e2e/run_smoke_courses.sh can run `npm ci` and `npm run smoke` reliably in CI and locally.
-
-(This was previously proposed but the new version explicitly requires the package.json to include the exact dependency names and a smoke script, addressing earlier feedback.)
+_(none yet)_
 
 ## Later / ideas
 
