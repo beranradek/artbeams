@@ -3,7 +3,7 @@
 
 <div class="container">
     <h1>${course.title} — ${module.title}</h1>
-    <p>${module.description?if_exists!''}</p>
+    <p>${module.perex?if_exists!module.shortDescription?if_exists!''}</p>
 
     <#if articles?has_content>
         <div id="module-articles">

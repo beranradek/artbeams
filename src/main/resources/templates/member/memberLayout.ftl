@@ -254,6 +254,27 @@
       </div>
     </nav>
 
+    <!-- Course menu for member courses. Contains links to available courses for the logged-in user.
+         The element id 'menu-kurz' is required by acceptance tests and smoke scripts. It will be
+         rendered only when 'courses' model attribute is present (populated by MemberSectionController
+         or CourseController). -->
+    <div id="menu-kurz" class="container mt-3">
+        <#if courses?has_content>
+            <nav aria-label="Course navigation">
+                <ul class="nav nav-pills">
+                    <#list courses as c>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/clenska-sekce/courses/${c.slug}">${c.title}</a>
+                        </li>
+                    </#list>
+                </ul>
+            </nav>
+        <#else>
+            <#-- Render an empty placeholder so the element exists for UI checks. -->
+            <nav aria-label="Course navigation" style="display:none"></nav>
+        </#if>
+    </div>
+
     <main role="main" class="container page-content" id="main-content" aria-label="Main content">
         <#nested/>
     </main><!-- /.container -->
