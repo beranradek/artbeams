@@ -83,23 +83,10 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-_(none yet)_
+Investigate and reconcile member-facing article detail and sprint-state verifier mismatch
+
+Rationale: verifier reports ModuleRepository is a stub and /a/{slug} alias mapping is missing while recent commits implemented ModuleRepository and WebController mapping. Audit the listed files, produce a short diagnostic report and apply minimal fixes or test updates so the verifier's expectations align with code.
 
 ## Later / ideas
 
-Investigate and reconcile member-facing article detail and sprint-state verifier mismatch
-
-Rationale: the repository contains working implementations of ModuleRepository (src/main/kotlin/org/xbery/artbeams/courses/repository/ModuleRepository.kt)
-and ModuleMapper (src/main/kotlin/org/xbery/artbeams/courses/repository/mapper/ModuleMapper.kt) as well as WebController article alias handling (src/main/kotlin/org/xbery/artbeams/web/WebController.kt).
-The verifier still reports unresolved failures (modules not persisted; missing /a/{slug} mapping). Add an investigation task to audit the following files and tests to determine why the verifier still flags the sprint as "needs_fixes":
-
-- src/main/kotlin/org/xbery/artbeams/courses/repository/ModuleRepository.kt
-- src/main/kotlin/org/xbery/artbeams/courses/repository/mapper/ModuleMapper.kt
-- src/main/kotlin/org/xbery/artbeams/web/WebController.kt
-- src/main/kotlin/org/xbery/artbeams/courses/controller/CourseController.kt
-- src/main/resources/templates/member/courses/module.ftl (template presence and links)
-- src/main/resources/templates/article.ftl (article detail template and expected model keys)
-- src/test/kotlin/org/xbery/artbeams/courses/CourseRepositoryModulesTest.kt
-- src/test/kotlin/org/xbery/artbeams/courses/controller/CourseControllerAccessTest.kt
-
-This is a research/investigation task (Later) and not yet ready for implementation.
+_(none yet)_
