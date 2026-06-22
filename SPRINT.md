@@ -83,11 +83,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Add product_course DB table, CourseRepository product methods, and update CourseServiceImpl to enforce product-based course visibility and persist assignments.
-
-Rationale: CourseService currently returns all courses (CourseServiceImpl.findCoursesForUser uses CourseRepository.findAll()). The sprint-memory and admin forms (EditedCourse.productIds) imply a product_course join is required so courses are visible only to users who purchased assigned products. This work implements the DB table and repository/service plumbing so member-facing course lists and access checks can rely on stored assignments.
-
-See issue: .autoworker/issue-body-0.md
+_(none yet)_
 
 ## Later / ideas
 
