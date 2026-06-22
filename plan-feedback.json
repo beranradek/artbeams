@@ -1,6 +1,13 @@
 {
   "rejections": [
     {
+      "title": "Add JVM integration test profile with embedded H2 and TestDatabaseInitializer",
+      "reason": "graded_out",
+      "detail": "grade 5/5, keep=false",
+      "runId": "plan-beranradek-artbeams-1782122401610",
+      "at": "2026-06-22T10:02:04.729Z"
+    },
+    {
       "title": "Add JVM test profile with embedded H2 and TestDatabaseInitializer",
       "reason": "graded_out",
       "detail": "grade 5/5, keep=false",
@@ -43,5 +50,5 @@
       "at": "2026-06-21T17:01:49.029Z"
     }
   ],
-  "updatedAt": "2026-06-22T09:02:07.529Z"
+  "updatedAt": "2026-06-22T10:02:04.729Z"
 }
