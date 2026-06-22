@@ -1,30 +1,24 @@
-<#-- Member courses list -->
-<div id="menu-kurz">
-    <h2>Kurzy</h2>
-    <ul id="course-list">
-    <#if courses?has_content>
-        <#list courses as course>
-            <li><a href="/clenska-sekce/courses/${course.slug}">${course.title}</a></li>
-        </#list>
-    <#else>
-        <li>Žádné kurzy</li>
-    </#if>
-    </ul>
-</div>
+<#import "/member/memberLayout.ftl" as layout>
+<@layout.page>
 
-<#-- simple listing tiles -->
 <div class="container">
-    <h1>Moje kurzy</h1>
-    <div class="row">
-        <#if courses?has_content>
-            <#list courses as course>
+    <h1>Kurzy</h1>
+    <#if courses?has_content>
+        <div class="row">
+            <#list courses as c>
                 <div class="col-md-4">
-                    <h3><a href="/clenska-sekce/courses/${course.slug}">${course.title}</a></h3>
-                    <p>${course.perex}</p>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="/clenska-sekce/courses/${c.slug}">${c.title}</a></h5>
+                            <p class="card-text">${c.perex?if_exists!''}</p>
+                        </div>
+                    </div>
                 </div>
             </#list>
-        <#else>
-            <p>Prozatím nemáte žádné kurzy.</p>
-        </#if>
-    </div>
+        </div>
+    <#else>
+        <div class="alert alert-info">Žádné kurzy k zobrazení.</div>
+    </#if>
 </div>
+
+</@layout.page>
