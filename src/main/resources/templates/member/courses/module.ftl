@@ -1,28 +1,24 @@
-<#-- Module view listing articles for a module -->
-<div id="menu-kurz">
-    <h2>Kurzy</h2>
-    <ul>
-        <#if courses?has_content>
-            <#list courses as c>
-                <li><a href="/clenska-sekce/courses/${c.slug}">${c.title}</a></li>
-            </#list>
-        </#if>
-    </ul>
-</div>
+<#import "/member/memberLayout.ftl" as layout>
+<@layout.page>
 
 <div class="container">
     <h1>${course.title} — ${module.title}</h1>
-    <p>${module.perex}</p>
+    <p>${module.description?if_exists!''}</p>
 
-    <div id="module-list">
-        <#if articles?has_content>
-            <ul>
-                <#list articles as a>
-                    <li><a href="/a/${a.slug}">${a.title}</a></li>
-                </#list>
-            </ul>
-        <#else>
-            <p>Žádné články v modulu.</p>
-        </#if>
-    </div>
+    <#if articles?has_content>
+        <div id="module-articles">
+            <#list articles as a>
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="/articles/${a.slug}">${a.title}</a></h5>
+                        <p class="card-text">${a.perex?if_exists!''}</p>
+                    </div>
+                </div>
+            </#list>
+        </div>
+    <#else>
+        <div class="alert alert-secondary">Žádné články v modulu.</div>
+    </#if>
 </div>
+
+</@layout.page>
