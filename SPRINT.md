@@ -83,9 +83,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Add JVM integration test profile using embedded H2 and test DB initializer (see issue to create).
-
-Reason: Provide a fast, deterministic Spring test profile so JVM integration tests (course access rules, repository-level checks) can run without PostgreSQL. The implementation will add a test-only application-test.yml, an H2 test dependency in build.gradle, and a TestDatabaseInitializer that executes src/main/resources/sql/create_tables.sql against the H2 DataSource.
+_(none yet)_
 
 ## Later / ideas
 
