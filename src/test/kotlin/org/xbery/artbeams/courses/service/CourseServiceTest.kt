@@ -32,9 +32,11 @@ class CourseServiceTest :
                 perex = null,
                 modules = listOf()
             )
-            every { courseRepo.findAll() } returns listOf(course)
+            every { courseRepo.findCoursesForProduct("p1") } returns listOf(course)
+            val userProductRepo = mockk<org.xbery.artbeams.userproducts.repository.UserProductRepository>()
+            every { userProductRepo.findProductIdsForUser("user1") } returns listOf("p1")
 
-            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo)
+            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo, userProductRepo)
             svc.findCoursesForUser("user1") shouldBe listOf(course)
         }
 
@@ -47,7 +49,8 @@ class CourseServiceTest :
             val c2 = Course(AssetAttributes.EMPTY, "slug-b", "B", null, null, null, null, listOf())
             every { courseRepo.findAll() } returns listOf(c1, c2)
 
-            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo)
+            val userProductRepo = mockk<org.xbery.artbeams.userproducts.repository.UserProductRepository>(relaxed = true)
+            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo, userProductRepo)
             svc.findBySlug("slug-b") shouldBe c2
             svc.findBySlug("missing") shouldBe null
         }
@@ -77,7 +80,8 @@ class CourseServiceTest :
 
             every { articleRepo.findByQueryForCourse("course-1", "query", 5) } returns listOf(article)
 
-            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo)
+            val userProductRepo = mockk<org.xbery.artbeams.userproducts.repository.UserProductRepository>(relaxed = true)
+            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo, userProductRepo)
             val results = svc.searchArticlesInCourse("course-1", "query", 5)
             results shouldContainExactly listOf(article)
             verify { articleRepo.findByQueryForCourse("course-1", "query", 5) }

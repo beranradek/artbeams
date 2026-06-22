@@ -62,7 +62,8 @@ class CourseServiceIntegrationTest :
                 ) // public
             every { articleRepo.findByQueryForCourse(expectedCourseId, "q", 10) } returns listOf(a1, a2)
 
-            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo)
+            val userProductRepo = mockk<org.xbery.artbeams.userproducts.repository.UserProductRepository>(relaxed = true)
+            val svc = CourseServiceImpl(courseRepo, articleRepo, moduleRepo, userProductRepo)
 
             val results = svc.searchArticlesInCourse(expectedCourseId, "q", 10)
 

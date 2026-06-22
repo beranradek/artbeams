@@ -26,6 +26,7 @@ import org.xbery.artbeams.jooq.schema.tables.Media
 import org.xbery.artbeams.jooq.schema.tables.NewsSubscription
 import org.xbery.artbeams.jooq.schema.tables.OrderItems
 import org.xbery.artbeams.jooq.schema.tables.Orders
+import org.xbery.artbeams.jooq.schema.tables.ProductCourse
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
 import org.xbery.artbeams.jooq.schema.tables.Roles
@@ -138,6 +139,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val ORDERS: Orders get() = Orders.ORDERS
 
     /**
+     * The table <code>product_course</code>.
+     */
+    val PRODUCT_COURSE: ProductCourse get() = ProductCourse.PRODUCT_COURSE
+
+    /**
      * The table <code>products</code>.
      */
     val PRODUCTS: Products get() = Products.PRODUCTS
@@ -212,6 +218,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         NewsSubscription.NEWS_SUBSCRIPTION,
         OrderItems.ORDER_ITEMS,
         Orders.ORDERS,
+        ProductCourse.PRODUCT_COURSE,
         Products.PRODUCTS,
         Queue.QUEUE,
         Roles.ROLES,

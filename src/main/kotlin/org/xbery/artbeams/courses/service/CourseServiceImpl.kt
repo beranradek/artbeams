@@ -5,17 +5,22 @@ import org.xbery.artbeams.articles.repository.ArticleRepository
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.repository.CourseRepository
 import org.xbery.artbeams.courses.repository.ModuleRepository
+import org.xbery.artbeams.userproducts.repository.UserProductRepository
 
 @Service
 class CourseServiceImpl(
     private val courseRepository: CourseRepository,
     private val articleRepository: ArticleRepository,
-    private val moduleRepository: ModuleRepository
+    private val moduleRepository: ModuleRepository,
+    private val userProductRepository: UserProductRepository
 ) : CourseService {
     override fun findCoursesForUser(userId: String): List<Course> {
-        // For now, courses available for a user are retrieved from repository.
-        // In future this can be filtered by user's purchased products.
-        return courseRepository.findAll()
+        // Courses available for a user are determined by user's purchased products.
+        val productIds = userProductRepository.findProductIdsForUser(userId)
+        if (productIds.isEmpty()) return emptyList()
+        // Aggregate courses for each product and deduplicate by id
+        val courses = productIds.flatMap { pid -> courseRepository.findCoursesForProduct(pid) }
+        return courses.distinctBy { it.id }
     }
 
     override fun findAllForAdmin(): List<Course> {
@@ -42,16 +47,35 @@ class CourseServiceImpl(
             .updatedWith(userId)
         val course =
             Course(common, edited.slug ?: "", edited.title ?: "", edited.subtitle, edited.listingImage, edited.image, edited.perex, emptyList())
+        // To ensure course creation/update and product assignments are applied
+        // atomically, perform both operations within a single jOOQ transaction.
         return try {
-            if (edited.id == null || edited.id == org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY_ID) {
-                courseRepository.create(course)
-            } else {
-                // Preserve existing modules when updating
-                val existing = courseRepository.requireById(edited.id!!)
-                val updated = course.copy(common = existing.common.updatedWith(userId), modules = existing.modules)
-                courseRepository.update(updated)
+            courseRepository.dsl.transactionResult { config ->
+                // Inside transaction closure; operations using the same DSLContext
+                // (courseRepository.dsl) will participate in the same DB transaction.
+                val saved = if (edited.id == null || edited.id == org.xbery.artbeams.common.assets.domain.AssetAttributes.EMPTY_ID) {
+                    courseRepository.create(course)
+                } else {
+                    // Preserve existing modules when updating
+                    val existing = courseRepository.requireById(edited.id!!)
+                    val updated = course.copy(common = existing.common.updatedWith(userId), modules = existing.modules)
+                    courseRepository.update(updated)
+                }
+
+                // Persist product assignments selected in admin UI. EditedCourse.productIds
+                // is a comma-separated list of product ids. Convert to list and persist.
+                val ids = edited.productIds
+                    ?.split(",")
+                    ?.map { it.trim() }
+                    ?.filter { it.isNotEmpty() } ?: emptyList()
+                // saveProductCourseAssignments no longer creates its own transaction so
+                // this call is part of the wrapping transaction and will roll back
+                // together with course persist on failure.
+                courseRepository.saveProductCourseAssignments(saved.id, ids)
+                saved
             }
         } catch (e: Exception) {
+            // On failure, return null to indicate save was not fully successful
             null
         }
     }
