@@ -53,6 +53,7 @@ class WebController(
     private val articleCategoryRepository: ArticleCategoryRepository,
     val productService: ProductService,
     val commentService: CommentService,
+    private val courseService: org.xbery.artbeams.courses.service.CourseService,
     val controllerComponents: ControllerComponents,
     val resourceLoader: ResourceLoader,
     private val searchService: SearchService,
@@ -251,118 +252,138 @@ class WebController(
     }
 
     /** GET article detail. */
-    @GetMapping("/{slug}")
-    fun article(request: HttpServletRequest, @PathVariable slug: String?): Any = if (slug != null) {
-        val article = articleService.findBySlugPublic(slug)
-        if (article != null) {
-            val entityKey = EntityKey.fromClassAndId(Article::class.java, article.id)
-            val fUserAccessReport =
-                CompletableFuture.supplyAsync {
-                    controllerComponents.userAccessService.saveUserAccess(
-                        entityKey,
-                        request
-                    )
-                }
-            val fCountOfVisits =
-                CompletableFuture.supplyAsync {
-                    controllerComponents.userAccessService.findCountOfVisits(entityKey)
-                }
-            val fCommentsWithForm =
-                CompletableFuture.supplyAsync {
-                    if (article.showOnBlog) {
-                        val newComment =
-                            Comment.EMPTY.toEdited().copy(entityId = article.id)
-                        val comments = commentService.findApprovedByEntityId(article.id)
-                        val commentForm =
-                            commentFormDef.fill(
-                                FormData(newComment, ValidationResult.empty)
-                            )
-                        Pair<List<Comment>, FormMapping<EditedComment>?>(
-                            comments,
-                            commentForm
-                        )
-                    } else {
-                        Pair<List<Comment>, FormMapping<EditedComment>?>(listOf(), null)
-                    }
-                }
-            val fArticleCategories =
-                CompletableFuture.supplyAsync {
-                    // Cached method - categories per article are cached efficiently
-                    categoryService.findCategoriesByArticleId(article.id)
-                }
-            CompletableFuture
-                .allOf(
-                    fUserAccessReport,
-                    fCountOfVisits,
-                    fCommentsWithForm,
-                    fArticleCategories
-                ).join()
-            val commentsWithForm = fCommentsWithForm.get()
-            val articleCategories = fArticleCategories.get()
+    @GetMapping(value = ["/{slug}", "/a/{slug}"])
+    fun article(request: HttpServletRequest, @PathVariable slug: String?): Any {
+        if (slug == null) {
+            return notFound(request)
+        }
+        val isAlias = request.requestURI.startsWith("/a/")
+        val article = if (isAlias) articleService.findBySlug(slug) else articleService.findBySlugPublic(slug)
+        if (article == null) {
+            return notFound(request)
+        }
 
-            // Generate structured data for GEO/SEO
-            val siteUrl = getUrlBase(request)
-            val siteName =
-                controllerComponents.localisationRepository.getEntries()["website.title"]
-                    ?: "ArtBeams"
-            val logoUrl =
-                "$siteUrl${controllerComponents.localisationRepository.getEntries()["logo.img.src"] ?: "/media/favicon.ico"}"
+        // If this is alias path, enforce that drafts are not exposed and course access is checked
+        if (isAlias) {
+            if (article.draft) {
+                return notFound(request)
+            }
+            val loggedUser = controllerComponents.getLoggedUser(request)
+            if (article.courseId != null) {
+                // If user not logged or does not have access to the course, return 404
+                if (loggedUser == null) {
+                    return notFound(request)
+                }
+                val courses = courseService.findCoursesForUser(loggedUser.common.id)
+                if (courses.none { it.id == article.courseId }) {
+                    return notFound(request)
+                }
+            }
+        }
 
-            val articleJsonLd =
-                StructuredDataGenerator.generateArticleJsonLd(
-                    article = article,
-                    author = null, // Author information from translations for now
-                    categories = articleCategories,
-                    siteUrl = siteUrl,
-                    siteName = siteName,
-                    logoUrl = logoUrl
-                )
-
-            // Generate breadcrumb structured data
-            val breadcrumbItems = mutableListOf<Pair<String, String>>()
-            breadcrumbItems.add(Pair(siteName, siteUrl))
-            if (articleCategories.isNotEmpty()) {
-                val primaryCategory = articleCategories.first()
-                breadcrumbItems.add(
-                    Pair(
-                        primaryCategory.title,
-                        "$siteUrl/kategorie/${primaryCategory.slug}"
-                    )
+        val entityKey = EntityKey.fromClassAndId(Article::class.java, article.id)
+        val fUserAccessReport =
+            CompletableFuture.supplyAsync {
+                controllerComponents.userAccessService.saveUserAccess(
+                    entityKey,
+                    request
                 )
             }
-            breadcrumbItems.add(Pair(article.title, "$siteUrl/${article.slug}"))
-            val breadcrumbJsonLd =
-                StructuredDataGenerator.generateBreadcrumbJsonLd(breadcrumbItems)
-
-            val faqs = faqService.findByEntity(FaqEntityType.ARTICLE, article.id)
-            val faqJsonLd =
-                if (faqs.isNotEmpty()) {
-                    StructuredDataGenerator.generateFaqJsonLd(faqs.map { it.question to it.answer })
+        val fCountOfVisits =
+            CompletableFuture.supplyAsync {
+                controllerComponents.userAccessService.findCountOfVisits(entityKey)
+            }
+        val fCommentsWithForm =
+            CompletableFuture.supplyAsync {
+                if (article.showOnBlog) {
+                    val newComment =
+                        Comment.EMPTY.toEdited().copy(entityId = article.id)
+                    val comments = commentService.findApprovedByEntityId(article.id)
+                    val commentForm =
+                        commentFormDef.fill(
+                            FormData(newComment, ValidationResult.empty)
+                        )
+                    Pair<List<Comment>, FormMapping<EditedComment>?>(
+                        comments,
+                        commentForm
+                    )
                 } else {
-                    null
+                    Pair<List<Comment>, FormMapping<EditedComment>?>(listOf(), null)
                 }
+            }
+        val fArticleCategories =
+            CompletableFuture.supplyAsync {
+                // Cached method - categories per article are cached efficiently
+                categoryService.findCategoriesByArticleId(article.id)
+            }
+        CompletableFuture
+            .allOf(
+                fUserAccessReport,
+                fCountOfVisits,
+                fCommentsWithForm,
+                fArticleCategories
+            ).join()
+        val commentsWithForm = fCommentsWithForm.get()
+        val articleCategories = fArticleCategories.get()
 
-            val model =
-                createBlogModel(
-                    request,
-                    FormData(SubscriptionFormData.Empty, ValidationResult.empty),
-                    "article" to article,
-                    "articleCategories" to articleCategories,
-                    "comments" to commentsWithForm.first,
-                    CommentController.TPL_PARAM_COMMENT_FORM to commentsWithForm.second,
-                    "userAccessReport" to fUserAccessReport.get(),
-                    "countOfVisits" to fCountOfVisits.get(),
-                    "articleJsonLd" to articleJsonLd,
-                    "breadcrumbJsonLd" to breadcrumbJsonLd,
-                    "faqs" to faqs,
-                    "faqJsonLd" to faqJsonLd
+        // Generate structured data for GEO/SEO
+        val siteUrl = getUrlBase(request)
+        val siteName =
+            controllerComponents.localisationRepository.getEntries()["website.title"]
+                ?: "ArtBeams"
+        val logoUrl =
+            "$siteUrl${controllerComponents.localisationRepository.getEntries()["logo.img.src"] ?: "/media/favicon.ico"}"
+
+        val articleJsonLd =
+            StructuredDataGenerator.generateArticleJsonLd(
+                article = article,
+                author = null, // Author information from translations for now
+                categories = articleCategories,
+                siteUrl = siteUrl,
+                siteName = siteName,
+                logoUrl = logoUrl
+            )
+
+        // Generate breadcrumb structured data
+        val breadcrumbItems = mutableListOf<Pair<String, String>>()
+        breadcrumbItems.add(Pair(siteName, siteUrl))
+        if (articleCategories.isNotEmpty()) {
+            val primaryCategory = articleCategories.first()
+            breadcrumbItems.add(
+                Pair(
+                    primaryCategory.title,
+                    "$siteUrl/kategorie/${primaryCategory.slug}"
                 )
-            ModelAndView("article", model)
-        } else {
-            notFound(request)
+            )
         }
-    } else {
-        notFound(request)
+        breadcrumbItems.add(Pair(article.title, "$siteUrl/${article.slug}"))
+        val breadcrumbJsonLd =
+            StructuredDataGenerator.generateBreadcrumbJsonLd(breadcrumbItems)
+
+        val faqs = faqService.findByEntity(FaqEntityType.ARTICLE, article.id)
+        val faqJsonLd =
+            if (faqs.isNotEmpty()) {
+                StructuredDataGenerator.generateFaqJsonLd(faqs.map { it.question to it.answer })
+            } else {
+                null
+            }
+
+        val model =
+            createBlogModel(
+                request,
+                FormData(SubscriptionFormData.Empty, ValidationResult.empty),
+                "article" to article,
+                "articleCategories" to articleCategories,
+                "comments" to commentsWithForm.first,
+                CommentController.TPL_PARAM_COMMENT_FORM to commentsWithForm.second,
+                "userAccessReport" to fUserAccessReport.get(),
+                "countOfVisits" to fCountOfVisits.get(),
+                "articleJsonLd" to articleJsonLd,
+                "breadcrumbJsonLd" to breadcrumbJsonLd,
+                "faqs" to faqs,
+                "faqJsonLd" to faqJsonLd
+            )
+        return ModelAndView("article", model)
     }
 
     private fun buildRssXml(siteUrl: String, siteName: String, siteDescription: String, articles: List<Article>): String {
