@@ -83,12 +83,9 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Add JVM integration test profile using H2 for fast verification of course access rules
+Add JVM integration test profile using embedded H2 and test DB initializer (see issue to create).
 
-Reason: The sprint's Later queue contains a well-scoped task to add a test profile that uses an embedded H2 DB so JVM integration
-tests (particularly course access rules and repository-level checks) can run quickly and deterministically without requiring
-PostgreSQL. Implement a Spring Boot test profile, add H2 test dependency and a small TestDatabaseInitializer that executes
-src/main/resources/sql/create_tables.sql against the H2 DataSource.
+Reason: Provide a fast, deterministic Spring test profile so JVM integration tests (course access rules, repository-level checks) can run without PostgreSQL. The implementation will add a test-only application-test.yml, an H2 test dependency in build.gradle, and a TestDatabaseInitializer that executes src/main/resources/sql/create_tables.sql against the H2 DataSource.
 
 ## Later / ideas
 
