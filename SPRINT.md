@@ -83,7 +83,9 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-_(none yet)_
+Implement article-detail member alias mapping `/a/{slug}` in WebController
+
+Rationale: member templates (src/main/resources/templates/member/courses/detail.ftl and module.ftl) link articles as `/a/${a.slug}` but the public article controller only handles `/{slug}` and uses ArticleService.findBySlugPublic. Add an alias route and member-access logic so course-bound articles are reachable from member pages while still enforcing course-product access.
 
 ## Later / ideas
 
