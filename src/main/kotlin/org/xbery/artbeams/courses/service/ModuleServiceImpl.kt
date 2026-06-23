@@ -1,6 +1,7 @@
 package org.xbery.artbeams.courses.service
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.xbery.artbeams.courses.admin.EditedModule
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.repository.ModuleRepository
@@ -11,10 +12,17 @@ class ModuleServiceImpl(
 ) : ModuleService {
     override fun findModulesByCourseId(courseId: String) = moduleRepository.findByCourseId(courseId)
 
+    @Transactional
     override fun saveModule(courseId: String, edited: EditedModule): Module? {
-        // Stub implementation: repository save not implemented yet. Return
-        // a domain Module instance constructed from edited data so callers
-        // (and unit tests) can verify behaviour without a DB.
-        return Module(edited.id ?: "", edited.title ?: "", edited.image, edited.shortDescription, edited.perex)
+        // Execute save inside a transaction to ensure atomicity of multi-
+        // statement operations (compute max sort order + insert) and to
+        // reduce race conditions when multiple modules are created
+        // concurrently. The repository itself performs either UPDATE or
+        // INSERT depending on existence.
+        return moduleRepository.save(courseId, edited)
+    }
+
+    override fun deleteModule(courseId: String, id: String) {
+        moduleRepository.delete(courseId, id)
     }
 }

@@ -13,4 +13,10 @@ interface ModuleService {
      * may later delegate to repository save methods once persistence is added.
      */
     fun saveModule(courseId: String, edited: EditedModule): Module?
+
+    /**
+     * Delete module with given id belonging to a course. Implementations should
+     * enforce course ownership to avoid accidental cross-course deletion.
+     */
+    fun deleteModule(courseId: String, id: String)
 }

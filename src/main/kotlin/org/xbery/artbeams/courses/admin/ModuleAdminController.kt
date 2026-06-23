@@ -34,7 +34,9 @@ class ModuleAdminController(
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
     fun editForm(@PathVariable courseId: String, request: HttpServletRequest, @PathVariable id: String?): Any {
-        val edited = if (id == null) EditedModule("0", "", null, null, null) else EditedModule(id, "", null, null, null)
+        // For new modules use null id instead of sentinel "0" so repository
+        // can reliably detect new entities. EditedModule.id is nullable.
+        val edited = if (id == null) EditedModule(null, "", null, null, null) else EditedModule(id, "", null, null, null)
         return renderEditForm(request, courseId, edited, ValidationResult.empty, null)
     }
 
@@ -59,7 +61,11 @@ class ModuleAdminController(
 
     @PostMapping("/delete")
     fun delete(@PathVariable courseId: String, request: HttpServletRequest): Any {
-        // No-op for stub repository
+        // Read module id from request parameters. Accept both 'id' and 'module.id'
+        val id = request.getParameter("id") ?: request.getParameter("module.id")
+        if (id.isNullOrBlank()) return notFound(request)
+
+        moduleService.deleteModule(courseId, id)
         return redirect("/admin/courses/$courseId/modules")
     }
 
