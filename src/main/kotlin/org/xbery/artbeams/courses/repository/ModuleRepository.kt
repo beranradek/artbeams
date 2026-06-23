@@ -1,9 +1,9 @@
 package org.xbery.artbeams.courses.repository
 
 import org.jooq.DSLContext
-import org.springframework.stereotype.Repository
 import org.jooq.Record
 import org.jooq.impl.DSL
+import org.springframework.stereotype.Repository
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.repository.mapper.ModuleMapper
 import org.xbery.artbeams.jooq.schema.tables.CourseModules
