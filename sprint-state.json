@@ -1,13 +1,11 @@
 {
   "version": 1,
-  "status": "active",
-  "verdict": "needs_fixes",
+  "status": "complete",
+  "verdict": "in_progress",
   "setBy": "verifier",
-  "updatedAt": "2026-06-23T05:06:46.291Z",
+  "updatedAt": "2026-06-23T06:41:47.759Z",
   "evidence": [],
-  "unmet": [
-    "Administration of Courses is implemented, allowing administrators to create and manage Courses (sets of articles) and assign them to products, create list of modules within this course - each module with image, title, short description and perex content (introduction text)."
-  ],
-  "notes": "Ran the test suite (./gradlew test) — all tests passed. Course administration, course assignment to products, article->course assignment, member-section menu, per-course search, and search-index exclusion are implemented (controllers, services, repositories, and templates are present). However module management is not fully implemented: ModuleService.saveModule is a stub that does not persist modules and ModuleAdminController.delete is a no-op, so administrators cannot persist/manage modules as required by the first DoD bullet.",
+  "unmet": [],
+  "notes": "Ran the test suite (./gradlew test) — all tests passed. Reviewed code and templates: course and module admin controllers, repositories, and templates exist; ModuleService.saveModule and ModuleAdminController.delete are implemented and persist modules; Article admin supports assigning articles to courses; member section templates and controllers expose a courses menu and enforce access; per-course search and search index explicitly exclude course-bound (private) articles. All DoD bullets are satisfied by code and tests.",
   "blockers": []
 }

@@ -83,9 +83,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Add unit test for ModuleAdminController.delete behavior
-
-Reason: controller.save and list already have unit tests (src/test/kotlin/.../ModuleAdminControllerTest.kt) but delete() is not covered. Add a focused unit test that verifies the controller reads the id from request, delegates to ModuleService.deleteModule(courseId, id) and redirects to the module list. This closes the remaining coverage gap for module admin CRUD.
+_(none yet)_
 
 ## Later / ideas
 
