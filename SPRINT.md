@@ -83,9 +83,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-Investigate and reconcile member-facing article detail and sprint-state verifier mismatch
-
-Rationale: verifier reports ModuleRepository is a stub and /a/{slug} alias mapping is missing while recent commits implemented ModuleRepository and WebController mapping. Audit the listed files, produce a short diagnostic report and apply minimal fixes or test updates so the verifier's expectations align with code.
+_(none yet)_
 
 ## Later / ideas
 
