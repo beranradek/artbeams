@@ -83,7 +83,7 @@ Each bullet is an observable symptom that must be resolved before the sprint can
 
 ## Next up (ready)
 
-_(none yet)_
+- Persist and delete Course Modules (admin CRUD)
 
 ## Later / ideas
 
