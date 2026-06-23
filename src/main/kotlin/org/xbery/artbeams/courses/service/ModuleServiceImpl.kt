@@ -12,9 +12,11 @@ class ModuleServiceImpl(
     override fun findModulesByCourseId(courseId: String) = moduleRepository.findByCourseId(courseId)
 
     override fun saveModule(courseId: String, edited: EditedModule): Module? {
-        // Stub implementation: repository save not implemented yet. Return
-        // a domain Module instance constructed from edited data so callers
-        // (and unit tests) can verify behaviour without a DB.
-        return Module(edited.id ?: "", edited.title ?: "", edited.image, edited.shortDescription, edited.perex)
+        // Delegate to repository which performs persistence using jOOQ.
+        return moduleRepository.save(courseId, edited)
+    }
+
+    override fun deleteModule(courseId: String, id: String) {
+        moduleRepository.delete(courseId, id)
     }
 }

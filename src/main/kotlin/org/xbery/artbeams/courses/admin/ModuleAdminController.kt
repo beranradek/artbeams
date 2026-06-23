@@ -59,7 +59,11 @@ class ModuleAdminController(
 
     @PostMapping("/delete")
     fun delete(@PathVariable courseId: String, request: HttpServletRequest): Any {
-        // No-op for stub repository
+        // Read module id from request parameters. Accept both 'id' and 'module.id'
+        val id = request.getParameter("id") ?: request.getParameter("module.id")
+        if (id.isNullOrBlank()) return notFound(request)
+
+        moduleService.deleteModule(courseId, id)
         return redirect("/admin/courses/$courseId/modules")
     }
 
