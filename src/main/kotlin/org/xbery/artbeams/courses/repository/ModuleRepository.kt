@@ -4,6 +4,8 @@ import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
+import org.xbery.artbeams.common.assets.domain.AssetAttributes
+import org.xbery.artbeams.courses.admin.EditedModule
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.repository.mapper.ModuleMapper
 import org.xbery.artbeams.jooq.schema.tables.CourseModules
@@ -31,8 +33,8 @@ class ModuleRepository(
      * The method sets a SORT_ORDER value (append to end) and returns persisted
      * Module mapped from the returned record.
      */
-    fun save(courseId: String, edited: org.xbery.artbeams.courses.admin.EditedModule): Module? {
-        val id = edited.id?.takeIf { it.isNotBlank() } ?: UUID.randomUUID().toString()
+    fun save(courseId: String, edited: EditedModule): Module? {
+        val id = resolveId(edited)
 
         // First try to find existing module by id + courseId. If present perform
         // UPDATE preserving existing sort order. Otherwise INSERT a new row and
@@ -94,5 +96,22 @@ class ModuleRepository(
             .where(CourseModules.COURSE_MODULES.ID.eq(id))
             .and(CourseModules.COURSE_MODULES.COURSE_ID.eq(courseId))
             .execute()
+    }
+
+    /**
+     * Resolve the id to persist a module under: a new random id is generated whenever
+     * edited.id is missing, blank, or the AssetAttributes.EMPTY_ID sentinel ("0") used
+     * by "New Module" links (see ModuleAdminController.editForm). Enforced here too, not
+     * only in the controller, so any caller that bypasses the edit form (e.g. a repeated
+     * form submission carrying a stale "0") cannot collide with, and silently overwrite,
+     * a previously saved module with that literal id.
+     */
+    internal fun resolveId(edited: EditedModule): String {
+        val existingId = edited.id
+        return if (!existingId.isNullOrBlank() && existingId != AssetAttributes.EMPTY_ID) {
+            existingId
+        } else {
+            UUID.randomUUID().toString()
+        }
     }
 }
