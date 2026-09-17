@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
+import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.courses.service.ModuleService
@@ -34,9 +35,16 @@ class ModuleAdminController(
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])
     fun editForm(@PathVariable courseId: String, request: HttpServletRequest, @PathVariable id: String?): Any {
-        // For new modules use null id instead of sentinel "0" so repository
-        // can reliably detect new entities. EditedModule.id is nullable.
-        val edited = if (id == null) EditedModule(null, "", null, null, null) else EditedModule(id, "", null, null, null)
+        // The "New Module" link always supplies a path segment (AssetAttributes.EMPTY_ID,
+        // "0"), the same sentinel used by CourseAdminController.editForm - the `id == null`
+        // branch alone is unreachable because {id} is a mandatory path segment. Without this
+        // check every new module was persisted with the literal id "0" and each subsequent
+        // "New Module" click silently overwrote it instead of inserting a new row.
+        val edited = if (id == null || id == AssetAttributes.EMPTY_ID) {
+            EditedModule(null, "", null, null, null)
+        } else {
+            EditedModule(id, "", null, null, null)
+        }
         return renderEditForm(request, courseId, edited, ValidationResult.empty, null)
     }
 
