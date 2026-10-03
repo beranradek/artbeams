@@ -22,6 +22,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.ProductCourse
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
+import org.xbery.artbeams.jooq.schema.tables.RefundRequests
 import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.SystemEventLog
 import org.xbery.artbeams.jooq.schema.tables.UserAccess
@@ -71,6 +72,9 @@ val IDX_PRODUCT_COURSE_PRODUCT_ID: Index = Internal.createIndex(DSL.name("idx_pr
 val IDX_PRODUCTS_SLUG: Index = Internal.createIndex(DSL.name("idx_products_slug"), Products.PRODUCTS, arrayOf(Products.PRODUCTS.SLUG), false)
 val IDX_QUEUE_EXPIRATION: Index = Internal.createIndex(DSL.name("idx_queue_expiration"), Queue.QUEUE, arrayOf(Queue.QUEUE.EXPIRATION_TIME), false)
 val IDX_QUEUE_NEXT_ACTION_TIME: Index = Internal.createIndex(DSL.name("idx_queue_next_action_time"), Queue.QUEUE, arrayOf(Queue.QUEUE.NEXT_ACTION_TIME), false)
+val IDX_REFUND_REQUESTS_OPEN_ORDER: Index = Internal.createIndex(DSL.name("idx_refund_requests_open_order"), RefundRequests.REFUND_REQUESTS, arrayOf(RefundRequests.REFUND_REQUESTS.ORDER_ID), true)
+val IDX_REFUND_REQUESTS_STATUS_REQUESTED: Index = Internal.createIndex(DSL.name("idx_refund_requests_status_requested"), RefundRequests.REFUND_REQUESTS, arrayOf(RefundRequests.REFUND_REQUESTS.STATUS, RefundRequests.REFUND_REQUESTS.REQUESTED_AT), false)
+val IDX_REFUND_REQUESTS_USER_REQUESTED: Index = Internal.createIndex(DSL.name("idx_refund_requests_user_requested"), RefundRequests.REFUND_REQUESTS, arrayOf(RefundRequests.REFUND_REQUESTS.USER_ID, RefundRequests.REFUND_REQUESTS.REQUESTED_AT), false)
 val IDX_SEARCH_ENTITY: Index = Internal.createIndex(DSL.name("idx_search_entity"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.ENTITY_TYPE, SearchIndex.SEARCH_INDEX.ENTITY_ID), false)
 val IDX_SEARCH_MODIFIED: Index = Internal.createIndex(DSL.name("idx_search_modified"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.MODIFIED), false)
 val IDX_SEARCH_SLUG: Index = Internal.createIndex(DSL.name("idx_search_slug"), SearchIndex.SEARCH_INDEX, arrayOf(SearchIndex.SEARCH_INDEX.SLUG), false)

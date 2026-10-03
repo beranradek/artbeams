@@ -38,8 +38,10 @@ import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_EMAIL
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USERS_LOGIN
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A
 import org.xbery.artbeams.jooq.schema.keys.FK_USER_ID
+import org.xbery.artbeams.jooq.schema.keys.REFUND_REQUEST_USER_FK
 import org.xbery.artbeams.jooq.schema.keys.USER_ACTIVITY_LOG_USER_FK
 import org.xbery.artbeams.jooq.schema.keys.USER_FK
+import org.xbery.artbeams.jooq.schema.tables.RefundRequests.RefundRequestsPath
 import org.xbery.artbeams.jooq.schema.tables.UserActivityLog.UserActivityLogPath
 import org.xbery.artbeams.jooq.schema.tables.UserProduct.UserProductPath
 import org.xbery.artbeams.jooq.schema.tables.UserRole.UserRolePath
@@ -183,6 +185,22 @@ open class Users(
 
     val userRole: UserRolePath
         get(): UserRolePath = userRole()
+
+    private lateinit var _refundRequests: RefundRequestsPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>PUBLIC.refund_requests</code> table
+     */
+    fun refundRequests(): RefundRequestsPath {
+        if (!this::_refundRequests.isInitialized)
+            _refundRequests = RefundRequestsPath(this, null, REFUND_REQUEST_USER_FK.inverseKey)
+
+        return _refundRequests;
+    }
+
+    val refundRequests: RefundRequestsPath
+        get(): RefundRequestsPath = refundRequests()
 
     private lateinit var _userActivityLog: UserActivityLogPath
 

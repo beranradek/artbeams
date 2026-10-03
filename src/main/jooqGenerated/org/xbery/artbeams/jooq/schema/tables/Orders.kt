@@ -41,7 +41,9 @@ import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_PAYMENT_METHOD
 import org.xbery.artbeams.jooq.schema.indexes.IDX_ORDERS_STATE
 import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3
 import org.xbery.artbeams.jooq.schema.keys.ORDER_FK
+import org.xbery.artbeams.jooq.schema.keys.REFUND_REQUEST_ORDER_FK
 import org.xbery.artbeams.jooq.schema.tables.OrderItems.OrderItemsPath
+import org.xbery.artbeams.jooq.schema.tables.RefundRequests.RefundRequestsPath
 import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 
 
@@ -182,6 +184,22 @@ open class Orders(
 
     val orderItems: OrderItemsPath
         get(): OrderItemsPath = orderItems()
+
+    private lateinit var _refundRequests: RefundRequestsPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>PUBLIC.refund_requests</code> table
+     */
+    fun refundRequests(): RefundRequestsPath {
+        if (!this::_refundRequests.isInitialized)
+            _refundRequests = RefundRequestsPath(this, null, REFUND_REQUEST_ORDER_FK.inverseKey)
+
+        return _refundRequests;
+    }
+
+    val refundRequests: RefundRequestsPath
+        get(): RefundRequestsPath = refundRequests()
     override fun `as`(alias: String): Orders = Orders(DSL.name(alias), this)
     override fun `as`(alias: Name): Orders = Orders(alias, this)
     override fun `as`(alias: Table<*>): Orders = Orders(alias.qualifiedName, this)

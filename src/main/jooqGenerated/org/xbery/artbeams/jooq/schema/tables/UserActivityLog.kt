@@ -38,7 +38,7 @@ import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ACTIVITY_LOG_ACTION_TYPE
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ACTIVITY_LOG_ENTITY
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ACTIVITY_LOG_USER_ID
 import org.xbery.artbeams.jooq.schema.indexes.IDX_USER_ACTIVITY_LOG_USER_TIME
-import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_1
+import org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_1E
 import org.xbery.artbeams.jooq.schema.keys.USER_ACTIVITY_LOG_USER_FK
 import org.xbery.artbeams.jooq.schema.tables.Users.UsersPath
 import org.xbery.artbeams.jooq.schema.tables.records.UserActivityLogRecord
@@ -159,7 +159,7 @@ open class UserActivityLog(
     }
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getIndexes(): List<Index> = listOf(IDX_USER_ACTIVITY_LOG_ACTION_TIME, IDX_USER_ACTIVITY_LOG_ACTION_TYPE, IDX_USER_ACTIVITY_LOG_ENTITY, IDX_USER_ACTIVITY_LOG_USER_ID, IDX_USER_ACTIVITY_LOG_USER_TIME)
-    override fun getPrimaryKey(): UniqueKey<UserActivityLogRecord> = CONSTRAINT_1
+    override fun getPrimaryKey(): UniqueKey<UserActivityLogRecord> = CONSTRAINT_1E
     override fun getReferences(): List<ForeignKey<UserActivityLogRecord, *>> = listOf(USER_ACTIVITY_LOG_USER_FK)
 
     private lateinit var _users: UsersPath

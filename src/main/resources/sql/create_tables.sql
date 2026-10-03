@@ -200,6 +200,27 @@ CREATE INDEX idx_orders_created_by ON orders (created_by);
 CREATE INDEX idx_orders_state ON orders (state);
 CREATE INDEX idx_orders_created ON orders (created DESC);
 
+-- Customer-initiated requests for a manual refund. A request is not a payment operation;
+-- an administrator verifies the refund outside the application before marking it refunded.
+CREATE TABLE refund_requests (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    created timestamp NOT NULL,
+    created_by VARCHAR(40) NOT NULL,
+    modified timestamp NOT NULL,
+    modified_by VARCHAR(40) NOT NULL,
+    order_id VARCHAR(40) NOT NULL,
+    user_id VARCHAR(40) NOT NULL,
+    reason VARCHAR(2000) DEFAULT NULL,
+    status VARCHAR(16) NOT NULL,
+    requested_at timestamp NOT NULL,
+    resolved_at timestamp DEFAULT NULL
+);
+ALTER TABLE refund_requests ADD CONSTRAINT refund_request_order_fk FOREIGN KEY (order_id) REFERENCES orders (id);
+ALTER TABLE refund_requests ADD CONSTRAINT refund_request_user_fk FOREIGN KEY (user_id) REFERENCES users (id);
+CREATE INDEX idx_refund_requests_status_requested ON refund_requests (status, requested_at DESC);
+CREATE INDEX idx_refund_requests_user_requested ON refund_requests (user_id, requested_at DESC);
+CREATE UNIQUE INDEX idx_refund_requests_open_order ON refund_requests (order_id) WHERE status = 'REQUESTED';
+
 CREATE TABLE order_items (
 	id VARCHAR(40) NOT NULL PRIMARY KEY,
 	created timestamp NOT NULL,

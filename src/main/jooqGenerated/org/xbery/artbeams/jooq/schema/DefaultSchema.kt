@@ -29,6 +29,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.ProductCourse
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
+import org.xbery.artbeams.jooq.schema.tables.RefundRequests
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.Sequences
@@ -154,6 +155,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val QUEUE: Queue get() = Queue.QUEUE
 
     /**
+     * The table <code>refund_requests</code>.
+     */
+    val REFUND_REQUESTS: RefundRequests get() = RefundRequests.REFUND_REQUESTS
+
+    /**
      * The table <code>roles</code>.
      */
     val ROLES: Roles get() = Roles.ROLES
@@ -221,6 +227,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
         ProductCourse.PRODUCT_COURSE,
         Products.PRODUCTS,
         Queue.QUEUE,
+        RefundRequests.REFUND_REQUESTS,
         Roles.ROLES,
         SearchIndex.SEARCH_INDEX,
         Sequences.SEQUENCES,

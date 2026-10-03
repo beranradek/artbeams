@@ -24,6 +24,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.ProductCourse
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
+import org.xbery.artbeams.jooq.schema.tables.RefundRequests
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.Sequences
@@ -135,6 +136,11 @@ val PRODUCTS: Products = Products.PRODUCTS
  * The table <code>queue</code>.
  */
 val QUEUE: Queue = Queue.QUEUE
+
+/**
+ * The table <code>refund_requests</code>.
+ */
+val REFUND_REQUESTS: RefundRequests = RefundRequests.REFUND_REQUESTS
 
 /**
  * The table <code>roles</code>.

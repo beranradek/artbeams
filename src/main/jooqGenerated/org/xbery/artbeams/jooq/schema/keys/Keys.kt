@@ -27,6 +27,7 @@ import org.xbery.artbeams.jooq.schema.tables.Orders
 import org.xbery.artbeams.jooq.schema.tables.ProductCourse
 import org.xbery.artbeams.jooq.schema.tables.Products
 import org.xbery.artbeams.jooq.schema.tables.Queue
+import org.xbery.artbeams.jooq.schema.tables.RefundRequests
 import org.xbery.artbeams.jooq.schema.tables.Roles
 import org.xbery.artbeams.jooq.schema.tables.SearchIndex
 import org.xbery.artbeams.jooq.schema.tables.Sequences
@@ -55,6 +56,7 @@ import org.xbery.artbeams.jooq.schema.tables.records.OrdersRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ProductCourseRecord
 import org.xbery.artbeams.jooq.schema.tables.records.ProductsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.QueueRecord
+import org.xbery.artbeams.jooq.schema.tables.records.RefundRequestsRecord
 import org.xbery.artbeams.jooq.schema.tables.records.RolesRecord
 import org.xbery.artbeams.jooq.schema.tables.records.SearchIndexRecord
 import org.xbery.artbeams.jooq.schema.tables.records.SequencesRecord
@@ -90,12 +92,13 @@ val CONSTRAINT_C3: UniqueKey<OrdersRecord> = Internal.createUniqueKey(Orders.ORD
 val CONSTRAINT_E: UniqueKey<ProductCourseRecord> = Internal.createUniqueKey(ProductCourse.PRODUCT_COURSE, DSL.name("CONSTRAINT_E"), arrayOf(ProductCourse.PRODUCT_COURSE.PRODUCT_ID, ProductCourse.PRODUCT_COURSE.COURSE_ID), true)
 val CONSTRAINT_C: UniqueKey<ProductsRecord> = Internal.createUniqueKey(Products.PRODUCTS, DSL.name("CONSTRAINT_C"), arrayOf(Products.PRODUCTS.ID), true)
 val CONSTRAINT_66: UniqueKey<QueueRecord> = Internal.createUniqueKey(Queue.QUEUE, DSL.name("CONSTRAINT_66"), arrayOf(Queue.QUEUE.ID), true)
+val CONSTRAINT_1: UniqueKey<RefundRequestsRecord> = Internal.createUniqueKey(RefundRequests.REFUND_REQUESTS, DSL.name("CONSTRAINT_1"), arrayOf(RefundRequests.REFUND_REQUESTS.ID), true)
 val CONSTRAINT_6: UniqueKey<RolesRecord> = Internal.createUniqueKey(Roles.ROLES, DSL.name("CONSTRAINT_6"), arrayOf(Roles.ROLES.ID), true)
 val CONSTRAINT_1B: UniqueKey<SearchIndexRecord> = Internal.createUniqueKey(SearchIndex.SEARCH_INDEX, DSL.name("CONSTRAINT_1B"), arrayOf(SearchIndex.SEARCH_INDEX.ID), true)
 val CONSTRAINT_BD: UniqueKey<SequencesRecord> = Internal.createUniqueKey(Sequences.SEQUENCES, DSL.name("CONSTRAINT_BD"), arrayOf(Sequences.SEQUENCES.SEQUENCE_NAME), true)
 val CONSTRAINT_6E: UniqueKey<SystemEventLogRecord> = Internal.createUniqueKey(SystemEventLog.SYSTEM_EVENT_LOG, DSL.name("CONSTRAINT_6E"), arrayOf(SystemEventLog.SYSTEM_EVENT_LOG.ID), true)
 val CONSTRAINT_D: UniqueKey<UserAccessRecord> = Internal.createUniqueKey(UserAccess.USER_ACCESS, DSL.name("CONSTRAINT_D"), arrayOf(UserAccess.USER_ACCESS.ID), true)
-val CONSTRAINT_1: UniqueKey<UserActivityLogRecord> = Internal.createUniqueKey(UserActivityLog.USER_ACTIVITY_LOG, DSL.name("CONSTRAINT_1"), arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ID), true)
+val CONSTRAINT_1E: UniqueKey<UserActivityLogRecord> = Internal.createUniqueKey(UserActivityLog.USER_ACTIVITY_LOG, DSL.name("CONSTRAINT_1E"), arrayOf(UserActivityLog.USER_ACTIVITY_LOG.ID), true)
 val CONSTRAINT_48: UniqueKey<UserProductRecord> = Internal.createUniqueKey(UserProduct.USER_PRODUCT, DSL.name("CONSTRAINT_48"), arrayOf(UserProduct.USER_PRODUCT.ID), true)
 val CONSTRAINT_6A: UniqueKey<UsersRecord> = Internal.createUniqueKey(Users.USERS, DSL.name("CONSTRAINT_6A"), arrayOf(Users.USERS.ID), true)
 
@@ -107,6 +110,8 @@ val PARENT_ID_FK: ForeignKey<CommentsRecord, CommentsRecord> = Internal.createFo
 val FK_COURSE_MODULES_COURSE_ID: ForeignKey<CourseModulesRecord, CoursesRecord> = Internal.createForeignKey(CourseModules.COURSE_MODULES, DSL.name("fk_course_modules_course_id"), arrayOf(CourseModules.COURSE_MODULES.COURSE_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_3, arrayOf(Courses.COURSES.ID), true)
 val ORDER_FK: ForeignKey<OrderItemsRecord, OrdersRecord> = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("order_fk"), arrayOf(OrderItems.ORDER_ITEMS.ORDER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3, arrayOf(Orders.ORDERS.ID), true)
 val ORDERED_PRODUCT_FK: ForeignKey<OrderItemsRecord, ProductsRecord> = Internal.createForeignKey(OrderItems.ORDER_ITEMS, DSL.name("ordered_product_fk"), arrayOf(OrderItems.ORDER_ITEMS.PRODUCT_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C, arrayOf(Products.PRODUCTS.ID), true)
+val REFUND_REQUEST_ORDER_FK: ForeignKey<RefundRequestsRecord, OrdersRecord> = Internal.createForeignKey(RefundRequests.REFUND_REQUESTS, DSL.name("refund_request_order_fk"), arrayOf(RefundRequests.REFUND_REQUESTS.ORDER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C3, arrayOf(Orders.ORDERS.ID), true)
+val REFUND_REQUEST_USER_FK: ForeignKey<RefundRequestsRecord, UsersRecord> = Internal.createForeignKey(RefundRequests.REFUND_REQUESTS, DSL.name("refund_request_user_fk"), arrayOf(RefundRequests.REFUND_REQUESTS.USER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A, arrayOf(Users.USERS.ID), true)
 val USER_ACTIVITY_LOG_USER_FK: ForeignKey<UserActivityLogRecord, UsersRecord> = Internal.createForeignKey(UserActivityLog.USER_ACTIVITY_LOG, DSL.name("user_activity_log_user_fk"), arrayOf(UserActivityLog.USER_ACTIVITY_LOG.USER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A, arrayOf(Users.USERS.ID), true)
 val PRODUCT_FK: ForeignKey<UserProductRecord, ProductsRecord> = Internal.createForeignKey(UserProduct.USER_PRODUCT, DSL.name("product_fk"), arrayOf(UserProduct.USER_PRODUCT.PRODUCT_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_C, arrayOf(Products.PRODUCTS.ID), true)
 val USER_FK: ForeignKey<UserProductRecord, UsersRecord> = Internal.createForeignKey(UserProduct.USER_PRODUCT, DSL.name("user_fk"), arrayOf(UserProduct.USER_PRODUCT.USER_ID), org.xbery.artbeams.jooq.schema.keys.CONSTRAINT_6A, arrayOf(Users.USERS.ID), true)
