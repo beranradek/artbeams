@@ -29,14 +29,18 @@
       <tr>
         <th>State:</th>
         <td>
-          <form action="/admin/orders/${order.id}/state" method="POST">
-            <select name="state" onchange="this.form.submit()" class="form-control">
-              <#list orderStates as state>
-                <option value="${state}"<#if state == order.state> selected</#if>>${state}</option>
-              </#list>
-            </select>
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-          </form>
+          <#if order.state.name() == "REFUNDED">
+            <span class="badge text-bg-warning">REFUNDED</span>
+          <#else>
+            <form action="/admin/orders/${order.id}/state" method="POST">
+              <select name="state" onchange="this.form.submit()" class="form-control">
+                <#list orderStates as state>
+                  <option value="${state}"<#if state == order.state.name()> selected</#if>>${state}</option>
+                </#list>
+              </select>
+              <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            </form>
+          </#if>
         </td>
       </tr>
       <tr>

@@ -13,6 +13,7 @@ import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.orders.admin.service.OrderCreatingAdminService
 import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
+import org.xbery.artbeams.refunds.service.RefundRequestService
 import jakarta.servlet.http.HttpServletRequest
 
 /**
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest
 class OrderAdminController(
     private val orderService: OrderService,
     private val orderCreatingAdminService: OrderCreatingAdminService,
+    private val refundRequestService: RefundRequestService,
     private val common: ControllerComponents
 ) : BaseController(common) {
     private val TplBasePath: String = "admin/orders"
@@ -46,9 +48,10 @@ class OrderAdminController(
         val model = createModel(
             request,
             "resultPage" to resultPage,
-            "orderStates" to OrderState.entries.map { it.name },
+            "orderStates" to OrderState.entries.filter { it != OrderState.REFUNDED }.map { it.name },
             "searchTerm" to (searchTerm ?: ""),
-            "stateFilter" to (stateFilter ?: "")
+            "stateFilter" to (stateFilter ?: ""),
+            "openRefundRequestCount" to refundRequestService.countOpenRequests()
         )
         return ModelAndView("$TplBasePath/orderList", model)
     }
@@ -103,9 +106,10 @@ class OrderAdminController(
         @PathVariable("id") id: String,
         @RequestParam("state") state: OrderState,
         request: HttpServletRequest
-    ): Any {
+    ): Any = tryOrErrorResponse(request) {
+        require(state != OrderState.REFUNDED) { "Vrácení objednávky potvrď přes žádost o vrácení." }
         orderService.updateOrderState(id, state)
-        return redirect("/admin/orders")
+        redirect("/admin/orders")
     }
 
     @GetMapping("/{id}")
@@ -114,7 +118,7 @@ class OrderAdminController(
         val model = createModel(
             request,
             "order" to order,
-            "orderStates" to OrderState.entries.map { it.name }
+            "orderStates" to OrderState.entries.filter { it != OrderState.REFUNDED }.map { it.name }
         )
         return ModelAndView("$TplBasePath/orderDetail", model)
     }

@@ -62,6 +62,30 @@ class UserProductRepository(
             .execute() == 1
     }
 
+    /**
+     * Removes a library entry only when no other paid order still grants the user
+     * access to the product. A user_product row is not linked to one specific
+     * order, so deleting it unconditionally could revoke a later purchase.
+     */
+    fun removeProductFromUserLibraryWhenNoEligibleOrder(userId: String, productId: String): Boolean {
+        val hasEligibleOrder = dsl.fetchExists(
+            dsl.selectOne()
+                .from(ORDER_ITEMS)
+                .innerJoin(ORDERS)
+                .on(ORDER_ITEMS.ORDER_ID.eq(ORDERS.ID))
+                .where(
+                    ORDERS.CREATED_BY.eq(userId)
+                        .and(ORDER_ITEMS.PRODUCT_ID.eq(productId))
+                        .and(ORDERS.STATE.`in`(OrderState.AFTER_PAYMENT_STATES))
+                )
+        )
+        if (hasEligibleOrder) return false
+
+        return dsl.deleteFrom(USER_PRODUCT)
+            .where(USER_PRODUCT.USER_ID.eq(userId).and(USER_PRODUCT.PRODUCT_ID.eq(productId)))
+            .execute() > 0
+    }
+
     fun findUserProducts(userId: String): List<UserProductInfo> = dsl
         .select(
             USER_PRODUCT.ID,

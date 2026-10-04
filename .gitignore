@@ -42,6 +42,10 @@ bin
 # Gradle
 !gradle/wrapper/gradle-wrapper.jar
 .gradle
+.gradle-heartbeat/
+.gradle-local/
+.gradle-user-home/
+.kotlin/
 build
 
 # Tomcat

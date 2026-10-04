@@ -4,6 +4,7 @@
 
 <div class="mb-3">
   <a href="/admin/orders/create" class="btn btn-primary">New Order</a>
+  <a href="/admin/refund-requests" class="btn btn-outline-warning">Žádosti o vrácení <span class="badge text-bg-warning">${openRefundRequestCount!0}</span></a>
   <strong>Total orders:</strong> ${resultPage.pagination.totalCount!0}
 </div>
 
@@ -73,14 +74,18 @@
         </td>
         <td>${order.price}</td>
         <td>
-            <form action="/admin/orders/${order.id}/state" method="POST">
-                <select name="state" onchange="this.form.submit()">
-                    <#list orderStates as state>
-                        <option value="${state}"<#if state == order.state> selected</#if>>${state}</option>
-                    </#list>
-                </select>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            </form>
+            <#if order.state.name() == "REFUNDED">
+                <span class="badge text-bg-warning">REFUNDED</span>
+            <#else>
+                <form action="/admin/orders/${order.id}/state" method="POST">
+                    <select name="state" onchange="this.form.submit()">
+                        <#list orderStates as state>
+                            <option value="${state}"<#if state == order.state.name()> selected</#if>>${state}</option>
+                        </#list>
+                    </select>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                </form>
+            </#if>
         </td>
         <td>
             <a href="/admin/orders/${order.id}" class="btn btn-sm">Edit</a>

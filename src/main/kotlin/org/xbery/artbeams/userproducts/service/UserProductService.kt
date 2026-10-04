@@ -24,6 +24,9 @@ class UserProductService(
      */
     fun addProductToUserLibrary(userId: String, productId: String): Boolean = userProductRepository.addProductToUserLibrary(userId, productId)
 
+    fun removeProductFromUserLibraryWhenNoEligibleOrder(userId: String, productId: String): Boolean =
+        userProductRepository.removeProductFromUserLibraryWhenNoEligibleOrder(userId, productId)
+
     /**
      * Finds user products for currently logged user.
      */

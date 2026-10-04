@@ -3,11 +3,13 @@ package org.xbery.artbeams.admin.notification
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.web.util.HtmlUtils
 import org.xbery.artbeams.comments.domain.Comment
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.prices.domain.Price
+import org.xbery.artbeams.refunds.domain.RefundRequest
 import org.xbery.artbeams.users.repository.UserRepository
 import java.util.*
 
@@ -138,6 +140,41 @@ class AdminNotificationService(
         } catch (e: Exception) {
             logger.error("Failed to send admin notification for new order ${order.id}", e)
             // Don't throw - notification failure should not break order creation
+        }
+    }
+
+    /**
+     * Notifies the administrator about a stored refund request. This intentionally
+     * treats notification delivery as best-effort: the request itself is already
+     * committed and must never be lost because e-mail delivery is unavailable.
+     */
+    fun sendRefundRequestNotification(order: Order, request: RefundRequest) {
+        try {
+            val adminEmail = appConfig.findConfig("admin.notification.email")
+            if (adminEmail.isNullOrBlank()) {
+                logger.debug("Admin notification email not configured, skipping refund request notification")
+                return
+            }
+            val baseUrl = appConfig.findConfig("web.baseUrl") ?: "http://localhost:8080"
+            val refundAdminUrl = "$baseUrl/admin/refund-requests/${request.id}"
+            val reason = request.reason?.let(HtmlUtils::htmlEscape) ?: "Neuveden"
+            val htmlBody = """
+                <!DOCTYPE html>
+                <html><body style="font-family: sans-serif; line-height: 1.6; color: #333;">
+                <h2>Nová žádost o vrácení objednávky</h2>
+                <p><strong>Objednávka:</strong> ${HtmlUtils.htmlEscape(order.orderNumber)}</p>
+                <p><strong>Důvod:</strong></p>
+                <p style="white-space: pre-wrap;">$reason</p>
+                <p><a href="${HtmlUtils.htmlEscape(refundAdminUrl)}">Otevřít žádost v administraci</a></p>
+                </body></html>
+            """.trimIndent()
+            mailSender.sendMailWithHtml(
+                recipientEmail = adminEmail,
+                subject = "Žádost o vrácení objednávky č. ${order.orderNumber}",
+                htmlBody = htmlBody
+            )
+        } catch (e: Exception) {
+            logger.error("Failed to send refund request notification for order ${order.id}", e)
         }
     }
 

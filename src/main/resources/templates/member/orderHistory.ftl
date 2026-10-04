@@ -30,6 +30,16 @@
                 </div>
               </div>
               <div class="card-body">
+                <#assign refundRequest = refundRequests[order.id]!>
+                <#if order.state.name() == "REFUNDED">
+                  <div class="alert alert-warning" role="alert">
+                    Objednávka byla vrácena a produkty už nejsou k dispozici ke stažení.
+                  </div>
+                <#elseif refundRequest??>
+                  <div class="alert alert-info" role="alert">
+                    Žádost o vrácení byla odeslána a čeká na vyřízení.
+                  </div>
+                </#if>
                 <h6>Produkty:</h6>
                 <table class="table table-sm">
                   <thead>
@@ -80,6 +90,11 @@
                 <#if order.paymentMethod??>
                   <div class="mt-2">
                     <small><strong>Způsob platby:</strong> ${order.paymentMethod}</small>
+                  </div>
+                </#if>
+                <#if (order.state.name() == "PAID" || order.state.name() == "PROCESSING" || order.state.name() == "SHIPPED" || order.state.name() == "DELIVERED") && !(refundRequest??)>
+                  <div class="mt-3">
+                    <a href="/clenska-sekce/moje-objednavky/${order.id}/vraceni" class="btn btn-outline-secondary btn-sm">Požádat o vrácení</a>
                   </div>
                 </#if>
               </div>
