@@ -11,7 +11,7 @@ import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.prices.domain.Price
 import org.xbery.artbeams.refunds.domain.RefundRequest
 import org.xbery.artbeams.users.repository.UserRepository
-import java.util.*
+import java.util.Locale
 
 /**
  * Service for sending email notifications to administrators about important events.

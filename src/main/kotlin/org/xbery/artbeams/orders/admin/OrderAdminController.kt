@@ -28,7 +28,7 @@ class OrderAdminController(
     private val refundRequestService: RefundRequestService,
     private val common: ControllerComponents
 ) : BaseController(common) {
-    private val TplBasePath: String = "admin/orders"
+    private val tplBasePath: String = "admin/orders"
     private val createFormDef: FormMapping<CreateOrderData> = CreateOrderForm.definition
 
     @GetMapping
@@ -53,7 +53,7 @@ class OrderAdminController(
             "stateFilter" to (stateFilter ?: ""),
             "openRefundRequestCount" to refundRequestService.countOpenRequests()
         )
-        return ModelAndView("$TplBasePath/orderList", model)
+        return ModelAndView("$tplBasePath/orderList", model)
     }
 
     @GetMapping("/create")
@@ -98,7 +98,7 @@ class OrderAdminController(
             "products" to products,
             "errorMessage" to errorMessage
         )
-        return ModelAndView("$TplBasePath/orderCreate", model)
+        return ModelAndView("$tplBasePath/orderCreate", model)
     }
 
     @PostMapping("/{id}/state")
@@ -120,7 +120,7 @@ class OrderAdminController(
             "order" to order,
             "orderStates" to OrderState.entries.filter { it != OrderState.REFUNDED }.map { it.name }
         )
-        return ModelAndView("$TplBasePath/orderDetail", model)
+        return ModelAndView("$tplBasePath/orderDetail", model)
     }
 
     @PostMapping("/{id}/notes")

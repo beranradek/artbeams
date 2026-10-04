@@ -69,19 +69,22 @@ class UserProductRepository(
      */
     fun removeProductFromUserLibraryWhenNoEligibleOrder(userId: String, productId: String): Boolean {
         val hasEligibleOrder = dsl.fetchExists(
-            dsl.selectOne()
+            dsl
+                .selectOne()
                 .from(ORDER_ITEMS)
                 .innerJoin(ORDERS)
                 .on(ORDER_ITEMS.ORDER_ID.eq(ORDERS.ID))
                 .where(
-                    ORDERS.CREATED_BY.eq(userId)
+                    ORDERS.CREATED_BY
+                        .eq(userId)
                         .and(ORDER_ITEMS.PRODUCT_ID.eq(productId))
                         .and(ORDERS.STATE.`in`(OrderState.AFTER_PAYMENT_STATES))
                 )
         )
         if (hasEligibleOrder) return false
 
-        return dsl.deleteFrom(USER_PRODUCT)
+        return dsl
+            .deleteFrom(USER_PRODUCT)
             .where(USER_PRODUCT.USER_ID.eq(userId).and(USER_PRODUCT.PRODUCT_ID.eq(productId)))
             .execute() > 0
     }

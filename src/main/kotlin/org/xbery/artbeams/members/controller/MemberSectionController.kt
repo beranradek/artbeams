@@ -76,7 +76,8 @@ class MemberSectionController(
     ): Any = tryOrErrorResponse(request) {
         val loggedUser = createModel(request)["_loggedUser"] as? org.xbery.artbeams.users.domain.User
             ?: return@tryOrErrorResponse unauthorized(request)
-        val normalizedReason = org.xbery.artbeams.refunds.domain.RefundRequestInput.normalizeReason(reason)
+        val normalizedReason = org.xbery.artbeams.refunds.domain.RefundRequestInput
+            .normalizeReason(reason)
         val confirmationKey = refundConfirmationKey(orderId)
         require(request.session.getAttribute(confirmationKey) == refundConfirmationValue(normalizedReason)) {
             "Žádost nejprve zkontrolujte a potvrďte."
@@ -100,7 +101,10 @@ class MemberSectionController(
         val model = createModel(request)
         val loggedUser = model["_loggedUser"] as? org.xbery.artbeams.users.domain.User
             ?: return@tryOrErrorResponse unauthorized(request)
-        require(org.xbery.artbeams.refunds.domain.RefundRequestInput.validateReason(reason)) {
+        require(
+            org.xbery.artbeams.refunds.domain.RefundRequestInput
+                .validateReason(reason)
+        ) {
             "Důvod vrácení může mít nejvýše 2000 znaků."
         }
         val order = orderService.requireByOrderId(orderId)
@@ -109,7 +113,8 @@ class MemberSectionController(
         require(refundRequestService.findForUser(loggedUser.common.id)[orderId] == null) {
             "Žádost o vrácení této objednávky již čeká na vyřízení."
         }
-        val normalizedReason = org.xbery.artbeams.refunds.domain.RefundRequestInput.normalizeReason(reason)
+        val normalizedReason = org.xbery.artbeams.refunds.domain.RefundRequestInput
+            .normalizeReason(reason)
         request.session.setAttribute(refundConfirmationKey(orderId), refundConfirmationValue(normalizedReason))
         ModelAndView(
             "member/refundRequestConfirm",

@@ -11,7 +11,9 @@ import java.time.ZoneOffset
 import java.util.UUID
 
 @Repository
-class RefundRequestRepository(private val dsl: DSLContext) {
+class RefundRequestRepository(
+    private val dsl: DSLContext
+) {
     fun create(orderId: String, userId: String, reason: String?): RefundRequest {
         val now = Instant.now()
         val request = RefundRequest(
@@ -22,7 +24,8 @@ class RefundRequestRepository(private val dsl: DSLContext) {
             status = RefundRequestStatus.REQUESTED,
             requestedAt = now
         )
-        dsl.insertInto(REFUND_REQUESTS)
+        dsl
+            .insertInto(REFUND_REQUESTS)
             .set(REFUND_REQUESTS.ID, request.id)
             .set(REFUND_REQUESTS.CREATED, now)
             .set(REFUND_REQUESTS.CREATED_BY, userId)
@@ -38,30 +41,36 @@ class RefundRequestRepository(private val dsl: DSLContext) {
     }
 
     fun hasOpenRequest(orderId: String): Boolean = dsl.fetchExists(
-        dsl.selectOne().from(REFUND_REQUESTS)
+        dsl
+            .selectOne()
+            .from(REFUND_REQUESTS)
             .where(REFUND_REQUESTS.ORDER_ID.eq(orderId))
             .and(REFUND_REQUESTS.STATUS.eq(RefundRequestStatus.REQUESTED.name))
     )
 
-    fun findForUser(userId: String): Map<String, RefundRequest> = dsl.selectFrom(REFUND_REQUESTS)
+    fun findForUser(userId: String): Map<String, RefundRequest> = dsl
+        .selectFrom(REFUND_REQUESTS)
         .where(REFUND_REQUESTS.USER_ID.eq(userId))
         .orderBy(REFUND_REQUESTS.REQUESTED_AT.desc())
         .fetch { record -> record.toDomain() }
         .groupBy { it.orderId }
         .mapValues { (_, requests) -> requests.first() }
 
-    fun findOpenRequests(): List<RefundRequest> = dsl.selectFrom(REFUND_REQUESTS)
+    fun findOpenRequests(): List<RefundRequest> = dsl
+        .selectFrom(REFUND_REQUESTS)
         .where(REFUND_REQUESTS.STATUS.eq(RefundRequestStatus.REQUESTED.name))
         .orderBy(REFUND_REQUESTS.REQUESTED_AT.asc())
         .fetch { record -> record.toDomain() }
 
-    fun countOpenRequests(): Int = dsl.selectCount()
+    fun countOpenRequests(): Int = dsl
+        .selectCount()
         .from(REFUND_REQUESTS)
         .where(REFUND_REQUESTS.STATUS.eq(RefundRequestStatus.REQUESTED.name))
         .fetchOne(0, Int::class.java) ?: 0
 
     fun requireById(requestId: String): RefundRequest = requireNotNull(
-        dsl.selectFrom(REFUND_REQUESTS)
+        dsl
+            .selectFrom(REFUND_REQUESTS)
             .where(REFUND_REQUESTS.ID.eq(requestId))
             .fetchOne { record -> record.toDomain() }
     ) { "Žádost o vrácení nebyla nalezena." }
@@ -69,7 +78,8 @@ class RefundRequestRepository(private val dsl: DSLContext) {
     /** Returns false when another administrator already resolved the request. */
     fun markResolved(requestId: String, adminUserId: String): Boolean {
         val now = Instant.now()
-        return dsl.update(REFUND_REQUESTS)
+        return dsl
+            .update(REFUND_REQUESTS)
             .set(REFUND_REQUESTS.STATUS, RefundRequestStatus.RESOLVED.name)
             .set(REFUND_REQUESTS.RESOLVED_AT, LocalDateTime.ofInstant(now, ZoneOffset.UTC))
             .set(REFUND_REQUESTS.MODIFIED, now)
