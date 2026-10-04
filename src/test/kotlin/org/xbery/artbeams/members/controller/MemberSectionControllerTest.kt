@@ -125,6 +125,35 @@ class MemberSectionControllerTest :
             verify(exactly = 0) { refundRequestService.requestRefund(any(), any(), any()) }
         }
 
+        "refund submission with a different reason than the confirmed one does not create a request" {
+            val components = mockk<ControllerComponents>(relaxed = true)
+            val request = mockk<HttpServletRequest>(relaxed = true)
+            val session = mockk<HttpSession>(relaxed = true)
+            val now = Instant.now()
+            val user = User(
+                AssetAttributes("u-id", now, "u-id", now, "u-id"),
+                "u1", "pwd", "First", "Last", "a@b", emptyList()
+            )
+            val refundRequestService = mockk<RefundRequestService>()
+            every { components.getLoggedUser(request) } returns user
+            every { request.session } returns session
+            every { session.getAttribute("refundConfirmation:order-1") } returns "reason:Potvrzený důvod"
+
+            val controller = MemberSectionController(
+                mockk<UserProductService>(),
+                mockk<OrderService>(),
+                refundRequestService,
+                mockk<CourseService>(),
+                components
+            )
+
+            val response = controller.requestRefund("order-1", "Pozměněný důvod", request)
+                as org.springframework.web.servlet.ModelAndView
+            response.viewName shouldBe "error"
+            response.status shouldBe HttpStatus.BAD_REQUEST
+            verify(exactly = 0) { refundRequestService.requestRefund(any(), any(), any()) }
+        }
+
         "refund confirmation preview does not create a request" {
             val components = mockk<ControllerComponents>(relaxed = true)
             val request = mockk<HttpServletRequest>(relaxed = true)
