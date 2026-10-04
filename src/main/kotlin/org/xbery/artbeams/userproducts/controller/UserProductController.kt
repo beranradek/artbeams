@@ -96,7 +96,9 @@ class UserProductController(
             val orders = orderItems.map { orderService.requireByOrderId(it.orderId) }
             if (orders.isEmpty()) throw UnauthorizedException("Objednávka produktu ${product.slug} nebyla nalezena pro uživatele ${user.login}")
 
-            val completedOrders = orders.filter { it.state.isAfterPayment() || product.priceRegular.isZero() }
+            val completedOrders = orders.filter {
+                isEligibleForDownload(it, product.priceRegular.isZero())
+            }
             if (completedOrders.isEmpty()) {
                 throw UnauthorizedException(
                     "Uživatel ${user.login} nezaplatil za produkt ${product.slug}, který vyžaduje provedení platby."
@@ -179,6 +181,16 @@ class UserProductController(
             }
             throw e
         }
+    }
+
+    companion object {
+        /**
+         * A free product may be downloaded from an existing order before payment,
+         * but a refunded order must never grant download access again.
+         */
+        internal fun isEligibleForDownload(order: org.xbery.artbeams.orders.domain.Order, isFreeProduct: Boolean): Boolean =
+            order.state != org.xbery.artbeams.orders.domain.OrderState.REFUNDED &&
+                (order.state.isAfterPayment() || isFreeProduct)
     }
 
     private fun isExpectedDownloadDenial(e: Exception): Boolean {
