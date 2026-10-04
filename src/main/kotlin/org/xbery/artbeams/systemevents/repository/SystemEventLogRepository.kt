@@ -32,6 +32,17 @@ class SystemEventLogRepository(
     override val table: Table<SystemEventLogRecord> = SYSTEM_EVENT_LOG
     override val idField: Field<String?> = SYSTEM_EVENT_LOG.ID
 
+    /**
+     * Clears IP address and user agent in all events of given user. The events itself are kept.
+     * @return number of updated events
+     */
+    fun clearClientData(userId: String): Int = dsl
+        .update(SYSTEM_EVENT_LOG)
+        .set(SYSTEM_EVENT_LOG.IP_ADDRESS, null as String?)
+        .set(SYSTEM_EVENT_LOG.USER_AGENT, null as String?)
+        .where(SYSTEM_EVENT_LOG.USER_ID.eq(userId))
+        .execute()
+
     fun findEvents(
         pagination: Pagination,
         severity: SystemEventSeverity?,

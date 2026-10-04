@@ -18,6 +18,12 @@ interface MailingApi {
     fun removeFromGroup(email: String, subscriberGroupId: String): Boolean
 
     /**
+     * Deletes subscriber (with all personal data) from the mailing service.
+     * Returns true if subscriber was deleted, false if subscriber was not found or deletion failed.
+     */
+    fun deleteSubscriber(email: String): Boolean
+
+    /**
      * Subscribes user to given subscription group.
      * Note: Use this for silent subscription (e.g., after payment) when you don't want to trigger email workflows.
      * For subscriptions that should trigger automation workflows, use resubscribeToGroup instead.

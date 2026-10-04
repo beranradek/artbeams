@@ -31,6 +31,8 @@ class SqlAuthorizationCodeRepository(
         updateBy(code, AUTH_CODE.CODE, code.code)
     }
 
+    override fun deleteByUserId(userId: String): Int = deleteBy(AUTH_CODE.USER_ID, userId)
+
     override fun findByCodePurposeAndUserId(code: String, purpose: String, userId: String): AuthorizationCode? =
         dsl
             .selectFrom(table)

@@ -100,6 +100,17 @@ class UserActivityLogRepository(
         .map(mapper::map)
 
     /**
+     * Clears IP address and user agent in all entries of given user. The entries itself are kept.
+     * @return number of updated entries
+     */
+    fun clearClientData(userId: String): Int = dsl
+        .update(USER_ACTIVITY_LOG)
+        .set(USER_ACTIVITY_LOG.IP_ADDRESS, null as String?)
+        .set(USER_ACTIVITY_LOG.USER_AGENT, null as String?)
+        .where(USER_ACTIVITY_LOG.USER_ID.eq(userId))
+        .execute()
+
+    /**
      * Logs a user activity.
      */
     fun logActivity(

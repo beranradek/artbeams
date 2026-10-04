@@ -13,5 +13,10 @@ interface AuthorizationCodeRepository {
 
     fun updateCode(code: AuthorizationCode)
 
+    /**
+     * Deletes all authorization codes of given user.
+     */
+    fun deleteByUserId(userId: String): Int
+
     fun findByCodePurposeAndUserId(code: String, purpose: String, userId: String): AuthorizationCode?
 }

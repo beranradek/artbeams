@@ -42,6 +42,9 @@ class CommentServiceImpl(
     }
 
     @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
+    override fun anonymizeAuthor(userId: String, email: String?): Int = commentRepository.anonymizeAuthor(userId, email)
+
+    @CacheEvict(value = [Comment.CACHE_NAME], allEntries = true)
     override fun saveComment(
         edited: EditedComment,
         ipAddress: String,
