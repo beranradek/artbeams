@@ -65,6 +65,25 @@ class MailerLiteMailingApi(
         }
     }
 
+    override fun deleteSubscriber(email: String): Boolean = try {
+        // See https://developers.mailerlite.com/docs/subscribers.html#fetch-a-subscriber
+        val fetchUrl = mailingApiConfig.baseUrl + "/api/subscribers/" + email
+        val subscriber = exchangeEntity(
+            HttpMethod.GET,
+            fetchUrl,
+            mapOf(),
+            createRequestEntity(null),
+            MailerLiteSubscriptionResponse::class.java
+        )
+        // See https://developers.mailerlite.com/docs/subscribers.html#delete-a-subscriber
+        val deleteUrl = mailingApiConfig.baseUrl + "/api/subscribers/" + subscriber.data.id
+        val response = exchangeEntity(HttpMethod.DELETE, deleteUrl, mapOf(), createRequestEntity(null))
+        response.statusCode == HttpStatusCode.valueOf(200) || response.statusCode == HttpStatusCode.valueOf(204)
+    } catch (e: Exception) {
+        logger.warn("Failed to delete subscriber from MailerLite: ${e.message}")
+        false
+    }
+
     override fun resubscribeToGroup(email: String, name: String, subscriberGroupId: String, ipAddress: String?): MailerLiteSubscriptionResponse {
         // First, try to remove subscriber from group (if already subscribed)
         // This ensures automation workflow will be triggered when we re-add them

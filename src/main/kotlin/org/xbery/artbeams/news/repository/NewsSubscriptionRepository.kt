@@ -2,6 +2,7 @@ package org.xbery.artbeams.news.repository
 
 import org.jooq.DSLContext
 import org.jooq.Table
+import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
 import org.xbery.artbeams.common.repository.AbstractRecordStorage
 import org.xbery.artbeams.jooq.schema.tables.records.NewsSubscriptionRecord
@@ -32,6 +33,15 @@ class NewsSubscriptionRepository(
         createWithoutReturn(entity, unmapper)
         return entity
     }
+
+    /**
+     * Deletes all subscription records of given email.
+     * @return number of deleted records
+     */
+    fun deleteByEmail(email: String): Int = dsl
+        .deleteFrom(table)
+        .where(DSL.lower(NEWS_SUBSCRIPTION.EMAIL).eq(email.trim().lowercase()))
+        .execute()
 
     fun confirm(id: String): Int = dsl
         .update(table)

@@ -75,6 +75,17 @@ class ConsentRepository(
         .fetch(mapper)
 
     /**
+     * Replaces login (email) in all consents of the given login, e.g. to pseudonymize history of consents
+     * that is kept as a proof of consent.
+     * @return number of updated records
+     */
+    fun replaceLogin(login: String, newLogin: String): Int = dsl
+        .update(table)
+        .set(CONSENTS.LOGIN, newLogin)
+        .where(CONSENTS.LOGIN.eq(login))
+        .execute()
+
+    /**
      * Updates valid_to timestamp to revoke a consent.
      */
     fun revoke(id: String, validTo: Instant): Int = dsl

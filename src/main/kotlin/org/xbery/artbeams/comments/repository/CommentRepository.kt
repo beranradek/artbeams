@@ -97,6 +97,27 @@ class CommentRepository(
             .orderBy(COMMENTS.CREATED)
             .fetch(mapper)
 
+    /**
+     * Removes personal data (name, email, IP address, user agent) from comments of a given author.
+     * Comments are matched by author user id or by email. The comment text itself is kept.
+     * @return number of anonymized comments
+     */
+    fun anonymizeAuthor(userId: String, email: String?): Int {
+        val condition = if (email.isNullOrBlank()) {
+            COMMENTS.CREATED_BY.eq(userId)
+        } else {
+            COMMENTS.CREATED_BY.eq(userId).or(DSL.lower(COMMENTS.EMAIL).eq(email.trim().lowercase()))
+        }
+        return dsl
+            .update(COMMENTS)
+            .set(COMMENTS.USERNAME, "[deleted]")
+            .set(COMMENTS.EMAIL, "")
+            .set(COMMENTS.IP, "")
+            .set(COMMENTS.USER_AGENT, "")
+            .where(condition)
+            .execute()
+    }
+
     fun updateState(id: String, state: CommentState): Boolean = dsl
         .update(COMMENTS)
         .set(COMMENTS.STATE, state.name)

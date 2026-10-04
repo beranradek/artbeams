@@ -17,6 +17,12 @@ interface CommentService {
         ctx: OperationCtx
     ): Comment
 
+    /**
+     * Removes personal data (name, email, IP address, user agent) from comments of the given author.
+     * @return number of anonymized comments
+     */
+    fun anonymizeAuthor(userId: String, email: String?): Int
+
     fun findComments(pagination: Pagination): ResultPage<Comment>
 
     fun searchComments(searchTerm: String?, state: CommentState?, pagination: Pagination): ResultPage<Comment>
