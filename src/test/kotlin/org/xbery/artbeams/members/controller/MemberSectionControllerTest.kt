@@ -3,18 +3,18 @@ package org.xbery.artbeams.members.controller
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.springframework.http.HttpStatus
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.http.HttpStatus
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.courses.domain.Course
 import org.xbery.artbeams.courses.domain.Module
 import org.xbery.artbeams.courses.service.CourseService
-import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderState
+import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.refunds.domain.RefundRequest
 import org.xbery.artbeams.refunds.domain.RefundRequestStatus
 import org.xbery.artbeams.refunds.service.RefundRequestService
@@ -70,14 +70,24 @@ class MemberSectionControllerTest :
             val now = Instant.now()
             val user = User(
                 AssetAttributes("u-id", now, "u-id", now, "u-id"),
-                "u1", "pwd", "First", "Last", "a@b", emptyList()
+                "u1",
+                "pwd",
+                "First",
+                "Last",
+                "a@b",
+                emptyList()
             )
             val refundRequestService = mockk<RefundRequestService>()
             every { components.getLoggedUser(request) } returns user
             every { request.session } returns session
             every { session.getAttribute("refundConfirmation:order-1") } returns "reason:Omylem objednáno."
             every { refundRequestService.requestRefund("u-id", "order-1", "Omylem objednáno.") } returns RefundRequest(
-                "request-1", "order-1", "u-id", "Omylem objednáno.", RefundRequestStatus.REQUESTED, now
+                "request-1",
+                "order-1",
+                "u-id",
+                "Omylem objednáno.",
+                RefundRequestStatus.REQUESTED,
+                now
             )
 
             val controller = MemberSectionController(
@@ -103,7 +113,12 @@ class MemberSectionControllerTest :
             val now = Instant.now()
             val user = User(
                 AssetAttributes("u-id", now, "u-id", now, "u-id"),
-                "u1", "pwd", "First", "Last", "a@b", emptyList()
+                "u1",
+                "pwd",
+                "First",
+                "Last",
+                "a@b",
+                emptyList()
             )
             val refundRequestService = mockk<RefundRequestService>()
             every { components.getLoggedUser(request) } returns user
@@ -132,7 +147,12 @@ class MemberSectionControllerTest :
             val now = Instant.now()
             val user = User(
                 AssetAttributes("u-id", now, "u-id", now, "u-id"),
-                "u1", "pwd", "First", "Last", "a@b", emptyList()
+                "u1",
+                "pwd",
+                "First",
+                "Last",
+                "a@b",
+                emptyList()
             )
             val refundRequestService = mockk<RefundRequestService>()
             every { components.getLoggedUser(request) } returns user
@@ -169,7 +189,11 @@ class MemberSectionControllerTest :
             every { refundRequestService.findForUser("u-id") } returns emptyMap()
 
             val controller = MemberSectionController(
-                mockk<UserProductService>(), orderService, refundRequestService, mockk<CourseService>(), components
+                mockk<UserProductService>(),
+                orderService,
+                refundRequestService,
+                mockk<CourseService>(),
+                components
             )
 
             val result = controller.confirmRefundForm("order-1", "  Omylem objednáno.  ", request) as org.springframework.web.servlet.ModelAndView
