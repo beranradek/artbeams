@@ -1,5 +1,6 @@
 package org.xbery.artbeams.refunds.service
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionSynchronization
@@ -30,7 +31,13 @@ class RefundRequestService(
         require(order.state.isAfterPayment()) { "O vrácení lze požádat jen u zaplacené objednávky." }
         require(!refundRequestRepository.hasOpenRequest(orderId)) { "Žádost o vrácení této objednávky již čeká na vyřízení." }
 
-        val request = refundRequestRepository.create(orderId, userId, RefundRequestInput.normalizeReason(reason))
+        val request = try {
+            refundRequestRepository.create(orderId, userId, RefundRequestInput.normalizeReason(reason))
+        } catch (_: DataIntegrityViolationException) {
+            // The partial unique index is the authoritative concurrent-request guard.
+            // Present its conflict as the same safe validation feedback as the pre-check.
+            throw IllegalArgumentException("Žádost o vrácení této objednávky již čeká na vyřízení.")
+        }
         systemEventLogService.logWarn(
             ctx = null,
             eventType = SystemEventType.REFUND_REQUEST_SUBMITTED,

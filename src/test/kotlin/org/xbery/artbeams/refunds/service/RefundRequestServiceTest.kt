@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.dao.DataIntegrityViolationException
 import org.xbery.artbeams.admin.notification.AdminNotificationService
 import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.orders.domain.Order
@@ -107,6 +108,27 @@ class RefundRequestServiceTest :
             shouldThrow<IllegalArgumentException> { service.requestRefund("user-1", "order-1", null) }
 
             verify(exactly = 0) { repository.create(any(), any(), any()) }
+        }
+
+        "reports a concurrent duplicate refund request as a validation error" {
+            val orderService = mockk<OrderService>()
+            val repository = mockk<RefundRequestRepository>()
+            val service = RefundRequestService(
+                orderService,
+                repository,
+                mockk<SystemEventLogService>(),
+                mockk<AdminNotificationService>(),
+                mockk<UserProductService>()
+            )
+            every { orderService.requireByOrderId("order-1") } returns paidOrder()
+            every { repository.hasOpenRequest("order-1") } returns false
+            every { repository.create("order-1", "user-1", null) } throws DataIntegrityViolationException("duplicate")
+
+            val exception = shouldThrow<IllegalArgumentException> {
+                service.requestRefund("user-1", "order-1", null)
+            }
+
+            exception.message shouldBe "Žádost o vrácení této objednávky již čeká na vyřízení."
         }
 
         "marks a requested order refunded and revokes its product access" {
