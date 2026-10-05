@@ -28,7 +28,7 @@ class UserProductControllerTest :
             common = AssetAttributes("order-1", Instant.EPOCH, "user-1", Instant.EPOCH, "user-1"),
             orderNumber = "2026001",
             state = state,
-            orderItems = emptyList()
+            items = emptyList()
         )
     }
 }
