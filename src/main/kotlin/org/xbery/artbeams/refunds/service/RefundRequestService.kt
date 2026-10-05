@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionSynchronization
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.xbery.artbeams.admin.notification.AdminNotificationService
-import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
 import org.xbery.artbeams.refunds.domain.RefundRequest
 import org.xbery.artbeams.refunds.domain.RefundRequestInput
@@ -70,8 +69,10 @@ class RefundRequestService(
         val order = orderService.requireByOrderId(request.orderId)
         require(order.common.createdBy == request.userId) { "Žádost neodpovídá objednávce." }
         require(order.state.isAfterPayment()) { "Objednávka už není ve stavu, který lze vrátit." }
+        // The conditional state transition is the authoritative concurrency guard.
+        // Any subsequent failure rolls this transaction back, including request resolution.
+        require(orderService.markOrderRefunded(order.id)) { "Objednávka už není ve stavu, který lze vrátit." }
         require(refundRequestRepository.markResolved(requestId, adminUserId)) { "Žádost o vrácení už byla vyřízena." }
-        require(orderService.updateOrderState(order.id, OrderState.REFUNDED)) { "Objednávku se nepodařilo označit jako vrácenou." }
         order.items.map { it.productId }.distinct().forEach { productId ->
             userProductService.removeProductFromUserLibraryWhenNoEligibleOrder(request.userId, productId)
         }

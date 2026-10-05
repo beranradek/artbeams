@@ -210,6 +210,11 @@ class OrderServiceImpl(
         return orderRepository.updateOrderState(orderId, state)
     }
 
+    override fun markOrderRefunded(orderId: String): Boolean {
+        logger.info("Marking order $orderId as refunded")
+        return orderRepository.markRefundedWhenAfterPayment(orderId)
+    }
+
     override fun updateOrderNotes(orderId: String, notes: String): Boolean {
         logger.info("Updating notes of order $orderId")
         return orderRepository.updateOrderNotes(orderId, notes)

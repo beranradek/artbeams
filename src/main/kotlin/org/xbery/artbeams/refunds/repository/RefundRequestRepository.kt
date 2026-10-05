@@ -68,6 +68,14 @@ class RefundRequestRepository(
         .where(REFUND_REQUESTS.STATUS.eq(RefundRequestStatus.REQUESTED.name))
         .fetchOne(0, Int::class.java) ?: 0
 
+    /** Erases free text that could contain personal data while retaining accounting history. */
+    fun clearReasonsForUser(userId: String): Int = dsl
+        .update(REFUND_REQUESTS)
+        .setNull(REFUND_REQUESTS.REASON)
+        .set(REFUND_REQUESTS.MODIFIED, Instant.now())
+        .where(REFUND_REQUESTS.USER_ID.eq(userId))
+        .execute()
+
     fun requireById(requestId: String): RefundRequest = requireNotNull(
         dsl
             .selectFrom(REFUND_REQUESTS)

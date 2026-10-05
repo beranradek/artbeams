@@ -9,6 +9,7 @@ import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.consents.repository.ConsentRepository
 import org.xbery.artbeams.mailing.api.MailingApi
 import org.xbery.artbeams.news.repository.NewsSubscriptionRepository
+import org.xbery.artbeams.refunds.repository.RefundRequestRepository
 import org.xbery.artbeams.systemevents.repository.SystemEventLogRepository
 
 /**
@@ -26,6 +27,7 @@ class AccountDataEraser(
     private val userActivityLogRepository: UserActivityLogRepository,
     private val systemEventLogRepository: SystemEventLogRepository,
     private val authorizationCodeRepository: AuthorizationCodeRepository,
+    private val refundRequestRepository: RefundRequestRepository,
     private val mailingApi: MailingApi
 ) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -42,6 +44,7 @@ class AccountDataEraser(
         emails.forEach { consentRepository.replaceLogin(it, pseudonym) }
         userActivityLogRepository.clearClientData(userId)
         systemEventLogRepository.clearClientData(userId)
+        refundRequestRepository.clearReasonsForUser(userId)
         // Pending codes (e.g. for password reset) must not be usable to revive the anonymized account
         authorizationCodeRepository.deleteByUserId(userId)
     }

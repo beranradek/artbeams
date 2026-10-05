@@ -10,6 +10,7 @@ import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.consents.repository.ConsentRepository
 import org.xbery.artbeams.mailing.api.MailingApi
 import org.xbery.artbeams.news.repository.NewsSubscriptionRepository
+import org.xbery.artbeams.refunds.repository.RefundRequestRepository
 import org.xbery.artbeams.systemevents.repository.SystemEventLogRepository
 
 class AccountDataEraserTest :
@@ -20,6 +21,7 @@ class AccountDataEraserTest :
         val userActivityLogRepository = mockk<UserActivityLogRepository>(relaxed = true)
         val systemEventLogRepository = mockk<SystemEventLogRepository>(relaxed = true)
         val authorizationCodeRepository = mockk<AuthorizationCodeRepository>(relaxed = true)
+        val refundRequestRepository = mockk<RefundRequestRepository>(relaxed = true)
         val mailingApi = mockk<MailingApi>(relaxed = true)
         val eraser = AccountDataEraser(
             commentService,
@@ -28,6 +30,7 @@ class AccountDataEraserTest :
             userActivityLogRepository,
             systemEventLogRepository,
             authorizationCodeRepository,
+            refundRequestRepository,
             mailingApi
         )
 
@@ -40,6 +43,7 @@ class AccountDataEraserTest :
             verify { userActivityLogRepository.clearClientData("user-1") }
             verify { systemEventLogRepository.clearClientData("user-1") }
             verify { authorizationCodeRepository.deleteByUserId("user-1") }
+            verify { refundRequestRepository.clearReasonsForUser("user-1") }
         }
 
         "handles different login and email and missing email" {

@@ -147,14 +147,14 @@ class RefundRequestServiceTest :
             every { repository.requireById("request-1") } returnsMany listOf(request, request.copy(status = RefundRequestStatus.RESOLVED))
             every { orderService.requireByOrderId("order-1") } returns order
             every { repository.markResolved("request-1", "admin-1") } returns true
-            every { orderService.updateOrderState("order-1", OrderState.REFUNDED) } returns true
+            every { orderService.markOrderRefunded("order-1") } returns true
             every { userProductService.removeProductFromUserLibraryWhenNoEligibleOrder("user-1", "product-1") } returns true
 
             val resolvedRequest = service.markRefunded("request-1", "admin-1")
 
             resolvedRequest.status shouldBe RefundRequestStatus.RESOLVED
             verify(exactly = 1) { repository.markResolved("request-1", "admin-1") }
-            verify(exactly = 1) { orderService.updateOrderState("order-1", OrderState.REFUNDED) }
+            verify(exactly = 1) { orderService.markOrderRefunded("order-1") }
             verify(exactly = 1) { userProductService.removeProductFromUserLibraryWhenNoEligibleOrder("user-1", "product-1") }
         }
 
@@ -189,7 +189,7 @@ class RefundRequestServiceTest :
             every { repository.requireById("request-1") } returns request
             every { orderService.requireByOrderId("order-1") } returns paidOrder()
             every { repository.markResolved("request-1", "admin-1") } returns true
-            every { orderService.updateOrderState("order-1", OrderState.REFUNDED) } returns false
+            every { orderService.markOrderRefunded("order-1") } returns false
 
             shouldThrow<IllegalArgumentException> { service.markRefunded("request-1", "admin-1") }
 

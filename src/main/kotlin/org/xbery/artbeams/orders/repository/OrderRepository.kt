@@ -343,6 +343,7 @@ class OrderRepository(
             .set(ORDERS.MODIFIED, now)
             .set(ORDERS.PAID_TIME, now)
             .where(ORDERS.ID.eq(orderId))
+            .and(ORDERS.STATE.ne(OrderState.REFUNDED.name))
             .execute() > 0
     }
 
@@ -351,7 +352,17 @@ class OrderRepository(
         .set(ORDERS.STATE, state.name)
         .set(ORDERS.MODIFIED, Instant.now())
         .where(ORDERS.ID.eq(orderId))
+        .and(ORDERS.STATE.ne(OrderState.REFUNDED.name))
         .execute() > 0
+
+    /** Atomic compare-and-set used by the refund workflow. */
+    fun markRefundedWhenAfterPayment(orderId: String): Boolean = dsl
+        .update(ORDERS)
+        .set(ORDERS.STATE, OrderState.REFUNDED.name)
+        .set(ORDERS.MODIFIED, Instant.now())
+        .where(ORDERS.ID.eq(orderId))
+        .and(ORDERS.STATE.`in`(OrderState.AFTER_PAYMENT_STATES))
+        .execute() == 1
 
     fun updateOrderNotes(orderId: String, notes: String): Boolean = dsl
         .update(ORDERS)

@@ -39,6 +39,13 @@ interface OrderService {
 
     fun updateOrderState(orderId: String, state: OrderState): Boolean
 
+    /**
+     * Marks an order as refunded only when it is still in a post-payment state.
+     * This is deliberately separate from generic state changes so a refund cannot
+     * be overwritten by a stale administrative update.
+     */
+    fun markOrderRefunded(orderId: String): Boolean
+
     fun updateOrderNotes(orderId: String, notes: String): Boolean
 
     fun deleteOrder(orderId: String): Boolean
