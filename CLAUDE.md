@@ -20,7 +20,7 @@ with Google Docs, Evernote, and email services.
 Application is then available on: http://localhost:8080/
 
 # Generate JOOQ classes (required after database schema changes)
-./gradlew generateJooq
+./gradlew jooqCodegen
 
 # Run tests
 ./gradlew test
@@ -48,12 +48,12 @@ Application is then available on: http://localhost:8080/
 ## Architecture
 
 ### Technology Stack
-- **Language**: Kotlin 1.9.22 with Java 21
-- **Framework**: Spring Boot 3.1.5, Spring MVC, Spring Security
-- **Database**: PostgreSQL with JOOQ 3.18.7
+- **Language**: Kotlin 2.4 with Java 25
+- **Framework**: Spring Boot 4.1, Spring MVC, Spring Security
+- **Database**: PostgreSQL with JOOQ 3.21
 - **Templates**: FreeMarker with Bootstrap CSS
 - **Testing**: Kotest, MockK
-- **Forms**: Formio 1.7.0, form definition, binding and validation library (https://github.com/beranradek/formio)
+- **Forms**: Formio 1.9.0, form definition, binding and validation library (https://github.com/beranradek/formio)
 - SLF4J logger
 - Google APIs for integration with Google Docs
 - Browscap for browser detection
@@ -71,7 +71,7 @@ Application is then available on: http://localhost:8080/
 #### Database
 - Uses PostgreSQL with JOOQ for type-safe SQL queries
 - Database schema in `src/main/resources/sql/create_tables.sql`
-- Run `./gradlew generateJooq` after schema changes to regenerate classes in `org.xbery.artbeams.jooq.schema` package
+- Run `./gradlew jooqCodegen` after schema changes to regenerate classes in `org.xbery.artbeams.jooq.schema` package
 - JOOQ generated files (`src/main/jooqGenerated/**`) are excluded from linting
 
 ### Package Structure
@@ -183,7 +183,7 @@ org.xbery.artbeams/
 
 ### Database Changes
 1. Update SQL schema in `src/main/resources/sql/create_tables.sql`
-2. Run `./gradlew generateJooq` to regenerate classes
+2. Run `./gradlew jooqCodegen` to regenerate classes
 3. Update mappers/unmappers if needed
 4. Add migration logic if required
 

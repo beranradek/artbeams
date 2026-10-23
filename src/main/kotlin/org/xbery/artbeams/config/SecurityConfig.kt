@@ -2,14 +2,15 @@ package org.xbery.artbeams.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.header.writers.CacheControlHeadersWriter
 import org.springframework.security.web.header.writers.DelegatingRequestMatcherHeaderWriter
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher.pathPattern
 import org.springframework.security.web.util.matcher.AndRequestMatcher
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
@@ -42,32 +43,32 @@ class SecurityConfig(
             }.authorizeHttpRequests { request ->
                 request
                     // AI agent endpoints can trigger side effects (OpenAI calls, media writes) and are admin-only.
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles/agent/**"))
+                    .requestMatchers(pathPattern("/admin/articles/agent/**"))
                     .hasAuthority("admin")
             }.authorizeHttpRequests { request ->
                 request
                     // Redactor may only manage draft articles (create/edit/delete drafts).
                     // Server-side authorization must be strict; UI is only a convenience.
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles", "GET"))
+                    .requestMatchers(pathPattern(HttpMethod.GET, "/admin/articles"))
                     .hasAnyAuthority("admin", "redactor")
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles/", "GET"))
+                    .requestMatchers(pathPattern(HttpMethod.GET, "/admin/articles/"))
                     .hasAnyAuthority("admin", "redactor")
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles/*/edit", "GET"))
+                    .requestMatchers(pathPattern(HttpMethod.GET, "/admin/articles/*/edit"))
                     .hasAnyAuthority("admin", "redactor")
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles/save", "POST"))
+                    .requestMatchers(pathPattern(HttpMethod.POST, "/admin/articles/save"))
                     .hasAnyAuthority("admin", "redactor")
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles/*/delete", "POST"))
+                    .requestMatchers(pathPattern(HttpMethod.POST, "/admin/articles/*/delete"))
                     .hasAnyAuthority("admin", "redactor")
                     // Everything else under /admin/articles is admin-only (publish/sync/reindex/etc.).
-                    .requestMatchers(AntPathRequestMatcher("/admin/articles/**"))
+                    .requestMatchers(pathPattern("/admin/articles/**"))
                     .hasAuthority("admin")
             }.authorizeHttpRequests { request ->
                 request
-                    .requestMatchers(AntPathRequestMatcher("/admin/**"))
+                    .requestMatchers(pathPattern("/admin/**"))
                     .hasAuthority("admin")
             }.authorizeHttpRequests { request ->
                 request
-                    .requestMatchers(AntPathRequestMatcher(MemberSectionController.MEMBER_SECTION_PATH + "/**"))
+                    .requestMatchers(pathPattern(MemberSectionController.MEMBER_SECTION_PATH + "/**"))
                     .hasAuthority("member")
             }.authorizeHttpRequests { request ->
                 request.anyRequest().permitAll()
@@ -127,7 +128,7 @@ class SecurityConfig(
         // Send disabled caching only for non-static resources:
         // TODO RBe: It seems this does not work :-/
         val resourceMatchers: List<RequestMatcher> =
-            ResourcePaths.map { path -> (AntPathRequestMatcher(path)) }
+            ResourcePaths.map { path -> (pathPattern(path)) }
         val notResourcesMatcher = NegatedRequestMatcher(AndRequestMatcher(resourceMatchers))
         val notResourcesHeaderWriter =
             DelegatingRequestMatcherHeaderWriter(notResourcesMatcher, CacheControlHeadersWriter())

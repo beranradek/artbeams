@@ -10,7 +10,7 @@ set -euo pipefail
 # Requirements:
 # - psql available and configured to access the local dev DB as described in sprint-memory.md
 #   (example: psql -U artbeams_user -d artbeams -f scripts/seed_courses_e2e.sql)
-# - Java 21 / Gradle toolchain to run the app locally (start.sh or ./gradlew bootRun)
+# - Java 25 / Gradle toolchain to run the app locally (start.sh or ./gradlew bootRun)
 # - Node.js and dependencies for the MCP script (see scripts/e2e/README.md)
 #
 ################################################################################

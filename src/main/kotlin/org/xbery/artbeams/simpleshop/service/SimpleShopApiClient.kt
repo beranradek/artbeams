@@ -1,11 +1,11 @@
 package org.xbery.artbeams.simpleshop.service
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.simpleshop.config.SimpleShopConfig
 import org.xbery.artbeams.simpleshop.domain.SimpleShopProduct
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.ObjectMapper
 import java.math.BigDecimal
 import java.net.URI
 import java.net.http.HttpClient

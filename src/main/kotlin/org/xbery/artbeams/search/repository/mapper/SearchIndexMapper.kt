@@ -1,12 +1,12 @@
 package org.xbery.artbeams.search.repository.mapper
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.jooq.RecordMapper
 import org.springframework.stereotype.Component
 import org.xbery.artbeams.jooq.schema.tables.records.SearchIndexRecord
 import org.xbery.artbeams.search.domain.EntityType
 import org.xbery.artbeams.search.domain.SearchIndexEntry
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 
 /**
  * Maps database record to SearchIndexEntry domain object.

@@ -1,6 +1,5 @@
 package org.xbery.artbeams.common.authcode.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -12,6 +11,7 @@ import org.xbery.artbeams.common.authcode.repository.AuthorizationCodeRepository
 import org.xbery.artbeams.common.json.ObjectMappers
 import org.xbery.artbeams.common.security.AESEncryption
 import org.xbery.artbeams.config.repository.AppConfig
+import tools.jackson.databind.ObjectMapper
 import java.time.Instant
 import kotlin.reflect.KClass
 

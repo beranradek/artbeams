@@ -3,15 +3,15 @@ set -e
 
 echo "=== ArtBeams Development Environment Setup ==="
 
-# Check for Java 21
+# Check for Java 25
 if ! command -v java &> /dev/null; then
-    echo "ERROR: Java is not installed. Please install Java 21."
+    echo "ERROR: Java is not installed. Please install Java 25."
     exit 1
 fi
 
 JAVA_VERSION=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | cut -d'.' -f1)
-if [ "$JAVA_VERSION" -lt 21 ]; then
-    echo "ERROR: Java 21 or higher required. Found: Java $JAVA_VERSION"
+if [ "$JAVA_VERSION" -lt 25 ]; then
+    echo "ERROR: Java 25 or higher required. Found: Java $JAVA_VERSION"
     exit 1
 fi
 

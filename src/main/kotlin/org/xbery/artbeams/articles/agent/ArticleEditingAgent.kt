@@ -78,7 +78,9 @@ class ArticleEditingAgent(
         const val MAX_HISTORY_MESSAGES = 20
         const val SYSTEM_PROMPT_CONFIG_KEY = "article.editing.agent.system.prompt"
         const val MODEL_ENV_VAR = "LLM_MODEL"
-        val DEFAULT_MODEL = ChatModel.GPT_5_1
+
+        // Reason: openai-java has no constant for this model, so it is created from its id.
+        val DEFAULT_MODEL: ChatModel = ChatModel.of("gpt-6.1-sol")
 
         // Default system prompt in Czech language
         val DEFAULT_SYSTEM_PROMPT = """

@@ -1,7 +1,5 @@
 package org.xbery.artbeams.google.searchconsole
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
@@ -11,6 +9,8 @@ import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.error.OperationException
 import org.xbery.artbeams.google.auth.GoogleApiAuth
 import org.xbery.artbeams.google.error.GoogleErrorCode
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient

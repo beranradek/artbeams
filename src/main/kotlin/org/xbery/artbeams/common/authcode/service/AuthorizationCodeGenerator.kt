@@ -1,6 +1,5 @@
 package org.xbery.artbeams.common.authcode.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.authcode.domain.AuthorizationCode
 import org.xbery.artbeams.common.authcode.domain.TokenPayload
@@ -12,6 +11,7 @@ import org.xbery.artbeams.common.security.SecureTokens
 import org.xbery.artbeams.common.security.SecureTokens.DEFAULT_CHARACTER_SOURCE
 import org.xbery.artbeams.common.security.SecureTokens.DEFAULT_TOKEN_LENGTH
 import org.xbery.artbeams.config.repository.AppConfig
+import tools.jackson.databind.ObjectMapper
 import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days

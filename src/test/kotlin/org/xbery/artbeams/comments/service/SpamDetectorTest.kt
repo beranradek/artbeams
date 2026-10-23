@@ -1,10 +1,6 @@
 package org.xbery.artbeams.comments.service
 
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.data.forAll
-import io.kotest.data.headers
-import io.kotest.data.row
-import io.kotest.data.table
 import io.kotest.matchers.shouldBe
 import org.mockito.Mockito
 import org.xbery.artbeams.config.repository.AppConfig
@@ -169,12 +165,11 @@ class SpamDetectorTest :
 
         // Tests for false positives
         "should not flag legitimate content with similar patterns to spam" {
-            table(
-                headers("comment", "userName", "email", "expected"),
-                row("Mluvili jsme o investování na poslední konferenci", "Jan", "jan@firma.cz", false),
-                row("Přečetl jsem knihu o obchodování na burze", "Petr", "petr@seznam.cz", false)
-            ).forAll { comment, userName, email, expected ->
-                spamDetectorWithoutLanguageCheck.isSpam(comment, userName, email) shouldBe expected
+            listOf(
+                Triple("Mluvili jsme o investování na poslední konferenci", "Jan", "jan@firma.cz"),
+                Triple("Přečetl jsem knihu o obchodování na burze", "Petr", "petr@seznam.cz")
+            ).forEach { (comment, userName, email) ->
+                spamDetectorWithoutLanguageCheck.isSpam(comment, userName, email) shouldBe false
             }
 
             // gmail.com should be allowed

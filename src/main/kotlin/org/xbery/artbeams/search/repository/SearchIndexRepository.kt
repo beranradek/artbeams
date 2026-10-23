@@ -1,6 +1,5 @@
 package org.xbery.artbeams.search.repository
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.jooq.*
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
@@ -13,6 +12,7 @@ import org.xbery.artbeams.search.domain.SearchResult
 import org.xbery.artbeams.search.domain.SearchSuggestion
 import org.xbery.artbeams.search.repository.mapper.SearchIndexMapper
 import org.xbery.artbeams.search.repository.mapper.SearchIndexUnmapper
+import tools.jackson.databind.ObjectMapper
 import java.time.Instant
 
 /**

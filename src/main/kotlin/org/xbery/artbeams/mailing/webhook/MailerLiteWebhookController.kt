@@ -1,6 +1,5 @@
 package org.xbery.artbeams.mailing.webhook
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -9,6 +8,7 @@ import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.consents.domain.ConsentType
 import org.xbery.artbeams.consents.service.ConsentService
 import org.xbery.artbeams.mailing.webhook.dto.MailerLiteWebhookPayload
+import tools.jackson.databind.ObjectMapper
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import javax.crypto.Mac
@@ -71,9 +71,18 @@ class MailerLiteWebhookController(
 
             // Handle different event types
             when (webhookPayload.type) {
-                SUBSCRIBER_UNSUBSCRIBED -> handleUnsubscribedEvent(webhookPayload)
-                SUBSCRIBER_REMOVED_FROM_GROUP -> handleRemovedFromGroupEvent(webhookPayload)
-                SUBSCRIBER_ADDED_TO_GROUP -> handleAddedToGroupEvent(webhookPayload)
+                SUBSCRIBER_UNSUBSCRIBED -> {
+                    handleUnsubscribedEvent(webhookPayload)
+                }
+
+                SUBSCRIBER_REMOVED_FROM_GROUP -> {
+                    handleRemovedFromGroupEvent(webhookPayload)
+                }
+
+                SUBSCRIBER_ADDED_TO_GROUP -> {
+                    handleAddedToGroupEvent(webhookPayload)
+                }
+
                 else -> {
                     logger.debug("Ignoring webhook event type: ${webhookPayload.type}")
                 }

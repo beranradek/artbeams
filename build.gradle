@@ -23,9 +23,8 @@ buildscript {
 plugins {
     // Automatically make certain annotated classes open for CGLIB proxies to work, e.g. @Configuration etc.
     id "org.jetbrains.kotlin.plugin.spring" version "$kotlinVersion"
-    // Integrates the jOOQ code generation tool
-    id("nu.studer.jooq") version "$jooqPluginVersion"
-    // id("org.jooq.jooq-codegen-gradle") version "jooqPluginVersion" // not compatible with Spring Boot yet, maybe later
+    // Integrates the jOOQ code generation tool (official jOOQ plugin, versioned together with jOOQ)
+    id("org.jooq.jooq-codegen-gradle") version "$jooqVersion"
     // Kotlin linter for code style checking
     id("org.jlleitschuh.gradle.ktlint") version "$ktlintPluginVersion"
 }
@@ -37,7 +36,7 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'org.xbery'
 version = '1.8.1-SNAPSHOT'
-def jvmTargetVersion = JavaVersion.VERSION_21
+def jvmTargetVersion = JavaVersion.VERSION_25
 
 repositories {
     mavenCentral()
@@ -45,10 +44,10 @@ repositories {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
     targetCompatibility = jvmTargetVersion
-    sourceCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
 }
 
 dependencies {
@@ -58,7 +57,8 @@ dependencies {
 
     // Spring Boot: Thanks to Spring Boot Gradle Plugin, versions can be omitted
     // Support for Web MVC, Freemarker templates, database layer, security
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    implementation("org.springframework.boot:spring-boot-starter-restclient")
     implementation("org.springframework.boot:spring-boot-starter-freemarker")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -71,29 +71,29 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-jooq:$springBootVersion"
 
     // JOOQ Code generation specific dependencies, like JDBC drivers, codegen extensions, etc.
-    jooqGenerator "org.postgresql:postgresql:$postgresqlVersion"
+    jooqCodegen "org.postgresql:postgresql:$postgresqlVersion"
     // Extension for org.jooq.meta.extensions.ddl.DDLDatabase, ...
-    jooqGenerator "org.jooq:jooq-meta-extensions:$jooqVersion"
+    jooqCodegen "org.jooq:jooq-meta-extensions:$jooqVersion"
 
     runtimeOnly("org.postgresql:postgresql:$postgresqlVersion")
 
-    implementation("com.google.api-client:google-api-client:2.7.0")
+    implementation("com.google.api-client:google-api-client:2.9.2")
 
     // OAuth 2.0 Verification Code Receiver For Google OAuth Client Library For Java.
     // Runs an HTTP server on a free port, waiting for a redirect with the verification code.
-    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.39.0")
 
-    implementation("com.google.oauth-client:google-oauth-client:1.35.0")
-    implementation("com.google.apis:google-api-services-docs:v1-rev20230929-2.0.0")
+    implementation("com.google.oauth-client:google-oauth-client:1.39.0")
+    implementation("com.google.apis:google-api-services-docs:v1-rev20261006-2.0.0")
 
     compileOnly("org.springframework.boot:spring-boot-devtools")
 
     // Forms
-    implementation("net.formio:formio:1.8.1")
+    implementation("net.formio:formio:1.9.0")
 
     // Working with text/HTML
-    implementation("org.apache.commons:commons-text:1.11.0")
-    implementation("commons-io:commons-io:2.15.1")
+    implementation("org.apache.commons:commons-text:1.15.0")
+    implementation("commons-io:commons-io:2.22.0")
 
     // Evernote integration
     implementation("com.evernote:evernote-api:1.25.1")
@@ -104,19 +104,15 @@ dependencies {
     implementation("javax.inject:javax.inject:1")
 
     // Detection of client - browser capabilities
-    implementation("com.blueconic:browscap-java:1.4.3")
+    implementation("com.blueconic:browscap-java:1.5.1")
 
     // HTTP client for communication with external services
     implementation("org.apache.httpcomponents:httpclient:4.5.14")
 
-    // JSON API
-    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    implementation "com.fasterxml.jackson.module:jackson-modules-java8:$jacksonVersion"
-    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    // JSON API (Jackson 3, versions managed by Spring Boot)
+    implementation "tools.jackson.core:jackson-databind"
+    implementation "tools.jackson.module:jackson-module-kotlin"
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
 
     // Password strength estimation library https://github.com/nulab/zxcvbn4j
     implementation("com.nulab-inc:zxcvbn:$zxcvbnVersion")
@@ -132,30 +128,27 @@ dependencies {
     implementation "com.mailgun:mailgun-java:$mailgunVersion"
 
     // Working with PDF documents
-    implementation("org.apache.pdfbox:pdfbox:3.0.3")
+    implementation("org.apache.pdfbox:pdfbox:3.0.8")
 
     // Working with webp and other images
-    implementation("com.sksamuel.scrimage:scrimage-core:4.1.1")
-    implementation("com.sksamuel.scrimage:scrimage-webp:4.1.1")
-    implementation("com.drewnoakes:metadata-extractor:2.19.0")
+    implementation("com.sksamuel.scrimage:scrimage-core:4.6.9")
+    implementation("com.sksamuel.scrimage:scrimage-webp:4.6.9")
+    implementation("com.drewnoakes:metadata-extractor:2.22.0")
 
     // Testing Spring Boot application
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1") // for older tests; kotest is preferred
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3") // for older tests; kotest is preferred
 
     testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
     testImplementation("io.kotest:kotest-runner-junit5") // necessary runner also for kotest
     testImplementation("io.kotest:kotest-assertions-core")
-    testImplementation("io.kotest.extensions:kotest-extensions-spring:$kotestSpringVersion")
+    testImplementation("io.kotest:kotest-extensions-spring")
     // Mocking library for Kotlin. MockK builds proxies for mocked (typically final) classes.
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 jooq {
-    version = property("jooqVersion")
-    configurations {
-        main {  // name of the jOOQ configuration
-            generationTool {
+    configuration {
                 logging = Logging.WARN
                 generator {
                     name = 'org.jooq.codegen.KotlinGenerator'
@@ -216,12 +209,14 @@ jooq {
                         directory = 'src/main/jooqGenerated'
                     }
                 }
-            }
-        }
     }
 }
 
 sourceSets {
+    main {
+        // Reason: unlike the former nu.studer plugin, org.jooq.jooq-codegen-gradle does not register its output as a source dir
+        java.srcDir 'src/main/jooqGenerated'
+    }
     jooqGenerated {
         java {
             compileClasspath += main.output
@@ -232,7 +227,7 @@ sourceSets {
 
 // Ktlint configuration for Kotlin code style checking
 ktlint {
-    version = "1.4.1"
+    version = "1.8.0"
     android = false
     outputToConsole = true
     outputColorName = "RED"
@@ -244,10 +239,18 @@ ktlint {
     }
 }
 
-// Fix for Gradle 9 compatibility - remove redundant setCanBeResolved call
+// Reason: ktlint 1.8.0 embeds a Kotlin compiler built for Kotlin 2.2.x and fails ("Extensions storage is not registered")
+// when its classpath is forced to the project's newer Kotlin version.
+configurations.matching { it.name == 'ktlint' }.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'org.jetbrains.kotlin') {
+            details.useVersion '2.2.21'
+        }
+    }
+}
+
 configurations.jooqGeneratedRuntimeClasspath {
     canBeConsumed = false
-    // canBeResolved is already true by default for resolvable configurations
 }
 
 def cssDir = file("$projectDir/src/main/resources/static/css")
@@ -306,7 +309,6 @@ tasks.named('processResources') {
 // force Spring Boot plugin to keep jOOQ version in sync
 ext["jooq.version"] = property("jooqVersion")
 
-tasks.named('generateJooq').configure { allInputsDeclared = true }
 
 // Task stage for Heroku deployment
 task stage(dependsOn: ['build', 'clean'])

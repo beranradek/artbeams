@@ -1,6 +1,5 @@
 package org.xbery.artbeams.common.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.*
@@ -8,6 +7,7 @@ import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import org.xbery.artbeams.common.json.ObjectMappers
+import tools.jackson.databind.ObjectMapper
 
 /**
  * Base class for APIs.
