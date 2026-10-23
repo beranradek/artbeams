@@ -109,6 +109,12 @@ This involves also changes in templates (but change in a template does not invok
 * In Heroku CLI run command: `heroku ps:scale web=1` (so the application has associated one dyno required for application run and application can start)
 * See Heroku documentation for more details
 
+#### JVM memory settings on Heroku
+
+Basic dyno (512 MB) hit R14 "Memory quota exceeded" (about 670 MB used). Limit JVM memory (`Procfile` uses `$JAVA_OPTS`):
+
+`heroku config:set -a <app-name> JAVA_OPTS="-XX:+UseSerialGC -Xmx256m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=64m -XX:NativeMemoryTracking=summary"`
+
 #### GitHub Actions deploy
 
 This repo contains a GitHub Actions workflow that builds the application and deploys it to an existing Heroku app via Heroku Git.
