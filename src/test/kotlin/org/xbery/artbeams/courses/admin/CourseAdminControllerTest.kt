@@ -38,7 +38,7 @@ class CourseAdminControllerTest {
         val request = MockHttpServletRequest()
         val result = controller.list(0, 20, request)
         val mv = result as org.springframework.web.servlet.ModelAndView
-        Assertions.assertEquals("admin/courses/list", mv.viewName)
+        Assertions.assertEquals("admin/courses/courseList", mv.viewName)
         Assertions.assertTrue(mv.model.containsKey("courses"))
     }
 

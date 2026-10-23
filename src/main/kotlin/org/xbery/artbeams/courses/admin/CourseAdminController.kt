@@ -44,8 +44,8 @@ class CourseAdminController(
         // For admin UI list all courses via service (so tests mock service)
         val courses = courseService.findAllForAdmin()
         val model = createModel(request, "courses" to courses, "emptyId" to AssetAttributes.EMPTY_ID)
-        // View name 'admin/courses/list' used by acceptance tests and templates
-        return ModelAndView("$tplBasePath/list", model)
+        // View name matches template admin/courses/courseList.ftl (and acceptance tests)
+        return ModelAndView("$tplBasePath/courseList", model)
     }
 
     @GetMapping(value = ["/{id}/edit"], produces = [MediaType.TEXT_HTML_VALUE])

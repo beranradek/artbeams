@@ -50,8 +50,9 @@ data class Article(
             showOnBlog = edited.showOnBlog,
             draft = edited.draft,
             editor = edited.editor,
-            courseId = edited.courseId,
-            moduleId = edited.moduleId
+            // Reason: empty option of dropdown is submitted as blank string, but "no course/module" must be stored as NULL
+            courseId = edited.courseId?.takeIf { it.isNotBlank() },
+            moduleId = edited.moduleId?.takeIf { it.isNotBlank() }
         )
 
     fun toEdited(categories: List<String>): EditedArticle {
