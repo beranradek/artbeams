@@ -1,14 +1,12 @@
 # Global project instructions
 
-This file provides guidance when working with code in this repository.
-
-## Sprint Memory
-
-**`sprint-memory.md`** (repo root) — MUST be read at the start of any sprint-related work. It contains the active sprint's research findings, domain model decisions, file map, and implementation tasks. Agents must keep it up-to-date as tasks are completed or decisions change. If `sprint-memory.md` exists, read it before touching any code related to the current sprint.
+Guidance for working with code in this repository.
 
 ## Project Overview
 
-ArtBeams is an open-source CMS for blogs with administration interface, built with Kotlin/Spring Boot. It features content management, user authentication, e-commerce capabilities, and integrations with Google Docs, Evernote, and email services.
+ArtBeams is an open-source CMS for blogs with administration interface, built with Kotlin/Spring Boot. 
+It features content management, user authentication, e-commerce capabilities, and integrations 
+with Google Docs, Evernote, and email services.
 
 ## Development Commands
 
@@ -44,15 +42,8 @@ Application is then available on: http://localhost:8080/
 ```
 
 **Notes:**
-- JOOQ generated files (`src/main/jooqGenerated/**`) are excluded from linting
 - Run `ktlintCheck` after coding sessions and before commits/releases
 - Use `ktlintFormat` to auto-fix most style issues
-
-### Database
-- Uses PostgreSQL with JOOQ for type-safe SQL queries
-- Database schema in `src/main/resources/sql/create_tables.sql`
-- Run `./gradlew generateJooq` after schema changes to regenerate classes
-- JOOQ generated classes in `org.xbery.artbeams.jooq.schema` package
 
 ## Architecture
 
@@ -62,7 +53,26 @@ Application is then available on: http://localhost:8080/
 - **Database**: PostgreSQL with JOOQ 3.18.7
 - **Templates**: FreeMarker with Bootstrap CSS
 - **Testing**: Kotest, MockK
-- **Forms**: Formio 1.7.0 for validation and binding
+- **Forms**: Formio 1.7.0, form definition, binding and validation library (https://github.com/beranradek/formio)
+- SLF4J logger
+- Google APIs for integration with Google Docs
+- Browscap for browser detection
+- Jackson for integration with JSON APIs
+- zxcvbn library for password strength estimation
+- mailgun-java for sending transactional Mailgun emails
+- Apache PDFBox for manipulation of PDF files
+- Scrimage image library for manipulation of images
+- Flexmark for markdown editor
+- CKEditor for WYSIWYG editor
+- Evernote API for Evernote integration (not actively used now)
+- Google reCaptcha
+- Deployed to Heroku
+
+#### Database
+- Uses PostgreSQL with JOOQ for type-safe SQL queries
+- Database schema in `src/main/resources/sql/create_tables.sql`
+- Run `./gradlew generateJooq` after schema changes to regenerate classes in `org.xbery.artbeams.jooq.schema` package
+- JOOQ generated files (`src/main/jooqGenerated/**`) are excluded from linting
 
 ### Package Structure
 Uses **feature-based packaging** (not layer-based):
@@ -79,10 +89,17 @@ org.xbery.artbeams/
 ```
 
 ### Key Patterns
-- **Repository Pattern**: `AbstractMappingRepository` with mapper/unmapper classes
+- **Repository Pattern**: `AbstractMappingRepository` with mapper/unmapper classes (extends `AbstractRecordStorage` for create, update, delete operations, `AbstractRecordFetcher` for find operations). Every DB operation must go through this repository layer.
+- **Service Layer**: Business logic in `*Service` classes. All business logic must be in service layer, not in controllers or repositories.
+- **Controller Layer**: Spring MVC controllers - subclasses of `BaseController`. `*AdminController` classes for admin endpoints. 
+  `AdminHomeController` handles main administration page. `WebController` handles public website homepage. 
+  `MemberSectionController` handles main member section pages. 
+  All using org.springframework.web mapping annotations and Freemarker templates.
 - **Context Handling**: `OperationCtx` for request context tracking
-- **Error Handling**: `OperationException` hierarchy with status codes
-- **Security**: PBKDF2 password hashing, role-based access control
+- **Error Handling**: `OperationException` hierarchy with status codes and 
+  `kotlin/org/xbery/artbeams/common/error/Preconditions.kt` for precondition checks throwing `OperationException` subclasses.
+  `org.xbery.artbeams.common.controller.BaseController.statusCodeToHttpStatus` maps `OperationException`s `StatusCode` to springframework HttpStatus.
+- **Security**: PBKDF2 password hashing, role-based access control. Spring Security configured in `org.xbery.artbeams.config.SecurityConfig`.
 
 ## Database Access
 
@@ -175,3 +192,45 @@ org.xbery.artbeams/
 - Use PBKDF2 for password hashing (existing utilities available)
 - Validate all user inputs (through form validation typically)
 - Check authorization at service layer
+
+## Coding best practices
+
+* Packages are organized by feature. Each encapsulated feature has its own package with subpackages: domain, repository, service, controller (for public controllers), admin (for administration controllers) (if applicable).
+* DRY principle.
+* Use meaningful names for variables, methods, classes.
+* Use require checks from Preconditions.kt for handling of missing data or access rights.
+* Never create a file longer than 500 lines of code. If a file approaches this limit, refactor by splitting it into more classes or helper files.
+* Check correctness of your code, also for the edge cases.
+* Use proper error handling and logging. Do NOT use System.err or System.out. Use logger.
+* Close all resources properly.
+* Check that you have implemented all requested changes.
+* Check if the code is time and memory efficient, DB queries optimized.
+* Adhere to SOLID OOP principles, especially create well-defined classes or interfaces with single responsibility.
+* Make changes in places most local to the parts of code where they will be used.
+* Respect and use existing conventions, libraries, patterns that are already present in codebase.
+* Create tests for every more complex service (business) logic.
+* Do not forget to always add the necessary imports if not present yet.
+* Do NOT use wildcard imports, name the imported symbols explicitly.
+* Do not forget to remove the code that becomes unused after implementation.
+* Never assume missing context.
+* Never hallucinate libraries or functions – only use verified facts.
+* Always confirm file paths and module names exist before referencing them in code or tests.
+* **Never delete or overwrite existing behavior** unless explicitly instructed to do it as part of a task.
+* Always communicate security considerations, improvements and issues. Review the code for security issues.
+
+### Testing & Reliability
+
+- **Create unit tests for new features (with mocks)** (functions, classes, routes, etc). Test libraries are already set up.
+- **After updating any logic**, check whether existing unit tests need to be updated. If so, do it.
+- **Tests should live in a `test` folder** mirroring the main app structure.
+- Example of running concrete test: `./gradlew :ai-tools-commons:test --tests "cz.etn.ai.tools.tool.provider.McpToolProvidersTest"`
+
+- Include at least:
+    - 1 test for expected use
+    - 1 edge case
+    - 1 failure case
+
+### Documentation & Explainability
+
+- **Update `README.md`** when new features are added, dependencies change, or setup steps are modified.
+- When writing complex logic, **add an inline `// Reason:` comment** explaining the why, not just the what.
