@@ -20,7 +20,7 @@ class SearchService(
      * Fast, trigram-based matching for immediate user feedback.
      * Cached for 1 hour to reduce database load.
      */
-    @Cacheable("searchSuggestions", unless = "#query.length() < 3")
+    @Cacheable(SEARCH_SUGGESTIONS_CACHE_NAME, unless = "#query.length() < 3")
     fun getSuggestions(query: String, limit: Int = 15): List<SearchSuggestion> {
         if (query.trim().length < 3) {
             return emptyList()
@@ -33,7 +33,7 @@ class SearchService(
      * Uses PostgreSQL's tsvector for comprehensive, ranked results.
      * Falls back to prefix matching when Czech stemming is unavailable.
      */
-    @Cacheable("searchResults", unless = "#query.length() < 3")
+    @Cacheable(SEARCH_RESULTS_CACHE_NAME, unless = "#query.length() < 3")
     fun search(query: String, limit: Int = 50): List<SearchResult> {
         if (query.trim().isEmpty()) {
             return emptyList()
@@ -57,4 +57,9 @@ class SearchService(
         "categories" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.CATEGORY),
         "products" to searchIndexRepository.countByEntityType(org.xbery.artbeams.search.domain.EntityType.PRODUCT)
     )
+
+    companion object {
+        const val SEARCH_SUGGESTIONS_CACHE_NAME = "searchSuggestions"
+        const val SEARCH_RESULTS_CACHE_NAME = "searchResults"
+    }
 }
