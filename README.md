@@ -111,9 +111,32 @@ This involves also changes in templates (but change in a template does not invok
 
 #### JVM memory settings on Heroku
 
-Basic dyno (512 MB) hit R14 "Memory quota exceeded" (about 670 MB used). Limit JVM memory (`Procfile` uses `$JAVA_OPTS`):
+Basic dyno has 512 MB RAM and 1 shared vCPU. Without tuning, the process used about 670 MB and Heroku logged R14
+"Memory quota exceeded". The buildpack sets only `-Xmx300m`, but the JVM uses much more memory than the heap.
+`Procfile` passes `$JAVA_OPTS` to the JVM, so the limits are set as a Heroku config variable (no code change):
 
 `heroku config:set -a <app-name> JAVA_OPTS="-XX:+UseSerialGC -Xmx256m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=64m -XX:NativeMemoryTracking=summary"`
+
+Memory budget (approximate, the sum must stay under 512 MB):
+
+| Area | Limit | Why |
+| --- | --- | --- |
+| Java heap | `-Xmx256m` (buildpack default 300m) | Objects of the app. Lower than 300m to leave room for the areas below. |
+| Metaspace | `-XX:MaxMetaspaceSize=128m` | Loaded classes (Spring, JOOQ, Kotlin, libraries). Unlimited by default. 128m is enough, OutOfMemoryError means raise it. |
+| JIT code cache | `-XX:ReservedCodeCacheSize=64m` | Compiled native code. Default is 240m. 64m is enough for this app size. |
+| Thread stacks | `-Xss512k` (buildpack) | About 0.5 MB per thread (Tomcat, DB pool, schedulers). |
+| GC structures | `-XX:+UseSerialGC` | See below. |
+
+Details:
+
+* `-XX:+UseSerialGC` - single-threaded GC with the smallest memory footprint. Default G1 needs extra memory (tens of MB)
+  and parallel threads, which give no speedup on a 256 MB heap and one shared vCPU. Pauses are short on a small heap.
+* `-Xmx256m` - heap is only part of the process memory, so it must be clearly below the dyno quota.
+* `-XX:MaxMetaspaceSize`, `-XX:ReservedCodeCacheSize` - hard limits against uncontrolled growth of non-heap areas.
+* `-XX:NativeMemoryTracking=summary` - small overhead, allows a breakdown: `jcmd <pid> VM.native_memory summary`.
+
+Check memory with `heroku logs -a <app-name> | grep -e R14 -e "Process running mem"`. Heroku logs these lines only when
+the dyno is over quota, so no lines means the settings work. If R14 stays, lower `-Xmx` or use a bigger dyno.
 
 #### GitHub Actions deploy
 
