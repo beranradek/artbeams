@@ -21,11 +21,6 @@
 
 <#assign fields = editForm.fields>
 <h1>${fields.title.value!}</h1>
-<#if fields.id.value?? && fields.id.value != "" && fields.id.value != "0">
-  <p class="mt-2">
-    <a class="btn btn-secondary btn-sm" href="/admin/faqs?entityType=PRODUCT&entityId=${fields.id.value}">Edit FAQs</a>
-  </p>
-</#if>
 
 <form action="/admin/products/save" method="post" class="form-horizontal">
   <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}"/>
@@ -79,7 +74,12 @@
   </div>
   <div class="form-group row">
     <div class="col-sm-2 col-form-label"></div>
-    <div class="col-sm-3"><button type="submit" class="btn btn-primary">Submit</button></div>
+    <div class="col-sm-9 d-flex flex-wrap gap-2">
+      <#if fields.id.value?? && fields.id.value != "" && fields.id.value != "0">
+        <a class="btn btn-outline-secondary" href="/admin/faqs?entityType=PRODUCT&entityId=${fields.id.value}">Edit FAQs</a>
+      </#if>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
   </div>
 </form>
 

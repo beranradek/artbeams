@@ -1,13 +1,16 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/adminComponents.ftl" as c>
 <@layout.page>
 
-<h1>Žádosti o vrácení objednávek</h1>
+<@c.pageHeader title="Žádosti o vrácení objednávek">
+  <a href="/admin/orders" class="btn btn-outline-secondary btn-sm">Zpět na objednávky</a>
+</@c.pageHeader>
 
 <#if refundRequests?size == 0>
   <div class="alert alert-success" role="status">Žádné žádosti nečekají na vyřízení.</div>
 <#else>
   <p class="text-muted">Před potvrzením ověř, že peníze byly vráceny mimo aplikaci.</p>
-  <table class="table table-sm admin-table">
+  <@c.table>
     <thead><tr><th>Objednávka</th><th>Zákazník</th><th>Podáno</th><th>Důvod</th><th></th></tr></thead>
     <tbody>
       <#list refundRequests as refundRequest>
@@ -21,8 +24,7 @@
         </tr>
       </#list>
     </tbody>
-  </table>
+  </@c.table>
 </#if>
 
-<a href="/admin/orders" class="btn btn-secondary">Zpět na objednávky</a>
 </@layout.page>

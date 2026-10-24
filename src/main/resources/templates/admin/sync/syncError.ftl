@@ -14,7 +14,7 @@
             <a href="/admin" class="btn btn-primary">
                 <i class="fas fa-home"></i> Back to Admin
             </a>
-            <a href="/admin/config" class="btn btn-secondary">
+            <a href="/admin/config" class="btn btn-outline-secondary">
                 <i class="fas fa-cog"></i> View Configuration
             </a>
         </div>

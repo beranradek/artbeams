@@ -33,7 +33,7 @@
             <span class="badge text-bg-warning">REFUNDED</span>
           <#else>
             <form action="/admin/orders/${order.id}/state" method="POST">
-              <select name="state" onchange="this.form.submit()" class="form-control">
+              <select name="state" class="form-select form-select-sm admin-state-select">
                 <#list orderStates as state>
                   <option value="${state}"<#if state == order.state.name()> selected</#if>>${state}</option>
                 </#list>
@@ -108,7 +108,7 @@
         <textarea name="notes" class="form-control" rows="5" placeholder="Add admin notes here...">${order.notes!}</textarea>
       </div>
       <button type="submit" class="btn btn-primary">Save Notes</button>
-      <a href="/admin/orders" class="btn btn-secondary">Back to List</a>
+      <a href="/admin/orders" class="btn btn-outline-secondary">Back to List</a>
     </form>
   </div>
 </div>

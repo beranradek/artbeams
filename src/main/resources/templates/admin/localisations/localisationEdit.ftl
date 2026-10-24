@@ -35,7 +35,7 @@
     <div class="col-sm-2 col-form-label"></div>
     <div class="col-sm-6">
       <button type="submit" class="btn btn-primary">Submit</button>
-      <a href="/admin/localisations" class="btn btn-secondary">Cancel</a>
+      <a href="/admin/localisations" class="btn btn-outline-secondary">Cancel</a>
     </div>
   </div>
 </form>

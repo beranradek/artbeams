@@ -23,7 +23,7 @@
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-sync-alt"></i> Yes, Sync Now
             </button>
-            <a href="/admin" class="btn btn-secondary">
+            <a href="/admin" class="btn btn-outline-secondary">
                 <i class="fas fa-times"></i> Cancel
             </a>
         </form>

@@ -1,12 +1,9 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/adminComponents.ftl" as c>
 <@layout.page>
-<h1>FAQs: ${entityType} / ${entityId}</h1>
-
-<p>
-  <a class="btn btn-secondary btn-sm" href="javascript:history.back()">Back</a>
-</p>
-
-<hr class="my-3">
+<@c.pageHeader title="FAQs: ${entityType} / ${entityId}">
+  <a class="btn btn-outline-secondary btn-sm" href="javascript:history.back()">Back</a>
+</@c.pageHeader>
 
 <h3>Add new</h3>
 <form action="/admin/faqs/add" method="post" class="form-horizontal">
@@ -27,11 +24,9 @@
   </div>
   <div class="form-group row">
     <div class="col-sm-2 col-form-label"></div>
-    <div class="col-sm-8"><button class="btn btn-primary" type="submit">Add</button></div>
+    <div class="col-sm-8"><button class="btn btn-primary btn-sm" type="submit">Add</button></div>
   </div>
 </form>
-
-<hr class="my-4">
 
 <h3>Existing</h3>
 <#if entries?has_content>
@@ -62,11 +57,11 @@
           </div>
         </form>
 
-        <form action="/admin/faqs/${e.id}/delete" method="post" onsubmit="return confirm('Delete this FAQ entry?');">
+        <form action="/admin/faqs/${e.id}/delete" method="post" data-confirm="Delete this FAQ entry?">
           <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
           <input type="hidden" name="entityType" value="${entityType}"/>
           <input type="hidden" name="entityId" value="${entityId}"/>
-          <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+          <button class="btn btn-outline-danger btn-sm" type="submit"><@c.icon "trash"/> Delete</button>
         </form>
       </div>
     </div>

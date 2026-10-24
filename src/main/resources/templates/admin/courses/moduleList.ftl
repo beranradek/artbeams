@@ -1,14 +1,31 @@
 <#import "/adminLayout.ftl" as layout>
+<#import "/adminComponents.ftl" as c>
 <@layout.page>
-  <h1>Modules for course ${courseId}</h1>
-  <a href="/admin/courses/${courseId}/modules/0/edit" class="btn btn-primary">New Module</a>
-  <#if modules?has_content>
-    <ul>
-      <#list modules as m>
-        <li>${m.title} - <a href="/admin/courses/${courseId}/modules/${m.id}/edit">Edit</a></li>
-      </#list>
-    </ul>
-  <#else>
-    <p>No modules.</p>
-  </#if>
+
+<@c.pageHeader title="Modules for course ${courseId}">
+  <@c.newButton url="/admin/courses/${courseId}/modules/0/edit" label="New Module" />
+</@c.pageHeader>
+
+<@c.table>
+  <thead>
+    <tr>
+      <th scope="col">Title</th>
+      <th scope="col" class="admin-col-actions">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<#list modules as module>
+    <tr>
+      <td>${module.title}</td>
+      <td class="admin-col-actions">
+        <@c.rowActions>
+          <@c.editLink url="/admin/courses/${courseId}/modules/${module.id}/edit" />
+        </@c.rowActions>
+      </td>
+    </tr>
+<#else>
+    <@c.emptyRow colspan=2 message="No modules." />
+</#list>
+  </tbody>
+</@c.table>
 </@layout.page>

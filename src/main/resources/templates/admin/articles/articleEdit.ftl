@@ -8,32 +8,28 @@
 <#assign fields = editForm.fields>
 
 <form action="/admin/articles/save" method="POST" enctype="multipart/form-data" class="form-article-edit">
-  <div>
-    <h1>${fields.title.value!}</h1>
-    <#if fields.id.value?? && fields.id.value != "" && fields.id.value != "0">
-      <p class="mt-2">
-        <a class="btn btn-secondary btn-sm" href="/admin/faqs?entityType=ARTICLE&entityId=${fields.id.value}">Edit FAQs</a>
-      </p>
-    </#if>
-  </div>
+  <h1>${fields.title.value!}</h1>
   <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}"/>
   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-  <div class="form-group article-basic-attributes">
-    <label>Slug
-      <input type="text" name="${fields.slug.name}" value="${fields.slug.value!}" size="30"/>
-    </label>&nbsp;
-    <label>Title
-      <input type="text" name="${fields.title.name}" value="${fields.title.value!}" size="30"/>
-    </label>&nbsp;
-    <label>Image
-      <input type="text" name="${fields.image.name}" value="${fields.image.value!}" size="30"/>
-      <input type="file" name="${fields.file.name}"/>
-    </label>
+  <div class="admin-field-grid">
+    <div class="admin-field">
+      <label for="article-slug">Slug</label>
+      <input type="text" id="article-slug" class="form-control" name="${fields.slug.name}" value="${fields.slug.value!}"/>
+    </div>
+    <div class="admin-field">
+      <label for="article-title">Title</label>
+      <input type="text" id="article-title" class="form-control" name="${fields.title.name}" value="${fields.title.value!}"/>
+    </div>
+    <div class="admin-field">
+      <label for="article-image">Image</label>
+      <input type="text" id="article-image" class="form-control" name="${fields.image.name}" value="${fields.image.value!}"/>
+      <input type="file" class="form-control" name="${fields.file.name}" aria-label="Image file to upload"/>
+    </div>
   </div>
 
-  <div class="form-group">
-    <label for="${fields.perex.elementId}">Perex&nbsp;</label>
-    <textarea name="${fields.perex.name}" id="${fields.perex.elementId}" rows="2" cols="160" class="max-width-100-percent">${fields.perex.value!}</textarea>
+  <div class="admin-field mb-3">
+    <label for="${fields.perex.elementId}">Perex</label>
+    <textarea name="${fields.perex.name}" id="${fields.perex.elementId}" rows="2" class="form-control">${fields.perex.value!}</textarea>
   </div>
 
   <div class="container">
@@ -58,6 +54,7 @@
   </div>
   </div>
 
+  <div class="form-horizontal admin-form">
   <div class="form-group row">
     <label for="${fields.editor.elementId}" class="col-form-label col-sm-2 label-fix">Editor</label>
     <div class="col-sm-3">
@@ -101,7 +98,7 @@
   </#if>
   <div class="form-group row">
     <label for="${fields.categories.elementId}" class="col-form-label col-sm-2 label-fix">Categories</label>
-    <div class="col-sm-2">
+    <div class="col-sm-4">
         <select name="${fields.categories.name}" multiple size="5" id="${fields.categories.elementId}" class="form-control">
           <#list categories as category>
             <option value="${category.id}"<#if fields.categories.filledObjects?seq_contains(category.id)> selected</#if>>${category.title}</option>
@@ -131,12 +128,13 @@
       </select>
     </div>
   </div>
-  <div class="form-group row">
-    <div class="col-sm-2 col-form-label"></div>
-    <div class="col-sm-10">
-        <button type="submit" class="btn btn-primary">Save and leave</button>
-        <button type="submit" name="save" accesskey="s" class="btn btn-secondary">Save</button>
-    </div>
+  </div>
+  <div class="admin-form-actions d-flex flex-wrap gap-2">
+    <#if fields.id.value?? && fields.id.value != "" && fields.id.value != "0">
+      <a class="btn btn-outline-secondary" href="/admin/faqs?entityType=ARTICLE&entityId=${fields.id.value}">Edit FAQs</a>
+    </#if>
+    <button type="submit" class="btn btn-primary">Save and leave</button>
+    <button type="submit" name="save" accesskey="s" class="btn btn-outline-secondary">Save</button>
   </div>
 </form>
 

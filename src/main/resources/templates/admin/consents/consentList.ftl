@@ -1,8 +1,10 @@
 <#import "/adminLayout.ftl" as layout>
-<#import "/pagination.ftl" as pagination>
-<@layout.page noUp=true>
+<#import "/adminComponents.ftl" as c>
+<@layout.page>
 
-<table class="table table-sm admin-table">
+<@c.pageHeader title="Consents" count="${resultPage.pagination.totalCount!0}" countLabel="Total consents" />
+
+<@c.table>
   <thead>
     <tr>
       <th scope="col">Login</th>
@@ -15,16 +17,18 @@
   <tbody>
 <#list resultPage.records as consent>
     <tr>
-        <td>${consent.login}</td>
-        <td>${consent.validFrom?string["d.M.yyyy, HH:mm"]}</td>
-        <td>${consent.validTo?string["d.M.yyyy, HH:mm"]}</td>
-        <td>${consent.consentType}</td>
-        <td>${consent.originProductId!"-"}</td>
+      <td>${consent.login}</td>
+      <td>${consent.validFrom?string["d.M.yyyy, HH:mm"]}</td>
+      <td>${consent.validTo?string["d.M.yyyy, HH:mm"]}</td>
+      <td>${consent.consentType}</td>
+      <td>${consent.originProductId!"-"}</td>
     </tr>
+<#else>
+    <@c.emptyRow colspan=5 />
 </#list>
   </tbody>
-</table>
+</@c.table>
 
-<@pagination.pagination pagination=resultPage.pagination />
+<@c.pagination pagination=resultPage.pagination />
 
 </@layout.page>

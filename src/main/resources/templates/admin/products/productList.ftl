@@ -1,5 +1,5 @@
 <#import "/adminLayout.ftl" as layout>
-<#import "/pagination.ftl" as pag>
+<#import "/adminComponents.ftl" as c>
 <@layout.page>
 
 <#if RequestParameters?? && RequestParameters.syncSuccess??>
@@ -23,37 +23,23 @@
   </div>
 </#if>
 
-<div class="mb-3">
-  <a class="btn btn-primary" href="/admin/products/${emptyId}/edit" role="button">New Product</a>
-
-  <form action="/admin/products/sync-all-from-simpleshop" method="post" style="display: inline; margin-left: 10px;">
+<@c.pageHeader title="Products" count="${resultPage.pagination.totalCount!0}" countLabel="Total products">
+  <form action="/admin/products/sync-all-from-simpleshop" method="post" class="admin-icon-form"
+        data-confirm="This will sync all products that have SimpleShop Product ID set. Continue?">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-    <button type="submit" class="btn btn-info" onclick="return confirm('This will sync all products that have SimpleShop Product ID set. Continue?');">Sync All from SimpleShop</button>
+    <button type="submit" class="btn btn-outline-secondary btn-sm"><@c.icon "refresh"/> Sync all from SimpleShop</button>
   </form>
+  <@c.newButton url="/admin/products/${emptyId}/edit" label="New Product" />
+</@c.pageHeader>
 
-  <strong style="margin-left: 20px;">Total products:</strong> ${resultPage.pagination.totalCount!0}
-</div>
+<@c.filterBar action="/admin/products" clearUrl="/admin/products" submitLabel="Search">
+  <@c.filterField label="Search" forId="searchInput" grow=true>
+    <input type="text" class="form-control" id="searchInput" name="search" value="${searchTerm}"
+           placeholder="Title, slug or subtitle" title="Searches in product title, slug and subtitle">
+  </@c.filterField>
+</@c.filterBar>
 
-<!-- Search Form -->
-<div class="card mb-3">
-  <div class="card-body">
-    <form method="GET" action="/admin/products" class="row g-3">
-      <div class="col-md-8">
-        <label for="searchInput" class="form-label">Search</label>
-        <input type="text" class="form-control" id="searchInput" name="search"
-               placeholder="Search by title, slug, or subtitle..."
-               value="${searchTerm}">
-      </div>
-      <div class="col-md-4 d-flex align-items-end gap-2">
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a href="/admin/products" class="btn btn-secondary">Clear</a>
-      </div>
-    </form>
-    <small class="text-muted mt-2 d-block">Search searches in product title, slug, and subtitle</small>
-  </div>
-</div>
-
-<table class="table table-sm admin-table">
+<@c.table>
   <thead>
     <tr>
       <th scope="col">Title</th>
@@ -62,29 +48,35 @@
       <th scope="col">Regular price</th>
       <th scope="col">Discounted price</th>
       <th scope="col">Last modified</th>
-      <th scope="col">Actions</th>
+      <th scope="col" class="admin-col-actions">Actions</th>
     </tr>
   </thead>
   <tbody>
 <#list resultPage.records as product>
     <tr>
-        <td>${product.title!}</td>
-        <td>${product.slug!}</td>
-        <td>${product.fileName!}</td>
-        <td>${product.priceRegular!}</td>
-        <td>${product.priceDiscounted!}</td>
-        <td><#if product.common.modified??>${product.common.modified?string["d.M.yyyy, HH:mm"]}</#if></td>
-        <td><a href="/admin/products/${product.id}/edit">Edit</a></td>
+      <td>${product.title!}</td>
+      <td>${product.slug!}</td>
+      <td>${product.fileName!}</td>
+      <td>${product.priceRegular!}</td>
+      <td>${product.priceDiscounted!}</td>
+      <td><#if product.common.modified??>${product.common.modified?string["d.M.yyyy, HH:mm"]}</#if></td>
+      <td class="admin-col-actions">
+        <@c.rowActions>
+          <@c.editLink url="/admin/products/${product.id}/edit" />
+        </@c.rowActions>
+      </td>
     </tr>
+<#else>
+    <@c.emptyRow colspan=7 />
 </#list>
   </tbody>
-</table>
+</@c.table>
 
 <#-- Preserve search parameters in pagination -->
 <#assign additionalParams = "">
 <#if searchTerm?has_content>
   <#assign additionalParams = additionalParams + "&search=" + searchTerm?url>
 </#if>
-<@pag.pagination resultPage.pagination additionalParams />
+<@c.pagination resultPage.pagination additionalParams />
 
 </@layout.page>

@@ -1,73 +1,55 @@
 <#import "/adminLayout.ftl" as layout>
-<#import "/pagination.ftl" as pag>
+<#import "/adminComponents.ftl" as c>
 <@layout.page>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <a class="btn btn-primary" href="/admin/users/${emptyId}/edit" role="button">New User</a>
-  <div>
-    <strong>Total users:</strong> ${resultPage.pagination.totalCount!0}
-  </div>
-</div>
+<@c.pageHeader title="Users" count="${resultPage.pagination.totalCount!0}" countLabel="Total users">
+  <@c.newButton url="/admin/users/${emptyId}/edit" label="New User" />
+</@c.pageHeader>
 
-<!-- Search and Filter Form -->
-<div class="card mb-3">
-  <div class="card-body">
-    <form method="GET" action="/admin/users" class="row g-3">
-      <div class="col-md-5">
-        <label for="searchInput" class="form-label">Search</label>
-        <input type="text" class="form-control" id="searchInput" name="search"
-               placeholder="Search by login, email, first name, or last name..."
-               value="${searchTerm}">
-      </div>
-      <div class="col-md-3">
-        <label for="roleFilter" class="form-label">Role</label>
-        <select class="form-select" id="roleFilter" name="role">
-          <option value="">All Roles</option>
-          <#list roles as role>
-            <option value="${role.id}" <#if roleFilter == role.id>selected</#if>>${role.name}</option>
-          </#list>
-        </select>
-      </div>
-      <div class="col-md-4 d-flex align-items-end gap-2">
-        <button type="submit" class="btn btn-primary">Apply Filters</button>
-        <a href="/admin/users" class="btn btn-secondary">Clear</a>
-      </div>
-    </form>
-    <small class="text-muted mt-2 d-block">Search searches in login, email, first name, and last name fields</small>
-  </div>
-</div>
+<@c.filterBar action="/admin/users" clearUrl="/admin/users">
+  <@c.filterField label="Search" forId="searchInput" grow=true>
+    <input type="text" class="form-control" id="searchInput" name="search" value="${searchTerm}"
+           placeholder="Login, email, first or last name" title="Searches in login, email, first name and last name">
+  </@c.filterField>
+  <@c.filterField label="Role" forId="roleFilter">
+    <select class="form-select" id="roleFilter" name="role">
+      <option value="">All roles</option>
+      <#list roles as role>
+        <option value="${role.id}" <#if roleFilter == role.id>selected</#if>>${role.name}</option>
+      </#list>
+    </select>
+  </@c.filterField>
+</@c.filterBar>
 
-<table class="table table-sm admin-table">
+<@c.table>
   <thead>
     <tr>
       <th scope="col">Login</th>
       <th scope="col">First name</th>
       <th scope="col">Last name</th>
       <th scope="col">Last modified</th>
-      <th scope="col">Edit</th>
-      <th scope="col">Login as</th>
+      <th scope="col" class="admin-col-actions">Actions</th>
     </tr>
   </thead>
   <tbody>
 <#list resultPage.records as user>
     <tr>
-        <td>${user.login}</td>
-        <td>${user.firstName!}</td>
-        <td>${user.lastName!}</td>
-        <td><#if user.common.modified??>${user.common.modified?string["d.M.yyyy, HH:mm"]}</#if></td>
-        <td>
-            <a href="/admin/users/${user.id}/edit">Edit</a>
-        </td>
-        <td>
-            <form action="/admin/users/${user.id}/login-as" method="POST">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit" class="btn">Login as</button>
-            </form>
-        </td>
+      <td>${user.login}</td>
+      <td>${user.firstName!}</td>
+      <td>${user.lastName!}</td>
+      <td><#if user.common.modified??>${user.common.modified?string["d.M.yyyy, HH:mm"]}</#if></td>
+      <td class="admin-col-actions">
+        <@c.rowActions>
+          <@c.editLink url="/admin/users/${user.id}/edit" />
+          <@c.iconForm url="/admin/users/${user.id}/login-as" iconName="log-in" title="Login as ${user.login}" />
+        </@c.rowActions>
+      </td>
     </tr>
+<#else>
+    <@c.emptyRow colspan=5 />
 </#list>
   </tbody>
-</table>
+</@c.table>
 
 <#-- Preserve search and filter parameters in pagination -->
 <#assign additionalParams = "">
@@ -77,6 +59,6 @@
 <#if roleFilter?has_content>
   <#assign additionalParams = additionalParams + "&role=" + roleFilter?url>
 </#if>
-<@pag.pagination resultPage.pagination additionalParams />
+<@c.pagination resultPage.pagination additionalParams />
 
 </@layout.page>

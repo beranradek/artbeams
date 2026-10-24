@@ -1,42 +1,28 @@
 <#import "/adminLayout.ftl" as layout>
-<#import "/pagination.ftl" as pag>
+<#import "/adminComponents.ftl" as c>
 <@layout.page>
 
-<div class="mb-3">
-  <a href="/admin/orders/create" class="btn btn-primary">New Order</a>
-  <a href="/admin/refund-requests" class="btn btn-outline-warning">Žádosti o vrácení <span class="badge text-bg-warning">${openRefundRequestCount!0}</span></a>
-  <strong>Total orders:</strong> ${resultPage.pagination.totalCount!0}
-</div>
+<@c.pageHeader title="Orders" count="${resultPage.pagination.totalCount!0}" countLabel="Total orders">
+  <a href="/admin/refund-requests" class="btn btn-outline-warning btn-sm">Žádosti o vrácení <span class="badge text-bg-warning">${openRefundRequestCount!0}</span></a>
+  <@c.newButton url="/admin/orders/create" label="New Order" />
+</@c.pageHeader>
 
-<!-- Search and Filter Form -->
-<div class="card mb-3">
-  <div class="card-body">
-    <form method="GET" action="/admin/orders" class="row g-3">
-      <div class="col-md-5">
-        <label for="searchInput" class="form-label">Search</label>
-        <input type="text" class="form-control" id="searchInput" name="search"
-               placeholder="Search by order number, user login, or user name..."
-               value="${searchTerm!""}">
-      </div>
-      <div class="col-md-3">
-        <label for="stateFilter" class="form-label">State</label>
-        <select class="form-select" id="stateFilter" name="state">
-          <option value="">All States</option>
-          <#list orderStates as state>
-            <option value="${state}" <#if stateFilter?? && stateFilter == state>selected</#if>>${state}</option>
-          </#list>
-        </select>
-      </div>
-      <div class="col-md-4 d-flex align-items-end gap-2">
-        <button type="submit" class="btn btn-primary">Apply Filters</button>
-        <a href="/admin/orders" class="btn btn-secondary">Clear</a>
-      </div>
-    </form>
-    <small class="text-muted mt-2 d-block">Search searches in order number, user login, first name, and last name</small>
-  </div>
-</div>
+<@c.filterBar action="/admin/orders" clearUrl="/admin/orders" submitLabel="Search">
+  <@c.filterField label="Search" forId="searchInput" grow=true>
+    <input type="text" class="form-control" id="searchInput" name="search" value="${searchTerm!""}"
+           placeholder="Order number, user login or name" title="Searches in order number, user login, first name and last name">
+  </@c.filterField>
+  <@c.filterField label="State" forId="stateFilter">
+    <select class="form-select" id="stateFilter" name="state">
+      <option value="">All states</option>
+      <#list orderStates as state>
+        <option value="${state}" <#if stateFilter?? && stateFilter == state>selected</#if>>${state}</option>
+      </#list>
+    </select>
+  </@c.filterField>
+</@c.filterBar>
 
-<table class="table table-sm admin-table">
+<@c.table>
   <thead>
     <tr>
       <th scope="col">Order number</th>
@@ -45,60 +31,56 @@
       <th scope="col">Products</th>
       <th scope="col">Price</th>
       <th scope="col">State</th>
-      <th scope="col">Actions</th>
+      <th scope="col" class="admin-col-actions">Actions</th>
     </tr>
   </thead>
   <tbody>
 <#list resultPage.records as order>
     <tr>
-        <td>${order.orderNumber}</td>
-        <td>${order.orderTime?string["d.M.yyyy, HH:mm"]}</td>
-        <td>
-            <#if order.createdBy??>
-                ${order.createdBy.login}
-                <#if order.createdBy.name??>
-                    <br/>${order.createdBy.name}
-                </#if>
-            </#if>
-        </td>
-        <td>
-            <ul>
-            <#list order.items as item>
-                <li>${item.productName} x ${item.quantity}
-                    <#if item.downloaded??>
-                        <br/>Downloaded: ${item.downloaded?string["d.M.yyyy, HH:mm"]}
-                    </#if>
-                </li>
-            </#list>
-            </ul>
-        </td>
-        <td>${order.price}</td>
-        <td>
-            <#if order.state.name() == "REFUNDED">
-                <span class="badge text-bg-warning">REFUNDED</span>
-            <#else>
-                <form action="/admin/orders/${order.id}/state" method="POST">
-                    <select name="state" onchange="this.form.submit()">
-                        <#list orderStates as state>
-                            <option value="${state}"<#if state == order.state.name()> selected</#if>>${state}</option>
-                        </#list>
-                    </select>
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                </form>
-            </#if>
-        </td>
-        <td>
-            <a href="/admin/orders/${order.id}" class="btn btn-sm">Edit</a>
-            <form action="/admin/orders/${order.id}" method="POST" onsubmit="return window.confirm('Are you sure you want to delete this order?');" style="display:inline;">
-                <input type="hidden" name="_method" value="DELETE"/>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit" class="btn btn-sm">Delete</button>
-            </form>
-        </td>
+      <td>${order.orderNumber}</td>
+      <td>${order.orderTime?string["d.M.yyyy, HH:mm"]}</td>
+      <td>
+        <#if order.createdBy??>
+          ${order.createdBy.login}
+          <#if order.createdBy.name??><div class="text-muted small">${order.createdBy.name}</div></#if>
+        </#if>
+      </td>
+      <td>
+        <ul>
+        <#list order.items as item>
+          <li>${item.productName} x ${item.quantity}
+            <#if item.downloaded??><div class="text-muted small">Downloaded: ${item.downloaded?string["d.M.yyyy, HH:mm"]}</div></#if>
+          </li>
+        </#list>
+        </ul>
+      </td>
+      <td class="text-nowrap">${order.price}</td>
+      <td>
+        <#if order.state.name() == "REFUNDED">
+          <span class="badge text-bg-warning">REFUNDED</span>
+        <#else>
+          <form action="/admin/orders/${order.id}/state" method="POST">
+            <select name="state" class="form-select form-select-sm admin-state-select" aria-label="Order state">
+              <#list orderStates as state>
+                <option value="${state}"<#if state == order.state.name()> selected</#if>>${state}</option>
+              </#list>
+            </select>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+          </form>
+        </#if>
+      </td>
+      <td class="admin-col-actions">
+        <@c.rowActions>
+          <@c.editLink url="/admin/orders/${order.id}" />
+          <@c.deleteForm url="/admin/orders/${order.id}" method="DELETE" confirm="Are you sure you want to delete this order?" />
+        </@c.rowActions>
+      </td>
     </tr>
+<#else>
+    <@c.emptyRow colspan=7 />
 </#list>
   </tbody>
-</table>
+</@c.table>
 
 <#-- Preserve search and filter parameters in pagination -->
 <#assign additionalParams = "">
@@ -108,6 +90,6 @@
 <#if stateFilter?has_content>
   <#assign additionalParams = additionalParams + "&state=" + stateFilter?url>
 </#if>
-<@pag.pagination resultPage.pagination additionalParams />
+<@c.pagination resultPage.pagination additionalParams />
 
 </@layout.page>

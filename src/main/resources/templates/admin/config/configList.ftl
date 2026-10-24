@@ -1,53 +1,44 @@
 <#import "/adminLayout.ftl" as layout>
-<#import "/pagination.ftl" as pagination>
-<@layout.page noUp=true>
+<#import "/adminComponents.ftl" as c>
+<@layout.page>
 
-<form method="GET" action="/admin/config" class="mb-3">
-  <div class="row">
-    <div class="col-md-6">
-      <div class="input-group">
-        <input type="text" class="form-control" name="search" placeholder="Search in keys and values..." value="${search!}" />
-        <div class="input-group-append">
-          <button class="btn btn-primary" type="submit">Search</button>
-          <#if search?? && search?has_content>
-            <a href="/admin/config" class="btn btn-secondary">Clear</a>
-          </#if>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
+<@c.pageHeader title="Config" count="${resultPage.pagination.totalCount!0}" countLabel="Total entries">
+  <@c.newButton url="/admin/config/new/edit" label="New Config Entry" />
+</@c.pageHeader>
 
-<a class="btn btn-primary" href="/admin/config/new/edit" role="button">New Config Entry</a>
+<@c.filterBar action="/admin/config" clearUrl="/admin/config" submitLabel="Search">
+  <@c.filterField label="Search" forId="searchInput" grow=true>
+    <input type="text" class="form-control" id="searchInput" name="search" value="${search!}" placeholder="Search in keys and values">
+  </@c.filterField>
+</@c.filterBar>
 
-<table class="table table-sm admin-table">
+<@c.table>
   <thead>
     <tr>
       <th scope="col">Entry Key</th>
       <th scope="col">Entry Value</th>
-      <th scope="col">Actions</th>
+      <th scope="col" class="admin-col-actions">Actions</th>
     </tr>
   </thead>
   <tbody>
 <#list resultPage.records as config>
     <tr>
-        <td>${config.entryKey!}</td>
-        <td>${config.entryValue!}</td>
-        <td>
-            <a href="/admin/config/${config.entryKey}/edit">Edit</a>
-            |
-            <form action="/admin/config/${config.entryKey}" method="POST" style="display:inline;" onsubmit="return window.confirm('Are you sure you want to delete this config entry?');">
-                <input type="hidden" name="_method" value="DELETE"/>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit" class="btn-link" style="border:none;background:none;padding:0;color:#007bff;cursor:pointer;text-decoration:underline;">Delete</button>
-            </form>
-        </td>
+      <td>${config.entryKey!}</td>
+      <td>${config.entryValue!}</td>
+      <td class="admin-col-actions">
+        <@c.rowActions>
+          <@c.editLink url="/admin/config/${config.entryKey}/edit" />
+          <@c.deleteForm url="/admin/config/${config.entryKey}" method="DELETE" confirm="Are you sure you want to delete this config entry?" />
+        </@c.rowActions>
+      </td>
     </tr>
+<#else>
+    <@c.emptyRow colspan=3 />
 </#list>
   </tbody>
-</table>
+</@c.table>
 
 <#assign searchParam = (search?? && search?has_content)?then("&search=" + search?url, "") />
-<@pagination.pagination pagination=resultPage.pagination additionalParams=searchParam />
+<@c.pagination pagination=resultPage.pagination additionalParams=searchParam />
 
 </@layout.page>

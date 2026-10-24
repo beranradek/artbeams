@@ -9,7 +9,7 @@
     </div>
 </#if>
 
-<form action="/admin/orders/create" method="POST">
+<form action="/admin/orders/create" method="POST" class="admin-form">
     <div class="mb-3">
         <label for="userId" class="form-label">Customer:</label>
         <select name="${createForm.fields.userId.name}" id="${createForm.fields.userId.elementId}" class="form-select">
@@ -48,7 +48,7 @@
     
     <div class="mb-3">
         <button type="submit" class="btn btn-primary">Create Order</button>
-        <a href="/admin/orders" class="btn btn-secondary">Cancel</a>
+        <a href="/admin/orders" class="btn btn-outline-secondary">Cancel</a>
     </div>
 </form>
 

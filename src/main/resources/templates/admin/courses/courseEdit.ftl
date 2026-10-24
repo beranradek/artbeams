@@ -5,7 +5,7 @@
   <#if errorMessage??>
     <div class="alert alert-danger" role="alert">${errorMessage}</div>
   </#if>
-  <form action="/admin/courses/save" method="post">
+  <form action="/admin/courses/save" method="post" class="admin-form">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}" />
     <div class="mb-3">
@@ -21,6 +21,6 @@
       <input class="form-control" type="text" name="${fields.productIds.name}" id="${fields.productIds.elementId}" value="${fields.productIds.value!}" />
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
-    <a href="/admin/courses" class="btn btn-secondary">Cancel</a>
+    <a href="/admin/courses" class="btn btn-outline-secondary">Cancel</a>
   </form>
 </@layout.page>

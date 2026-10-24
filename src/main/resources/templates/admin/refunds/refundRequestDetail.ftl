@@ -11,13 +11,13 @@
 
 <#if refundRequest.status.name() == "REQUESTED">
   <div class="alert alert-warning">Potvrď až po skutečném vrácení peněz mimo aplikaci. Tato akce zruší přístup ke stažení.</div>
-  <form method="post" action="/admin/refund-requests/${refundRequest.id}/refund" onsubmit="return window.confirm('Potvrdit vrácení peněz a odebrat přístup k produktům?');">
+  <form method="post" action="/admin/refund-requests/${refundRequest.id}/refund" data-confirm="Potvrdit vrácení peněz a odebrat přístup k produktům?">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     <button type="submit" class="btn btn-danger">Potvrdit vrácení peněz</button>
-    <a href="/admin/refund-requests" class="btn btn-secondary">Zpět</a>
+    <a href="/admin/refund-requests" class="btn btn-outline-secondary">Zpět</a>
   </form>
 <#else>
   <div class="alert alert-success">Žádost byla vyřízena ${refundRequest.resolvedAt?string["d.M.yyyy, HH:mm"]}.</div>
-  <a href="/admin/refund-requests" class="btn btn-secondary">Zpět</a>
+  <a href="/admin/refund-requests" class="btn btn-outline-secondary">Zpět</a>
 </#if>
 </@layout.page>

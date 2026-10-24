@@ -5,7 +5,7 @@
   <#if errorMessage??>
     <div class="alert alert-danger" role="alert">${errorMessage}</div>
   </#if>
-  <form action="save" method="post">
+  <form action="save" method="post" class="admin-form">
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     <input type="hidden" name="${fields.id.name}" value="${fields.id.value!}" />
     <div class="mb-3">

@@ -6,7 +6,7 @@
     <h4 class="alert-heading">Authorization Required</h4>
     <p>To access Google Search Console metrics, you need to authorize the application.</p>
     <hr>
-    <a href="${authUrl}" class="btn btn-primary">Authorize with Google</a>
+    <a href="${authUrl}" class="btn btn-primary btn-sm">Authorize with Google</a>
   </div>
 <#else>
 

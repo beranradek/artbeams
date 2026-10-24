@@ -57,19 +57,19 @@
             <a href="/admin" class="btn btn-primary">
                 <i class="fas fa-home"></i> Back to Admin
             </a>
-            <a href="/admin/categories" class="btn btn-secondary">
+            <a href="/admin/categories" class="btn btn-outline-secondary">
                 <i class="fas fa-folder"></i> View Categories
             </a>
-            <a href="/admin/products" class="btn btn-secondary">
+            <a href="/admin/products" class="btn btn-outline-secondary">
                 <i class="fas fa-shopping-cart"></i> View Products
             </a>
-            <a href="/admin/articles" class="btn btn-secondary">
+            <a href="/admin/articles" class="btn btn-outline-secondary">
                 <i class="fas fa-newspaper"></i> View Articles
             </a>
-            <a href="/admin/localisations" class="btn btn-secondary">
+            <a href="/admin/localisations" class="btn btn-outline-secondary">
                 <i class="fas fa-language"></i> View Localizations
             </a>
-            <a href="/admin/media" class="btn btn-secondary">
+            <a href="/admin/media" class="btn btn-outline-secondary">
                 <i class="fas fa-images"></i> View Media
             </a>
         </div>

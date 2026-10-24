@@ -1,71 +1,39 @@
 <#import "/adminLayout.ftl" as layout>
-<#import "/pagination.ftl" as pag>
+<#import "/adminComponents.ftl" as c>
 <@layout.page>
 
-<div class="mb-4">
-    <h2>User Activity Logs</h2>
-    <p class="text-muted">Track user actions including logins, orders, product downloads, and member section activities.</p>
-</div>
+<@c.pageHeader title="User Activity Logs" count="${resultPage.pagination.totalCount!0}" countLabel="Total entries" />
 
-<!-- Filters -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">Filters</h5>
-    </div>
-    <div class="card-body">
-        <form method="GET" action="/admin/activity-logs">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label for="userId" class="form-label">User ID</label>
-                    <input type="text" class="form-control" id="userId" name="userId" value="${selectedUserId}" placeholder="Enter user ID">
-                </div>
-                <div class="col-md-3">
-                    <label for="actionType" class="form-label">Action Type</label>
-                    <select class="form-select" id="actionType" name="actionType">
-                        <option value="">All Actions</option>
-                        <#list actionTypes as type>
-                            <option value="${type}" <#if selectedActionType == type>selected</#if>>${type}</option>
-                        </#list>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="entityType" class="form-label">Entity Type</label>
-                    <select class="form-select" id="entityType" name="entityType">
-                        <option value="">All Entities</option>
-                        <#list entityTypes as type>
-                            <option value="${type}" <#if selectedEntityType == type>selected</#if>>${type}</option>
-                        </#list>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="startDate" class="form-label">Start Date</label>
-                    <input type="date" class="form-control" id="startDate" name="startDate" value="${selectedStartDate}">
-                </div>
-                <div class="col-md-3">
-                    <label for="endDate" class="form-label">End Date</label>
-                    <input type="date" class="form-control" id="endDate" name="endDate" value="${selectedEndDate}">
-                </div>
-                <div class="col-md-6 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
-                    <a href="/admin/activity-logs" class="btn btn-secondary">Clear Filters</a>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Results Summary -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <strong>Total entries:</strong> ${resultPage.pagination.totalCount!0}
-    </div>
-    <div>
-        <span class="text-muted">Showing ${(resultPage.pagination.offset + 1)} - ${(resultPage.pagination.offset + resultPage.records?size)} of ${resultPage.pagination.totalCount!0}</span>
-    </div>
-</div>
+<@c.filterBar action="/admin/activity-logs" clearUrl="/admin/activity-logs">
+  <@c.filterField label="User ID" forId="userId" grow=true>
+    <input type="text" class="form-control" id="userId" name="userId" value="${selectedUserId}" placeholder="User ID">
+  </@c.filterField>
+  <@c.filterField label="Action" forId="actionType">
+    <select class="form-select" id="actionType" name="actionType">
+      <option value="">All actions</option>
+      <#list actionTypes as type>
+        <option value="${type}" <#if selectedActionType == type>selected</#if>>${type}</option>
+      </#list>
+    </select>
+  </@c.filterField>
+  <@c.filterField label="Entity" forId="entityType">
+    <select class="form-select" id="entityType" name="entityType">
+      <option value="">All entities</option>
+      <#list entityTypes as type>
+        <option value="${type}" <#if selectedEntityType == type>selected</#if>>${type}</option>
+      </#list>
+    </select>
+  </@c.filterField>
+  <@c.filterField label="From" forId="startDate">
+    <input type="date" class="form-control" id="startDate" name="startDate" value="${selectedStartDate}">
+  </@c.filterField>
+  <@c.filterField label="To" forId="endDate">
+    <input type="date" class="form-control" id="endDate" name="endDate" value="${selectedEndDate}">
+  </@c.filterField>
+</@c.filterBar>
 
 <!-- Activity Log Table -->
-<table class="table table-sm table-hover admin-table">
+<@c.table>
     <thead>
         <tr>
             <th scope="col" style="width: 180px">Time</th>
@@ -125,15 +93,11 @@
         </tr>
     </#list>
 <#else>
-    <tr>
-        <td colspan="7" class="text-center text-muted py-4">
-            No activity log entries found. Try adjusting your filters.
-        </td>
-    </tr>
+    <@c.emptyRow colspan=7 message="No activity log entries found. Try adjusting your filters." />
 </#if>
     </tbody>
-</table>
+</@c.table>
 
-<@pag.pagination resultPage.pagination />
+<@c.pagination resultPage.pagination />
 
 </@layout.page>

@@ -1,36 +1,25 @@
 <#import "/adminLayout.ftl" as layout>
-<#import "/pagination.ftl" as pagination>
-<@layout.page noUp=true>
+<#import "/adminComponents.ftl" as c>
+<@layout.page>
 
-<div class="card mb-3">
-  <div class="card-body">
-    <h5 class="card-title">Search Comments</h5>
-    <form action="/admin/comments" method="GET" class="row g-3">
-      <div class="col-md-6">
-        <label for="search" class="form-label">Search</label>
-        <input type="text" class="form-control" id="search" name="search" 
-               placeholder="Search by author, email, or content..." 
-               value="${searchTerm}">
-        <small class="form-text text-muted">Search in author name, email, or comment content</small>
-      </div>
-      <div class="col-md-3">
-        <label for="state" class="form-label">State</label>
-        <select class="form-select" id="state" name="state">
-          <option value="">All States</option>
-          <#list commentStates as state>
-            <option value="${state}"<#if state == selectedState> selected</#if>>${state}</option>
-          </#list>
-        </select>
-      </div>
-      <div class="col-md-3 d-flex align-items-end">
-        <button type="submit" class="btn btn-primary me-2">Search</button>
-        <a href="/admin/comments" class="btn btn-secondary">Clear</a>
-      </div>
-    </form>
-  </div>
-</div>
+<@c.pageHeader title="Comments" count="${resultPage.pagination.totalCount!0}" countLabel="Total comments" />
 
-<table class="table table-sm admin-table">
+<@c.filterBar action="/admin/comments" clearUrl="/admin/comments" submitLabel="Search">
+  <@c.filterField label="Search" forId="search" grow=true>
+    <input type="text" class="form-control" id="search" name="search" value="${searchTerm}"
+           placeholder="Author, email or content" title="Searches in author name, email and comment content">
+  </@c.filterField>
+  <@c.filterField label="State" forId="state">
+    <select class="form-select" id="state" name="state">
+      <option value="">All states</option>
+      <#list commentStates as state>
+        <option value="${state}"<#if state == selectedState> selected</#if>>${state}</option>
+      </#list>
+    </select>
+  </@c.filterField>
+</@c.filterBar>
+
+<@c.table>
   <thead>
     <tr>
       <th scope="col">Created</th>
@@ -38,39 +27,39 @@
       <th scope="col">Email</th>
       <th scope="col">Comment</th>
       <th scope="col">State</th>
-      <th scope="col">Actions</th>
+      <th scope="col" class="admin-col-actions">Actions</th>
     </tr>
   </thead>
   <tbody>
 <#list resultPage.records as comment>
     <tr>
-        <td>${comment.common.created?string["d.M.yyyy, HH:mm"]}</td>
-        <td>${comment.userName}</td>
-        <td>${comment.email}</td>
-        <td>${comment.comment}</td>
-        <td>
-            <form action="/admin/comments/${comment.id}/state" method="POST">
-                <select name="state" onchange="this.form.submit()">
-                    <#list commentStates as state>
-                        <option value="${state}"<#if state == comment.state> selected</#if>>${state}</option>
-                    </#list>
-                </select>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            </form>
-        </td>
-        <td>
-            <form action="/admin/comments/${comment.id}" method="POST" onsubmit="return window.confirm('Are you sure you want to delete this comment?');">
-                <input type="hidden" name="_method" value="DELETE"/>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit" class="btn">Delete</button>
-            </form>
-        </td>
+      <td>${comment.common.created?string["d.M.yyyy, HH:mm"]}</td>
+      <td>${comment.userName}</td>
+      <td>${comment.email}</td>
+      <td>${comment.comment}</td>
+      <td>
+        <form action="/admin/comments/${comment.id}/state" method="POST">
+          <select name="state" class="form-select form-select-sm admin-state-select">
+            <#list commentStates as state>
+              <option value="${state}"<#if state == comment.state> selected</#if>>${state}</option>
+            </#list>
+          </select>
+          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+      </td>
+      <td class="admin-col-actions">
+        <@c.rowActions>
+          <@c.deleteForm url="/admin/comments/${comment.id}" method="DELETE" confirm="Are you sure you want to delete this comment?" />
+        </@c.rowActions>
+      </td>
     </tr>
+<#else>
+    <@c.emptyRow colspan=6 />
 </#list>
   </tbody>
-</table>
+</@c.table>
 
 <#assign additionalParams><#if searchTerm?has_content>&search=${searchTerm?url}</#if><#if selectedState?has_content>&state=${selectedState?url}</#if></#assign>
-<@pagination.pagination pagination=resultPage.pagination additionalParams=additionalParams />
+<@c.pagination pagination=resultPage.pagination additionalParams=additionalParams />
 
 </@layout.page>
