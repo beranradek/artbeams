@@ -41,7 +41,8 @@
     <div class="col-sm-6">
         <button type="submit" name="save" accesskey="s" class="btn btn-secondary btn-sm align-right">Save</button>
         <div class="align-left"><label for="markdown-content">Article body</label></div>
-        <textarea name="${fields.bodyEdited.name}" id="markdown-content" rows="32">${fields.bodyEdited.value!}</textarea>
+        <div id="markdown-toolbar" class="md-toolbar" role="toolbar" aria-label="Markdown formatting"></div>
+        <textarea name="${fields.bodyEdited.name}" id="markdown-content" class="md-toolbar-textarea" rows="32">${fields.bodyEdited.value!}</textarea>
         <button type="submit" name="save" accesskey="s" class="btn btn-secondary btn-sm align-right">Save</button>
     </div>
     <div class="col-sm-6">
@@ -148,6 +149,8 @@
 </#if>
 
 <script nonce="${_cspNonce}" src="/static/js/markdown-it.js?v190420"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/markdown-toolbar.css?v1" />
+<script nonce="${_cspNonce}" src="/static/js/markdown-toolbar.js?v1"></script>
 <#--
 markdown-it-attrs is extension/plugin of markdown-it that allows custom styles using attributes such as {.text-box}
 Extracted from NPM package markdown-it-attrs-3.0.3.tgz:
@@ -190,6 +193,21 @@ ready(function() {
     markdownItAttrs = window.markdownItAttrs;
     md = window.markdownit().use(markdownItAttrs);
     updateResult(md);
+
+    var toolbarElement = document.getElementById('markdown-toolbar');
+    var editorSelectElement = document.getElementById("${fields.editor.elementId}");
+    window.MarkdownToolbar.init(editedContentElement, toolbarElement, function () {
+        oldVal = editedContentElement.value;
+        updateResult(md);
+    });
+    // Toolbar generates markdown syntax, so it is shown only for the Markdown editor
+    function updateToolbarVisibility() {
+        toolbarElement.style.display = editorSelectElement && editorSelectElement.value === "html" ? "none" : "";
+    }
+    if (editorSelectElement) {
+        editorSelectElement.addEventListener('change', updateToolbarVisibility, false);
+    }
+    updateToolbarVisibility();
 });
 
 var oldVal = "";
@@ -207,6 +225,7 @@ function onMarkdownChange() {
 if (editedContentElement) {
     editedContentElement.addEventListener('change', onMarkdownChange, false);
     editedContentElement.addEventListener('keyup', onMarkdownChange, false);
+    editedContentElement.addEventListener('input', onMarkdownChange, false);
     editedContentElement.addEventListener('paste', onMarkdownChange, false);
 }
 

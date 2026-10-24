@@ -1,6 +1,7 @@
 package org.xbery.artbeams.common.markdown
 
 import com.vladsch.flexmark.ext.attributes.AttributesExtension
+import com.vladsch.flexmark.ext.tables.TablesExtension
 import com.vladsch.flexmark.html.HtmlRenderer
 import com.vladsch.flexmark.parser.Parser
 import com.vladsch.flexmark.util.ast.Document
@@ -18,7 +19,7 @@ open class MarkdownConverter {
 
     init {
         val options = MutableDataSet()
-        options.set(Parser.EXTENSIONS, listOf(AttributesExtension.create()))
+        options.set(Parser.EXTENSIONS, listOf(AttributesExtension.create(), TablesExtension.create()))
         // uncomment to convert soft-breaks to hard breaks
         //options.set(HtmlRenderer.SOFT_BREAK, "<br />\n")
 
