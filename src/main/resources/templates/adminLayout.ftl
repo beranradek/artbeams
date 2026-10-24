@@ -156,11 +156,11 @@
                 <li><span class="dropdown-item-text text-muted small">Signed in as <strong>${_loggedUser.login}</strong></span></li>
                 <li><a class="dropdown-item" href="/admin/users/${_loggedUser.id}/edit"><@c.icon "pencil"/> My profile</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/logout"><@c.icon "log-out"/> ${xlat['logout']}</a></li>
+                <li><a class="dropdown-item" href="/logout"><@c.icon "log-out"/> Log out</a></li>
               </ul>
             </li>
             <li class="nav-item d-none d-lg-block" role="none">
-              <a class="nav-link" href="/logout" role="menuitem" aria-label="Log out from CMS" title="${xlat['logout']}">
+              <a class="nav-link" href="/logout" role="menuitem" aria-label="Log out from CMS" title="Log out">
                 <@c.icon "log-out"/>
               </a>
             </li>
@@ -174,7 +174,7 @@
         <#nested/>
     </main><!-- /.container -->
     <#if !noUp>
-    <button type="button" id="admin-to-top" class="admin-to-top" title="${xlat['goto.up']}" aria-label="${xlat['goto.up']}"><@c.icon "arrow-up"/></button>
+    <button type="button" id="admin-to-top" class="admin-to-top" title="Back to top" aria-label="Back to top"><@c.icon "arrow-up"/></button>
     </#if>
 
     <!-- Bootstrap core JavaScript (bundle includes Popper for dropdowns) -->

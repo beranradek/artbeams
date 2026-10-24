@@ -3,7 +3,7 @@
 <@layout.page>
 
 <@c.pageHeader title="Orders" count="${resultPage.pagination.totalCount!0}" countLabel="Total orders">
-  <a href="/admin/refund-requests" class="btn btn-outline-warning btn-sm">Žádosti o vrácení <span class="badge text-bg-warning">${openRefundRequestCount!0}</span></a>
+  <a href="/admin/refund-requests" class="btn btn-outline-warning btn-sm">Refund requests <span class="badge text-bg-warning">${openRefundRequestCount!0}</span></a>
   <@c.newButton url="/admin/orders/create" label="New Order" />
 </@c.pageHeader>
 

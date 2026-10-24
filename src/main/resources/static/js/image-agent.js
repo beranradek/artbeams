@@ -54,12 +54,12 @@
         const prompt = messageInput.value.trim();
 
         if (!prompt) {
-            alert('Zadejte prosím popis obrázku, který chcete vygenerovat.');
+            alert('Please enter a description of the image you want to generate.');
             return;
         }
 
         // Display user request message
-        appendUserMessage('🎨 Vygeneruj obrázek: ' + prompt);
+        appendUserMessage('🎨 Generate image: ' + prompt);
 
         // Clear input
         messageInput.value = '';
@@ -108,7 +108,7 @@
         .catch(error => {
             console.error('Fetch error:', error);
             showImageGenerating(false);
-            showError('Chyba při komunikaci se serverem.');
+            showError('Error communicating with the server.');
         });
     }
 
@@ -142,7 +142,7 @@
         if (imagePollAttempts > MAX_IMAGE_POLL_ATTEMPTS) {
             stopImagePolling();
             showImageGenerating(false);
-            showError('Časový limit vypršel. Generování obrázku trvá příliš dlouho.');
+            showError('The time limit expired. Image generation takes too long.');
             return;
         }
 
@@ -176,12 +176,12 @@
                     currentTempImageId = data.tempImageId;
                     displayGeneratedImage(data.tempImageId);
                 } else {
-                    showError('Obrázek byl vygenerován, ale nepodařilo se ho načíst.');
+                    showError('The image was generated, but it could not be loaded.');
                 }
             } else if (data.status === 'error') {
                 stopImagePolling();
                 showImageGenerating(false);
-                showError(data.error || 'Neznámá chyba při generování obrázku');
+                showError(data.error || 'Unknown error while generating the image');
             }
             // If status is 'processing', continue polling
         })
@@ -189,7 +189,7 @@
             console.error('Polling error:', error);
             stopImagePolling();
             showImageGenerating(false);
-            showError('Chyba při komunikaci se serverem.');
+            showError('Error communicating with the server.');
         });
     }
 
@@ -212,7 +212,7 @@
         // Create image element
         const img = document.createElement('img');
         img.src = `/admin/articles/agent/image/temp/${tempImageId}`;
-        img.alt = 'Vygenerovaný obrázek';
+        img.alt = 'Generated image';
         img.className = 'image-preview-thumbnail';
         img.loading = 'lazy';
 
@@ -233,7 +233,7 @@
         const viewBtn = document.createElement('button');
         viewBtn.type = 'button';
         viewBtn.className = 'btn btn-sm btn-secondary';
-        viewBtn.innerHTML = '<i class="fas fa-search-plus"></i> Zobrazit v plné velikosti';
+        viewBtn.innerHTML = '<i class="fas fa-search-plus"></i> Show in full size';
         viewBtn.addEventListener('click', function() {
             viewFullSizeImage(tempImageId);
         });
@@ -241,7 +241,7 @@
         const saveBtn = document.createElement('button');
         saveBtn.type = 'button';
         saveBtn.className = 'btn btn-sm btn-success';
-        saveBtn.innerHTML = '<i class="fas fa-save"></i> Uložit do galerie';
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Save to gallery';
         saveBtn.addEventListener('click', function() {
             saveImageToGallery(tempImageId, saveBtn);
         });
@@ -274,11 +274,11 @@
                 <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Vygenerovaný obrázek</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+                            <h5 class="modal-title">Generated image</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <img id="fullSizeImage" src="" alt="Vygenerovaný obrázek v plné velikosti" style="width: 100%; height: auto;">
+                            <img id="fullSizeImage" src="" alt="Generated image in full size" style="width: 100%; height: auto;">
                         </div>
                     </div>
                 </div>
@@ -313,31 +313,31 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Název souboru</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zavřít"></button>
+                            <h5 class="modal-title">File name</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="customFilenameInput" class="form-label">
-                                    Zadejte název souboru (bez přípony):
+                                    Enter the file name (without extension):
                                 </label>
                                 <div class="input-group">
                                     <input type="text"
                                            class="form-control"
                                            id="customFilenameInput"
-                                           placeholder="např. sunset-over-river"
-                                           aria-label="Název souboru">
+                                           placeholder="e.g. sunset-over-river"
+                                           aria-label="File name">
                                     <span class="input-group-text">.webp</span>
                                 </div>
                                 <div class="form-text">
-                                    Ponechte prázdné pro automatické pojmenování. Povolené znaky: a-z, 0-9, pomlčka, podtržítko.
+                                    Leave empty for automatic naming. Allowed characters: a-z, 0-9, hyphen, underscore.
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zrušit</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="button" class="btn btn-success" id="confirmSaveBtn">
-                                <i class="fas fa-save"></i> Uložit
+                                <i class="fas fa-save"></i> Save
                             </button>
                         </div>
                     </div>
@@ -384,7 +384,7 @@
         // Disable button and show loading state
         button.disabled = true;
         const originalHtml = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ukládám...';
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
 
         const headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -409,20 +409,20 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                button.innerHTML = '<i class="fas fa-check"></i> Uloženo';
+                button.innerHTML = '<i class="fas fa-check"></i> Saved';
                 button.className = 'btn btn-sm btn-outline-success';
-                alert('Obrázek byl úspěšně uložen do galerie jako: ' + data.filename);
+                alert('The image was successfully saved to the gallery as: ' + data.filename);
             } else {
                 button.disabled = false;
                 button.innerHTML = originalHtml;
-                showError(data.error || 'Nepodařilo se uložit obrázek');
+                showError(data.error || 'Could not save the image');
             }
         })
         .catch(error => {
             console.error('Save error:', error);
             button.disabled = false;
             button.innerHTML = originalHtml;
-            showError('Chyba při ukládání obrázku');
+            showError('Error saving the image');
         });
     }
 
@@ -437,7 +437,7 @@
                 generatingDiv.className = 'image-generating';
                 generatingDiv.innerHTML = `
                     <i class="fas fa-palette"></i>
-                    <div class="image-generating-text">Generuji obrázek pomocí AI...</div>
+                    <div class="image-generating-text">Generating the image using AI...</div>
                 `;
                 messagesContainer.appendChild(generatingDiv);
                 scrollToBottom();

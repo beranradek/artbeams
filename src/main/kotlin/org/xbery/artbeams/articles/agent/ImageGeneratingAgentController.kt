@@ -77,7 +77,7 @@ class ImageGeneratingAgentController(
         if (!checkRateLimit(sessionId)) {
             return ResponseEntity
                 .status(HttpStatus.TOO_MANY_REQUESTS)
-                .body(AgentJobResponse.buildErrorResponse("Příliš mnoho požadavků. Počkejte prosím chvíli a zkuste to znovu."))
+                .body(AgentJobResponse.buildErrorResponse("Too many requests. Please wait a moment and try again."))
         }
 
         // Create new job using job manager
@@ -110,15 +110,15 @@ class ImageGeneratingAgentController(
                 // Provide user-friendly error message
                 val userMessage = when {
                     e.message?.contains("server had an error") == true ->
-                        "OpenAI server zaznamenal chybu při zpracování. Zkuste to prosím znovu."
+                        "The OpenAI server reported an error while processing. Please try again."
                     e.message?.contains("rate limit") == true ->
-                        "Překročen limit požadavků. Počkejte prosím chvíli a zkuste to znovu."
+                        "Request limit exceeded. Please wait a moment and try again."
                     e.message?.contains("timeout") == true ->
-                        "Časový limit vypršel. Zkuste to prosím znovu."
+                        "The time limit expired. Please try again."
                     e.message?.contains("content policy") == true ->
-                        "Váš požadavek byl zamítnut kvůli bezpečnostním pravidlům OpenAI. Zkuste jiný popis obrázku."
+                        "Your request was rejected due to OpenAI safety rules. Try a different image description."
                     else ->
-                        "Došlo k chybě při generování obrázku: ${e.message ?: "Neznámá chyba"}"
+                        "An error occurred while generating the image: ${e.message ?: "Unknown error"}"
                 }
 
                 job.error = userMessage
@@ -162,7 +162,7 @@ class ImageGeneratingAgentController(
                 }
             }
             JobStatus.ERROR -> {
-                response["error"] = job.error ?: "Neznámá chyba"
+                response["error"] = job.error ?: "Unknown error"
             }
             else -> {} // PROCESSING or CANCELLED
         }
@@ -208,7 +208,7 @@ class ImageGeneratingAgentController(
                 mapOf(
                     "success" to true,
                     "filename" to filename,
-                    "message" to "Obrázek byl úspěšně uložen do galerie"
+                    "message" to "The image was successfully saved to the gallery"
                 )
             )
         } else {
@@ -217,7 +217,7 @@ class ImageGeneratingAgentController(
                 .body(
                     mapOf(
                         "success" to false,
-                        "error" to "Nepodařilo se uložit obrázek do galerie"
+                        "error" to "Could not save the image to the gallery"
                     )
                 )
         }
@@ -229,10 +229,10 @@ class ImageGeneratingAgentController(
      */
     private fun validateInput(prompt: String): String? {
         if (prompt.isBlank()) {
-            return "Popis obrázku nesmí být prázdný"
+            return "Image description must not be empty"
         }
         if (prompt.length > MAX_PROMPT_LENGTH) {
-            return "Popis obrázku je příliš dlouhý (maximum $MAX_PROMPT_LENGTH znaků)"
+            return "Image description is too long (maximum $MAX_PROMPT_LENGTH characters)"
         }
         return null
     }

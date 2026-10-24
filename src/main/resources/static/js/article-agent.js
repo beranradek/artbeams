@@ -114,7 +114,7 @@
 
         // Validate file count
         if (files.length + selectedFiles.length > MAX_FILES) {
-            alert(`Můžete nahrát maximálně ${MAX_FILES} souborů najednou.`);
+            alert(`You can upload at most ${MAX_FILES} files at once.`);
             return;
         }
 
@@ -122,12 +122,12 @@
         for (const file of files) {
             if (file.size > MAX_FILE_SIZE) {
                 const maxSizeMB = MAX_FILE_SIZE / (1024 * 1024);
-                alert(`Soubor "${file.name}" je příliš velký (maximum ${maxSizeMB}MB).`);
+                alert(`Soubor "${file.name}" is too large (maximum ${maxSizeMB}MB).`);
                 return;
             }
 
             if (!file.type.startsWith('image/')) {
-                alert(`Soubor "${file.name}" není obrázek. Podporovány jsou pouze obrázky.`);
+                alert(`Soubor "${file.name}" is not an image. Only images are supported.`);
                 return;
             }
         }
@@ -276,7 +276,7 @@
         .catch(error => {
             console.error('Fetch error:', error);
             showLoading(false);
-            showError('Chyba při komunikaci s AI asistentem.');
+            showError('Error communicating with the AI assistant.');
         });
     }
 
@@ -314,7 +314,7 @@
         if (pollAttempts > MAX_POLL_ATTEMPTS) {
             stopPolling();
             showLoading(false);
-            showError('Časový limit vypršel. Zkuste to prosím znovu s kratším dotazem.');
+            showError('The time limit expired. Please try again with a shorter request.');
             return;
         }
 
@@ -365,7 +365,7 @@
             } else if (data.status === 'error') {
                 stopPolling();
                 showLoading(false);
-                showError(data.error || 'Neznámá chyba');
+                showError(data.error || 'Unknown error');
             }
             // If status is 'processing', continue polling
         })
@@ -373,12 +373,12 @@
             console.error('Polling error:', error);
             stopPolling();
             showLoading(false);
-            showError('Chyba při komunikaci s AI asistentem.');
+            showError('Error communicating with the AI assistant.');
         });
     }
 
     function clearConversation() {
-        if (!confirm('Opravdu chcete vymazat historii konverzace a začít znovu?')) {
+        if (!confirm('Do you really want to clear the conversation history and start again?')) {
             return;
         }
 
@@ -402,8 +402,8 @@
                 const messagesContainer = document.getElementById('agent-chat-messages');
                 if (messagesContainer) {
                     messagesContainer.innerHTML = '<div class="agent-welcome-message">' +
-                        '<i class="fas fa-info-circle"></i> Konverzace byla vymazána. ' +
-                        'Jak vám mohu pomoci?' +
+                        '<i class="fas fa-info-circle"></i> Conversation was cleared. ' +
+                        'How can I help you?' +
                         '</div>';
                 }
                 currentAssistantMessage = null;
@@ -412,7 +412,7 @@
         })
         .catch(error => {
             console.error('Error clearing conversation:', error);
-            showError('Chyba při mazání konverzace.');
+            showError('Error clearing the conversation.');
         });
     }
 
@@ -496,7 +496,7 @@
         const buttonDiv = document.createElement('div');
         buttonDiv.className = 'agent-message-actions';
         buttonDiv.innerHTML = '<button type="button" class="btn btn-sm btn-info agent-diff-btn">' +
-                              '<i class="fas fa-code-compare"></i> Zobrazit porovnání' +
+                              '<i class="fas fa-code-compare"></i> Show comparison' +
                               '</button>';
 
         messageDiv.appendChild(buttonDiv);
@@ -667,7 +667,7 @@
                 agentModal.hide();
             }
 
-            alert('Nová verze článku byla aplikována do editoru.');
+            alert('The new article version was applied to the editor.');
         }
     }
 
@@ -679,7 +679,7 @@
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(diffRight.value)
                     .then(() => {
-                        alert('Obsah byl zkopírován do schránky.');
+                        alert('The content was copied to the clipboard.');
                     })
                     .catch(err => {
                         console.error('Failed to copy to clipboard:', err);
@@ -697,10 +697,10 @@
         try {
             element.select();
             document.execCommand('copy');
-            alert('Obsah byl zkopírován do schránky.');
+            alert('The content was copied to the clipboard.');
         } catch (err) {
             console.error('Failed to copy to clipboard:', err);
-            alert('Nepodařilo se zkopírovat obsah do schránky. Použijte prosím Ctrl+C.');
+            alert('Could not copy the content to the clipboard. Please use Ctrl+C.');
         }
     }
 

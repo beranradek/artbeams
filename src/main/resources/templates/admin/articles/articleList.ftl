@@ -30,7 +30,7 @@
       <td class="admin-col-actions">
         <@c.rowActions>
           <@c.editLink url="/admin/articles/${article.id}/edit" />
-          <@c.deleteForm url="/admin/articles/${article.id}/delete" confirm="Opravdu smazat článek?" />
+          <@c.deleteForm url="/admin/articles/${article.id}/delete" confirm="Do you really want to delete this article?" />
         </@c.rowActions>
       </td>
     </tr>

@@ -117,7 +117,7 @@ class ArticleEditingAgentController(
         if (!checkRateLimit(sessionId)) {
             return ResponseEntity
                 .status(HttpStatus.TOO_MANY_REQUESTS)
-                .body(AgentJobResponse.buildErrorResponse("Příliš mnoho požadavků. Počkejte prosím chvíli a zkuste to znovu."))
+                .body(AgentJobResponse.buildErrorResponse("Too many requests. Please wait a moment and try again."))
         }
 
         // Create new job using job manager
@@ -175,21 +175,21 @@ class ArticleEditingAgentController(
                 // Provide user-friendly error message
                 val userMessage = when {
                     e.message?.contains("server had an error") == true ->
-                        "OpenAI server zaznamenal chybu při zpracování. Zkuste to prosím znovu."
+                        "The OpenAI server reported an error while processing. Please try again."
                     e.message?.contains("rate limit") == true ->
-                        "Překročen limit požadavků. Počkejte prosím chvíli a zkuste to znovu."
+                        "Request limit exceeded. Please wait a moment and try again."
                     e.message?.contains("timeout") == true ->
-                        "Časový limit vypršel. Zkuste to prosím znovu s kratším dotazem."
+                        "The time limit expired. Please try again with a shorter request."
                     else ->
-                        "Došlo k chybě při komunikaci s AI asistentem: ${e.message ?: "Neznámá chyba"}"
+                        "An error occurred while communicating with the AI assistant: ${e.message ?: "Unknown error"}"
                 }
 
                 job.error = userMessage
 
                 // Also add error message as a chunk so it's visible in the UI
                 synchronized(job.chunks) {
-                    if (job.chunks.isEmpty() || !job.chunks.last().contains("chybě")) {
-                        job.chunks.add("Omlouváme se, $userMessage")
+                    if (job.chunks.isEmpty() || !job.chunks.last().contains("error")) {
+                        job.chunks.add("Sorry, $userMessage")
                     }
                 }
             }
@@ -226,7 +226,7 @@ class ArticleEditingAgentController(
         logger.info("Cleared conversation history for session: $sessionId")
         return mapOf(
             "success" to true,
-            "message" to "Historie konverzace byla vymazána"
+            "message" to "Conversation history was cleared"
         )
     }
 
@@ -254,27 +254,27 @@ class ArticleEditingAgentController(
         files: List<MultipartFile>
     ): String? {
         if (message.isBlank()) {
-            return "Zpráva nesmí být prázdná"
+            return "Message must not be empty"
         }
         if (message.length > MAX_MESSAGE_LENGTH) {
-            return "Zpráva je příliš dlouhá (maximum $MAX_MESSAGE_LENGTH znaků)"
+            return "Message is too long (maximum $MAX_MESSAGE_LENGTH characters)"
         }
         if (articleTitle != null && articleTitle.length > MAX_TITLE_LENGTH) {
-            return "Titulek článku je příliš dlouhý (maximum $MAX_TITLE_LENGTH znaků)"
+            return "Article title is too long (maximum $MAX_TITLE_LENGTH characters)"
         }
         if (articlePerex != null && articlePerex.length > MAX_PEREX_LENGTH) {
-            return "Perex článku je příliš dlouhý (maximum $MAX_PEREX_LENGTH znaků)"
+            return "Article perex is too long (maximum $MAX_PEREX_LENGTH characters)"
         }
         if (articleBody != null && articleBody.length > MAX_BODY_LENGTH) {
-            return "Tělo článku je příliš dlouhé (maximum $MAX_BODY_LENGTH znaků)"
+            return "Article body is too long (maximum $MAX_BODY_LENGTH characters)"
         }
         if (files.size > MAX_FILES) {
-            return "Příliš mnoho souborů (maximum $MAX_FILES souborů)"
+            return "Too many files (maximum $MAX_FILES files)"
         }
         files.forEach { file ->
             if (file.size > MAX_FILE_SIZE) {
                 val maxSizeMB = MAX_FILE_SIZE / (1024 * 1024)
-                return "Soubor ${file.originalFilename} je příliš velký (maximum ${maxSizeMB}MB)"
+                return "File ${file.originalFilename} is too large (maximum ${maxSizeMB}MB)"
             }
         }
         return null

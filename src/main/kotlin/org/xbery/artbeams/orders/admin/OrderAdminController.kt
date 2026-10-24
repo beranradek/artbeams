@@ -107,7 +107,7 @@ class OrderAdminController(
         @RequestParam("state") state: OrderState,
         request: HttpServletRequest
     ): Any = tryOrErrorResponse(request) {
-        require(state != OrderState.REFUNDED) { "Vrácení objednávky potvrď přes žádost o vrácení." }
+        require(state != OrderState.REFUNDED) { "Confirm the order refund through the refund request." }
         orderService.updateOrderState(id, state)
         redirect("/admin/orders")
     }

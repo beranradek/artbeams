@@ -81,7 +81,7 @@ class RefundRequestRepository(
             .selectFrom(REFUND_REQUESTS)
             .where(REFUND_REQUESTS.ID.eq(requestId))
             .fetchOne { record -> record.toDomain() }
-    ) { "Žádost o vrácení nebyla nalezena." }
+    ) { "Refund request was not found." }
 
     /** Returns false when another administrator already resolved the request. */
     fun markResolved(requestId: String, adminUserId: String): Boolean {

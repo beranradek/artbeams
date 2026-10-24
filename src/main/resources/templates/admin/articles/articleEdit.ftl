@@ -81,7 +81,7 @@
     <input type="hidden" name="${fields.validFrom.name}" value="${fields.validFrom.value!}"/>
     <input type="hidden" name="${fields.validTo.name}" value="${fields.validTo.value!}"/>
     <div class="alert alert-info mt-3">
-      Tento článek bude uložen jako <strong>draft</strong>. Publikaci na veřejný web může provést pouze administrátor.
+      This article will be saved as a <strong>draft</strong>. Only an administrator can publish it to the public website.
     </div>
   </#if>
   <div class="form-group row">
@@ -141,7 +141,7 @@
 <#-- AI Agent for article editing -->
 <#if (articleAgentAvailable!false) && (canPublish!false)>
 <#include "/articles/agent/chat.ftl">
-<div class="article-agent-icon" onclick="window.ArticleAgent.openChat()" title="AI Asistent pro editaci článků">
+<div class="article-agent-icon" onclick="window.ArticleAgent.openChat()" title="AI assistant for article editing">
     <i class="fas fa-robot"></i>
 </div>
 </#if>
