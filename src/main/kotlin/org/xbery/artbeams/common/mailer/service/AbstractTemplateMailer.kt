@@ -10,13 +10,8 @@ import org.xbery.artbeams.common.web.WebLinkBuilder
  */
 @Component
 class TemplateMailer(
-    private val webLinkBuilder: WebLinkBuilder,
-    private val mailSender: MailgunMailSender
+    private val webLinkBuilder: WebLinkBuilder
 ) {
-    fun sendMailWithTemplate(recipientEmail: String, subject: String, templateId: String, templateVariables: Map<String, Any>) {
-        mailSender.sendMailWithTemplate(recipientEmail, subject, templateId, templateVariables)
-    }
-
     fun buildWebLink(relativePath: String, urlParams: Map<String, String>): String =
         webLinkBuilder.buildWebLink(relativePath, urlParams)
 }

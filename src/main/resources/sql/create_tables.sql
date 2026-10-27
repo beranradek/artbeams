@@ -121,6 +121,20 @@ CREATE TABLE products (
 
 CREATE INDEX idx_products_slug ON products (slug);
 
+-- Editable transactional e-mail definitions. System templates may be updated but must not be deleted.
+CREATE TABLE email_templates (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    created timestamp NOT NULL,
+    created_by VARCHAR(40) NOT NULL,
+    modified timestamp NOT NULL,
+    modified_by VARCHAR(40) NOT NULL,
+    template_key VARCHAR(80) NOT NULL,
+    subject VARCHAR(500) NOT NULL,
+    body_html TEXT NOT NULL,
+    system_template boolean NOT NULL DEFAULT FALSE
+);
+CREATE UNIQUE INDEX idx_email_templates_key ON email_templates (template_key);
+
 -- Courses and course_modules tables
 -- These tables back the Courses/Modules feature. They are also present
 -- in migration scripts located in src/main/resources/sql/migrations so

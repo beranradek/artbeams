@@ -10,12 +10,10 @@ INSERT INTO config (entry_key, entry_value) VALUES ('mailer.api.domain', '???');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.from', 'info@???');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.replyTo', 'info@???');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailer.sender.name', 'FILL IN YOUR NAME');
-INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.recovery.subject', 'Obnova hesla');
-INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.recovery.template', 'password.recovery');
-INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.setup.subject', 'Nastavení hesla');
-INSERT INTO config (entry_key, entry_value) VALUES ('mailer.password.setup.template', 'password.setup');
-INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.subject', 'Potvrzení platby a přístup do členské sekce');
-INSERT INTO config (entry_key, entry_value) VALUES ('mailer.member.section.template', 'member.section');
+INSERT INTO email_templates (id, created, created_by, modified, modified_by, template_key, subject, body_html, system_template) VALUES
+('email-password-recovery', now(), 'SYSTEM', now(), 'SYSTEM', 'password-recovery', 'Obnova hesla', '<p>Dobrý den,</p><p>pro obnovu hesla na webu {{webName}} klikněte na tento odkaz:</p><p><a href="{{tokenUrl}}">Obnovit heslo</a></p><p>{{senderName}}</p>', true),
+('email-password-setup', now(), 'SYSTEM', now(), 'SYSTEM', 'password-setup', 'Nastavení hesla', '<p>Dobrý den,</p><p>pro nastavení hesla na webu {{webName}} klikněte na tento odkaz:</p><p><a href="{{tokenUrl}}">Nastavit heslo</a></p><p>{{senderName}}</p>', true),
+('email-member-section-access', now(), 'SYSTEM', now(), 'SYSTEM', 'member-section-access', 'Potvrzení platby a přístup do členské sekce', '<p>Děkujeme za platbu.</p><p>Do členské sekce se přihlásíte zde: <a href="{{memberLoginUrl}}">Přihlásit se</a>.</p><p>Pokud heslo neznáte, nastavte jej zde: <a href="{{forgottenPasswordUrl}}">Nastavit heslo</a>.</p><p>{{senderName}}</p>', true);
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.baseUrl', 'https://connect.mailerlite.com');
 INSERT INTO config (entry_key, entry_value) VALUES ('mailing.api.token', 'FILL IN API TOKEN');
 

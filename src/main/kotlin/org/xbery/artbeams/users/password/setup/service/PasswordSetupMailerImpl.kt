@@ -3,6 +3,7 @@ package org.xbery.artbeams.users.password.setup.service
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.authcode.service.AuthorizationCodeGenerator
 import org.xbery.artbeams.common.mailer.service.TemplateMailer
+import org.xbery.artbeams.emailtemplates.service.EmailTemplateMailer
 import org.xbery.artbeams.common.security.SecureTokens
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.users.password.controller.PasswordSetupController
@@ -17,6 +18,7 @@ import org.xbery.artbeams.users.password.domain.PasswordSetupData
 class PasswordSetupMailerImpl(
     private val authorizationCodeGenerator: AuthorizationCodeGenerator,
     private val templateMailer: TemplateMailer,
+    private val emailTemplateMailer: EmailTemplateMailer,
     private val appConfig: AppConfig
 ) : PasswordSetupMailer {
 
@@ -28,9 +30,6 @@ class PasswordSetupMailerImpl(
             "webName" to (appConfig.findConfig("web.name") ?: ""),
             "senderName" to (appConfig.findConfig("mailer.sender.name") ?: "")
         )
-        val subject = appConfig.requireConfig("mailer.password.setup.subject")
-        val templateId = appConfig.requireConfig("mailer.password.setup.template")
-
-        templateMailer.sendMailWithTemplate(username, subject, templateId, tplVars)
+        emailTemplateMailer.send("password-setup", username, tplVars)
     }
 }

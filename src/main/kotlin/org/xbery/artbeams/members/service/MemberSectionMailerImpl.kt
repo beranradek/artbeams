@@ -2,6 +2,7 @@ package org.xbery.artbeams.members.service
 
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.mailer.service.TemplateMailer
+import org.xbery.artbeams.emailtemplates.service.EmailTemplateMailer
 import org.xbery.artbeams.config.repository.AppConfig
 import org.xbery.artbeams.users.password.controller.PasswordRecoveryController
 
@@ -14,6 +15,7 @@ import org.xbery.artbeams.users.password.controller.PasswordRecoveryController
 @Service
 class MemberSectionMailerImpl(
     private val templateMailer: TemplateMailer,
+    private val emailTemplateMailer: EmailTemplateMailer,
     private val appConfig: AppConfig
 ) : MemberSectionMailer {
 
@@ -28,9 +30,6 @@ class MemberSectionMailerImpl(
             "webName" to (appConfig.findConfig("web.name") ?: ""),
             "senderName" to (appConfig.findConfig("mailer.sender.name") ?: "")
         )
-        val subject = appConfig.requireConfig("mailer.member.section.subject")
-        val templateId = appConfig.requireConfig("mailer.member.section.template")
-
-        templateMailer.sendMailWithTemplate(username, subject, templateId, tplVars)
+        emailTemplateMailer.send("member-section-access", username, tplVars)
     }
 }

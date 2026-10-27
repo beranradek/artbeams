@@ -24,52 +24,6 @@ open class MailgunMailSender(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    open fun sendMailWithTemplate(recipientEmail: String, subject: String, templateId: String, templateVariables: Map<String, Any>) {
-        logger.info("Sending email $subject to $recipientEmail")
-        try {
-            val message = Message
-                .builder()
-                .from(mailerConfig.getFrom())
-                .replyTo(mailerConfig.getReplyTo())
-                .to(recipientEmail)
-                .subject(subject)
-                .template(templateId)
-                .mailgunVariables(templateVariables)
-                .build()
-            mailgunMessagesApi.sendMessage(
-                mailerConfig.getDomain(),
-                message
-            )
-            logger.info("Email $subject to $recipientEmail was sent successfully.")
-        } catch (ex: FeignException) {
-            logMailerException(subject, recipientEmail, ex)
-            systemEventLogService.logError(
-                ctx = null,
-                eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun template email failed: subject='$subject', status=${ex.status()}",
-                throwable = ex,
-                entityType = "EMAIL",
-                entityId = recipientEmail,
-                userId = null,
-                details = "templateId=$templateId,to=$recipientEmail"
-            )
-            throw ex
-        } catch (ex: Exception) {
-            logMailerException(subject, recipientEmail, ex)
-            systemEventLogService.logError(
-                ctx = null,
-                eventType = SystemEventType.EMAIL_SEND_FAILED,
-                message = "Mailgun template email failed: subject='$subject'",
-                throwable = ex,
-                entityType = "EMAIL",
-                entityId = recipientEmail,
-                userId = null,
-                details = "templateId=$templateId,to=$recipientEmail"
-            )
-            throw ex
-        }
-    }
-
     open fun sendMailWithText(recipientEmail: String, subject: String, body: String, replyTo: String? = null) {
         logger.info("Sending email $subject to $recipientEmail")
         try {
