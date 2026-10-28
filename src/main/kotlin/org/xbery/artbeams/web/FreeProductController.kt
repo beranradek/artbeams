@@ -39,6 +39,7 @@ import org.xbery.artbeams.media.domain.FileData
 import org.xbery.artbeams.media.repository.MediaRepository
 import org.xbery.artbeams.orders.domain.OrderState
 import org.xbery.artbeams.orders.service.OrderService
+import org.xbery.artbeams.emailworkflows.service.EmailWorkflowAcquisitionService
 import org.xbery.artbeams.products.domain.Product
 import org.xbery.artbeams.products.service.ProductService
 import org.xbery.artbeams.systemevents.domain.SystemEventType
@@ -64,6 +65,7 @@ class FreeProductController(
     private val userService: UserService,
     private val consentService: ConsentService,
     private val orderService: OrderService,
+    private val emailWorkflowAcquisitionService: EmailWorkflowAcquisitionService,
     private val userProductService: UserProductService,
     private val mediaRepository: MediaRepository,
     private val mailSender: MailgunMailSender,
@@ -168,6 +170,9 @@ class FreeProductController(
             val orderItems = orderService.findOrderItemsOfUserAndProduct(user.id, product.id)
             if (orderItems.isNotEmpty()) {
                 val latestOrderItem = orderItems.maxByOrNull { it.common.created }
+                latestOrderItem?.let { item ->
+                    emailWorkflowAcquisitionService.startForAcquisition(user.id, product.id, item.id)
+                }
                 latestOrderItem?.orderId?.let { orderId ->
                     orderService.updateOrderState(orderId, OrderState.SHIPPED)
                     logger.info("Order $orderId state updated to SHIPPED after confirming and sending free product ${product.slug}")

@@ -24,6 +24,7 @@ Evernote API for Evernote integration, Google reCaptcha and more.
 * Evernote integration using simple developer token 
   (real applications authenticate with Evernote using OAuth, but for the purpose of exploring the API, you can get a developer token that allows you to access your own Evernote account. To get a developer token, visit https://www.evernote.com/api/DeveloperToken.action).
 * Mailer for Mailgun transactional emails.
+* Product e-mail workflows: administrators can compose delayed sequences from non-system templates; deliveries use a durable, consent-aware retrying outbox with at-least-once delivery semantics.
 * MailerLite webhook integration for real-time subscriber status synchronization.
 
 ## MailerLite Webhook Configuration
@@ -88,6 +89,7 @@ This involves also changes in templates (but change in a template does not invok
 
 * Configure database in application.properties.
 * Create DB tables using sql/create*.sql scripts.
+* On an existing database, apply `src/main/resources/sql/migrations/add_email_templates.sql` and then `src/main/resources/sql/migrations/add_email_workflows.sql` before deploying the workflow feature.
 * Fill in DB tables using sql/insert*.sql scripts, fill in your own configuration and translations.
 * Run application with local config: `./gradlew :bootRun --args='--spring.profiles.active=local'`, or:
 * Run Application main class with VM options: `-DJDBC_DATABASE_URL=jdbc:postgresql://localhost:5432/<db-name> -DJDBC_DATABASE_USERNAME=... -DJDBC_DATABASE_PASSWORD=...`

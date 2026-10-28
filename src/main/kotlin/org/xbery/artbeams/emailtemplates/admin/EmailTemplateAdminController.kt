@@ -9,10 +9,15 @@ import org.xbery.artbeams.common.controller.BaseController
 import org.xbery.artbeams.common.controller.ControllerComponents
 import org.xbery.artbeams.emailtemplates.domain.EmailTemplate
 import org.xbery.artbeams.emailtemplates.repository.EmailTemplateRepository
+import org.xbery.artbeams.emailworkflows.repository.EmailWorkflowRepository
 
 @Controller
 @RequestMapping("/admin/email-templates")
-class EmailTemplateAdminController(private val repository: EmailTemplateRepository, common: ControllerComponents) : BaseController(common) {
+class EmailTemplateAdminController(
+    private val repository: EmailTemplateRepository,
+    private val workflows: EmailWorkflowRepository,
+    common: ControllerComponents
+) : BaseController(common) {
     @GetMapping fun list(request: HttpServletRequest): ModelAndView = ModelAndView("admin/emailTemplates", createModel(request, "templates" to repository.findAll()))
     @PostMapping("/add") fun add(request: HttpServletRequest, @RequestParam templateKey: String, @RequestParam subject: String, @RequestParam bodyHtml: String): String {
         val actor = requestToOperationCtx(request).loggedUser?.id ?: "SYSTEM"
@@ -33,6 +38,7 @@ class EmailTemplateAdminController(private val repository: EmailTemplateReposito
     @PostMapping("/{id}/delete") fun delete(@PathVariable id: String): String {
         val existing = requireNotNull(repository.findById(id)) { "Email template not found" }
         require(!existing.systemTemplate) { "System email templates cannot be deleted" }
+        require(!workflows.isTemplateReferenced(id)) { "E-mail template is used by a workflow or queued delivery and cannot be deleted" }
         repository.delete(id)
         return redirect("/admin/email-templates")
     }

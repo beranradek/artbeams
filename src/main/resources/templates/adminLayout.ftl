@@ -80,6 +80,9 @@
               <a class="nav-link" href="/admin/email-templates" role="menuitem">E-mail templates</a>
             </li>
             <li class="nav-item nav-secondary-inline" role="none">
+              <a class="nav-link" href="/admin/email-workflows" role="menuitem">E-mail workflows</a>
+            </li>
+            <li class="nav-item nav-secondary-inline" role="none">
               <a class="nav-link" href="/admin/activity-logs" role="menuitem">Activity Logs</a>
             </li>
             <li class="nav-item nav-secondary-inline" role="none">
@@ -96,6 +99,7 @@
                 <li><a class="dropdown-item" href="/admin/localisations">Localisations</a></li>
                 <li><a class="dropdown-item" href="/admin/config">Config</a></li>
                 <li><a class="dropdown-item" href="/admin/email-templates">E-mail templates</a></li>
+                <li><a class="dropdown-item" href="/admin/email-workflows">E-mail workflows</a></li>
                 <li><a class="dropdown-item" href="/admin/activity-logs">Activity Logs</a></li>
                 <li><a class="dropdown-item" href="/admin/system-events">System Events</a></li>
                 <li><a class="dropdown-item" href="/admin/search-console">Search Console</a></li>

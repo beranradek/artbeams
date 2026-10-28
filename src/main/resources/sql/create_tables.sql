@@ -135,6 +135,59 @@ CREATE TABLE email_templates (
 );
 CREATE UNIQUE INDEX idx_email_templates_key ON email_templates (template_key);
 
+-- Product follow-up e-mail workflows. A workflow contains ordered steps that use only
+-- administrator-created (non-system) e-mail templates. A separate delivery outbox makes
+-- scheduling idempotent. Delivery itself has at-least-once semantics because Mailgun is external.
+CREATE TABLE email_workflows (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    created timestamp NOT NULL,
+    created_by VARCHAR(40) NOT NULL,
+    modified timestamp NOT NULL,
+    modified_by VARCHAR(40) NOT NULL,
+    product_id VARCHAR(40) NOT NULL,
+    name VARCHAR(160) NOT NULL,
+    active boolean NOT NULL DEFAULT TRUE
+);
+CREATE INDEX idx_email_workflows_product_active ON email_workflows (product_id, active);
+
+CREATE TABLE email_workflow_steps (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    workflow_id VARCHAR(40) NOT NULL REFERENCES email_workflows (id) ON DELETE CASCADE,
+    email_template_id VARCHAR(40) NOT NULL REFERENCES email_templates (id),
+    step_order integer NOT NULL,
+    delay_minutes integer NOT NULL CHECK (delay_minutes >= 0),
+    UNIQUE (workflow_id, step_order)
+);
+
+CREATE TABLE email_workflow_runs (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    workflow_id VARCHAR(40) NOT NULL REFERENCES email_workflows (id),
+    user_id VARCHAR(40) NOT NULL,
+    product_id VARCHAR(40) NOT NULL,
+    acquisition_id VARCHAR(40) NOT NULL,
+    started_at timestamp NOT NULL,
+    completed_at timestamp DEFAULT NULL,
+    cancelled_at timestamp DEFAULT NULL,
+    UNIQUE (workflow_id, acquisition_id)
+);
+CREATE INDEX idx_email_workflow_runs_user_product ON email_workflow_runs (user_id, product_id);
+
+CREATE TABLE email_workflow_deliveries (
+    id VARCHAR(40) NOT NULL PRIMARY KEY,
+    run_id VARCHAR(40) NOT NULL REFERENCES email_workflow_runs (id) ON DELETE CASCADE,
+    step_id VARCHAR(40) REFERENCES email_workflow_steps (id) ON DELETE SET NULL,
+    -- Keep the selected template even when an administrator later changes workflow steps.
+    template_id VARCHAR(40) NOT NULL REFERENCES email_templates (id),
+    scheduled_at timestamp NOT NULL,
+    sent_at timestamp DEFAULT NULL,
+    cancelled_at timestamp DEFAULT NULL,
+    attempts integer NOT NULL DEFAULT 0,
+    next_attempt_at timestamp DEFAULT NULL,
+    last_error VARCHAR(1000) DEFAULT NULL,
+    UNIQUE (run_id, step_id)
+);
+CREATE INDEX idx_email_workflow_deliveries_due ON email_workflow_deliveries (next_attempt_at) WHERE sent_at IS NULL;
+
 -- Courses and course_modules tables
 -- These tables back the Courses/Modules feature. They are also present
 -- in migration scripts located in src/main/resources/sql/migrations so

@@ -10,6 +10,7 @@ import org.xbery.artbeams.common.assets.domain.AssetAttributes
 import org.xbery.artbeams.common.error.requireFound
 import org.xbery.artbeams.common.overview.Pagination
 import org.xbery.artbeams.common.overview.ResultPage
+import org.xbery.artbeams.emailworkflows.service.EmailWorkflowAcquisitionService
 import org.xbery.artbeams.members.service.MemberSectionMailer
 import org.xbery.artbeams.orders.domain.Order
 import org.xbery.artbeams.orders.domain.OrderInfo
@@ -41,7 +42,8 @@ class OrderServiceImpl(
     private val mailingApi: org.xbery.artbeams.mailing.api.MailingApi,
     private val activityLogService: UserActivityLogService,
     private val adminNotificationService: org.xbery.artbeams.admin.notification.AdminNotificationService,
-    private val systemEventLogService: SystemEventLogService
+    private val systemEventLogService: SystemEventLogService,
+    private val emailWorkflowAcquisitionService: EmailWorkflowAcquisitionService
 ) : OrderService {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -128,6 +130,10 @@ class OrderServiceImpl(
 
     override fun updateOrderPaid(orderId: String): Boolean {
         val updated = orderRepository.updateOrderPaid(orderId)
+        if (!updated) {
+            logger.warn("Ignoring payment callback for order $orderId because it is already refunded or missing")
+            return false
+        }
         val order = orderRepository.requireById(orderId)
         val userId = order.common.createdBy
 
@@ -141,6 +147,9 @@ class OrderServiceImpl(
 
         // Subscribe user to final mailing groups for paid products
         val orderItems = orderItemRepository.findByOrderId(orderId)
+        orderItems.forEach { item ->
+            emailWorkflowAcquisitionService.startForAcquisition(userId, item.productId, item.id)
+        }
         orderItems.forEach { orderItem ->
             try {
                 val product = productService.findBySlug(orderItem.productId)
