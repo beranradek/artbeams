@@ -31,6 +31,7 @@ INSERT INTO config (entry_key, entry_value) VALUES ('bankTransfer.bankCode', 'FI
 INSERT INTO sequences (sequence_name, next_value) VALUES ('orderNumber', 1);
 
 INSERT INTO config (entry_key, entry_value) VALUES ('contact.email', '???');
+INSERT INTO config (entry_key, entry_value) VALUES ('contact.blacklistedEmailDomains', 'ultraleadgeneration.com');
 
 -- SimpleShop.cz API integration
 INSERT INTO config (entry_key, entry_value) VALUES ('simpleshop.api.baseUrl', 'https://api.simpleshop.cz/v2');

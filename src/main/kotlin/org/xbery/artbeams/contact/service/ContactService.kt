@@ -20,6 +20,13 @@ class ContactService(
         userAgent: String,
         requestToOperationCtx: OperationCtx
     ) {
+        if (isEmailDomainBlacklisted(contactRequest.email)) {
+            // Reason: keep the rejection indistinguishable from a successful submission so blocked senders
+            // cannot use the form to discover the blacklist, while avoiding an outbound e-mail altogether.
+            logger.info("Not sending contact form request from a blacklisted e-mail domain.")
+            return
+        }
+
         val subject = "Contact form request"
         val body = """
             E-mail: ${contactRequest.email}
@@ -37,4 +44,31 @@ class ContactService(
      * Returns contact email to send contact form requests to.
      */
     fun getContactEmail(): String = appConfig.requireConfig("contact.email")
+
+    private fun isEmailDomainBlacklisted(email: String): Boolean {
+        val emailDomain = emailDomain(email) ?: return false
+        return appConfig
+            .findConfig(BLACKLISTED_EMAIL_DOMAINS_CONFIG_KEY)
+            .orEmpty()
+            .split(',')
+            .asSequence()
+            .map(::normalizeDomain)
+            .filter(String::isNotEmpty)
+            .any { it == emailDomain }
+    }
+
+    private fun emailDomain(email: String): String? {
+        val trimmedEmail = email.trim()
+        val separatorIndex = trimmedEmail.lastIndexOf('@')
+        if (separatorIndex <= 0 || separatorIndex == trimmedEmail.lastIndex || trimmedEmail.indexOf('@') != separatorIndex) {
+            return null
+        }
+        return normalizeDomain(trimmedEmail.substring(separatorIndex + 1)).ifEmpty { null }
+    }
+
+    private fun normalizeDomain(domain: String): String = domain.trim().removePrefix("@").removeSuffix(".").lowercase()
+
+    companion object {
+        const val BLACKLISTED_EMAIL_DOMAINS_CONFIG_KEY = "contact.blacklistedEmailDomains"
+    }
 }

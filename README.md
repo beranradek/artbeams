@@ -39,6 +39,10 @@ To enable automatic synchronization of subscriber unsubscribe events with your A
    - Use your configured secret for authentication
 3. The webhook will automatically update user consent status in your database when users unsubscribe
 
+## Contact form domain blacklist
+
+Set `contact.blacklistedEmailDomains` in the `config` table to a comma-separated list of e-mail domains whose contact-form submissions must be ignored. The default value is `ultraleadgeneration.com`. Apply `src/main/resources/sql/migrations/add_contact_form_domain_blacklist.sql` to existing databases.
+
 ## Development
 
 ### Conventions
