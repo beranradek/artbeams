@@ -1,5 +1,6 @@
 package org.xbery.artbeams.contact.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.xbery.artbeams.common.context.OperationCtx
 import org.xbery.artbeams.common.mailer.service.MailgunMailSender
@@ -14,6 +15,8 @@ class ContactService(
     private val mailSender: MailgunMailSender,
     private val appConfig: AppConfig
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun sendContactRequest(
         contactRequest: ContactRequest,
         ipAddress: String,
