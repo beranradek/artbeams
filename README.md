@@ -79,6 +79,9 @@ encryption, encoding and hashing security utilities; date and text utilities.
 
 Build using `./gradlew clean build`
 
+Security constraints in `build.gradle` keep Commons Lang on the build classpath and Okio/OkHttp in
+application configurations at fixed-safe minimum versions; review them when upgrading their parent libraries.
+
 Updating gradle wrapper: Update gradle version in build.gradle or springBootVersion of spring-boot-gradle-plugin 
 and run: `gradle wrapper`
 
